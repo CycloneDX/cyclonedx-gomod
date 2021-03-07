@@ -1,0 +1,36 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - 386
+      - amd64
+      - arm64
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: darwin
+        goarch: arm64
+    ldflags:
+      - -s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{.Version}}
+archives:
+  - replacements:
+      darwin: macos
+      386: x86
+      amd64: x64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
