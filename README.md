@@ -98,4 +98,4 @@ Pull requests are welcome. But please read the
 [CycloneDX contributing guidelines](https://github.com/CycloneDX/.github/blob/master/CONTRIBUTING.md) first.
 
 It is generally expected that pull requests will include relevant tests. Tests are automatically run against all
-supported Go versions (see [Compatibility](#compatibility)) for every pull request.
+supported Go versions for every pull request.
