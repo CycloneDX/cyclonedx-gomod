@@ -111,3 +111,23 @@ func GetPseudoVersion(path string) (string, error) {
 
 	return fmt.Sprintf("v0.0.0-%s-%s", commitDate.Format("20060102150405"), commitHash), nil
 }
+
+// GetVersionFromTag checks if the current commit is annotated with a tag and if yes, returns that tag's name.
+// Note that this is only possible when path points to a Git repository and the
+// git binary is available in the system's PATH.
+func GetVersionFromTag(path string) (string, error) {
+	if _, err := os.Stat(filepath.Join(path, ".git")); os.IsNotExist(err) {
+		return "", fmt.Errorf("%s is not a git repository", path)
+	}
+
+	cmd := exec.Command("git", "describe", "--exact-match", "--tags", "HEAD")
+	cmd.Dir = path
+
+	// Sample output: v0.1.0
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(output)), nil
+}

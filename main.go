@@ -52,7 +52,13 @@ func main() {
 		module := &modules[i]
 
 		if module.Main && module.Version == "" {
-			module.Version, _ = gomod.GetPseudoVersion(module.Dir)
+			if tagVersion, err := gomod.GetVersionFromTag(module.Dir); err != nil {
+				if module.Version, err = gomod.GetPseudoVersion(module.Dir); err != nil {
+					log.Fatalf("failed to determine version of main module: %v", err)
+				}
+			} else {
+				module.Version = tagVersion
+			}
 		}
 
 		module.Version = strings.Replace(module.Version, "+incompatible", "", -1)
@@ -130,7 +136,6 @@ func calculcateToolHashes() ([]cdx.Hash, error) {
 	if err != nil {
 		return nil, err
 	}
-	// TODO: exe might be a symlink
 
 	exeFile, err := os.Open(exe)
 	if err != nil {
@@ -174,7 +179,7 @@ func convertToComponent(module gomod.Module) cdx.Component {
 		BOMRef:     module.PackageURL(),
 		Type:       cdx.ComponentTypeLibrary,
 		Name:       module.Path,
-		Version:    module.Version, // TODO: Make it configurable to strip the "v" prefix
+		Version:    module.Version, // TODO: Make it configurable to strip the "v" prefix?
 		Scope:      cdx.ScopeRequired,
 		PackageURL: module.PackageURL(),
 	}
