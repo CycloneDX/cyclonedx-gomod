@@ -1,6 +1,10 @@
 package main
 
 import (
+	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
 	"flag"
 	"fmt"
 	"io"
@@ -66,6 +70,11 @@ func main() {
 		}
 	}
 
+	toolHashes, err := calculcateToolHashes()
+	if err != nil {
+		log.Fatalf("failed to calculate tool hashes: %v", err)
+	}
+
 	mainComponent := convertToComponent(mainModule)
 	mainComponent.Scope = ""                          // Main component can't have a scope
 	mainComponent.Type = cdx.ComponentTypeApplication // TODO: Make this configurable
@@ -77,6 +86,7 @@ func main() {
 				Vendor:  version.Author,
 				Name:    version.Name,
 				Version: version.Version,
+				Hashes:  &toolHashes,
 			},
 		},
 		Component: &mainComponent,
@@ -113,6 +123,37 @@ func main() {
 	if err = encoder.Encode(bom); err != nil {
 		log.Fatalf("encoding BOM failed: %v", err)
 	}
+}
+
+func calculcateToolHashes() ([]cdx.Hash, error) {
+	exe, err := os.Executable()
+	if err != nil {
+		return nil, err
+	}
+	// TODO: exe might be a symlink
+
+	exeFile, err := os.Open(exe)
+	if err != nil {
+		return nil, err
+	}
+	defer exeFile.Close()
+
+	hashMD5 := md5.New()
+	hashSHA1 := sha1.New()
+	hashSHA256 := sha256.New()
+	hashSHA512 := sha512.New()
+	hashWriter := io.MultiWriter(hashMD5, hashSHA1, hashSHA256, hashSHA512)
+
+	if _, err = io.Copy(hashWriter, exeFile); err != nil {
+		return nil, err
+	}
+
+	return []cdx.Hash{
+		{Algorithm: cdx.HashAlgoMD5, Value: fmt.Sprintf("%x", hashMD5.Sum(nil))},
+		{Algorithm: cdx.HashAlgoSHA1, Value: fmt.Sprintf("%x", hashSHA1.Sum(nil))},
+		{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", hashSHA256.Sum(nil))},
+		{Algorithm: cdx.HashAlgoSHA512, Value: fmt.Sprintf("%x", hashSHA512.Sum(nil))},
+	}, nil
 }
 
 func convertToComponent(module gomod.Module) cdx.Component {
