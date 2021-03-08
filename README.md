@@ -11,9 +11,15 @@
 
 ## Installation
 
+Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/cyclonedx-gomod/releases) page.
+
+### From Source
+
 ```
 go get github.com/CycloneDX/cyclonedx-gomod
 ```
+
+*cyclonedx-gomod* requires Go 1.16 or newer.
 
 ## Usage
 
@@ -41,50 +47,46 @@ Make sure you run `go mod download` before generating BOMs with *cyclonedx-gomod
 ```
 $ go mod tidy
 $ go mod download
-$ cyclonedx-gomod -json -output bom.json 
+$ cyclonedx-gomod -output bom.xml 
 ```
 
-```json
-{
-  "bomFormat": "CycloneDX",
-  "specVersion": "1.2",
-  "serialNumber": "urn:uuid:60dc90e1-807b-4297-b919-13fc0bd01d40",
-  "version": 1,
-  "metadata": {
-    "timestamp": "2021-03-07T22:34:13+01:00",
-    "tools": [
-      {
-        "vendor": "CycloneDX",
-        "name": "cyclonedx-gomod",
-        "version": "v0.0.0-unset"
-      }
-    ],
-    "component": {
-      "bom-ref": "pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210307202123-2cd971b532b3",
-      "type": "application",
-      "name": "github.com/CycloneDX/cyclonedx-gomod",
-      "version": "v0.0.0-20210307202123-2cd971b532b3",
-      "purl": "pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210307202123-2cd971b532b3"
-    }
-  },
-  "components": [
-    {
-      "bom-ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
-      "type": "library",
-      "name": "github.com/CycloneDX/cyclonedx-go",
-      "version": "v0.1.0",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "c92dc729b69e0f3c13262d3ec62a6021f7060eb8e4af75e17d7e89b28f790588"
-        }
-      ],
-      "purl": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0"
-    },
-    ...
-  ]
-}
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:07c19f2c-6ea7-4258-befd-19e9bc019183" version="1">
+    <metadata>
+        <timestamp>2021-03-08T18:49:41+01:00</timestamp>
+        <tools>
+            <tool>
+                <vendor>CycloneDX</vendor>
+                <name>cyclonedx-gomod</name>
+                <version>v0.0.0-unset</version>
+                <hashes>
+                    <hash alg="MD5">31e8977ccf58f1dd081d5f15f248c45e</hash>
+                    <hash alg="SHA-1">fcbdb1485eaa54afdac6901fde3266d9d4517505</hash>
+                    <hash alg="SHA-256">940e64bb70b2bbb827f9fe3ca719324d08a1afed087ba1331311c6838eddc2d0</hash>
+                    <hash alg="SHA-512">4505b70b028a0c384459a02eb5fd2fe008763c2ea8640cc97e2f75626e04c03eab4c95acfbea250703c8049590791f9feebe3cdbc954cca042fb8050e7c0c3bf</hash>
+                </hashes>
+            </tool>
+        </tools>
+        <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210308115936-fe548e553e56" type="application">
+            <name>github.com/CycloneDX/cyclonedx-gomod</name>
+            <version>v0.0.0-20210308115936-fe548e553e56</version>
+            <purl>pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210308115936-fe548e553e56</purl>
+        </component>
+    </metadata>
+    <components>
+        <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0" type="library">
+            <name>github.com/CycloneDX/cyclonedx-go</name>
+            <version>v0.1.0</version>
+            <scope>required</scope>
+            <hashes>
+                <hash alg="SHA-256">c92dc729b69e0f3c13262d3ec62a6021f7060eb8e4af75e17d7e89b28f790588</hash>
+            </hashes>
+            <purl>pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0</purl>
+        </component>
+        <!-- ... -->
+    </components>
+</bom>
 ```
 
 ## License
