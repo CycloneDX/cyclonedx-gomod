@@ -19,7 +19,7 @@ Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/c
 go get github.com/CycloneDX/cyclonedx-gomod
 ```
 
-*cyclonedx-gomod* requires Go 1.16 or newer.
+Building from source requires Go 1.16 or newer.
 
 ## Usage
 
@@ -35,12 +35,14 @@ Usage of cyclonedx-gomod:
         Output path (default "-")
   -serial string
         Serial number (default [random UUID])
+  -type string
+        Type of the main component (default "application")
   -version
         Show version
 ```
 
 In order to be able to calculate hashes, all modules have to be present in Go's module cache.  
-Make sure you run `go mod download` before generating BOMs with *cyclonedx-gomod*.
+Make sure to run `go mod download` before generating BOMs with *cyclonedx-gomod*.
 
 ### Example
 

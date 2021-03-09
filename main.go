@@ -21,15 +21,28 @@ import (
 )
 
 var (
+	componentType  string
 	modulePath     string
 	noSerialNumber bool
 	outputPath     string
 	serialNumber   string
 	showVersion    bool
 	useJSON        bool
+
+	allowedComponentTypes = []cdx.ComponentType{
+		cdx.ComponentTypeApplication,
+		cdx.ComponentTypeContainer,
+		cdx.ComponentTypeDevice,
+		cdx.ComponentTypeFile,
+		cdx.ComponentTypeFirmware,
+		cdx.ComponentTypeFramework,
+		cdx.ComponentTypeLibrary,
+		cdx.ComponentTypeOS,
+	}
 )
 
 func main() {
+	flag.StringVar(&componentType, "type", string(cdx.ComponentTypeApplication), "Type of the main component")
 	flag.StringVar(&modulePath, "module", ".", "Path to Go module")
 	flag.BoolVar(&noSerialNumber, "noserial", false, "Omit serial number")
 	flag.StringVar(&outputPath, "output", "-", "Output path")
@@ -43,29 +56,33 @@ func main() {
 		return
 	}
 
+	if err := validateArguments(); err != nil {
+		log.Fatal(err)
+	}
+
 	modules, err := gomod.GetModules(modulePath)
 	if err != nil {
 		log.Fatalf("failed to get modules: %v", err)
 	}
 
-	for i := range modules {
-		module := &modules[i]
-
-		if module.Main && module.Version == "" {
-			if tagVersion, err := gomod.GetVersionFromTag(module.Dir); err != nil {
-				if module.Version, err = gomod.GetPseudoVersion(module.Dir); err != nil {
-					log.Fatalf("failed to determine version of main module: %v", err)
-				}
-			} else {
-				module.Version = tagVersion
-			}
-		}
-
-		module.Version = strings.Replace(module.Version, "+incompatible", "", -1)
-	}
-
 	mainModule := modules[0]
 	modules = modules[1:]
+
+	// Detect main module version
+	if tagVersion, err := gomod.GetVersionFromTag(mainModule.Dir); err != nil {
+		pseudoVersion, err := gomod.GetPseudoVersion(mainModule.Dir)
+		if err != nil {
+			log.Fatalf("failed to detect version of main module: %v", err)
+		}
+		mainModule.Version = pseudoVersion
+	} else {
+		mainModule.Version = tagVersion
+	}
+
+	// Normalize versions
+	for i := range modules {
+		modules[i].Version = strings.TrimSuffix(modules[i].Version, "+incompatible")
+	}
 
 	bom := cdx.NewBOM()
 	if !noSerialNumber {
@@ -76,14 +93,14 @@ func main() {
 		}
 	}
 
-	toolHashes, err := calculcateToolHashes()
+	toolHashes, err := calculateToolHashes()
 	if err != nil {
 		log.Fatalf("failed to calculate tool hashes: %v", err)
 	}
 
 	mainComponent := convertToComponent(mainModule)
-	mainComponent.Scope = ""                          // Main component can't have a scope
-	mainComponent.Type = cdx.ComponentTypeApplication // TODO: Make this configurable
+	mainComponent.Scope = "" // Main component can't have a scope
+	mainComponent.Type = cdx.ComponentType(componentType)
 
 	bom.Metadata = &cdx.Metadata{
 		Timestamp: time.Now().Format(time.RFC3339),
@@ -131,7 +148,29 @@ func main() {
 	}
 }
 
-func calculcateToolHashes() ([]cdx.Hash, error) {
+func validateArguments() error {
+	isAllowedComponentType := false
+	for i := range allowedComponentTypes {
+		if allowedComponentTypes[i] == cdx.ComponentType(componentType) {
+			isAllowedComponentType = true
+			break
+		}
+	}
+	if !isAllowedComponentType {
+		return fmt.Errorf("invalid component type %s. See https://pkg.go.dev/github.com/CycloneDX/cyclonedx-go#ComponentType for options", componentType)
+	}
+
+	// Serial number must be valid UUIDs
+	if !noSerialNumber && serialNumber != "" {
+		if _, err := uuid.Parse(serialNumber); err != nil {
+			return fmt.Errorf("invalid serial number: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func calculateToolHashes() ([]cdx.Hash, error) {
 	exe, err := os.Executable()
 	if err != nil {
 		return nil, err
