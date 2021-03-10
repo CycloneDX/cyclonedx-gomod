@@ -91,7 +91,7 @@ $ cyclonedx-gomod -output bom.xml
 </bom>
 ```
 
-The [`examples`](./examples) directory also contains a few BOMs that have been generated with *cyclonedx-gomod*.
+Checkout the [`examples`](./examples) directory for complete BOM examples.
 
 ## License
 
