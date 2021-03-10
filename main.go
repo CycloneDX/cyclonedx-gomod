@@ -121,6 +121,14 @@ func main() {
 	}
 	bom.Components = &components
 
+	moduleGraph, err := mainModule.ModuleGraph()
+	if err != nil {
+		log.Fatalf("failed to get module graph: %v", err)
+	}
+
+	depGraph := buildDependencyGraph(moduleGraph)
+	bom.Dependencies = &depGraph
+
 	var outputFormat cdx.BOMFileFormat
 	if useJSON {
 		outputFormat = cdx.BOMFileFormatJSON
@@ -160,7 +168,7 @@ func validateArguments() error {
 		return fmt.Errorf("invalid component type %s. See https://pkg.go.dev/github.com/CycloneDX/cyclonedx-go#ComponentType for options", componentType)
 	}
 
-	// Serial number must be valid UUIDs
+	// Serial numbers must be valid UUIDs
 	if !noSerialNumber && serialNumber != "" {
 		if _, err := uuid.Parse(serialNumber); err != nil {
 			return fmt.Errorf("invalid serial number: %w", err)
@@ -235,4 +243,22 @@ func convertToComponent(module gomod.Module) cdx.Component {
 	}
 
 	return component
+}
+
+func buildDependencyGraph(moduleGraph map[string][]string) []cdx.Dependency {
+	depGraph := make([]cdx.Dependency, 0)
+
+	for dependant, dependencies := range moduleGraph {
+		cdxDependant := cdx.Dependency{Ref: dependant}
+		cdxDependencies := make([]cdx.Dependency, len(dependencies))
+		for i := range dependencies {
+			cdxDependencies[i] = cdx.Dependency{Ref: dependencies[i]}
+		}
+		if len(cdxDependencies) > 0 {
+			cdxDependant.Dependencies = &cdxDependencies
+		}
+		depGraph = append(depGraph, cdxDependant)
+	}
+
+	return depGraph
 }

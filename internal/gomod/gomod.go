@@ -1,6 +1,7 @@
 package gomod
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
@@ -46,8 +47,52 @@ func (m Module) Hashes() ([]cdx.Hash, error) {
 	}, nil
 }
 
+func (m Module) ModuleGraph() (map[string][]string, error) {
+	cmd := exec.Command("go", "mod", "graph")
+	cmd.Dir = m.Dir
+
+	output, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+
+	return m.parseModuleGraph(bytes.NewReader(output))
+}
+
+func (m Module) parseModuleGraph(reader io.Reader) (map[string][]string, error) {
+	graph := make(map[string][]string)
+
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		parts := strings.SplitN(scanner.Text(), " ", 2)
+
+		dependant := parts[0]
+		if dependant == m.Path {
+			// The main module has no version in the module graph
+			dependant = m.PackageURL()
+		} else {
+			dependant = coordinatesToPURL(dependant)
+		}
+		dependency := coordinatesToPURL(parts[1])
+
+		dependencies, ok := graph[dependant]
+		if !ok {
+			dependencies = []string{dependency}
+		} else {
+			dependencies = append(dependencies, dependency)
+		}
+		graph[dependant] = dependencies
+
+		// For a complete graph, dependencies must be included as dependants as well
+		if _, ok := graph[dependency]; !ok {
+			graph[dependency] = make([]string, 0)
+		}
+	}
+	return graph, nil
+}
+
 func (m Module) PackageURL() string {
-	return fmt.Sprintf("pkg:golang/%s@%s", m.Path, m.Version)
+	return coordinatesToPURL(m.Path + "@" + m.Version)
 }
 
 func GetModules(path string) ([]Module, error) {
@@ -63,9 +108,14 @@ func GetModules(path string) ([]Module, error) {
 		return nil, err
 	}
 
-	// Output is not a JSON array, so we have to parse one object after another
+	return parseModules(bytes.NewReader(output))
+}
+
+func parseModules(reader io.Reader) ([]Module, error) {
 	modules := make([]Module, 0)
-	jsonDecoder := json.NewDecoder(bytes.NewReader(output))
+	jsonDecoder := json.NewDecoder(reader)
+
+	// Output is not a JSON array, so we have to parse one object after another
 	for {
 		var mod Module
 		if err := jsonDecoder.Decode(&mod); err != nil {
@@ -130,4 +180,8 @@ func GetVersionFromTag(path string) (string, error) {
 	}
 
 	return strings.TrimSpace(string(output)), nil
+}
+
+func coordinatesToPURL(coordinates string) string {
+	return "pkg:golang/" + coordinates
 }

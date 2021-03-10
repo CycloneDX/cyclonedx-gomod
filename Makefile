@@ -3,11 +3,11 @@ build:
 .PHONY: build
 
 test:
-	go test -v -cover
+	go test -v -cover ./...
 .PHONY: test
 
 clean:
-	go clean
+	go clean ./...
 .PHONY: clean
 
 bom:
