@@ -96,11 +96,10 @@ $ cyclonedx-gomod -output bom.xml
             <dependency ref="pkg:golang/golang.org/x/mod@v0.4.2"></dependency>
         </dependency>
         <!-- ... -->
-        <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210312235402-7b06d181cac7">
-            <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0"></dependency>
-            <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
-            <dependency ref="pkg:golang/github.com/stretchr/testify@v1.7.0"></dependency>
-            <dependency ref="pkg:golang/golang.org/x/mod@v0.4.2"></dependency>
+        <dependency ref="pkg:golang/golang.org/x/mod@v0.4.2">
+            <dependency ref="pkg:golang/golang.org/x/crypto@v0.0.0-20191011191535-87dc89f01550"></dependency>
+            <dependency ref="pkg:golang/golang.org/x/tools@v0.0.0-20191119224855-298f0cb1881e"></dependency>
+            <dependency ref="pkg:golang/golang.org/x/xerrors@v0.0.0-20191011141410-1b5146add898"></dependency>
         </dependency>
         <!-- ... -->
     </dependencies>
