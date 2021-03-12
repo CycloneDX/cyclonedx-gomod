@@ -33,17 +33,17 @@ gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c gopkg.in/check.v1@v0.0.0-201
 	graph, err := module.parseModuleGraph(strings.NewReader(rawGraph))
 	require.NoError(t, err)
 
-	directDependencies, ok := graph["pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0"]
+	directDependencies, ok := graph["github.com/CycloneDX/cyclonedx-go@v0.1.0"]
 	require.True(t, ok)
-	assert.Contains(t, directDependencies, "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0")
-	assert.Contains(t, directDependencies, "pkg:golang/github.com/stretchr/testify@v1.7.0")
+	assert.Contains(t, directDependencies, "github.com/bradleyjkemp/cupaloy/v2@v2.6.0")
+	assert.Contains(t, directDependencies, "github.com/stretchr/testify@v1.7.0")
 
-	transitiveDependencies, ok := graph["pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0"]
+	transitiveDependencies, ok := graph["github.com/bradleyjkemp/cupaloy/v2@v2.6.0"]
 	require.True(t, ok)
-	assert.Contains(t, transitiveDependencies, "pkg:golang/github.com/davecgh/go-spew@v1.1.1")
-	assert.Contains(t, transitiveDependencies, "pkg:golang/github.com/pmezard/go-difflib@v1.0.0")
-	assert.Contains(t, transitiveDependencies, "pkg:golang/github.com/stretchr/objx@v0.1.1")
-	assert.Contains(t, transitiveDependencies, "pkg:golang/github.com/stretchr/testify@v1.6.1")
+	assert.Contains(t, transitiveDependencies, "github.com/davecgh/go-spew@v1.1.1")
+	assert.Contains(t, transitiveDependencies, "github.com/pmezard/go-difflib@v1.0.0")
+	assert.Contains(t, transitiveDependencies, "github.com/stretchr/objx@v0.1.1")
+	assert.Contains(t, transitiveDependencies, "github.com/stretchr/testify@v1.6.1")
 }
 
 func TestModule_PackageURL(t *testing.T) {

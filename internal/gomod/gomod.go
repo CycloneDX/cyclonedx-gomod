@@ -27,6 +27,10 @@ type Module struct {
 	Version string
 }
 
+func (m Module) Coordinates() string {
+	return m.Path + "@" + m.Version
+}
+
 func (m Module) Hashes() ([]cdx.Hash, error) {
 	if _, err := os.Stat(m.Dir); os.IsNotExist(err) {
 		return nil, fmt.Errorf("module dir %s does not exist", m.Dir)
@@ -64,16 +68,24 @@ func (m Module) parseModuleGraph(reader io.Reader) (map[string][]string, error) 
 
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
-		parts := strings.SplitN(scanner.Text(), " ", 2)
+		// Skip empty lines
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+
+		//
+		parts := strings.Fields(line)
+		if len(parts) != 2 {
+			return nil, fmt.Errorf("")
+		}
 
 		dependant := parts[0]
 		if dependant == m.Path {
 			// The main module has no version in the module graph
-			dependant = m.PackageURL()
-		} else {
-			dependant = coordinatesToPURL(dependant)
+			dependant = m.Coordinates()
 		}
-		dependency := coordinatesToPURL(parts[1])
+		dependency := parts[1]
 
 		dependencies, ok := graph[dependant]
 		if !ok {
@@ -92,7 +104,7 @@ func (m Module) parseModuleGraph(reader io.Reader) (map[string][]string, error) 
 }
 
 func (m Module) PackageURL() string {
-	return coordinatesToPURL(m.Path + "@" + m.Version)
+	return CoordinatesToPURL(m.Coordinates())
 }
 
 func GetModules(path string) ([]Module, error) {
@@ -127,6 +139,42 @@ func parseModules(reader io.Reader) ([]Module, error) {
 		modules = append(modules, mod)
 	}
 	return modules, nil
+}
+
+func GetEffectiveModuleGraph(moduleGraph map[string][]string, modules []Module) (map[string][]string, error) {
+	newGraph := make(map[string][]string)
+
+	for dependant, dependencies := range moduleGraph {
+		// Filter out dependants that haven't made it into the final module list
+		moduleFound := false
+		for _, module := range modules {
+			if dependant == module.Coordinates() {
+				moduleFound = true
+				break
+			}
+		}
+		if !moduleFound {
+			continue
+		}
+
+		newGraph[dependant] = make([]string, len(dependencies))
+
+		// Rewire dependencies so they point to the correct version
+		for i := range dependencies {
+			moduleFound := false
+			for _, module := range modules {
+				if strings.Index(dependencies[i], module.Path+"@") == 0 {
+					newGraph[dependant][i] = module.Coordinates()
+					moduleFound = true
+				}
+			}
+			if !moduleFound {
+				return nil, fmt.Errorf("dependency %s does not exist in module list", dependencies[i])
+			}
+		}
+	}
+
+	return newGraph, nil
 }
 
 // GetPseudoVersion constructs a pseudo version for a Go module at the given path.
@@ -182,6 +230,6 @@ func GetVersionFromTag(path string) (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-func coordinatesToPURL(coordinates string) string {
+func CoordinatesToPURL(coordinates string) string {
 	return "pkg:golang/" + coordinates
 }

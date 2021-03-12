@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:37bc3d96-012a-4163-85fa-0f12a690a60c" version="1">
   <metadata>
-    <timestamp>2021-03-10T22:29:44+01:00</timestamp>
+    <timestamp>2021-03-12T17:45:46+01:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
         <version>v0.0.0-unset</version>
         <hashes>
-          <hash alg="MD5">2c623bc20b3e350e8dbfc1c5a710a634</hash>
-          <hash alg="SHA-1">bb92c50a0706bbf1a9d88bab65c77fa1793de8a7</hash>
-          <hash alg="SHA-256">a9458dcef870ffe20c91c6094298aacc045ed70cf61ba2aedd6e13d9b0059ede</hash>
-          <hash alg="SHA-512">f28d69e9b2a875313b9a7b443f379d2949fa3233ca5c5034ab738a8a0b9cfd5428b2a15b653a823a3f58cc29cfbe63f99cbf4406fd33377a0369ad98fba1b43b</hash>
+          <hash alg="MD5">97fea0b2424b3690ccd108eeab428d05</hash>
+          <hash alg="SHA-1">4895b099634c96157f33885bba2f3c66a8931125</hash>
+          <hash alg="SHA-256">20e86b7a0c33b1b5316b5aa22d79628f111b896b1f18f81892672a759ada15fe</hash>
+          <hash alg="SHA-512">fde8e3fd62ee20cc23bc34c72c9df9b2ccf0a660c924f48afd0c4e012af779aaed08d7cb6ec1a2cc73876729a45c13f4388fc02d579cf21d2006dde80f6ee1c0</hash>
         </hashes>
       </tool>
     </tools>
-    <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0" type="application">
+    <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0" type="library">
       <name>github.com/CycloneDX/cyclonedx-go</name>
       <version>v0.1.0</version>
       <purl>pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0</purl>
@@ -87,36 +87,28 @@
     </component>
   </components>
   <dependencies>
+    <dependency ref="pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405"></dependency>
     <dependency ref="pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0">
       <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
       <dependency ref="pkg:golang/github.com/pmezard/go-difflib@v1.0.0"></dependency>
       <dependency ref="pkg:golang/github.com/stretchr/objx@v0.1.1"></dependency>
-      <dependency ref="pkg:golang/github.com/stretchr/testify@v1.6.1"></dependency>
+      <dependency ref="pkg:golang/github.com/stretchr/testify@v1.7.0"></dependency>
     </dependency>
-    <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
-    <dependency ref="pkg:golang/github.com/stretchr/testify@v1.6.1">
-      <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.0"></dependency>
-      <dependency ref="pkg:golang/github.com/pmezard/go-difflib@v1.0.0"></dependency>
-      <dependency ref="pkg:golang/github.com/stretchr/objx@v0.1.0"></dependency>
-      <dependency ref="pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"></dependency>
-    </dependency>
-    <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.0"></dependency>
     <dependency ref="pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c">
       <dependency ref="pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405"></dependency>
     </dependency>
-    <dependency ref="pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405"></dependency>
     <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0">
       <dependency ref="pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0"></dependency>
       <dependency ref="pkg:golang/github.com/stretchr/testify@v1.7.0"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/stretchr/testify@v1.7.0">
-      <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.0"></dependency>
+      <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
       <dependency ref="pkg:golang/github.com/pmezard/go-difflib@v1.0.0"></dependency>
-      <dependency ref="pkg:golang/github.com/stretchr/objx@v0.1.0"></dependency>
+      <dependency ref="pkg:golang/github.com/stretchr/objx@v0.1.1"></dependency>
       <dependency ref="pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"></dependency>
     </dependency>
+    <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
     <dependency ref="pkg:golang/github.com/pmezard/go-difflib@v1.0.0"></dependency>
     <dependency ref="pkg:golang/github.com/stretchr/objx@v0.1.1"></dependency>
-    <dependency ref="pkg:golang/github.com/stretchr/objx@v0.1.0"></dependency>
   </dependencies>
 </bom>
