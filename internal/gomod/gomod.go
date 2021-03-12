@@ -18,6 +18,11 @@ import (
 	"golang.org/x/mod/sumdb/dirhash"
 )
 
+var (
+	ErrNoGitRepository = errors.New("not a git repository")
+	ErrNoGoModule      = errors.New("not a Go module")
+)
+
 // See https://golang.org/ref/mod#go-list-m
 type Module struct {
 	Dir     string
@@ -74,10 +79,9 @@ func (m Module) parseModuleGraph(reader io.Reader) (map[string][]string, error) 
 			continue
 		}
 
-		//
 		parts := strings.Fields(line)
 		if len(parts) != 2 {
-			return nil, fmt.Errorf("")
+			return nil, fmt.Errorf("expected two fields per line, but got %d: %s", len(parts), line)
 		}
 
 		dependant := parts[0]
@@ -109,7 +113,7 @@ func (m Module) PackageURL() string {
 
 func GetModules(path string) ([]Module, error) {
 	if _, err := os.Stat(filepath.Join(path, "go.mod")); os.IsNotExist(err) {
-		return nil, fmt.Errorf("%s is not a valid Go module: go.mod file missing", path)
+		return nil, ErrNoGoModule
 	}
 
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
@@ -117,7 +121,7 @@ func GetModules(path string) ([]Module, error) {
 
 	output, err := cmd.Output()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("executing command '%s' failed: %w", cmd.String(), err)
 	}
 
 	return parseModules(bytes.NewReader(output))
@@ -149,6 +153,10 @@ func GetEffectiveModuleGraph(moduleGraph map[string][]string, modules []Module) 
 		moduleFound := false
 		for _, module := range modules {
 			if dependant == module.Coordinates() {
+				// Handle replacement
+				if module.Replace != nil {
+					dependant = module.Replace.Coordinates()
+				}
 				moduleFound = true
 				break
 			}
@@ -164,7 +172,12 @@ func GetEffectiveModuleGraph(moduleGraph map[string][]string, modules []Module) 
 			moduleFound := false
 			for _, module := range modules {
 				if strings.Index(dependencies[i], module.Path+"@") == 0 {
-					newGraph[dependant][i] = module.Coordinates()
+					// Handle replacement
+					if module.Replace != nil {
+						newGraph[dependant][i] = module.Replace.Coordinates()
+					} else {
+						newGraph[dependant][i] = module.Coordinates()
+					}
 					moduleFound = true
 				}
 			}
@@ -183,26 +196,24 @@ func GetEffectiveModuleGraph(moduleGraph map[string][]string, modules []Module) 
 // See https://golang.org/ref/mod#pseudo-versions
 func GetPseudoVersion(path string) (string, error) {
 	if _, err := os.Stat(filepath.Join(path, ".git")); os.IsNotExist(err) {
-		return "", fmt.Errorf("%s is not a git repository", path)
+		return "", ErrNoGitRepository
 	}
 
 	cmd := exec.Command("git", "show", "-s", "--format=%H %cI")
 	cmd.Dir = path
 
-	// Sample output:
-	// 4a65026c194e432dfb49679ed7551cec532f04cc 2021-02-26T20:56:53+01:00
 	output, err := cmd.Output()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("executing command '%s' failed: %w", cmd.String(), err)
 	}
 
-	parts := strings.SplitN(string(output), " ", 2)
+	parts := strings.Fields(string(output))
 	if len(parts) != 2 {
-		return "", fmt.Errorf("unexpected git output: %s", output)
+		return "", fmt.Errorf("expected two fields in git output, but got %d: %s", len(parts), output)
 	}
 
 	commitHash := parts[0][:12]
-	commitDate, err := time.Parse(time.RFC3339, strings.TrimSpace(parts[1]))
+	commitDate, err := time.Parse(time.RFC3339, parts[1])
 	if err != nil {
 		return "", fmt.Errorf("failed to parse commit timestamp: %w", err)
 	}
@@ -215,16 +226,15 @@ func GetPseudoVersion(path string) (string, error) {
 // git binary is available in the system's PATH.
 func GetVersionFromTag(path string) (string, error) {
 	if _, err := os.Stat(filepath.Join(path, ".git")); os.IsNotExist(err) {
-		return "", fmt.Errorf("%s is not a git repository", path)
+		return "", ErrNoGitRepository
 	}
 
 	cmd := exec.Command("git", "describe", "--exact-match", "--tags", "HEAD")
 	cmd.Dir = path
 
-	// Sample output: v0.1.0
 	output, err := cmd.Output()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("executing command '%s' failed: %w", cmd.String(), err)
 	}
 
 	return strings.TrimSpace(string(output)), nil
