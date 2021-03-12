@@ -82,3 +82,35 @@ func TestParseModules(t *testing.T) {
 	assert.Equal(t, "v1.1.1", modules[1].Version)
 	assert.False(t, modules[1].Main)
 }
+
+func TestGetEffectiveModuleGraph(t *testing.T) {
+	moduleGraph := map[string][]string{
+		"github.com/acme-inc/acme-app@v1.0.0": {
+			"github.com/acme-inc/acme-lib@v1.1.1",
+			"golang.org/x/crypto@v0.0.0-20200622213623-75b288015ac9",
+		},
+		"github.com/acme-inc/acme-lib@v1.1.1":                    {},
+		"golang.org/x/crypto@v0.0.0-20200622213623-75b288015ac9": {},
+	}
+
+	modules := []Module{
+		{Path: "github.com/acme-inc/acme-app", Version: "v1.0.0"},
+		{Path: "github.com/acme-inc/acme-lib", Version: "v1.1.3"},
+		{
+			Path:    "golang.org/x/crypto",
+			Version: "v0.0.0-20200622213623-75b288015ac9",
+			Replace: &Module{
+				Path:    "github.com/acme-inc/acme-crypto",
+				Version: "v0.0.0-20200622213623-75b288015ac9",
+			},
+		},
+	}
+
+	effectiveGraph, err := GetEffectiveModuleGraph(moduleGraph, modules)
+	require.NoError(t, err)
+
+	assert.Equal(t, "github.com/acme-inc/acme-lib@v1.1.3", effectiveGraph["github.com/acme-inc/acme-app@v1.0.0"][0])
+	assert.Equal(t, "github.com/acme-inc/acme-crypto@v0.0.0-20200622213623-75b288015ac9", effectiveGraph["github.com/acme-inc/acme-app@v1.0.0"][1])
+	assert.Empty(t, effectiveGraph["github.com/acme-inc/acme-lib@v1.1.1"])
+	assert.Empty(t, effectiveGraph["github.com/acme-inc/acme-crypto@v0.0.0-20200622213623-75b288015ac9"])
+}
