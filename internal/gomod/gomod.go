@@ -112,7 +112,7 @@ func GetModules(path string) ([]Module, error) {
 		return nil, fmt.Errorf("%s is not a valid Go module: go.mod file missing", path)
 	}
 
-	cmd := exec.Command("go", "list", "-json", "-m", "all")
+	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
 	cmd.Dir = path
 
 	output, err := cmd.Output()
