@@ -56,24 +56,24 @@ $ cyclonedx-gomod -output bom.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:07c19f2c-6ea7-4258-befd-19e9bc019183" version="1">
     <metadata>
-        <timestamp>2021-03-08T18:49:41+01:00</timestamp>
+        <timestamp>2021-03-13T00:31:25+01:00</timestamp>
         <tools>
             <tool>
                 <vendor>CycloneDX</vendor>
                 <name>cyclonedx-gomod</name>
                 <version>v0.0.0-unset</version>
                 <hashes>
-                    <hash alg="MD5">31e8977ccf58f1dd081d5f15f248c45e</hash>
-                    <hash alg="SHA-1">fcbdb1485eaa54afdac6901fde3266d9d4517505</hash>
-                    <hash alg="SHA-256">940e64bb70b2bbb827f9fe3ca719324d08a1afed087ba1331311c6838eddc2d0</hash>
-                    <hash alg="SHA-512">4505b70b028a0c384459a02eb5fd2fe008763c2ea8640cc97e2f75626e04c03eab4c95acfbea250703c8049590791f9feebe3cdbc954cca042fb8050e7c0c3bf</hash>
+                    <hash alg="MD5">d6856603b707ca75498c3bdd652aaebe</hash>
+                    <hash alg="SHA-1">d2cf76a375a0fb7e4692ed3ee1a22de3a53aba63</hash>
+                    <hash alg="SHA-256">dc73154f76ae14d1ba2150713de59d156d733de57763924cd6fd71386ba3b8ca</hash>
+                    <hash alg="SHA-512">fbba3204590549cca545709e671f7191824acce57a6ad25432208c4dd662ce3475a62012602c716868ed0490ca96059e14f4c13e8e3a3474ad6dedada0a1a280</hash>
                 </hashes>
             </tool>
         </tools>
-        <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210308115936-fe548e553e56" type="application">
+        <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210312235402-7b06d181cac7" type="application">
             <name>github.com/CycloneDX/cyclonedx-gomod</name>
-            <version>v0.0.0-20210308115936-fe548e553e56</version>
-            <purl>pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210308115936-fe548e553e56</purl>
+            <version>v0.0.0-20210312235402-7b06d181cac7</version>
+            <purl>pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210312235402-7b06d181cac7</purl>
         </component>
     </metadata>
     <components>
@@ -88,10 +88,95 @@ $ cyclonedx-gomod -output bom.xml
         </component>
         <!-- ... -->
     </components>
+    <dependencies>
+        <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210312235402-7b06d181cac7">
+            <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0"></dependency>
+            <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
+            <dependency ref="pkg:golang/github.com/stretchr/testify@v1.7.0"></dependency>
+            <dependency ref="pkg:golang/golang.org/x/mod@v0.4.2"></dependency>
+        </dependency>
+        <!-- ... -->
+        <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210312235402-7b06d181cac7">
+            <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0"></dependency>
+            <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
+            <dependency ref="pkg:golang/github.com/stretchr/testify@v1.7.0"></dependency>
+            <dependency ref="pkg:golang/golang.org/x/mod@v0.4.2"></dependency>
+        </dependency>
+        <!-- ... -->
+    </dependencies>
 </bom>
 ```
 
 Checkout the [`examples`](./examples) directory for complete BOM examples.
+
+### Replacements
+
+By using the [`replace` directive](https://golang.org/ref/mod#go-mod-file-replace), users of Go modules can replace the 
+content of a given module, e.g.:
+
+```
+require github.com/jameskeane/bcrypt v0.0.0-20170924085257-7509ea014998
+replace github.com/jameskeane/bcrypt => github.com/ProtonMail/bcrypt v0.0.0-20170924085257-7509ea014998
+```
+
+We consider the replaced module (`github.com/jameskeane/bcrypt`) to be the ancestor of the replacement 
+(`github.com/ProtonMail/bcrypt`) and include it in the replacement's [pedigree](https://cyclonedx.org/use-cases/#pedigree):
+
+```xml
+<component bom-ref="pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998" type="library">
+  <name>github.com/ProtonMail/bcrypt</name>
+  <version>v0.0.0-20170924085257-7509ea014998</version>
+  <scope>required</scope>
+  <hashes>
+    <hash alg="SHA-256">613dae57042245067109a69a8707dc813ab68f78faeb0d349ffdbb81bff3b9bb</hash>
+  </hashes>
+  <purl>pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998</purl>
+  <pedigree>
+    <ancestors>
+      <component bom-ref="pkg:golang/github.com/jameskeane/bcrypt@v0.0.0-20170924085257-7509ea014998" type="library">
+        <name>github.com/jameskeane/bcrypt</name>
+        <version>v0.0.0-20170924085257-7509ea014998</version>
+        <hashes>
+          <hash alg="SHA-256">c510a93977f0fe9cf70bc2b8ec586828f64b985128d88a1f5d2e355b7e895f9f</hash>
+        </hashes>
+        <purl>pkg:golang/github.com/jameskeane/bcrypt@v0.0.0-20170924085257-7509ea014998</purl>
+      </component>
+    </ancestors>
+  </pedigree>
+</component>
+```
+
+The [dependency graph](https://cyclonedx.org/use-cases/#dependency-graph) will also reference the replacement, 
+not the replaced module:
+
+```xml
+<dependencies>
+    <dependency ref="pkg:golang/github.com/ProtonMail/proton-bridge@v0.0.0-20210210160947-565c0b6ddf0f">
+        <dependency ref="pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998"></dependency>
+        <!-- ... -->
+    </dependency>
+    <dependency ref="pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998"></dependency>
+</dependencies>
+```
+
+### Hashes
+
+*cyclonedx-gomod* uses the same hashing algorithm Go uses for its module integrity checks.  
+[`vikyd/go-checksum`](https://github.com/vikyd/go-checksum#calc-checksum-of-module-directory) does a great job of
+explaining what exactly that entails. In essence, the hash you see in a BOM should be the same as in your `go.sum` file,
+just in a different format. This is because the CycloneDX specification enforces hashes to be provided in hex encoding,
+while Go uses base64 encoded values.
+
+To verify a hash found in a BOM, do the following:
+
+1. Hex decode the value
+2. Base64 encode the value
+3. Prefix the value with `h1:`
+
+Given the hex encoded hash `a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b`, we'd end up with a
+module checksum of `h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=`. 
+Now, query your [checksum database](https://go.googlesource.com/proposal/+/master/design/25530-sumdb.md#checksum-database) 
+for the expected checksum and compare the values.
 
 ## License
 

@@ -218,6 +218,7 @@ func convertToComponent(module gomod.Module) cdx.Component {
 
 		module.Replace = nil // Avoid endless recursion
 		replacedComponent := convertToComponent(module)
+		replacedComponent.Scope = ""
 
 		replacementComponent.Pedigree = &cdx.Pedigree{
 			Ancestors: &[]cdx.Component{replacedComponent},
