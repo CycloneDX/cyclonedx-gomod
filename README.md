@@ -22,6 +22,13 @@ go get github.com/CycloneDX/cyclonedx-gomod
 
 Building from source requires Go 1.16 or newer.
 
+## Compatibility
+
+*cyclonedx-gomod* will produce BOMs for the latest version of the CycloneDX specification 
+[supported by cyclonedx-go](https://github.com/CycloneDX/cyclonedx-go#compatibility).  
+You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple 
+BOM formats or specification versions. 
+
 ## Usage
 
 ```
