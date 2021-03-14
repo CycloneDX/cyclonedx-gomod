@@ -18,16 +18,19 @@ builds:
       - goos: darwin
         goarch: arm64
     ldflags:
-      - -s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{.Version}}
+      - -s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{.Tag}}
 archives:
   - replacements:
       darwin: macos
       386: x86
       amd64: x64
+    format_overrides:
+      - goos: windows
+        format: zip
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .Tag }}-snapshot"
 changelog:
   sort: asc
   filters:
