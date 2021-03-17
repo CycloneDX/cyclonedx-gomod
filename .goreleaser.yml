@@ -17,8 +17,14 @@ builds:
         goarch: 386
       - goos: darwin
         goarch: arm64
-    ldflags:
-      - -s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{.Tag}}
+    flags: |
+      -trimpath
+    ldflags: |
+      -s
+      -w
+      -extldflags '-static'
+      -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{.Tag}}
+    mod_timestamp: '{{ .CommitTimestamp }}'
 archives:
   - replacements:
       darwin: macos
