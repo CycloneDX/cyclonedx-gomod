@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"crypto/sha512"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"io"
@@ -240,14 +241,30 @@ func convertToComponent(module gomod.Module) cdx.Component {
 	// files that are .gitignore'd and thus not part of the hashes in Go's sumdb.
 	// Maybe we need to copy and modify the code from https://github.com/golang/mod/blob/release-branch.go1.15/sumdb/dirhash/hash.go
 	if !module.Main {
-		if hashes, err := module.Hashes(); err != nil {
-			log.Fatalf("failed to calculate hashes for %s: %v", component.PackageURL, err)
-		} else {
-			component.Hashes = &hashes
+		hashes, err := calculateModuleHashes(module)
+		if err != nil {
+			log.Fatal(err)
 		}
+		component.Hashes = &hashes
 	}
 
 	return component
+}
+
+func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {
+	h1, err := module.Hash()
+	if err != nil {
+		return nil, fmt.Errorf("failed to calculate h1 hash for %s: %w", module.Coordinates(), err)
+	}
+
+	h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
+	if err != nil {
+		return nil, fmt.Errorf("failed to base64 decode h1 hash: %w", err)
+	}
+
+	return []cdx.Hash{
+		{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
+	}, nil
 }
 
 func buildDependencyGraph(moduleGraph map[string][]string) []cdx.Dependency {
