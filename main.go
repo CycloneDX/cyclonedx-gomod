@@ -129,16 +129,7 @@ func main() {
 	}
 	bom.Components = &components
 
-	moduleGraph, err := mainModule.ModuleGraph()
-	if err != nil {
-		log.Fatalf("failed to get module graph: %v", err)
-	}
-	moduleGraph, err = gomod.GetEffectiveModuleGraph(moduleGraph, append(modules, mainModule))
-	if err != nil {
-		log.Fatalf("failed to get effective module graph: %v", err)
-	}
-
-	dependencyGraph := buildDependencyGraph(moduleGraph)
+	dependencyGraph := buildDependencyGraph(append(modules, mainModule))
 	bom.Dependencies = &dependencyGraph
 
 	var outputFormat cdx.BOMFileFormat
@@ -291,17 +282,19 @@ func resolveVcsURL(module gomod.Module) string {
 	return ""
 }
 
-func buildDependencyGraph(moduleGraph map[string][]string) []cdx.Dependency {
+func buildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	depGraph := make([]cdx.Dependency, 0)
 
-	for dependant, dependencies := range moduleGraph {
-		cdxDependant := cdx.Dependency{Ref: gomod.CoordinatesToPURL(dependant)}
-		cdxDependencies := make([]cdx.Dependency, len(dependencies))
-		for i := range dependencies {
-			cdxDependencies[i] = cdx.Dependency{Ref: gomod.CoordinatesToPURL(dependencies[i])}
-		}
-		if len(cdxDependencies) > 0 {
-			cdxDependant.Dependencies = &cdxDependencies
+	for _, module := range modules {
+		cdxDependant := cdx.Dependency{Ref: module.PackageURL()}
+		if module.Dependencies != nil {
+			cdxDependencies := make([]cdx.Dependency, len(module.Dependencies))
+			for i := range module.Dependencies {
+				cdxDependencies[i] = cdx.Dependency{Ref: module.Dependencies[i].PackageURL()}
+			}
+			if len(cdxDependencies) > 0 {
+				cdxDependant.Dependencies = &cdxDependencies
+			}
 		}
 		depGraph = append(depGraph, cdxDependant)
 	}

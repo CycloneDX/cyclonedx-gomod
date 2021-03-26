@@ -22,6 +22,8 @@ type Module struct {
 	Path    string
 	Replace *Module
 	Version string
+
+	Dependencies []*Module `json:"-"`
 }
 
 func (m Module) Coordinates() string {
@@ -40,6 +42,19 @@ func GetModules(path string) ([]Module, error) {
 		return nil, ErrNoGoModule
 	}
 
+	modules, err := listModules(path)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = getModuleGraph(path, modules); err != nil {
+		return nil, err
+	}
+
+	return modules, nil
+}
+
+func listModules(path string) ([]Module, error) {
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
 	cmd.Dir = path
 
@@ -67,6 +82,18 @@ func parseModules(reader io.Reader) ([]Module, error) {
 		modules = append(modules, mod)
 	}
 	return modules, nil
+}
+
+func findModule(coordinates string, modules []Module) *Module {
+	for i := range modules {
+		if coordinates == modules[i].Coordinates() {
+			if modules[i].Replace != nil {
+				return modules[i].Replace
+			}
+			return &modules[i]
+		}
+	}
+	return nil
 }
 
 func CoordinatesToPURL(coordinates string) string {

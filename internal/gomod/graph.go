@@ -9,21 +9,19 @@ import (
 	"strings"
 )
 
-func (m Module) ModuleGraph() (map[string][]string, error) {
+func getModuleGraph(path string, modules []Module) error {
 	cmd := exec.Command("go", "mod", "graph")
-	cmd.Dir = m.Dir
+	cmd.Dir = path
 
 	output, err := cmd.Output()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return m.parseModuleGraph(bytes.NewReader(output))
+	return parseModuleGraph(bytes.NewReader(output), modules)
 }
 
-func (m Module) parseModuleGraph(reader io.Reader) (map[string][]string, error) {
-	graph := make(map[string][]string)
-
+func parseModuleGraph(reader io.Reader, modules []Module) error {
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -33,73 +31,25 @@ func (m Module) parseModuleGraph(reader io.Reader) (map[string][]string, error) 
 
 		parts := strings.Fields(line)
 		if len(parts) != 2 {
-			return nil, fmt.Errorf("expected two fields per line, but got %d: %s", len(parts), line)
+			return fmt.Errorf("")
 		}
 
-		dependant := parts[0]
-		if dependant == m.Path {
-			// The main module has no version in the module graph
-			dependant = m.Coordinates()
-		}
-		dependency := parts[1]
-
-		dependencies, ok := graph[dependant]
-		if !ok {
-			dependencies = []string{dependency}
-		} else {
-			dependencies = append(dependencies, dependency)
-		}
-		graph[dependant] = dependencies
-
-		// For a complete graph, dependencies must be included as dependants as well
-		if _, ok := graph[dependency]; !ok {
-			graph[dependency] = make([]string, 0)
-		}
-	}
-	return graph, nil
-}
-
-func GetEffectiveModuleGraph(moduleGraph map[string][]string, modules []Module) (map[string][]string, error) {
-	newGraph := make(map[string][]string)
-
-	for dependant, dependencies := range moduleGraph {
-		// Filter out dependants that haven't made it into the final module list
-		moduleFound := false
-		for _, module := range modules {
-			if dependant == module.Coordinates() {
-				// Handle replacement
-				if module.Replace != nil {
-					dependant = module.Replace.Coordinates()
-				}
-				moduleFound = true
-				break
-			}
-		}
-		if !moduleFound {
+		dependant := findModule(parts[0], modules)
+		if dependant == nil {
 			continue
 		}
 
-		newGraph[dependant] = make([]string, len(dependencies))
+		dependency := findModule(parts[1], modules)
+		if dependency == nil {
+			continue
+		}
 
-		// Rewire dependencies so they point to the correct version
-		for i := range dependencies {
-			moduleFound := false
-			for _, module := range modules {
-				if strings.Index(dependencies[i], module.Path+"@") == 0 {
-					// Handle replacement
-					if module.Replace != nil {
-						newGraph[dependant][i] = module.Replace.Coordinates()
-					} else {
-						newGraph[dependant][i] = module.Coordinates()
-					}
-					moduleFound = true
-				}
-			}
-			if !moduleFound {
-				return nil, fmt.Errorf("dependency %s does not exist in module list", dependencies[i])
-			}
+		if dependant.Dependencies == nil {
+			dependant.Dependencies = []*Module{dependency}
+		} else {
+			dependant.Dependencies = append(dependant.Dependencies, dependency)
 		}
 	}
 
-	return newGraph, nil
+	return nil
 }
