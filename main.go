@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -40,6 +41,12 @@ var (
 		cdx.ComponentTypeLibrary,
 		cdx.ComponentTypeOS,
 	}
+
+	// See https://labix.org/gopkg.in
+	// gopkg.in/pkg.v3		→ github.com/go-pkg/pkg	(branch/tag v3, v3.N, or v3.N.M)
+	// gopkg.in/user/pkg.v3	→ github.com/user/pkg  	(branch/tag v3, v3.N, or v3.N.M)
+	goPkgInRegex1 = regexp.MustCompile("^gopkg\\.in/([^/]+)/([^.]+)\\..*$") // With user segment
+	goPkgInRegex2 = regexp.MustCompile("^gopkg\\.in/([^.]+)\\..*$")         // Without user segment
 )
 
 func main() {
@@ -248,6 +255,12 @@ func convertToComponent(module gomod.Module) cdx.Component {
 		component.Hashes = &hashes
 	}
 
+	if vcsURL := resolveVcsURL(module); vcsURL != "" {
+		component.ExternalReferences = &[]cdx.ExternalReference{
+			{Type: cdx.ERTypeVCS, URL: vcsURL},
+		}
+	}
+
 	return component
 }
 
@@ -265,6 +278,17 @@ func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {
 	return []cdx.Hash{
 		{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
 	}, nil
+}
+
+func resolveVcsURL(module gomod.Module) string {
+	if strings.Index(module.Path, "github.com/") == 0 {
+		return "https://" + module.Path
+	} else if goPkgInRegex1.MatchString(module.Path) {
+		return "https://" + goPkgInRegex1.ReplaceAllString(module.Path, "github.com/$1/$2")
+	} else if goPkgInRegex2.MatchString(module.Path) {
+		return "https://" + goPkgInRegex2.ReplaceAllString(module.Path, "github.com/go-$1/$1")
+	}
+	return ""
 }
 
 func buildDependencyGraph(moduleGraph map[string][]string) []cdx.Dependency {
