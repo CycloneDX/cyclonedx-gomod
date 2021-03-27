@@ -2,49 +2,71 @@ package gomod
 
 import (
 	"fmt"
-	"os/exec"
 	"strings"
-	"time"
+
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/storer"
 )
 
 // GetPseudoVersion constructs a pseudo version for a Go module at the given path.
-// Note that this is only possible when path points to a Git repository and the
-// git binary is available in the system's PATH.
+// Note that this is only possible when path points to a Git repository.
 // See https://golang.org/ref/mod#pseudo-versions
 func GetPseudoVersion(path string) (string, error) {
-	cmd := exec.Command("git", "show", "-s", "--format=%H %cI")
-	cmd.Dir = path
-
-	output, err := cmd.Output()
+	repo, err := git.PlainOpen(path)
 	if err != nil {
-		return "", fmt.Errorf("executing command '%s' failed: %w", cmd.String(), err)
+		return "", err
 	}
 
-	parts := strings.Fields(string(output))
-	if len(parts) != 2 {
-		return "", fmt.Errorf("expected two fields in git output, but got %d: %s", len(parts), output)
-	}
-
-	commitHash := parts[0][:12]
-	commitDate, err := time.Parse(time.RFC3339, parts[1])
+	headRef, err := repo.Head()
 	if err != nil {
-		return "", fmt.Errorf("failed to parse commit timestamp: %w", err)
+		return "", err
 	}
 
-	return fmt.Sprintf("v0.0.0-%s-%s", commitDate.Format("20060102150405"), commitHash), nil
+	headCommit, err := repo.CommitObject(headRef.Hash())
+	if err != nil {
+		return "", err
+	}
+
+	commitHash := headCommit.Hash.String()[:12]
+	commitDate := headCommit.Author.When.Format("20060102150405")
+
+	return fmt.Sprintf("v0.0.0-%s-%s", commitDate, commitHash), nil
 }
 
 // GetVersionFromTag checks if the current commit is annotated with a tag and if yes, returns that tag's name.
-// Note that this is only possible when path points to a Git repository and the
-// git binary is available in the system's PATH.
+// Note that this is only possible when path points to a Git repository.
 func GetVersionFromTag(path string) (string, error) {
-	cmd := exec.Command("git", "describe", "--exact-match", "--tags", "HEAD")
-	cmd.Dir = path
-
-	output, err := cmd.Output()
+	repo, err := git.PlainOpen(path)
 	if err != nil {
-		return "", fmt.Errorf("executing command '%s' failed: %w", cmd.String(), err)
+		return "", err
 	}
 
-	return strings.TrimSpace(string(output)), nil
+	headRef, err := repo.Head()
+	if err != nil {
+		return "", err
+	}
+
+	tags, err := repo.Tags()
+	if err != nil {
+		return "", err
+	}
+
+	tagName := ""
+	err = tags.ForEach(func(reference *plumbing.Reference) error {
+		if reference.Hash() == headRef.Hash() && strings.Index(reference.Name().String(), "refs/tags/v") == 0 {
+			tagName = strings.TrimPrefix(reference.Name().String(), "refs/tags/")
+			return storer.ErrStop // break
+		}
+		return nil
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if tagName == "" {
+		return "", plumbing.ErrObjectNotFound
+	}
+
+	return tagName, nil
 }
