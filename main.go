@@ -213,17 +213,7 @@ func calculateToolHashes() ([]cdx.Hash, error) {
 
 func convertToComponent(module gomod.Module) cdx.Component {
 	if module.Replace != nil {
-		replacementComponent := convertToComponent(*module.Replace)
-
-		module.Replace = nil // Avoid endless recursion
-		replacedComponent := convertToComponent(module)
-		replacedComponent.Scope = ""
-
-		replacementComponent.Pedigree = &cdx.Pedigree{
-			Ancestors: &[]cdx.Component{replacedComponent},
-		}
-
-		return replacementComponent
+		return convertToComponent(*module.Replace)
 	}
 
 	component := cdx.Component{
@@ -286,11 +276,19 @@ func buildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	depGraph := make([]cdx.Dependency, 0)
 
 	for _, module := range modules {
+		if module.Replace != nil {
+			module = *module.Replace
+		}
 		cdxDependant := cdx.Dependency{Ref: module.PackageURL()}
+
 		if module.Dependencies != nil {
 			cdxDependencies := make([]cdx.Dependency, len(module.Dependencies))
 			for i := range module.Dependencies {
-				cdxDependencies[i] = cdx.Dependency{Ref: module.Dependencies[i].PackageURL()}
+				if module.Dependencies[i].Replace != nil {
+					cdxDependencies[i] = cdx.Dependency{Ref: module.Dependencies[i].Replace.PackageURL()}
+				} else {
+					cdxDependencies[i] = cdx.Dependency{Ref: module.Dependencies[i].PackageURL()}
+				}
 			}
 			if len(cdxDependencies) > 0 {
 				cdxDependant.Dependencies = &cdxDependencies
