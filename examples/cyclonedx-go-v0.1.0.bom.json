@@ -1,0 +1,231 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.2",
+  "serialNumber": "urn:uuid:da310a43-abfc-4ecb-944e-89ee02fedfb7",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2021-03-27T13:36:20+01:00",
+    "tools": [
+      {
+        "vendor": "CycloneDX",
+        "name": "cyclonedx-gomod",
+        "version": "v0.0.0-unset",
+        "hashes": [
+          {
+            "alg": "MD5",
+            "content": "6e230383e50deda3c6ad0591a80cb618"
+          },
+          {
+            "alg": "SHA-1",
+            "content": "3cc2519da1bbf25a85db5615eacf0e401de90b7d"
+          },
+          {
+            "alg": "SHA-256",
+            "content": "227912bb348800ef9d41bf3158e2c836cf83a80cd3efd669e19cffa75645fb09"
+          },
+          {
+            "alg": "SHA-512",
+            "content": "c0e174a6af80ccf336606101fefc71d68b4c428976c4cf71cb31f5689694b1e16017a979d519055863de647b00b11e3c851251ae245ddb380c30b991a8793cc2"
+          }
+        ]
+      }
+    ],
+    "component": {
+      "bom-ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
+      "type": "application",
+      "name": "github.com/CycloneDX/cyclonedx-go",
+      "version": "v0.1.0",
+      "purl": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
+      "externalReferences": [
+        {
+          "url": "https://github.com/CycloneDX/cyclonedx-go",
+          "type": "vcs"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0",
+      "type": "library",
+      "name": "github.com/bradleyjkemp/cupaloy/v2",
+      "version": "v2.6.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9274e83d86b6c6d7e0e3653723aa6e9c512368614a5904572708f4253bf8993b"
+        }
+      ],
+      "purl": "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0",
+      "externalReferences": [
+        {
+          "url": "https://github.com/bradleyjkemp/cupaloy/v2",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
+      "type": "library",
+      "name": "github.com/davecgh/go-spew",
+      "version": "v1.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "be3f63feed5baa7bc211f24ec1486d94e011aacdfeae41d8635de36164d4f7b7"
+        }
+      ],
+      "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
+      "externalReferences": [
+        {
+          "url": "https://github.com/davecgh/go-spew",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
+      "type": "library",
+      "name": "github.com/pmezard/go-difflib",
+      "version": "v1.0.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e030700c4d0d1b24280476cb4183f04943e808c591e41133224fdfd6565b0103"
+        }
+      ],
+      "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
+      "externalReferences": [
+        {
+          "url": "https://github.com/pmezard/go-difflib",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/github.com/stretchr/objx@v0.1.1",
+      "type": "library",
+      "name": "github.com/stretchr/objx",
+      "version": "v0.1.1",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "daf7d1b82329e6c4952034aa3bca0d9d626aee63dae8a54fde23c8c0506ecbc0"
+        }
+      ],
+      "purl": "pkg:golang/github.com/stretchr/objx@v0.1.1",
+      "externalReferences": [
+        {
+          "url": "https://github.com/stretchr/objx",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/github.com/stretchr/testify@v1.7.0",
+      "type": "library",
+      "name": "github.com/stretchr/testify",
+      "version": "v1.7.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9f07370c47879a62c07e866e71547cf35b804a4d0c7e3c3cc5827df6d6f909c6"
+        }
+      ],
+      "purl": "pkg:golang/github.com/stretchr/testify@v1.7.0",
+      "externalReferences": [
+        {
+          "url": "https://github.com/stretchr/testify",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405",
+      "type": "library",
+      "name": "gopkg.in/check.v1",
+      "version": "v0.0.0-20161208181325-20d25e280405",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ca10958320b8a3579509adad665ede4b4afe483a3af776c9955765946b4478a3"
+        }
+      ],
+      "purl": "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405",
+      "externalReferences": [
+        {
+          "url": "https://github.com/go-check/check",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
+      "type": "library",
+      "name": "gopkg.in/yaml.v3",
+      "version": "v3.0.0-20200313102051-9f266ea9e77c",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7545301e4d90102a3feafa80e38aed859f227b641730d78a4531c2358da75efa"
+        }
+      ],
+      "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
+      "externalReferences": [
+        {
+          "url": "https://github.com/go-yaml/yaml",
+          "type": "vcs"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0",
+      "dependsOn": [
+        "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
+        "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
+        "pkg:golang/github.com/stretchr/objx@v0.1.1"
+      ]
+    },
+    {
+      "ref": "pkg:golang/github.com/davecgh/go-spew@v1.1.1"
+    },
+    {
+      "ref": "pkg:golang/github.com/pmezard/go-difflib@v1.0.0"
+    },
+    {
+      "ref": "pkg:golang/github.com/stretchr/objx@v0.1.1"
+    },
+    {
+      "ref": "pkg:golang/github.com/stretchr/testify@v1.7.0",
+      "dependsOn": [
+        "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
+        "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"
+      ]
+    },
+    {
+      "ref": "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405"
+    },
+    {
+      "ref": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
+      "dependsOn": [
+        "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405"
+      ]
+    },
+    {
+      "ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
+      "dependsOn": [
+        "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0",
+        "pkg:golang/github.com/stretchr/testify@v1.7.0"
+      ]
+    }
+  ]
+}
