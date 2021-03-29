@@ -23,13 +23,14 @@ import (
 )
 
 var (
-	componentType  string
-	modulePath     string
-	noSerialNumber bool
-	outputPath     string
-	serialNumber   string
-	showVersion    bool
-	useJSON        bool
+	componentType   string
+	modulePath      string
+	noSerialNumber  bool
+	noVersionPrefix bool
+	outputPath      string
+	serialNumber    string
+	showVersion     bool
+	useJSON         bool
 
 	allowedComponentTypes = []cdx.ComponentType{
 		cdx.ComponentTypeApplication,
@@ -53,6 +54,7 @@ func main() {
 	flag.StringVar(&componentType, "type", string(cdx.ComponentTypeApplication), "Type of the main component")
 	flag.StringVar(&modulePath, "module", ".", "Path to Go module")
 	flag.BoolVar(&noSerialNumber, "noserial", false, "Omit serial number")
+	flag.BoolVar(&noVersionPrefix, "novprefix", false, "Omit \"v\" version prefix")
 	flag.StringVar(&outputPath, "output", "-", "Output path")
 	flag.StringVar(&serialNumber, "serial", "", "Serial number (default [random UUID])")
 	flag.BoolVar(&showVersion, "version", false, "Show version")
@@ -73,6 +75,14 @@ func main() {
 		log.Fatalf("failed to get modules: %v", err)
 	}
 
+	for i := range modules {
+		modules[i].Version = strings.TrimSuffix(modules[i].Version, "+incompatible")
+
+		if noVersionPrefix {
+			modules[i].Version = strings.TrimPrefix(modules[i].Version, "v")
+		}
+	}
+
 	mainModule := modules[0]
 	modules = modules[1:]
 
@@ -86,10 +96,8 @@ func main() {
 	} else {
 		mainModule.Version = tagVersion
 	}
-
-	// Normalize versions
-	for i := range modules {
-		modules[i].Version = strings.TrimSuffix(modules[i].Version, "+incompatible")
+	if noVersionPrefix {
+		mainModule.Version = strings.TrimPrefix(mainModule.Version, "v")
 	}
 
 	bom := cdx.NewBOM()

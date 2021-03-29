@@ -39,6 +39,8 @@ Usage of cyclonedx-gomod:
         Path to Go module (default ".")
   -noserial
         Omit serial number
+  -novprefix
+        Omit "v" version prefix
   -output string
         Output path (default "-")
   -serial string
