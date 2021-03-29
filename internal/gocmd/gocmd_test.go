@@ -17,6 +17,12 @@ func TestGetVersion(t *testing.T) {
 	require.Equal(t, runtime.Version(), version)
 }
 
+func TestGetModuleName(t *testing.T) {
+	name, err := GetModuleName("../../")
+	require.NoError(t, err)
+	require.Equal(t, "github.com/CycloneDX/cyclonedx-gomod", name)
+}
+
 func TestGetModuleList(t *testing.T) {
 	buf := new(bytes.Buffer)
 	err := GetModuleList("../../", buf)

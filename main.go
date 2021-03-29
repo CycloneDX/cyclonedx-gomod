@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/base64"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -72,6 +73,9 @@ func main() {
 
 	modules, err := gomod.GetModules(modulePath)
 	if err != nil {
+		if errors.Is(err, gomod.ErrNoGoModule) {
+			log.Fatalf("%s is not a Go module", modulePath)
+		}
 		log.Fatalf("failed to get modules: %v", err)
 	}
 
@@ -114,7 +118,10 @@ func main() {
 		log.Fatalf("failed to calculate tool hashes: %v", err)
 	}
 
-	mainComponent := convertToComponent(mainModule)
+	mainComponent, err := convertToComponent(mainModule)
+	if err != nil {
+		log.Fatalf("failed to convert module %s: %v", mainModule.Coordinates(), err)
+	}
 	mainComponent.Scope = "" // Main component can't have a scope
 	mainComponent.Type = cdx.ComponentType(componentType)
 
@@ -128,12 +135,17 @@ func main() {
 				Hashes:  &toolHashes,
 			},
 		},
-		Component: &mainComponent,
+		Component: mainComponent,
 	}
 
+	component := new(cdx.Component)
 	components := make([]cdx.Component, len(modules))
 	for i, module := range modules {
-		components[i] = convertToComponent(module)
+		component, err = convertToComponent(module)
+		if err != nil {
+			log.Fatalf("failed to convert module %s: %v", module.Coordinates(), err)
+		}
+		components[i] = *component
 	}
 	bom.Components = &components
 
@@ -219,7 +231,7 @@ func calculateToolHashes() ([]cdx.Hash, error) {
 	}, nil
 }
 
-func convertToComponent(module gomod.Module) cdx.Component {
+func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 	if module.Replace != nil {
 		return convertToComponent(*module.Replace)
 	}
@@ -228,7 +240,7 @@ func convertToComponent(module gomod.Module) cdx.Component {
 		BOMRef:     module.PackageURL(),
 		Type:       cdx.ComponentTypeLibrary,
 		Name:       module.Path,
-		Version:    module.Version, // TODO: Make it configurable to strip the "v" prefix?
+		Version:    module.Version,
 		Scope:      cdx.ScopeRequired,
 		PackageURL: module.PackageURL(),
 	}
@@ -239,7 +251,7 @@ func convertToComponent(module gomod.Module) cdx.Component {
 	if !module.Main {
 		hashes, err := calculateModuleHashes(module)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		component.Hashes = &hashes
 	}
@@ -250,7 +262,7 @@ func convertToComponent(module gomod.Module) cdx.Component {
 		}
 	}
 
-	return component
+	return &component, nil
 }
 
 func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {

@@ -9,7 +9,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/storer"
 )
 
-// GetPseudoVersion constructs a pseudo version for a Go module at the given path.
+// GetPseudoVersion constructs a pseudo version for a Go module at a given path.
 // Note that this is only possible when path points to a Git repository.
 // See https://golang.org/ref/mod#pseudo-versions
 func GetPseudoVersion(path string) (string, error) {

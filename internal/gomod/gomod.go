@@ -6,12 +6,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go/build"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 var (
@@ -53,6 +55,16 @@ func GetModules(path string) ([]Module, error) {
 	modules, err := parseModules(buffer)
 	if err != nil {
 		return nil, err
+	}
+
+	for i := range modules {
+		if modules[i].Replace == nil {
+			continue
+		}
+
+		if err := resolveLocalModule(path, modules[i].Replace); err != nil {
+			return nil, fmt.Errorf("resolving local module %s failed: %v", modules[i].Replace.Coordinates(), err)
+		}
 	}
 
 	buffer.Reset()
@@ -127,5 +139,37 @@ func findModule(modules []Module, coordinates string) *Module {
 			return &modules[i]
 		}
 	}
+	return nil
+}
+
+func resolveLocalModule(mainModulePath string, module *Module) error {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		gopath = build.Default.GOPATH
+	}
+	modCacheDir := filepath.Join(gopath, "pkg", "mod")
+
+	if strings.Index(module.Dir, modCacheDir) == 0 {
+		// Module is in module cache
+		return nil
+	}
+
+	modulePath := ""
+	if filepath.IsAbs(module.Path) {
+		modulePath = module.Path
+	} else {
+		modulePath = filepath.Join(mainModulePath, module.Path)
+	}
+	if !util.IsGoModule(modulePath) {
+		return ErrNoGoModule
+	}
+
+	moduleName, err := gocmd.GetModuleName(modulePath)
+	if err != nil {
+		return err
+	}
+
+	module.Path = moduleName
+	// TODO: Resolve version
 	return nil
 }
