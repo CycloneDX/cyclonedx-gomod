@@ -1,14 +1,17 @@
 package gomod
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
+	"strings"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
 var (
@@ -34,7 +37,7 @@ func (m Module) Coordinates() string {
 }
 
 func (m Module) PackageURL() string {
-	return CoordinatesToPURL(m.Coordinates())
+	return "pkg:golang/" + m.Coordinates()
 }
 
 func GetModules(path string) ([]Module, error) {
@@ -42,28 +45,26 @@ func GetModules(path string) ([]Module, error) {
 		return nil, ErrNoGoModule
 	}
 
-	modules, err := listModules(path)
+	buffer := new(bytes.Buffer)
+	if err := gocmd.GetModuleList(path, buffer); err != nil {
+		return nil, err
+	}
+
+	modules, err := parseModules(buffer)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = getModuleGraph(path, modules); err != nil {
+	buffer.Reset()
+	if err = gocmd.GetModuleGraph(path, buffer); err != nil {
+		return nil, err
+	}
+
+	if err = parseModuleGraph(buffer, modules); err != nil {
 		return nil, err
 	}
 
 	return modules, nil
-}
-
-func listModules(path string) ([]Module, error) {
-	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
-	cmd.Dir = path
-
-	output, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("executing command '%s' failed: %w", cmd.String(), err)
-	}
-
-	return parseModules(bytes.NewReader(output))
 }
 
 func parseModules(reader io.Reader) ([]Module, error) {
@@ -84,7 +85,40 @@ func parseModules(reader io.Reader) ([]Module, error) {
 	return modules, nil
 }
 
-func findModule(coordinates string, modules []Module) *Module {
+func parseModuleGraph(reader io.Reader, modules []Module) error {
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+
+		parts := strings.Fields(line)
+		if len(parts) != 2 {
+			return fmt.Errorf("expected two fields per line, but got %d: %s", len(parts), line)
+		}
+
+		dependant := findModule(modules, parts[0])
+		if dependant == nil {
+			continue
+		}
+
+		dependency := findModule(modules, parts[1])
+		if dependency == nil {
+			continue
+		}
+
+		if dependant.Dependencies == nil {
+			dependant.Dependencies = []*Module{dependency}
+		} else {
+			dependant.Dependencies = append(dependant.Dependencies, dependency)
+		}
+	}
+
+	return nil
+}
+
+func findModule(modules []Module, coordinates string) *Module {
 	for i := range modules {
 		if coordinates == modules[i].Coordinates() {
 			if modules[i].Replace != nil {
@@ -94,8 +128,4 @@ func findModule(coordinates string, modules []Module) *Module {
 		}
 	}
 	return nil
-}
-
-func CoordinatesToPURL(coordinates string) string {
-	return "pkg:golang/" + coordinates
 }
