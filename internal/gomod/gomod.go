@@ -72,6 +72,8 @@ func GetModules(path string) ([]Module, error) {
 		return nil, err
 	}
 
+	// Replacements may point to local directories, in which case their .Path is
+	// not the actual module's name, but the filepath as used in go.mod.
 	for i := range modules {
 		if modules[i].Replace == nil {
 			continue
@@ -185,6 +187,6 @@ func resolveLocalModule(mainModulePath string, module *Module) error {
 	}
 
 	module.Path = moduleName
-	// TODO: Resolve version
+	// TODO: Resolve version. How can this be done when the local module isn't in a Git repo?
 	return nil
 }

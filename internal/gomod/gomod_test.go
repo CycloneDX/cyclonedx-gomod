@@ -12,6 +12,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestModule_Coordinates(t *testing.T) {
+	module := Module{
+		Path:    "path",
+		Version: "version",
+	}
+	assert.Equal(t, "path@version", module.Coordinates())
+
+	module.Version = ""
+	assert.Equal(t, "path", module.Coordinates())
+}
+
 func TestModule_Hash(t *testing.T) {
 	// Download a specific version of a module
 	cmd := exec.Command("go", "get", "github.com/google/uuid@v1.2.0")
