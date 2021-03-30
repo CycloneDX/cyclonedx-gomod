@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/mod/sumdb/dirhash"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
@@ -36,6 +38,19 @@ func (m Module) Coordinates() string {
 		return m.Path
 	}
 	return m.Path + "@" + m.Version
+}
+
+func (m Module) Hash() (string, error) {
+	if _, err := os.Stat(m.Dir); os.IsNotExist(err) {
+		return "", fmt.Errorf("module dir %s does not exist", m.Dir)
+	}
+
+	h1, err := dirhash.HashDir(m.Dir, m.Coordinates(), dirhash.Hash1)
+	if err != nil {
+		return "", err
+	}
+
+	return h1, nil
 }
 
 func (m Module) PackageURL() string {
