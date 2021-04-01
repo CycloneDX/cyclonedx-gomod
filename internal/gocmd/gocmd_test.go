@@ -18,9 +18,15 @@ func TestGetVersion(t *testing.T) {
 }
 
 func TestGetModuleName(t *testing.T) {
-	name, err := GetModuleName("../../")
+	buf := new(bytes.Buffer)
+	err := GetModule("../../", buf)
 	require.NoError(t, err)
-	require.Equal(t, "github.com/CycloneDX/cyclonedx-gomod", name)
+
+	mod := make(map[string]interface{})
+	require.NoError(t, json.NewDecoder(buf).Decode(&mod))
+
+	require.Equal(t, "github.com/CycloneDX/cyclonedx-gomod", mod["Path"])
+	assert.Equal(t, true, mod["Main"])
 }
 
 func TestGetModuleList(t *testing.T) {

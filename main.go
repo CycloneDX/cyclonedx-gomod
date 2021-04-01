@@ -20,6 +20,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 )
 
@@ -90,15 +91,8 @@ func main() {
 	mainModule := modules[0]
 	modules = modules[1:]
 
-	// Detect main module version
-	if tagVersion, err := gomod.GetVersionFromTag(mainModule.Dir); err != nil {
-		pseudoVersion, err := gomod.GetPseudoVersion(mainModule.Dir)
-		if err != nil {
-			log.Fatalf("failed to detect version of main module: %v", err)
-		}
-		mainModule.Version = pseudoVersion
-	} else {
-		mainModule.Version = tagVersion
+	if mainModule.Version, err = gomod.GetModuleVersion(mainModule.Dir); err != nil {
+		log.Fatalf("failed to get version of main module %s: %v", mainModule.Path, err)
 	}
 	if noVersionPrefix {
 		mainModule.Version = strings.TrimPrefix(mainModule.Version, "v")
@@ -282,7 +276,7 @@ func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {
 }
 
 func resolveVcsURL(module gomod.Module) string {
-	if strings.Index(module.Path, "github.com/") == 0 {
+	if util.StartsWith(module.Path, "github.com/") {
 		return "https://" + module.Path
 	} else if goPkgInRegex1.MatchString(module.Path) {
 		return "https://" + goPkgInRegex1.ReplaceAllString(module.Path, "github.com/$1/$2")

@@ -3,6 +3,7 @@ package util
 import (
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func FileExists(path string) bool {
@@ -12,4 +13,8 @@ func FileExists(path string) bool {
 
 func IsGoModule(path string) bool {
 	return FileExists(filepath.Join(path, "go.mod"))
+}
+
+func StartsWith(str, with string) bool {
+	return strings.Index(str, with) == 0
 }

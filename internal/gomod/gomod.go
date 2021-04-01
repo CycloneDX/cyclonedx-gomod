@@ -58,16 +58,16 @@ func (m Module) PackageURL() string {
 }
 
 func GetModules(path string) ([]Module, error) {
-	if _, err := os.Stat(filepath.Join(path, "go.mod")); os.IsNotExist(err) {
+	if !util.IsGoModule(path) {
 		return nil, ErrNoGoModule
 	}
 
-	buffer := new(bytes.Buffer)
-	if err := gocmd.GetModuleList(path, buffer); err != nil {
+	buf := new(bytes.Buffer)
+	if err := gocmd.GetModuleList(path, buf); err != nil {
 		return nil, err
 	}
 
-	modules, err := parseModules(buffer)
+	modules, err := parseModules(buf)
 	if err != nil {
 		return nil, err
 	}
@@ -84,12 +84,12 @@ func GetModules(path string) ([]Module, error) {
 		}
 	}
 
-	buffer.Reset()
-	if err = gocmd.GetModuleGraph(path, buffer); err != nil {
+	buf.Reset()
+	if err = gocmd.GetModuleGraph(path, buf); err != nil {
 		return nil, err
 	}
 
-	if err = parseModuleGraph(buffer, modules); err != nil {
+	if err = parseModuleGraph(buf, modules); err != nil {
 		return nil, err
 	}
 
@@ -181,12 +181,16 @@ func resolveLocalModule(mainModulePath string, module *Module) error {
 		return ErrNoGoModule
 	}
 
-	moduleName, err := gocmd.GetModuleName(modulePath)
-	if err != nil {
+	buf := new(bytes.Buffer)
+	if err := gocmd.GetModule(modulePath, buf); err != nil {
+		return err
+	}
+	localModule := new(Module)
+	if err := json.NewDecoder(buf).Decode(localModule); err != nil {
 		return err
 	}
 
-	module.Path = moduleName
+	module.Path = localModule.Path
 	// TODO: Resolve version. How can this be done when the local module isn't in a Git repo?
 	return nil
 }

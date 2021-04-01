@@ -25,3 +25,9 @@ func TestIsGoModule(t *testing.T) {
 	defer os.Remove(tmpDir)
 	require.False(t, IsGoModule(tmpDir))
 }
+
+func TestStartsWith(t *testing.T) {
+	assert.True(t, StartsWith("startsWithSomething", "startsWithSomething"))
+	assert.True(t, StartsWith("startsWithSomething", "startsWith"))
+	assert.False(t, StartsWith("startsWithSomething", " startsWith"))
+}
