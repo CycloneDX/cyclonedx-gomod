@@ -19,6 +19,7 @@ import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/google/uuid"
 
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
@@ -26,6 +27,7 @@ import (
 
 var (
 	componentType   string
+	includeStd      bool
 	modulePath      string
 	noSerialNumber  bool
 	noVersionPrefix bool
@@ -54,6 +56,7 @@ var (
 
 func main() {
 	flag.StringVar(&componentType, "type", string(cdx.ComponentTypeApplication), "Type of the main component")
+	flag.BoolVar(&includeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	flag.StringVar(&modulePath, "module", ".", "Path to Go module")
 	flag.BoolVar(&noSerialNumber, "noserial", false, "Omit serial number")
 	flag.BoolVar(&noVersionPrefix, "novprefix", false, "Omit \"v\" version prefix")
@@ -145,6 +148,53 @@ func main() {
 
 	dependencyGraph := buildDependencyGraph(append(modules, mainModule))
 	bom.Dependencies = &dependencyGraph
+
+	if includeStd {
+		goVersion, err := gocmd.GetVersion()
+		if err != nil {
+			log.Fatalf("failed to determine Go version: %v", err)
+		}
+		goVersion = strings.TrimPrefix(goVersion, "go")
+		stdPURL := "pkg:golang/std@" + goVersion
+
+		// Add std component
+		goComponent := cdx.Component{
+			BOMRef:      stdPURL,
+			Type:        cdx.ComponentTypeLibrary,
+			Name:        "std",
+			Version:     goVersion,
+			Description: "The Go standard library",
+			Scope:       cdx.ScopeRequired,
+			PackageURL:  stdPURL,
+			ExternalReferences: &[]cdx.ExternalReference{
+				{
+					Type: cdx.ERTypeDocumentation,
+					URL:  "https://golang.org/pkg/",
+				},
+				{
+					Type: cdx.ERTypeVCS,
+					URL:  "https://go.googlesource.com/go",
+				},
+				{
+					Type: cdx.ERTypeWebsite,
+					URL:  "https://golang.org/",
+				},
+			},
+		}
+		*bom.Components = append(*bom.Components, goComponent)
+
+		// Add std to dependency graph
+		stdDependency := cdx.Dependency{Ref: stdPURL}
+		*bom.Dependencies = append(*bom.Dependencies, stdDependency)
+
+		// Add std as dependency of main module
+		for _, dependency := range *bom.Dependencies {
+			if dependency.Ref == mainModule.PackageURL() {
+				*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
+				break
+			}
+		}
+	}
 
 	var outputFormat cdx.BOMFileFormat
 	if useJSON {

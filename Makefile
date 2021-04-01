@@ -13,7 +13,7 @@ clean:
 bom:
 	go mod tidy
 	go mod download
-	go run main.go
+	go run main.go -std
 
 all: clean build test bench
 .PHONY: all

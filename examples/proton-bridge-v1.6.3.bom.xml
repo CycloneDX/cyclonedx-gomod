@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:ea4f5bc2-8a04-4a22-9dcf-44f67d079625" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:30c3b679-204d-4950-a3a0-464cdd2c948e" version="1">
   <metadata>
-    <timestamp>2021-03-27T13:31:31+01:00</timestamp>
+    <timestamp>2021-04-01T20:56:49+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
         <version>v0.0.0-unset</version>
         <hashes>
-          <hash alg="MD5">6e230383e50deda3c6ad0591a80cb618</hash>
-          <hash alg="SHA-1">3cc2519da1bbf25a85db5615eacf0e401de90b7d</hash>
-          <hash alg="SHA-256">227912bb348800ef9d41bf3158e2c836cf83a80cd3efd669e19cffa75645fb09</hash>
-          <hash alg="SHA-512">c0e174a6af80ccf336606101fefc71d68b4c428976c4cf71cb31f5689694b1e16017a979d519055863de647b00b11e3c851251ae245ddb380c30b991a8793cc2</hash>
+          <hash alg="MD5">a4c8510e9a7ace33bb196dc9f4b9d4f3</hash>
+          <hash alg="SHA-1">f5ff9366fa139a45bf579b2342b7c7ec7e5fe2bb</hash>
+          <hash alg="SHA-256">43295993cf42f362e98d902fcd9553753249ff60e65b1c9e2ad16967666d3396</hash>
+          <hash alg="SHA-512">955a851ac1b7bdb43d07bb9d442f140531cca85e514f5088f3d5a7f8b0439fd0baec47dcc02bdb0d56aa3c61efacd890e7f166e6d588776cb7acc39278c211b2</hash>
         </hashes>
       </tool>
     </tools>
@@ -2781,6 +2781,24 @@
         </reference>
       </externalReferences>
     </component>
+    <component bom-ref="pkg:golang/std@1.16.2" type="library">
+      <name>std</name>
+      <version>1.16.2</version>
+      <description>The Go standard library</description>
+      <scope>required</scope>
+      <purl>pkg:golang/std@1.16.2</purl>
+      <externalReferences>
+        <reference type="documentation">
+          <url>https://golang.org/pkg/</url>
+        </reference>
+        <reference type="vcs">
+          <url>https://go.googlesource.com/go</url>
+        </reference>
+        <reference type="website">
+          <url>https://golang.org/</url>
+        </reference>
+      </externalReferences>
+    </component>
   </components>
   <dependencies>
     <dependency ref="pkg:golang/github.com/0xAX/notificator@v0.0.0-20191016112426-3962a5ea8da1"></dependency>
@@ -3266,6 +3284,8 @@
       <dependency ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c"></dependency>
       <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20200707034311-ab3426394381"></dependency>
       <dependency ref="pkg:golang/golang.org/x/text@v0.3.5-0.20201125200606-c27b9fd57aec"></dependency>
+      <dependency ref="pkg:golang/std@1.16.2"></dependency>
     </dependency>
+    <dependency ref="pkg:golang/std@1.16.2"></dependency>
   </dependencies>
 </bom>
