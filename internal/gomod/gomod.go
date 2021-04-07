@@ -160,13 +160,16 @@ func findModule(modules []Module, coordinates string) *Module {
 }
 
 func resolveLocalModule(mainModulePath string, module *Module) error {
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		gopath = build.Default.GOPATH
+	modCacheDir := os.Getenv("GOMODCACHE")
+	if modCacheDir == "" {
+		gopath := os.Getenv("GOPATH")
+		if gopath == "" {
+			gopath = build.Default.GOPATH
+		}
+		modCacheDir = filepath.Join(gopath, "pkg", "mod")
 	}
-	modCacheDir := filepath.Join(gopath, "pkg", "mod")
 
-	if strings.Index(module.Dir, modCacheDir) == 0 {
+	if util.StartsWith(module.Dir, modCacheDir) {
 		// Module is in module cache
 		return nil
 	}
