@@ -1,6 +1,9 @@
 before:
   hooks:
     - go mod tidy
+    - go mod download
+    - go install github.com/CycloneDX/cyclonedx-gomod@{{ .Tag }}
+    - cyclonedx-gomod -module . -output bom.xml -std
 builds:
   - env:
       - CGO_ENABLED=0
@@ -37,6 +40,9 @@ checksum:
   name_template: 'checksums.txt'
 snapshot:
   name_template: "{{ .Tag }}-snapshot"
+release:
+  extra_files:
+    - glob: ./bom.xml
 changelog:
   sort: asc
   filters:
