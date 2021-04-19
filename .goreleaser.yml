@@ -4,6 +4,7 @@ before:
     - go mod download
     - go install github.com/CycloneDX/cyclonedx-gomod@{{ .Tag }}
     - cyclonedx-gomod -module . -output bom.xml -std
+    - cyclonedx-gomod -module . -json -output bom.json -std
 builds:
   - env:
       - CGO_ENABLED=0
@@ -43,6 +44,7 @@ snapshot:
 release:
   extra_files:
     - glob: ./bom.xml
+    - glob: ./bom.json
 changelog:
   sort: asc
   filters:
