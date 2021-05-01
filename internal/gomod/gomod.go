@@ -152,11 +152,7 @@ func parseVendoredModules(path string, reader io.Reader) ([]Module, error) {
 			continue
 		}
 
-		// TODO: Handle replacements.
-		// Format of lines with replacement may be any of:
-		//   Path Version => Path Version
-		//   Path Version => Path
-		//   Path => Path Version
+		// TODO: Handle replacements. Format is "Path [Version] => Path [Version]"
 		fields := strings.Fields(strings.TrimPrefix(line, "# "))
 		if len(fields) == 2 {
 			modules = append(modules, Module{
