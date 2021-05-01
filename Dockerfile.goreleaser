@@ -1,0 +1,5 @@
+FROM golang:1.16-alpine
+COPY cyclonedx-gomod /usr/local/bin/
+USER 1000
+ENTRYPOINT ["cyclonedx-gomod"]
+CMD ["-h"]
