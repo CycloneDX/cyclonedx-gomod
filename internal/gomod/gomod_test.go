@@ -88,3 +88,26 @@ func TestParseModules(t *testing.T) {
 	assert.Equal(t, "v1.1.1", modules[1].Version)
 	assert.False(t, modules[1].Main)
 }
+
+func TestParseVendoredModules(t *testing.T) {
+	goModVendorOutput := `# github.com/bradleyjkemp/cupaloy/v2 v2.6.0
+## explicit
+github.com/bradleyjkemp/cupaloy/v2
+github.com/bradleyjkemp/cupaloy/v2/internal
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew`
+
+	cwd, err := os.Getwd()
+	require.NoError(t, err)
+
+	modules, err := parseVendoredModules(cwd, strings.NewReader(goModVendorOutput))
+	require.NoError(t, err)
+
+	assert.Len(t, modules, 2)
+	assert.Equal(t, "github.com/bradleyjkemp/cupaloy/v2", modules[0].Path)
+	assert.Equal(t, "v2.6.0", modules[0].Version)
+	assert.Equal(t, filepath.Join(cwd, "github.com/bradleyjkemp/cupaloy/v2"), modules[0].Dir)
+	assert.Equal(t, "github.com/davecgh/go-spew", modules[1].Path)
+	assert.Equal(t, "v1.1.1", modules[1].Version)
+	assert.Equal(t, filepath.Join(cwd, "github.com/davecgh/go-spew"), modules[1].Dir)
+}

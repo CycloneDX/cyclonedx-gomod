@@ -31,7 +31,7 @@ func TestGetModuleName(t *testing.T) {
 
 func TestGetModuleList(t *testing.T) {
 	buf := new(bytes.Buffer)
-	err := GetModuleList("../../", buf)
+	err := GetModules("../../", buf)
 	require.NoError(t, err)
 
 	mod := make(map[string]interface{})

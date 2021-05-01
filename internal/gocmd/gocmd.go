@@ -28,7 +28,7 @@ func GetVersion() (string, error) {
 	return fields[2], nil
 }
 
-// GetModule writes the JSON representation of a given module to a writer.
+// GetModule executes `go list -json -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
 func GetModule(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m")
@@ -38,9 +38,9 @@ func GetModule(modulePath string, writer io.Writer) error {
 	return cmd.Run()
 }
 
-// GetModuleList writes the JSON representation of all modules at a given path to a writer.
+// GetModules executes `go list -json -m all` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
-func GetModuleList(modulePath string, writer io.Writer) error {
+func GetModules(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
 	cmd.Dir = modulePath
 	cmd.Stdout = writer
@@ -48,7 +48,17 @@ func GetModuleList(modulePath string, writer io.Writer) error {
 	return cmd.Run()
 }
 
-// GetModuleGraph writes the module graph for the module at a given path to a writer.
+// GetVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
+// See https://golang.org/ref/mod#go-mod-vendor
+func GetVendoredModules(modulePath string, writer io.Writer) error {
+	cmd := exec.Command("go", "mod", "vendor", "-v", "-e")
+	cmd.Dir = modulePath
+	cmd.Stderr = writer
+
+	return cmd.Run()
+}
+
+// GetModuleGraph executes `go mod graph` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-graph
 func GetModuleGraph(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "mod", "graph")
