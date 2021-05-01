@@ -106,8 +106,8 @@ github.com/davecgh/go-spew/spew`
 	assert.Len(t, modules, 2)
 	assert.Equal(t, "github.com/bradleyjkemp/cupaloy/v2", modules[0].Path)
 	assert.Equal(t, "v2.6.0", modules[0].Version)
-	assert.Equal(t, filepath.Join(cwd, "github.com/bradleyjkemp/cupaloy/v2"), modules[0].Dir)
+	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/bradleyjkemp/cupaloy/v2"), modules[0].Dir)
 	assert.Equal(t, "github.com/davecgh/go-spew", modules[1].Path)
 	assert.Equal(t, "v1.1.1", modules[1].Version)
-	assert.Equal(t, filepath.Join(cwd, "github.com/davecgh/go-spew"), modules[1].Dir)
+	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/davecgh/go-spew"), modules[1].Dir)
 }
