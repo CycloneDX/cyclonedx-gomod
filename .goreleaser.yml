@@ -1,7 +1,7 @@
 before:
   hooks:
-    - go mod tidy
     - go mod download
+    - go mod tidy
     - go install github.com/CycloneDX/cyclonedx-gomod@{{ .Tag }}
     - cyclonedx-gomod -module . -output bom.xml -std
     - cyclonedx-gomod -module . -json -output bom.json -std
