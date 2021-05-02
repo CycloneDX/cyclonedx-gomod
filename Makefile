@@ -18,6 +18,7 @@ bom:
 	go mod download
 	go mod tidy
 	go run main.go -std
+.PHONY: bom
 
 all: clean build test bench
 .PHONY: all
