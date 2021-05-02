@@ -1,13 +1,13 @@
 package gomod
 
 import (
-	"go/build"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,11 +30,7 @@ func TestModule_Hash(t *testing.T) {
 	require.NoError(t, cmd.Run())
 
 	// Locate the module on the file system
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		gopath = build.Default.GOPATH
-	}
-	modDir := filepath.Join(gopath, "pkg", "mod", "github.com", "google", "uuid@v1.2.0")
+	modDir := filepath.Join(util.GetModuleCacheDir(), "github.com", "google", "uuid@v1.2.0")
 
 	// Construct module instance
 	module := Module{

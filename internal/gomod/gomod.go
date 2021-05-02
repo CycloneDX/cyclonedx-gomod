@@ -6,9 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go/build"
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -214,16 +212,7 @@ func findModule(modules []Module, coordinates string) *Module {
 }
 
 func resolveLocalModule(mainModulePath string, module *Module) error {
-	modCacheDir := os.Getenv("GOMODCACHE")
-	if modCacheDir == "" {
-		gopath := os.Getenv("GOPATH")
-		if gopath == "" {
-			gopath = build.Default.GOPATH
-		}
-		modCacheDir = filepath.Join(gopath, "pkg", "mod")
-	}
-
-	if util.StartsWith(module.Dir, modCacheDir) {
+	if util.StartsWith(module.Dir, util.GetModuleCacheDir()) {
 		// Module is in module cache
 		return nil
 	}
