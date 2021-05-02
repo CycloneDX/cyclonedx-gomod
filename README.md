@@ -63,8 +63,8 @@ Make sure to run `go mod download` before generating BOMs with *cyclonedx-gomod*
 ### Example
 
 ```
-$ go mod tidy
 $ go mod download
+$ go mod tidy
 $ cyclonedx-gomod -output bom.xml -std
 ```
 

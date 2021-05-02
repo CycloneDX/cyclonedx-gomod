@@ -15,8 +15,8 @@ docker:
 .PHONY: docker
 
 bom:
-	go mod tidy
 	go mod download
+	go mod tidy
 	go run main.go -std
 
 all: clean build test bench
