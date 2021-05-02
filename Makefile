@@ -20,5 +20,9 @@ bom:
 	go run main.go -std
 .PHONY: bom
 
+goreleaser-dryrun:
+	goreleaser release --skip-publish --snapshot
+.PHONY: goreleaser-dryrun
+
 all: clean build test bench
 .PHONY: all
