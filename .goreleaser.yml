@@ -33,6 +33,7 @@ dockers:
       - "cyclonedx/cyclonedx-gomod:latest"
       - "cyclonedx/cyclonedx-gomod:{{ .Tag }}"
       - "cyclonedx/cyclonedx-gomod:v{{ .Major }}"
+      - "cyclonedx/cyclonedx-gomod:v{{ .Major }}.{{ .Minor }}"
     dockerfile: Dockerfile.goreleaser
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
