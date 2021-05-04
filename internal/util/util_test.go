@@ -31,3 +31,9 @@ func TestStartsWith(t *testing.T) {
 	assert.True(t, StartsWith("startsWithSomething", "startsWith"))
 	assert.False(t, StartsWith("startsWithSomething", " startsWith"))
 }
+
+func TestStringSliceIndex(t *testing.T) {
+	assert.Equal(t, 0, StringSliceIndex([]string{"foo", "bar"}, "foo"))
+	assert.Equal(t, 1, StringSliceIndex([]string{"foo", "bar"}, "bar"))
+	assert.Equal(t, -1, StringSliceIndex([]string{"foo", "bar"}, "baz"))
+}

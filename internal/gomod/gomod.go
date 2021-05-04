@@ -28,6 +28,7 @@ type Module struct {
 	Version string
 
 	Dependencies []*Module `json:"-"`
+	Vendored     bool      `json:"-"`
 }
 
 func (m Module) Coordinates() string {
@@ -99,12 +100,12 @@ func GetModules(path string) ([]Module, error) {
 	// Replacements may point to local directories, in which case their .Path is
 	// not the actual module's name, but the filepath as used in go.mod.
 	for i := range modules {
-		if modules[i].Replace == nil {
+		if modules[i].Replace == nil || !util.IsGoModule(modules[i].Replace.Path) {
 			continue
 		}
 
 		if err = resolveLocalModule(path, modules[i].Replace); err != nil {
-			return nil, fmt.Errorf("resolving local module %s failed: %v", modules[i].Replace.Coordinates(), err)
+			return nil, fmt.Errorf("resolving local module %s failed: %w", modules[i].Replace.Coordinates(), err)
 		}
 	}
 
@@ -150,16 +151,46 @@ func parseVendoredModules(path string, reader io.Reader) ([]Module, error) {
 			continue
 		}
 
-		// TODO: Handle replacements. Format is "Path [Version] => Path [Version]"
 		fields := strings.Fields(strings.TrimPrefix(line, "# "))
-		if len(fields) == 2 {
+
+		// Replacements may be specified as
+		//   Path [Version] => Path [Version]
+		arrowIndex := util.StringSliceIndex(fields, "=>")
+
+		if arrowIndex == -1 {
+			if len(fields) != 2 {
+				return nil, fmt.Errorf("expected two fields per line, but got %d: %s", len(fields), line)
+			}
+
 			modules = append(modules, Module{
-				Path:    fields[0],
-				Version: fields[1],
-				Dir:     filepath.Join(path, "vendor", fields[0]),
+				Path:     fields[0],
+				Version:  fields[1],
+				Dir:      filepath.Join(path, "vendor", fields[0]),
+				Vendored: true,
 			})
 		} else {
-			return nil, fmt.Errorf("expected two fields per line, but got %d: %s", len(fields), line)
+			pathParent := fields[0]
+			versionParent := ""
+			if arrowIndex == 2 {
+				versionParent = fields[1]
+			}
+
+			pathReplacement := fields[arrowIndex+1]
+			versionReplacement := ""
+			if len(fields) == arrowIndex+3 {
+				versionReplacement = fields[arrowIndex+2]
+			}
+
+			modules = append(modules, Module{
+				Path:    pathParent,
+				Version: versionParent,
+				Replace: &Module{
+					Path:     pathReplacement,
+					Version:  versionReplacement,
+					Dir:      filepath.Join(path, "vendor", pathParent), // Replacements are copied to their parents dir
+					Vendored: true,
+				},
+			})
 		}
 	}
 

@@ -78,20 +78,29 @@ func TestParseModules(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Len(t, modules, 2)
+
 	assert.Equal(t, "github.com/CycloneDX/cyclonedx-go", modules[0].Path)
+	assert.Empty(t, modules[0].Version)
 	assert.True(t, modules[0].Main)
+	assert.False(t, modules[0].Vendored)
+
 	assert.Equal(t, "github.com/davecgh/go-spew", modules[1].Path)
 	assert.Equal(t, "v1.1.1", modules[1].Version)
 	assert.False(t, modules[1].Main)
+	assert.False(t, modules[1].Vendored)
 }
 
 func TestParseVendoredModules(t *testing.T) {
-	goModVendorOutput := `# github.com/bradleyjkemp/cupaloy/v2 v2.6.0
-## explicit
-github.com/bradleyjkemp/cupaloy/v2
-github.com/bradleyjkemp/cupaloy/v2/internal
-# github.com/davecgh/go-spew v1.1.1
-github.com/davecgh/go-spew/spew`
+	goModVendorOutput := `# github.com/CycloneDX/cyclonedx-go v0.1.0
+
+# github.com/CycloneDX/cyclonedx-go v0.1.0 => github.com/nscuro/cyclonedx-go v0.1.1
+
+# github.com/CycloneDX/cyclonedx-go => github.com/nscuro/cyclonedx-go v0.1.1
+
+# github.com/CycloneDX/cyclonedx-go v0.1.0 => ../cyclonedx-go
+
+# github.com/CycloneDX/cyclonedx-go => ../cyclonedx-go
+`
 
 	cwd, err := os.Getwd()
 	require.NoError(t, err)
@@ -99,11 +108,55 @@ github.com/davecgh/go-spew/spew`
 	modules, err := parseVendoredModules(cwd, strings.NewReader(goModVendorOutput))
 	require.NoError(t, err)
 
-	assert.Len(t, modules, 2)
-	assert.Equal(t, "github.com/bradleyjkemp/cupaloy/v2", modules[0].Path)
-	assert.Equal(t, "v2.6.0", modules[0].Version)
-	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/bradleyjkemp/cupaloy/v2"), modules[0].Dir)
-	assert.Equal(t, "github.com/davecgh/go-spew", modules[1].Path)
-	assert.Equal(t, "v1.1.1", modules[1].Version)
-	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/davecgh/go-spew"), modules[1].Dir)
+	assert.Len(t, modules, 5)
+
+	// Normal module
+	assert.Equal(t, "github.com/CycloneDX/cyclonedx-go", modules[0].Path)
+	assert.Equal(t, "v0.1.0", modules[0].Version)
+	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/CycloneDX/cyclonedx-go"), modules[0].Dir)
+	assert.True(t, modules[0].Vendored)
+
+	// Module with replacement: "Path Version => Path Version"
+	assert.Equal(t, "github.com/CycloneDX/cyclonedx-go", modules[1].Path)
+	assert.Equal(t, "v0.1.0", modules[1].Version)
+	assert.Empty(t, modules[1].Dir)
+	assert.False(t, modules[1].Vendored)
+	assert.NotNil(t, modules[1].Replace)
+	assert.Equal(t, "github.com/nscuro/cyclonedx-go", modules[1].Replace.Path)
+	assert.Equal(t, "v0.1.1", modules[1].Replace.Version)
+	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/CycloneDX/cyclonedx-go"), modules[1].Replace.Dir)
+	assert.True(t, modules[1].Replace.Vendored)
+
+	// Module with replacement: "Path => Path Version"
+	assert.Equal(t, "github.com/CycloneDX/cyclonedx-go", modules[1].Path)
+	assert.Empty(t, modules[2].Version)
+	assert.Empty(t, modules[2].Dir)
+	assert.False(t, modules[2].Vendored)
+	assert.NotNil(t, modules[2].Replace)
+	assert.Equal(t, "github.com/nscuro/cyclonedx-go", modules[2].Replace.Path)
+	assert.Equal(t, "v0.1.1", modules[2].Replace.Version)
+	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/CycloneDX/cyclonedx-go"), modules[2].Replace.Dir)
+	assert.True(t, modules[2].Replace.Vendored)
+
+	// Module with replacement: "Path Version => Path"
+	assert.Equal(t, "github.com/CycloneDX/cyclonedx-go", modules[3].Path)
+	assert.Equal(t, "v0.1.0", modules[3].Version)
+	assert.Empty(t, modules[3].Dir)
+	assert.False(t, modules[3].Vendored)
+	assert.NotNil(t, modules[3].Replace)
+	assert.Equal(t, "../cyclonedx-go", modules[3].Replace.Path)
+	assert.Empty(t, modules[3].Replace.Version)
+	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/CycloneDX/cyclonedx-go"), modules[3].Replace.Dir)
+	assert.True(t, modules[3].Replace.Vendored)
+
+	// Module with replacement: "Path => Path"
+	assert.Equal(t, "github.com/CycloneDX/cyclonedx-go", modules[4].Path)
+	assert.Empty(t, modules[4].Version)
+	assert.Empty(t, modules[4].Dir)
+	assert.False(t, modules[4].Vendored)
+	assert.NotNil(t, modules[4].Replace)
+	assert.Equal(t, "../cyclonedx-go", modules[4].Replace.Path)
+	assert.Empty(t, modules[4].Replace.Version)
+	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/CycloneDX/cyclonedx-go"), modules[4].Replace.Dir)
+	assert.True(t, modules[4].Replace.Vendored)
 }

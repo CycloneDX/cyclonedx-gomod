@@ -45,3 +45,13 @@ func GetModuleCacheDir() string {
 func StartsWith(str, with string) bool {
 	return strings.Index(str, with) == 0
 }
+
+// StringSliceIndex determines the index of a given string in a given string slice.
+func StringSliceIndex(haystack []string, needle string) int {
+	for i := range haystack {
+		if haystack[i] == needle {
+			return i
+		}
+	}
+	return -1
+}

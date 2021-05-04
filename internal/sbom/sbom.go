@@ -142,8 +142,14 @@ func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 
 	// We currently don't have an accurate way of hashing the main module, as it may contain
 	// files that are .gitignore'd and thus not part of the hashes in Go's sumdb.
-	// Maybe we need to copy and modify the code from https://github.com/golang/mod/blob/release-branch.go1.15/sumdb/dirhash/hash.go
-	if !module.Main {
+	//
+	// Go's vendoring mechanism doesn't copy all files that make up a module to the vendor dir.
+	// Hashing vendored modules thus won't result in the expected hash, probably causing more
+	// confusion than anything else.
+	//
+	// TODO: Research how we can provide accurate hashes for main modules
+	// TODO: Research how we can provide meaningful hashes for vendored modules
+	if !module.Main && !module.Vendored {
 		hashes, err := calculateModuleHashes(module)
 		if err != nil {
 			return nil, err
@@ -163,7 +169,7 @@ func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {
 	h1, err := module.Hash()
 	if err != nil {
-		return nil, fmt.Errorf("failed to calculate h1 hash for %s: %w", module.Coordinates(), err)
+		return nil, fmt.Errorf("failed to calculate h1 hash: %w", err)
 	}
 
 	h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
