@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -16,6 +17,7 @@ import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/google/uuid"
@@ -155,6 +157,21 @@ func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 			return nil, err
 		}
 		component.Hashes = &hashes
+	}
+
+	if !module.Main {
+		resolvedLicense, err := license.Resolve(module)
+		if err == nil {
+			component.Licenses = &[]cdx.LicenseChoice{
+				{
+					License: &cdx.License{
+						ID: resolvedLicense,
+					},
+				},
+			}
+		} else {
+			log.Printf("failed to resolve license of %s: %v\n", module.Coordinates(), err)
+		}
 	}
 
 	if vcsURL := resolveVcsURL(module); vcsURL != "" {
