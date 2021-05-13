@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"path/filepath"
 	"strings"
 
@@ -243,7 +244,7 @@ func findModule(modules []Module, coordinates string) *Module {
 }
 
 func resolveLocalModule(mainModulePath string, module *Module) error {
-	if util.StartsWith(module.Dir, util.GetModuleCacheDir()) {
+	if util.IsGoModule(module.Dir) && util.StartsWith(module.Dir, util.GetModuleCacheDir()) {
 		// Module is in module cache
 		return nil
 	}
@@ -268,6 +269,19 @@ func resolveLocalModule(mainModulePath string, module *Module) error {
 	}
 
 	module.Path = localModule.Path
-	// TODO: Resolve version. How can this be done when the local module isn't in a Git repo?
+
+	// Try to resolve the version. Only works when module.Dir is a Git repo.
+	if module.Version == "" {
+		version, err := GetModuleVersion(module.Dir)
+		if err == nil {
+			module.Version = version
+		} else {
+			// We don't fail with an error here, because our possibilities are limited.
+			// module.Dir may be a Mercurial repo or just a normal directory, in which case we
+			// cannot detect versions reliably right now.
+			log.Printf("failed to resolve version of local module %s: %v\n", module.Path, err)
+		}
+	}
+
 	return nil
 }
