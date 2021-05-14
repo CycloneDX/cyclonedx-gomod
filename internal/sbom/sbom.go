@@ -49,9 +49,9 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	modules = modules[1:]
 
 	if mainModule.Version, err = gomod.GetModuleVersion(mainModule.Dir); err != nil {
-		return nil, fmt.Errorf("failed to get version of main module: %w", err)
+		log.Printf("failed to get version of main module: %v\n", err)
 	}
-	if options.NoVersionPrefix {
+	if mainModule.Version != "" && options.NoVersionPrefix {
 		mainModule.Version = strings.TrimPrefix(mainModule.Version, "v")
 	}
 
