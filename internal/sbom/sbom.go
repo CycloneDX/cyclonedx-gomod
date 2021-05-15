@@ -31,6 +31,16 @@ type GenerateOptions struct {
 }
 
 func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
+	if !util.IsVendoring(modulePath) {
+		if err := gocmd.ModDownload(modulePath); err != nil {
+			return nil, fmt.Errorf("failed to download modules: %w", err)
+		}
+
+		if err := gocmd.ModTidy(modulePath); err != nil {
+			return nil, fmt.Errorf("failed to tidy modules: %w", err)
+		}
+	}
+
 	modules, err := gomod.GetModules(modulePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get modules: %w", err)

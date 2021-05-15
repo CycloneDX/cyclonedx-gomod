@@ -65,7 +65,7 @@ func GetModules(path string) ([]Module, error) {
 	buf := new(bytes.Buffer)
 
 	if !util.IsVendoring(path) {
-		if err = gocmd.GetModules(path, buf); err != nil {
+		if err = gocmd.ListModules(path, buf); err != nil {
 			return nil, fmt.Errorf("listing modules failed: %w", err)
 		}
 
@@ -74,7 +74,7 @@ func GetModules(path string) ([]Module, error) {
 			return nil, fmt.Errorf("parsing modules failed: %w", err)
 		}
 	} else {
-		if err = gocmd.GetVendoredModules(path, buf); err != nil {
+		if err = gocmd.ListVendoredModules(path, buf); err != nil {
 			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
 		}
 
