@@ -3,6 +3,7 @@ package license
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -16,10 +17,21 @@ var (
 	ErrLicenseNotFound = errors.New("no license found")
 )
 
-func Resolve(module gomod.Module) (*SPDXLicense, error) {
-	// TODO: Check for local Path
+func Resolve(module gomod.Module) ([]*SPDXLicense, error) {
+	licenses, err := resolveForCoordinates(module.Coordinates())
+	if err != nil {
+		// The specific version of the module may not be present
+		// in the module proxy yet. Retry with just he module path
+		if errors.Is(err, ErrModuleNotFound) {
+			return resolveForCoordinates(module.Path)
+		}
+		return nil, err
+	}
+	return licenses, nil
+}
 
-	req, err := http.NewRequest(http.MethodGet, "https://pkg.go.dev/"+module.Coordinates(), nil)
+func resolveForCoordinates(coordinates string) ([]*SPDXLicense, error) {
+	req, err := http.NewRequest(http.MethodGet, "https://pkg.go.dev/"+coordinates, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -54,10 +66,16 @@ func Resolve(module gomod.Module) (*SPDXLicense, error) {
 		return nil, ErrLicenseNotFound
 	}
 
-	license := getLicenseByID(strings.TrimSpace(sel.Text()))
-	if license == nil {
-		return nil, ErrLicenseNotFound
+	licenseIDs := strings.TrimSpace(sel.Text())
+
+	licenses := make([]*SPDXLicense, 0)
+	for _, licenseID := range strings.Split(licenseIDs, ",") {
+		if license := getLicenseByID(strings.TrimSpace(licenseID)); license != nil {
+			licenses = append(licenses, license)
+		} else {
+			log.Printf("the resolved license ID %s is not a valid SPDX license ID\n", licenseID)
+		}
 	}
 
-	return license, nil
+	return licenses, nil
 }

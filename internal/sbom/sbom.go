@@ -190,17 +190,19 @@ func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Componen
 	}
 
 	if resolveLicense && !module.Main && !private {
-		resolvedLicense, err := license.Resolve(module)
-		if err == nil && resolvedLicense != nil {
-			component.Licenses = &[]cdx.LicenseChoice{
-				{
+		resolvedLicenses, err := license.Resolve(module)
+		if err == nil {
+			componentLicenses := make([]cdx.LicenseChoice, len(resolvedLicenses))
+			for i, resolvedLicense := range resolvedLicenses {
+				componentLicenses[i] = cdx.LicenseChoice{
 					License: &cdx.License{
 						ID:   resolvedLicense.ID,
 						Name: resolvedLicense.Name,
 						URL:  resolvedLicense.Reference,
 					},
-				},
+				}
 			}
+			component.Licenses = &componentLicenses
 		} else {
 			log.Printf("failed to resolve license of %s: %v\n", module.Coordinates(), err)
 		}
