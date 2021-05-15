@@ -43,7 +43,7 @@ dockers:
       - "--label=org.opencontainers.image.vendor=CycloneDX"
       - "--label=org.opencontainers.image.url=https://cyclonedx.org"
       - "--label=org.opencontainers.image.source=https://github.com/CycloneDX/cyclonedx-gomod"
-    skip_push: true
+    skip_push: false
 archives:
   - replacements:
       darwin: macos
