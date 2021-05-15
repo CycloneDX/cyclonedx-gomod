@@ -24,7 +24,7 @@ go install github.com/CycloneDX/cyclonedx-gomod@latest
 
 > This project is not in a stable state yet and may be subject to breaking changes.  
 > When using it in CI/CD pipelines, we recommend pinning its version instead of using `latest`.  
-> In that case, you'd use `go install github.com/CycloneDX/cyclonedx-gomod@v0.3.1` instead.
+> In that case, you'd use `go install github.com/CycloneDX/cyclonedx-gomod@v0.5.0` instead.
 
 Building from source requires Go 1.16 or newer.
 
