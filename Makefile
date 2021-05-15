@@ -15,7 +15,7 @@ docker:
 .PHONY: docker
 
 bom:
-	go run main.go -std
+	go run main.go -licenses -std
 .PHONY: bom
 
 goreleaser-dryrun:
