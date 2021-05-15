@@ -94,6 +94,7 @@ func validateOptions(options *Options) error {
 }
 
 func executeCommand(options Options) error {
+	log.Println("generating sbom")
 	bom, err := sbom.Generate(options.ModulePath, sbom.GenerateOptions{
 		ComponentType:   options.ComponentType,
 		IncludeStdLib:   options.IncludeStd,
@@ -112,6 +113,7 @@ func executeCommand(options Options) error {
 		outputFormat = cdx.BOMFileFormatXML
 	}
 
+	log.Println("writing sbom")
 	var outputWriter io.Writer
 	if options.OutputPath == "" || options.OutputPath == "-" {
 		outputWriter = os.Stdout

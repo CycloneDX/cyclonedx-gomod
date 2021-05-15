@@ -1,8 +1,6 @@
 before:
   hooks:
-    - go mod download
-    - go mod tidy
-    - go install github.com/CycloneDX/cyclonedx-gomod@{{ .Tag }}
+    - go install -trimpath -ldflags '-s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{ .Tag }}' github.com/CycloneDX/cyclonedx-gomod@{{ .Tag }}
     - cyclonedx-gomod -module . -output bom.xml -std
     - cyclonedx-gomod -module . -json -output bom.json -std
 builds:
@@ -37,13 +35,13 @@ dockers:
     dockerfile: Dockerfile.goreleaser
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.version={{ .Tag }}"
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.created={{ .Date }}"
       - "--label=org.opencontainers.image.vendor=CycloneDX"
       - "--label=org.opencontainers.image.url=https://cyclonedx.org"
       - "--label=org.opencontainers.image.source=https://github.com/CycloneDX/cyclonedx-gomod"
-    skip_push: true
+    skip_push: false
 archives:
   - replacements:
       darwin: macos
@@ -60,11 +58,13 @@ release:
   extra_files:
     - glob: ./bom.xml
     - glob: ./bom.json
+milestones:
+  - name_template: "{{ .Tag }}"
+    close: true
 changelog:
   sort: asc
   filters:
     exclude:
       - '^docs:'
       - '^test:'
-      - '^Merge pull request'
-      - '^Merge branch'
+      - '^Merge '

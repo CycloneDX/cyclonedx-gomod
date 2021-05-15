@@ -15,8 +15,6 @@ docker:
 .PHONY: docker
 
 bom:
-	go mod download
-	go mod tidy
 	go run main.go -std
 .PHONY: bom
 
@@ -24,5 +22,5 @@ goreleaser-dryrun:
 	goreleaser release --skip-publish --snapshot
 .PHONY: goreleaser-dryrun
 
-all: clean build test bench
+all: clean build test
 .PHONY: all

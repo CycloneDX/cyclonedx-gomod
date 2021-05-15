@@ -32,11 +32,25 @@ type GenerateOptions struct {
 }
 
 func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
-	modules, err := gomod.GetModules(modulePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get modules: %w", err)
+	if !util.IsVendoring(modulePath) {
+		log.Println("downloading modules to cache")
+		if err := gocmd.ModDownload(modulePath); err != nil {
+			return nil, fmt.Errorf("failed to download modules: %w", err)
+		}
+
+		log.Println("tidying up go.mod and go.sum")
+		if err := gocmd.ModTidy(modulePath); err != nil {
+			return nil, fmt.Errorf("failed to tidy modules: %w", err)
+		}
 	}
 
+	log.Println("enumerating modules")
+	modules, err := gomod.GetModules(modulePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to enumerate modules: %w", err)
+	}
+
+	log.Println("normalizing module versions")
 	for i := range modules {
 		modules[i].Version = strings.TrimSuffix(modules[i].Version, "+incompatible")
 
@@ -48,6 +62,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	mainModule := modules[0]
 	modules = modules[1:]
 
+	log.Println("determining version of main module")
 	if mainModule.Version, err = gomod.GetModuleVersion(mainModule.Dir); err != nil {
 		log.Printf("failed to get version of main module: %v\n", err)
 	}
@@ -55,6 +70,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 		mainModule.Version = strings.TrimPrefix(mainModule.Version, "v")
 	}
 
+	log.Printf("converting main module %s\n", mainModule.Coordinates())
 	mainComponent, err := convertToComponent(mainModule)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
@@ -72,13 +88,16 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 		components[i] = *component
 	}
 
+	log.Println("building dependency graph")
 	dependencyGraph := buildDependencyGraph(append(modules, mainModule))
 
+	log.Println("calculating tool hashes")
 	toolHashes, err := calculateToolHashes()
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
 	}
 
+	log.Println("assembling sbom")
 	bom := cdx.NewBOM()
 	if !options.NoSerialNumber {
 		if options.SerialNumber == nil {
@@ -105,11 +124,13 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	bom.Dependencies = &dependencyGraph
 
 	if options.IncludeStdLib {
+		log.Println("gathering info about standard library")
 		stdComponent, err := buildStdComponent()
 		if err != nil {
 			return nil, fmt.Errorf("failed to build std component: %w", err)
 		}
 
+		log.Println("adding standard library to sbom")
 		*bom.Components = append(*bom.Components, *stdComponent)
 
 		// Add std to dependency graph
@@ -132,6 +153,8 @@ func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 	if module.Replace != nil {
 		return convertToComponent(*module.Replace)
 	}
+
+	log.Printf("converting module %s\n", module.Coordinates())
 
 	component := cdx.Component{
 		BOMRef:     module.PackageURL(),

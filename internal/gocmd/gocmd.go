@@ -34,27 +34,24 @@ func GetModule(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m")
 	cmd.Dir = modulePath
 	cmd.Stdout = writer
-
 	return cmd.Run()
 }
 
-// GetModules executes `go list -json -m all` and writes the output to a given writer.
+// ListModules executes `go list -json -m all` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
-func GetModules(modulePath string, writer io.Writer) error {
+func ListModules(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
 	cmd.Dir = modulePath
 	cmd.Stdout = writer
-
 	return cmd.Run()
 }
 
-// GetVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
+// ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-vendor
-func GetVendoredModules(modulePath string, writer io.Writer) error {
+func ListVendoredModules(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "mod", "vendor", "-v", "-e")
 	cmd.Dir = modulePath
 	cmd.Stderr = writer
-
 	return cmd.Run()
 }
 
@@ -64,6 +61,17 @@ func GetModuleGraph(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "mod", "graph")
 	cmd.Dir = modulePath
 	cmd.Stdout = writer
+	return cmd.Run()
+}
 
+func ModDownload(modulePath string) error {
+	cmd := exec.Command("go", "mod", "download")
+	cmd.Dir = modulePath
+	return cmd.Run()
+}
+
+func ModTidy(modulePath string) error {
+	cmd := exec.Command("go", "mod", "tidy")
+	cmd.Dir = modulePath
 	return cmd.Run()
 }
