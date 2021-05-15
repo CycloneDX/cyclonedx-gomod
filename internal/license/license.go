@@ -18,7 +18,6 @@ var (
 
 func Resolve(module gomod.Module) (string, error) {
 	// TODO: Check for local Path
-	// TODO: We should probably honor GOPRIVATE and / or GONOPROXY to avoid leaking private module coordinates
 
 	req, err := http.NewRequest(http.MethodGet, "https://pkg.go.dev/"+module.Coordinates(), nil)
 	if err != nil {
@@ -55,5 +54,10 @@ func Resolve(module gomod.Module) (string, error) {
 		return "", ErrLicenseNotFound
 	}
 
-	return strings.TrimSpace(sel.Text()), nil
+	license := strings.TrimSpace(sel.Text())
+	if license == "" {
+		return "", ErrLicenseNotFound
+	}
+
+	return license, nil
 }

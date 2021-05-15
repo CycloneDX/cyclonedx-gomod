@@ -182,7 +182,13 @@ func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 		component.Hashes = &hashes
 	}
 
-	if !module.Main {
+	private, err := module.Private()
+	if err != nil {
+		// An error indicates a bad pattern, which must be fixed before we can proceed
+		return nil, fmt.Errorf("failed to determine if module is private: %w", err)
+	}
+
+	if !module.Main && !private {
 		resolvedLicense, err := license.Resolve(module)
 		if err == nil {
 			component.Licenses = &[]cdx.LicenseChoice{
