@@ -237,7 +237,7 @@ var (
 )
 
 func resolveVcsURL(module gomod.Module) string {
-	if util.StartsWith(module.Path, "github.com/") {
+	if strings.HasPrefix(module.Path, "github.com/") {
 		return "https://" + module.Path
 	} else if goPkgInRegex1.MatchString(module.Path) {
 		return "https://" + goPkgInRegex1.ReplaceAllString(module.Path, "github.com/$1/$2")

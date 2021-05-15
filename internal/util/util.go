@@ -4,7 +4,6 @@ import (
 	"go/build"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 func FileExists(path string) bool {
@@ -39,11 +38,6 @@ func GetModuleCacheDir() string {
 		modCacheDir = filepath.Join(GetGoPath(), "pkg", "mod")
 	}
 	return modCacheDir
-}
-
-// StartsWith checks if a given string is prefixed with another.
-func StartsWith(str, with string) bool {
-	return strings.Index(str, with) == 0
 }
 
 // StringSliceIndex determines the index of a given string in a given string slice.

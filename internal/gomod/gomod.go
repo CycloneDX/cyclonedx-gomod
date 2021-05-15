@@ -189,7 +189,7 @@ func parseVendoredModules(path string, reader io.Reader) ([]Module, error) {
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		if !util.StartsWith(line, "# ") {
+		if !strings.HasPrefix(line, "# ") {
 			continue
 		}
 
@@ -285,7 +285,7 @@ func findModule(modules []Module, coordinates string) *Module {
 }
 
 func resolveLocalModule(mainModulePath string, module *Module) error {
-	if util.IsGoModule(module.Dir) && util.StartsWith(module.Dir, util.GetModuleCacheDir()) {
+	if util.IsGoModule(module.Dir) && strings.HasPrefix(module.Dir, util.GetModuleCacheDir()) {
 		// Module is in module cache
 		return nil
 	}
