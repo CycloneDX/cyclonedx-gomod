@@ -65,8 +65,6 @@ Make sure to run `go mod download` before generating BOMs with *cyclonedx-gomod*
 ### Example
 
 ```
-$ go mod download
-$ go mod tidy
 $ cyclonedx-gomod -output bom.xml -std
 ```
 
@@ -75,13 +73,10 @@ Checkout the [`examples`](./examples) directory for examples of BOMs generated b
 ### Docker
 
 ```
-$ go mod download
-$ go mod tidy
 $ docker run -it --rm -v "$GOPATH/pkg/mod:/go/pkg/mod" -v "$(pwd):/mymodule" cyclonedx/cyclonedx-gomod -module /mymodule
 ```
 
-Note how the host's module cache is mounted into the container to avoid re-downloading modules.  
-Executing `go mod download` and `go mod tidy` on the host is necessary until [#16](https://github.com/CycloneDX/cyclonedx-gomod/issues/16) is implemented.
+Note how the host's module cache is mounted into the container to avoid re-downloading modules.
 
 ### Vendoring
 
