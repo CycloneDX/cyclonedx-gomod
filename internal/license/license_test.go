@@ -9,14 +9,24 @@ import (
 )
 
 func TestResolve(t *testing.T) {
-	// Success
-	license, err := Resolve(gomod.Module{
+	// Success with single license
+	licenses, err := Resolve(gomod.Module{
 		Path:    "github.com/CycloneDX/cyclonedx-go",
 		Version: "v0.1.0",
 	})
 	require.NoError(t, err)
-	require.NotNil(t, license)
-	assert.Equal(t, "Apache-2.0", license.ID)
+	require.Len(t, licenses, 1)
+	assert.Equal(t, "Apache-2.0", licenses[0].ID)
+
+	// Success with multiple licenses
+	licenses, err = Resolve(gomod.Module{
+		Path:    "gopkg.in/yaml.v3",
+		Version: "v3.0.0-20200313102051-9f266ea9e77c",
+	})
+	require.NoError(t, err)
+	require.Len(t, licenses, 2)
+	assert.Equal(t, "Apache-2.0", licenses[0].ID)
+	assert.Equal(t, "MIT", licenses[1].ID)
 
 	// Module not found
 	_, err = Resolve(gomod.Module{
