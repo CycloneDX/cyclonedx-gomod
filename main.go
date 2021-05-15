@@ -22,6 +22,7 @@ type Options struct {
 	NoSerialNumber   bool
 	NoVersionPrefix  bool
 	OutputPath       string
+	ResolveLicenses  bool
 	SerialNumber     *uuid.UUID
 	SerialNumberStr  string
 	ShowVersion      bool
@@ -37,6 +38,7 @@ func main() {
 	flag.BoolVar(&options.NoSerialNumber, "noserial", false, "Omit serial number")
 	flag.BoolVar(&options.NoVersionPrefix, "novprefix", false, "Omit \"v\" version prefix")
 	flag.StringVar(&options.OutputPath, "output", "-", "Output path")
+	flag.BoolVar(&options.ResolveLicenses, "licenses", false, "Resolve module licenses")
 	flag.StringVar(&options.SerialNumberStr, "serial", "", "Serial number (default [random UUID])")
 	flag.BoolVar(&options.ShowVersion, "version", false, "Show version")
 	flag.BoolVar(&options.UseJSON, "json", false, "Output in JSON format")
@@ -100,6 +102,7 @@ func executeCommand(options Options) error {
 		IncludeStdLib:   options.IncludeStd,
 		NoSerialNumber:  options.NoSerialNumber,
 		NoVersionPrefix: options.NoVersionPrefix,
+		ResolveLicenses: options.ResolveLicenses,
 		SerialNumber:    options.SerialNumber,
 	})
 	if err != nil {

@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/CycloneDX/cyclonedx-go v0.1.0
+	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/go-git/go-git/v5 v5.3.0
 	github.com/google/uuid v1.2.0
 	github.com/stretchr/testify v1.7.0

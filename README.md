@@ -41,6 +41,8 @@ BOM formats or specification versions.
 Usage of cyclonedx-gomod:
   -json
         Output in JSON format
+  -licenses
+        Resolve module licenses
   -module string
         Path to Go module (default ".")
   -noserial
@@ -61,6 +63,9 @@ Usage of cyclonedx-gomod:
 
 In order to be able to calculate hashes, all modules have to be present in Go's module cache.  
 Make sure to run `go mod download` before generating BOMs with *cyclonedx-gomod*.
+
+> *cyclonedx-gomod* honors the `GONOPROXY` and `GOPRIVATE` environment variables and 
+> won't reach out to external data sources for private modules (e.g. for [license resolution](#licenses)).
 
 ### Example
 
@@ -87,6 +92,16 @@ Limitations are as follows:
   and test the main module. Because [module checksums](#hashes) consider almost all files in a module's directory though, 
   calculating accurate hashes from the `vendor` directory is not possible. As a consequence, BOMs for modules that use
   vendoring do not include component hashes.
+
+### Licenses
+
+There is currently no standard way for developers to declare their module's license.  
+Detecting licenses based on files in a repository is a non-trivial task, which is why *cyclonedx-gomod*  
+uses [`pkg.go.dev`](https://pkg.go.dev/) to resolve module licenses (please read their [license disclaimer](https://pkg.go.dev/license-policy)).
+
+While `pkg.go.dev`'s license matching *may* be accurate most of the time, BOMs should state facts.  
+This is why license resolution is an opt-in feature (using the `-licenses` flag). If you are a vendor and legally
+required to provide 100% accurate BOMs, **do not** use this feature.
 
 ### Hashes
 

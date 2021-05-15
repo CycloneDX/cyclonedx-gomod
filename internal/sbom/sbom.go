@@ -17,6 +17,7 @@ import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/google/uuid"
@@ -27,6 +28,7 @@ type GenerateOptions struct {
 	IncludeStdLib   bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
+	ResolveLicenses bool
 	SerialNumber    *uuid.UUID
 }
 
@@ -70,7 +72,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	log.Printf("converting main module %s\n", mainModule.Coordinates())
-	mainComponent, err := convertToComponent(mainModule)
+	mainComponent, err := convertToComponent(mainModule, options.ResolveLicenses)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
@@ -80,7 +82,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	component := new(cdx.Component)
 	components := make([]cdx.Component, len(modules))
 	for i, module := range modules {
-		component, err = convertToComponent(module)
+		component, err = convertToComponent(module, options.ResolveLicenses)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert module %s: %w", module.Coordinates(), err)
 		}
@@ -148,9 +150,9 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	return bom, nil
 }
 
-func convertToComponent(module gomod.Module) (*cdx.Component, error) {
+func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Component, error) {
 	if module.Replace != nil {
-		return convertToComponent(*module.Replace)
+		return convertToComponent(*module.Replace, resolveLicense)
 	}
 
 	log.Printf("converting module %s\n", module.Coordinates())
@@ -179,6 +181,29 @@ func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 			return nil, err
 		}
 		component.Hashes = &hashes
+	}
+
+	private, err := module.Private()
+	if err != nil {
+		// An error indicates a bad pattern, which must be fixed before we can proceed
+		return nil, fmt.Errorf("failed to determine if module is private: %w", err)
+	}
+
+	if resolveLicense && !module.Main && !private {
+		resolvedLicense, err := license.Resolve(module)
+		if err == nil && resolvedLicense != nil {
+			component.Licenses = &[]cdx.LicenseChoice{
+				{
+					License: &cdx.License{
+						ID:   resolvedLicense.ID,
+						Name: resolvedLicense.Name,
+						URL:  resolvedLicense.Reference,
+					},
+				},
+			}
+		} else {
+			log.Printf("failed to resolve license of %s: %v\n", module.Coordinates(), err)
+		}
 	}
 
 	if vcsURL := resolveVcsURL(module); vcsURL != "" {
@@ -215,7 +240,7 @@ var (
 )
 
 func resolveVcsURL(module gomod.Module) string {
-	if util.StartsWith(module.Path, "github.com/") {
+	if strings.HasPrefix(module.Path, "github.com/") {
 		return "https://" + module.Path
 	} else if goPkgInRegex1.MatchString(module.Path) {
 		return "https://" + goPkgInRegex1.ReplaceAllString(module.Path, "github.com/$1/$2")

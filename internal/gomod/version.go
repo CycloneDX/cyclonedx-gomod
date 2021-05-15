@@ -7,8 +7,6 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/storer"
-
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 // GetModuleVersion attempts to detect a given module's version by first
@@ -71,7 +69,7 @@ func GetVersionFromTag(modulePath string) (string, error) {
 
 	tagName := ""
 	err = tags.ForEach(func(reference *plumbing.Reference) error {
-		if reference.Hash() == headRef.Hash() && util.StartsWith(reference.Name().String(), "refs/tags/v") {
+		if reference.Hash() == headRef.Hash() && strings.HasPrefix(reference.Name().String(), "refs/tags/v") {
 			tagName = strings.TrimPrefix(reference.Name().String(), "refs/tags/")
 			return storer.ErrStop // break
 		}

@@ -48,6 +48,30 @@ func TestModule_Hash(t *testing.T) {
 	require.Equal(t, "h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=", hash)
 }
 
+func TestModule_Private(t *testing.T) {
+	// Make sure we leave the environment clean
+	originalPrivateModulePatterns := make([]string, len(PrivateModulePatterns))
+	copy(originalPrivateModulePatterns, PrivateModulePatterns)
+	defer func() {
+		PrivateModulePatterns = originalPrivateModulePatterns
+	}()
+
+	module := Module{
+		Path:    "github.com/google/uuid",
+		Version: "v1.2.0",
+	}
+
+	PrivateModulePatterns = []string{}
+	private, err := module.Private()
+	assert.NoError(t, err)
+	assert.False(t, private)
+
+	PrivateModulePatterns = []string{"github.com/google/*"}
+	private, err = module.Private()
+	assert.NoError(t, err)
+	assert.True(t, private)
+}
+
 func TestModule_PackageURL(t *testing.T) {
 	module := Module{
 		Path:    "github.com/CycloneDX/cyclonedx-go",
