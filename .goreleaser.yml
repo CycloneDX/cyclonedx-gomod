@@ -60,6 +60,9 @@ release:
   extra_files:
     - glob: ./bom.xml
     - glob: ./bom.json
+milestones:
+  - name_template: "{{ .Tag }}"
+    close: true
 changelog:
   sort: asc
   filters:
