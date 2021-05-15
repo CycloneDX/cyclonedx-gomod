@@ -15,7 +15,8 @@ func TestResolve(t *testing.T) {
 		Version: "v0.1.0",
 	})
 	require.NoError(t, err)
-	assert.Equal(t, "Apache-2.0", license)
+	require.NotNil(t, license)
+	assert.Equal(t, "Apache-2.0", license.ID)
 
 	// Module not found
 	_, err = Resolve(gomod.Module{

@@ -16,12 +16,12 @@ var (
 	ErrLicenseNotFound = errors.New("no license found")
 )
 
-func Resolve(module gomod.Module) (string, error) {
+func Resolve(module gomod.Module) (*SPDXLicense, error) {
 	// TODO: Check for local Path
 
 	req, err := http.NewRequest(http.MethodGet, "https://pkg.go.dev/"+module.Coordinates(), nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	req.Header.Set("User-Agent", fmt.Sprintf("%s/%s", version.Name, version.Version))
 
@@ -31,7 +31,7 @@ func Resolve(module gomod.Module) (string, error) {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer res.Body.Close()
 
@@ -39,24 +39,24 @@ func Resolve(module gomod.Module) (string, error) {
 	case http.StatusOK:
 		break
 	case http.StatusNotFound:
-		return "", ErrModuleNotFound
+		return nil, ErrModuleNotFound
 	default:
-		return "", fmt.Errorf("unexpected response status: %d", res.StatusCode)
+		return nil, fmt.Errorf("unexpected response status: %d", res.StatusCode)
 	}
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	sel := doc.Find("div.Container section.License h2").First()
 	if len(sel.Nodes) == 0 {
-		return "", ErrLicenseNotFound
+		return nil, ErrLicenseNotFound
 	}
 
-	license := strings.TrimSpace(sel.Text())
-	if license == "" {
-		return "", ErrLicenseNotFound
+	license := getLicenseByID(strings.TrimSpace(sel.Text()))
+	if license == nil {
+		return nil, ErrLicenseNotFound
 	}
 
 	return license, nil

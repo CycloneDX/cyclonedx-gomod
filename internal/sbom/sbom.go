@@ -28,6 +28,7 @@ type GenerateOptions struct {
 	IncludeStdLib   bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
+	ResolveLicenses bool
 	SerialNumber    *uuid.UUID
 }
 
@@ -71,7 +72,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	log.Printf("converting main module %s\n", mainModule.Coordinates())
-	mainComponent, err := convertToComponent(mainModule)
+	mainComponent, err := convertToComponent(mainModule, options.ResolveLicenses)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
@@ -81,7 +82,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	component := new(cdx.Component)
 	components := make([]cdx.Component, len(modules))
 	for i, module := range modules {
-		component, err = convertToComponent(module)
+		component, err = convertToComponent(module, options.ResolveLicenses)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert module %s: %w", module.Coordinates(), err)
 		}
@@ -149,9 +150,9 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	return bom, nil
 }
 
-func convertToComponent(module gomod.Module) (*cdx.Component, error) {
+func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Component, error) {
 	if module.Replace != nil {
-		return convertToComponent(*module.Replace)
+		return convertToComponent(*module.Replace, resolveLicense)
 	}
 
 	log.Printf("converting module %s\n", module.Coordinates())
@@ -188,13 +189,15 @@ func convertToComponent(module gomod.Module) (*cdx.Component, error) {
 		return nil, fmt.Errorf("failed to determine if module is private: %w", err)
 	}
 
-	if !module.Main && !private {
+	if resolveLicense && !module.Main && !private {
 		resolvedLicense, err := license.Resolve(module)
-		if err == nil {
+		if err == nil && resolvedLicense != nil {
 			component.Licenses = &[]cdx.LicenseChoice{
 				{
 					License: &cdx.License{
-						ID: resolvedLicense,
+						ID:   resolvedLicense.ID,
+						Name: resolvedLicense.Name,
+						URL:  resolvedLicense.Reference,
 					},
 				},
 			}
