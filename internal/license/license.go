@@ -3,10 +3,10 @@ package license
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
+	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/PuerkitoBio/goquery"
@@ -17,7 +17,7 @@ var (
 	ErrLicenseNotFound = errors.New("no license found")
 )
 
-func Resolve(module gomod.Module) ([]*SPDXLicense, error) {
+func Resolve(module gomod.Module) ([]cdx.License, error) {
 	licenses, err := resolveForCoordinates(module.Coordinates())
 	if err != nil {
 		// The specific version of the module may not be present
@@ -30,7 +30,7 @@ func Resolve(module gomod.Module) ([]*SPDXLicense, error) {
 	return licenses, nil
 }
 
-func resolveForCoordinates(coordinates string) ([]*SPDXLicense, error) {
+func resolveForCoordinates(coordinates string) ([]cdx.License, error) {
 	req, err := http.NewRequest(http.MethodGet, "https://pkg.go.dev/"+coordinates, nil)
 	if err != nil {
 		return nil, err
@@ -68,12 +68,18 @@ func resolveForCoordinates(coordinates string) ([]*SPDXLicense, error) {
 
 	licenseIDs := strings.TrimSpace(sel.Text())
 
-	licenses := make([]*SPDXLicense, 0)
+	licenses := make([]cdx.License, 0)
 	for _, licenseID := range strings.Split(licenseIDs, ",") {
-		if license := getLicenseByID(strings.TrimSpace(licenseID)); license != nil {
-			licenses = append(licenses, license)
+		licenseID = strings.TrimSpace(licenseID)
+		if spdxLicense := getLicenseByID(licenseID); spdxLicense != nil {
+			licenses = append(licenses, cdx.License{
+				ID:  spdxLicense.ID,
+				URL: spdxLicense.Reference,
+			})
 		} else {
-			log.Printf("the resolved license ID %s is not a valid SPDX license ID\n", licenseID)
+			licenses = append(licenses, cdx.License{
+				Name: licenseID,
+			})
 		}
 	}
 

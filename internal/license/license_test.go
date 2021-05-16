@@ -17,16 +17,21 @@ func TestResolve(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, licenses, 1)
 	assert.Equal(t, "Apache-2.0", licenses[0].ID)
+	assert.NotEmpty(t, licenses[0].URL)
 
 	// Success with multiple licenses
 	licenses, err = Resolve(gomod.Module{
-		Path:    "gopkg.in/yaml.v3",
-		Version: "v3.0.0-20200313102051-9f266ea9e77c",
+		Path:    "github.com/BurntSushi/xgb",
+		Version: "v0.0.0-20160522181843-27f122750802",
 	})
 	require.NoError(t, err)
 	require.Len(t, licenses, 2)
-	assert.Equal(t, "Apache-2.0", licenses[0].ID)
-	assert.Equal(t, "MIT", licenses[1].ID)
+	assert.Equal(t, "BSD-3-Clause", licenses[0].ID)
+	assert.Empty(t, licenses[0].Name)
+	assert.NotEmpty(t, licenses[0].URL)
+	assert.Empty(t, licenses[1].ID)
+	assert.Equal(t, "GooglePatentClause", licenses[1].Name)
+	assert.Empty(t, licenses[1].URL)
 
 	// Module not found
 	_, err = Resolve(gomod.Module{
