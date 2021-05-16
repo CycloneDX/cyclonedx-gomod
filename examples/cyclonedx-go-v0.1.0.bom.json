@@ -1,31 +1,31 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:871248f4-64c6-4c51-8580-576f39c883de",
+  "serialNumber": "urn:uuid:f6da311b-d3cf-4356-85f9-e0cc22d03a3d",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-05-16T00:49:43+02:00",
+    "timestamp": "2021-05-16T17:14:46+02:00",
     "tools": [
       {
         "vendor": "CycloneDX",
         "name": "cyclonedx-gomod",
-        "version": "v0.0.0-unset",
+        "version": "v0.6.1",
         "hashes": [
           {
             "alg": "MD5",
-            "content": "b0b93711fe1878029d443f74589ff1fa"
+            "content": "a92d9f6145a94c2c7ad8489d84301eb9"
           },
           {
             "alg": "SHA-1",
-            "content": "6f6296e723cdf3ae695915ad735355d3ce2275dd"
+            "content": "a5af6c5ef3f21bf5425c680b64acf57cc6a90c69"
           },
           {
             "alg": "SHA-256",
-            "content": "0f72a073ad16e34459a4bbbb0ba9237bc6fd26c0400cd893bcd138bd929f2842"
+            "content": "dc215a651772356eca763d6fe77169379c1cc25c2bb89c7d6df2e2170c3972ab"
           },
           {
             "alg": "SHA-512",
-            "content": "f0336f91f642d034aeb91f590ef9549da4358da99c6c934332226b71c1f5ea6ce2d78859aa71440159d8ca92d6f7635d7c782b546f23cdc910bd1f86265ab3e0"
+            "content": "387953ab509c31bf352693de9df617650c87494e607119bc284b91ba9a0a2d284a2e96946c272dc284c4370875412eea855bc30351faedd099dbdbed209e4636"
           }
         ]
       }
@@ -61,7 +61,6 @@
         {
           "license": {
             "id": "MIT",
-            "name": "MIT License",
             "url": "https://spdx.org/licenses/MIT.html"
           }
         }
@@ -90,7 +89,6 @@
         {
           "license": {
             "id": "ISC",
-            "name": "ISC License",
             "url": "https://spdx.org/licenses/ISC.html"
           }
         }
@@ -119,7 +117,6 @@
         {
           "license": {
             "id": "BSD-3-Clause",
-            "name": "BSD 3-Clause \"New\" or \"Revised\" License",
             "url": "https://spdx.org/licenses/BSD-3-Clause.html"
           }
         }
@@ -148,7 +145,6 @@
         {
           "license": {
             "id": "MIT",
-            "name": "MIT License",
             "url": "https://spdx.org/licenses/MIT.html"
           }
         }
@@ -177,7 +173,6 @@
         {
           "license": {
             "id": "MIT",
-            "name": "MIT License",
             "url": "https://spdx.org/licenses/MIT.html"
           }
         }
@@ -206,7 +201,6 @@
         {
           "license": {
             "id": "BSD-2-Clause",
-            "name": "BSD 2-Clause \"Simplified\" License",
             "url": "https://spdx.org/licenses/BSD-2-Clause.html"
           }
         }
@@ -235,14 +229,12 @@
         {
           "license": {
             "id": "Apache-2.0",
-            "name": "Apache License 2.0",
             "url": "https://spdx.org/licenses/Apache-2.0.html"
           }
         },
         {
           "license": {
             "id": "MIT",
-            "name": "MIT License",
             "url": "https://spdx.org/licenses/MIT.html"
           }
         }
