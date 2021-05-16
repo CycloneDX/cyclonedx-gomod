@@ -15,7 +15,8 @@ docker:
 .PHONY: docker
 
 bom:
-	go run main.go -licenses -std
+	go run main.go -licenses -std -output bom.xml
+	cyclonedx validate --input-file bom.xml --input-format xml --fail-on-errors
 .PHONY: bom
 
 goreleaser-dryrun:

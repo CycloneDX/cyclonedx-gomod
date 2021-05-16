@@ -196,9 +196,8 @@ func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Componen
 			for i, resolvedLicense := range resolvedLicenses {
 				componentLicenses[i] = cdx.LicenseChoice{
 					License: &cdx.License{
-						ID:   resolvedLicense.ID,
-						Name: resolvedLicense.Name,
-						URL:  resolvedLicense.Reference,
+						ID:  resolvedLicense.ID,
+						URL: resolvedLicense.Reference,
 					},
 				}
 			}
