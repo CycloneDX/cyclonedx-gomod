@@ -28,6 +28,7 @@ type GenerateOptions struct {
 	IncludeStdLib   bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
+	Reproducible    bool
 	ResolveLicenses bool
 	SerialNumber    *uuid.UUID
 }
@@ -93,9 +94,12 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	dependencyGraph := buildDependencyGraph(append(modules, mainModule))
 
 	log.Println("calculating tool hashes")
-	toolHashes, err := calculateToolHashes()
-	if err != nil {
-		return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
+	toolHashes := make([]cdx.Hash, 0)
+	if !options.Reproducible {
+		toolHashes, err = calculateToolHashes()
+		if err != nil {
+			return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
+		}
 	}
 
 	log.Println("assembling sbom")
@@ -109,16 +113,18 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	bom.Metadata = &cdx.Metadata{
-		Timestamp: time.Now().Format(time.RFC3339),
-		Tools: &[]cdx.Tool{
+		Component: mainComponent,
+	}
+	if !options.Reproducible {
+		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
+		bom.Metadata.Tools = &[]cdx.Tool{
 			{
 				Vendor:  version.Author,
 				Name:    version.Name,
 				Version: version.Version,
 				Hashes:  &toolHashes,
 			},
-		},
-		Component: mainComponent,
+		}
 	}
 
 	bom.Components = &components
