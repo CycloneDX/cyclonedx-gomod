@@ -139,7 +139,6 @@ Given the following `component` element in a BOM:
   <licenses>
     <license>
       <id>BSD-3-Clause</id>
-      <name>BSD 3-Clause "New" or "Revised" License</name>
       <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
     </license>
   </licenses>
