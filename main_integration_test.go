@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/bradleyjkemp/cupaloy/v2"
-	"github.com/go-git/go-git/v5"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,7 +16,10 @@ import (
 
 var (
 	itSnapshotter = cupaloy.NewDefaultConfig().
-			WithOptions(cupaloy.SnapshotSubdirectory("./testdata/snapshots"))
+			WithOptions(cupaloy.SnapshotSubdirectory("./testdata/integration/snapshots"))
+
+	// Prefix for temporary files and directories created during ITs
+	tmpPrefix = version.Name + "_"
 
 	// Serial number to use in order to keep generated SBOMs reproducable
 	zeroUUID = uuid.MustParse("00000000-0000-0000-0000-000000000000")
@@ -24,24 +27,11 @@ var (
 
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
-func TestSimpleModuleIntegration(t *testing.T) {
+func TestIntegrationSimple(t *testing.T) {
 	skipIfShort(t)
 
-	// Create a temporary directory to store the module in
-	tmpDir, err := os.MkdirTemp("", "TestSimpleModuleIntegration_*")
-	require.NoError(t, err)
-	defer os.RemoveAll(tmpDir)
-
-	// Clone the module's repo to the temp dir
-	_, err = git.PlainClone(tmpDir, false, &git.CloneOptions{
-		URL:           "https://github.com/CycloneDX/cyclonedx-go.git",
-		ReferenceName: "refs/tags/v0.1.0",
-		SingleBranch:  true,
-	})
-	require.NoError(t, err)
-
 	// Create a temporary file to write the SBOM to
-	bomFile, err := os.CreateTemp("", "TestSimpleModuleIntegration_*.bom.xml")
+	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom.xml")
 	require.NoError(t, err)
 	defer os.Remove(bomFile.Name())
 	require.NoError(t, bomFile.Close())
@@ -49,7 +39,38 @@ func TestSimpleModuleIntegration(t *testing.T) {
 	// Generate the SBOM
 	err = executeCommand(Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      tmpDir,
+		ModulePath:      "./testdata/integration/simple",
+		OutputPath:      bomFile.Name(),
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
+	require.NoError(t, err)
+
+	// Sanity check: Make sure the SBOM is valid
+	assertValidSBOM(t, bomFile.Name())
+
+	// Read SBOM and compare with snapshot
+	bomFileContent, err := os.ReadFile(bomFile.Name())
+	require.NoError(t, err)
+	itSnapshotter.SnapshotT(t, string(bomFileContent))
+}
+
+// Integration test with a "simple" module with only a few dependencies,
+// no replacements and no vendoring.
+func TestIntegrationVendored(t *testing.T) {
+	skipIfShort(t)
+
+	// Create a temporary file to write the SBOM to
+	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom.xml")
+	require.NoError(t, err)
+	defer os.Remove(bomFile.Name())
+	require.NoError(t, bomFile.Close())
+
+	// Generate the SBOM
+	err = executeCommand(Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		ModulePath:      "./testdata/integration/vendored",
 		OutputPath:      bomFile.Name(),
 		ResolveLicenses: true,
 		Reproducible:    true,
