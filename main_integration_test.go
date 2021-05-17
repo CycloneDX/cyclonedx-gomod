@@ -21,7 +21,7 @@ var (
 	// Prefix for temporary files and directories created during ITs
 	tmpPrefix = version.Name + "_"
 
-	// Serial number to use in order to keep generated SBOMs reproducable
+	// Serial number to use in order to keep generated SBOMs reproducible
 	zeroUUID = uuid.MustParse("00000000-0000-0000-0000-000000000000")
 )
 
