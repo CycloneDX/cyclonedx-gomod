@@ -26,5 +26,3 @@ jobs:
         run: make build
       - name: Test
         run: make test
-      - name: Generate BOM
-        run: make bom
