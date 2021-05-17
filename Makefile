@@ -2,6 +2,10 @@ build:
 	go build -v
 .PHONY: build
 
+unit-test:
+	go test -v -short -cover ./...
+.PHONY: unit-test
+
 test:
 	go test -v -cover ./...
 .PHONY: test

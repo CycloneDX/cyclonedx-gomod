@@ -1,0 +1,82 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"testing"
+
+	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/bradleyjkemp/cupaloy/v2"
+	"github.com/go-git/go-git/v5"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+var (
+	itSnapshotter = cupaloy.NewDefaultConfig().
+			WithOptions(cupaloy.SnapshotSubdirectory("./testdata/snapshots"))
+
+	// Serial number to use in order to keep generated SBOMs reproducable
+	zeroUUID = uuid.MustParse("00000000-0000-0000-0000-000000000000")
+)
+
+// Integration test with a "simple" module with only a few dependencies,
+// no replacements and no vendoring.
+func TestSimpleModuleIntegration(t *testing.T) {
+	skipIfShort(t)
+
+	// Create a temporary directory to store the module in
+	tmpDir, err := os.MkdirTemp("", "TestSimpleModuleIntegration_*")
+	require.NoError(t, err)
+	defer os.RemoveAll(tmpDir)
+
+	// Clone the module's repo to the temp dir
+	_, err = git.PlainClone(tmpDir, false, &git.CloneOptions{
+		URL:           "https://github.com/CycloneDX/cyclonedx-go.git",
+		ReferenceName: "refs/tags/v0.1.0",
+		SingleBranch:  true,
+	})
+	require.NoError(t, err)
+
+	// Create a temporary file to write the SBOM to
+	bomFile, err := os.CreateTemp("", "TestSimpleModuleIntegration_*.bom.xml")
+	require.NoError(t, err)
+	defer os.Remove(bomFile.Name())
+	require.NoError(t, bomFile.Close())
+
+	// Generate the SBOM
+	err = executeCommand(Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		ModulePath:      tmpDir,
+		OutputPath:      bomFile.Name(),
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
+	require.NoError(t, err)
+
+	// Sanity check: Make sure the SBOM is valid
+	assertValidSBOM(t, bomFile.Name())
+
+	// Read SBOM and compare with snapshot
+	bomFileContent, err := os.ReadFile(bomFile.Name())
+	require.NoError(t, err)
+	itSnapshotter.SnapshotT(t, string(bomFileContent))
+}
+
+func skipIfShort(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+}
+
+func assertValidSBOM(t *testing.T, bomFilePath string) {
+	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFilePath, "--fail-on-errors")
+	valOut, err := valCmd.CombinedOutput()
+	if !assert.NoError(t, err) {
+		// Provide some context when test is failing
+		fmt.Printf("validation error: %s\n", string(valOut))
+	}
+}
