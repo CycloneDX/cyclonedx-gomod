@@ -60,6 +60,7 @@ type Module struct {
 	Version string
 
 	Dependencies []*Module `json:"-"`
+	Local        bool      `json:"-"`
 	Vendored     bool      `json:"-"`
 }
 
@@ -142,11 +143,21 @@ func GetModules(path string) ([]Module, error) {
 	// Replacements may point to local directories, in which case their .Path is
 	// not the actual module's name, but the filepath as used in go.mod.
 	for i := range modules {
-		if modules[i].Replace == nil || !util.IsGoModule(modules[i].Replace.Path) {
+		if modules[i].Replace == nil {
 			continue
 		}
 
-		if err = resolveLocalModule(path, modules[i].Replace); err != nil {
+		localModulePath := ""
+		if filepath.IsAbs(modules[i].Replace.Path) {
+			localModulePath = modules[i].Replace.Path
+		} else {
+			localModulePath = filepath.Join(path, modules[i].Replace.Path)
+		}
+		if !util.IsGoModule(localModulePath) {
+			continue
+		}
+
+		if err = resolveLocalModule(localModulePath, modules[i].Replace); err != nil {
 			return nil, fmt.Errorf("resolving local module %s failed: %w", modules[i].Replace.Coordinates(), err)
 		}
 	}
@@ -284,24 +295,16 @@ func findModule(modules []Module, coordinates string) *Module {
 	return nil
 }
 
-func resolveLocalModule(mainModulePath string, module *Module) error {
+func resolveLocalModule(localModulePath string, module *Module) error {
 	if util.IsGoModule(module.Dir) && strings.HasPrefix(module.Dir, util.GetModuleCacheDir()) {
 		// Module is in module cache
 		return nil
-	}
-
-	modulePath := ""
-	if filepath.IsAbs(module.Path) {
-		modulePath = module.Path
-	} else {
-		modulePath = filepath.Join(mainModulePath, module.Path)
-	}
-	if !util.IsGoModule(modulePath) {
+	} else if !util.IsGoModule(localModulePath) {
 		return ErrNoGoModule
 	}
 
 	buf := new(bytes.Buffer)
-	if err := gocmd.GetModule(modulePath, buf); err != nil {
+	if err := gocmd.GetModule(localModulePath, buf); err != nil {
 		return err
 	}
 	localModule := new(Module)
@@ -310,6 +313,7 @@ func resolveLocalModule(mainModulePath string, module *Module) error {
 	}
 
 	module.Path = localModule.Path
+	module.Local = true
 
 	// Try to resolve the version. Only works when module.Dir is a Git repo.
 	if module.Version == "" {

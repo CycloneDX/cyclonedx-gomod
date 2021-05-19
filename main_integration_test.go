@@ -56,6 +56,36 @@ func TestIntegrationSimple(t *testing.T) {
 	itSnapshotter.SnapshotT(t, string(bomFileContent))
 }
 
+// Integration test with a module that uses replacement with a local module.
+func TestIntegrationLocal(t *testing.T) {
+	skipIfShort(t)
+
+	// Create a temporary file to write the SBOM to
+	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom.xml")
+	require.NoError(t, err)
+	defer os.Remove(bomFile.Name())
+	require.NoError(t, bomFile.Close())
+
+	// Generate the SBOM
+	err = executeCommand(Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		ModulePath:      "./testdata/integration/local",
+		OutputPath:      bomFile.Name(),
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
+	require.NoError(t, err)
+
+	// Sanity check: Make sure the SBOM is valid
+	assertValidSBOM(t, bomFile.Name())
+
+	// Read SBOM and compare with snapshot
+	bomFileContent, err := os.ReadFile(bomFile.Name())
+	require.NoError(t, err)
+	itSnapshotter.SnapshotT(t, string(bomFileContent))
+}
+
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
 func TestIntegrationVendored(t *testing.T) {
