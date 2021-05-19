@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -124,7 +125,11 @@ func skipIfShort(t *testing.T) {
 }
 
 func assertValidSBOM(t *testing.T, bomFilePath string) {
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFilePath, "--fail-on-errors")
+	inputFormat := "xml_v1_2"
+	if strings.HasSuffix(bomFilePath, ".json") {
+		inputFormat = "json_v1_2"
+	}
+	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFilePath, "--input-format", inputFormat, "--fail-on-errors")
 	valOut, err := valCmd.CombinedOutput()
 	if !assert.NoError(t, err) {
 		// Provide some context when test is failing
