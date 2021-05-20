@@ -145,9 +145,13 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 		*bom.Dependencies = append(*bom.Dependencies, stdDependency)
 
 		// Add std as dependency of main module
-		for _, dependency := range *bom.Dependencies {
+		for i, dependency := range *bom.Dependencies {
 			if dependency.Ref == mainComponent.BOMRef {
-				*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
+				if dependency.Dependencies == nil {
+					(*bom.Dependencies)[i].Dependencies = &[]cdx.Dependency{stdDependency}
+				} else {
+					*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
+				}
 				break
 			}
 		}
