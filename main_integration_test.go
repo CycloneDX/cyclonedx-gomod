@@ -29,115 +29,79 @@ var (
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
 func TestIntegrationSimple(t *testing.T) {
-	skipIfShort(t)
-
-	// Create a temporary file to write the SBOM to
-	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom.xml")
-	require.NoError(t, err)
-	defer os.Remove(bomFile.Name())
-	require.NoError(t, bomFile.Close())
-
-	// Generate the SBOM
-	err = executeCommand(Options{
+	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
 		ModulePath:      "./testdata/integration/simple",
-		OutputPath:      bomFile.Name(),
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
 	})
-	require.NoError(t, err)
-
-	// Sanity check: Make sure the SBOM is valid
-	assertValidSBOM(t, bomFile.Name())
-
-	// Read SBOM and compare with snapshot
-	bomFileContent, err := os.ReadFile(bomFile.Name())
-	require.NoError(t, err)
-	itSnapshotter.SnapshotT(t, string(bomFileContent))
 }
 
 // Integration test with a module that uses replacement with a local module.
 func TestIntegrationLocal(t *testing.T) {
-	skipIfShort(t)
-
-	// Create a temporary file to write the SBOM to
-	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom.xml")
-	require.NoError(t, err)
-	defer os.Remove(bomFile.Name())
-	require.NoError(t, bomFile.Close())
-
-	// Generate the SBOM
-	err = executeCommand(Options{
+	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
 		ModulePath:      "./testdata/integration/local",
-		OutputPath:      bomFile.Name(),
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
 	})
-	require.NoError(t, err)
-
-	// Sanity check: Make sure the SBOM is valid
-	assertValidSBOM(t, bomFile.Name())
-
-	// Read SBOM and compare with snapshot
-	bomFileContent, err := os.ReadFile(bomFile.Name())
-	require.NoError(t, err)
-	itSnapshotter.SnapshotT(t, string(bomFileContent))
 }
 
 // Integration test with a module that doesn't have any dependencies.
 func TestIntegrationNoDependencies(t *testing.T) {
-	skipIfShort(t)
-
-	// Create a temporary file to write the SBOM to
-	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom.xml")
-	require.NoError(t, err)
-	defer os.Remove(bomFile.Name())
-	require.NoError(t, bomFile.Close())
-
-	// Generate the SBOM
-	err = executeCommand(Options{
+	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		IncludeStd:      true,
 		ModulePath:      "./testdata/integration/no-dependencies",
-		OutputPath:      bomFile.Name(),
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
 	})
-	require.NoError(t, err)
+}
 
-	// Sanity check: Make sure the SBOM is valid
-	assertValidSBOM(t, bomFile.Name())
-
-	// Read SBOM and compare with snapshot
-	bomFileContent, err := os.ReadFile(bomFile.Name())
-	require.NoError(t, err)
-	itSnapshotter.SnapshotT(t, string(bomFileContent))
+// Integration test with a module that doesn't have any module dependencies,
+// but includes the Go standard library as component.
+func TestIntegrationNoDependenciesWithStd(t *testing.T) {
+	runSnapshotIT(t, Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		IncludeStd:      true,
+		ModulePath:      "./testdata/integration/no-dependencies",
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
 }
 
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
 func TestIntegrationVendored(t *testing.T) {
+	runSnapshotIT(t, Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		ModulePath:      "./testdata/integration/vendored",
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
+}
+
+func runSnapshotIT(t *testing.T, options Options) {
 	skipIfShort(t)
 
+	bomFileExtension := ".xml"
+	if options.UseJSON {
+		bomFileExtension = ".json"
+	}
+
 	// Create a temporary file to write the SBOM to
-	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom.xml")
+	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom"+bomFileExtension)
 	require.NoError(t, err)
 	defer os.Remove(bomFile.Name())
 	require.NoError(t, bomFile.Close())
 
 	// Generate the SBOM
-	err = executeCommand(Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/vendored",
-		OutputPath:      bomFile.Name(),
-		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
-	})
+	options.OutputPath = bomFile.Name()
+	err = executeCommand(options)
 	require.NoError(t, err)
 
 	// Sanity check: Make sure the SBOM is valid
