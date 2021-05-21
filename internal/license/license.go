@@ -15,9 +15,14 @@ import (
 var (
 	ErrModuleNotFound  = errors.New("module not found")
 	ErrLicenseNotFound = errors.New("no license found")
+	ErrLocalModule     = errors.New("license resolution isn't supported for local modules")
 )
 
 func Resolve(module gomod.Module) ([]cdx.License, error) {
+	if module.Local {
+		return nil, ErrLocalModule
+	}
+
 	licenses, err := resolveForCoordinates(module.Coordinates())
 	if err != nil {
 		// The specific version of the module may not be present

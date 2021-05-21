@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:00000000-0000-0000-0000-000000000000" version="1">
+  <metadata>
+    <component bom-ref="pkg:golang/testmod-nodeps" type="library">
+      <name>testmod-nodeps</name>
+      <version></version>
+      <purl>pkg:golang/testmod-nodeps</purl>
+    </component>
+  </metadata>
+  <components></components>
+  <dependencies>
+    <dependency ref="pkg:golang/testmod-nodeps"></dependency>
+  </dependencies>
+</bom>

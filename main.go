@@ -23,6 +23,7 @@ type Options struct {
 	NoVersionPrefix  bool
 	OutputPath       string
 	ResolveLicenses  bool
+	Reproducible     bool
 	SerialNumber     *uuid.UUID
 	SerialNumberStr  string
 	ShowVersion      bool
@@ -39,6 +40,7 @@ func main() {
 	flag.BoolVar(&options.NoVersionPrefix, "novprefix", false, "Omit \"v\" version prefix")
 	flag.StringVar(&options.OutputPath, "output", "-", "Output path")
 	flag.BoolVar(&options.ResolveLicenses, "licenses", false, "Resolve module licenses")
+	flag.BoolVar(&options.Reproducible, "reproducible", false, "Make the SBOM reproducible by omitting dynamic content")
 	flag.StringVar(&options.SerialNumberStr, "serial", "", "Serial number (default [random UUID])")
 	flag.BoolVar(&options.ShowVersion, "version", false, "Show version")
 	flag.BoolVar(&options.UseJSON, "json", false, "Output in JSON format")
@@ -102,6 +104,7 @@ func executeCommand(options Options) error {
 		IncludeStdLib:   options.IncludeStd,
 		NoSerialNumber:  options.NoSerialNumber,
 		NoVersionPrefix: options.NoVersionPrefix,
+		Reproducible:    options.Reproducible,
 		ResolveLicenses: options.ResolveLicenses,
 		SerialNumber:    options.SerialNumber,
 	})

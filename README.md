@@ -51,6 +51,8 @@ Usage of cyclonedx-gomod:
         Omit "v" version prefix
   -output string
         Output path (default "-")
+  -reproducible
+        Make the SBOM reproducible by omitting dynamic content
   -serial string
         Serial number (default [random UUID])
   -std
