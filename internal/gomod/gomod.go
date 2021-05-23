@@ -250,6 +250,11 @@ func parseVendoredModules(path string, reader io.Reader) ([]Module, error) {
 	return modules, nil
 }
 
+// parseModuleGraph parses the output of `go mod graph` and populates
+// the .Dependencies field of a given Module slice.
+//
+// The Module slice is expected to contain only "effective" modules,
+// with only a single version per module, as provided by `go list -m` or `go list -deps`.
 func parseModuleGraph(reader io.Reader, modules []Module) error {
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
@@ -263,13 +268,20 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 			return fmt.Errorf("expected two fields per line, but got %d: %s", len(fields), line)
 		}
 
-		dependant := findModule(modules, fields[0])
+		// The module graph contains dependency relationships for multiple versions of a module.
+		// When identifying the ACTUAL dependant, we search for it in strict mode (versions must match).
+		dependant := findModule(modules, fields[0], true)
 		if dependant == nil {
+			// TODO: log this in DEBUG level once we use a more sophisticated logger
 			continue
 		}
 
-		dependency := findModule(modules, fields[1])
+		// The identified module may depend on an older version of its dependency.
+		// Due to Go's minimal version selection, that version may not be present in
+		// the effective modules slice. Hence, we search for the dependency in non-strict mode.
+		dependency := findModule(modules, fields[1], false)
 		if dependency == nil {
+			// TODO: log this in DEBUG level once we use a more sophisticated logger
 			continue
 		}
 
@@ -283,9 +295,9 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 	return nil
 }
 
-func findModule(modules []Module, coordinates string) *Module {
+func findModule(modules []Module, coordinates string, strict bool) *Module {
 	for i := range modules {
-		if coordinates == modules[i].Coordinates() {
+		if coordinates == modules[i].Coordinates() || (!strict && strings.HasPrefix(coordinates, modules[i].Path+"@")) {
 			if modules[i].Replace != nil {
 				return modules[i].Replace
 			}

@@ -1,31 +1,31 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:f6da311b-d3cf-4356-85f9-e0cc22d03a3d",
+  "serialNumber": "urn:uuid:26dbc58d-2eff-4f09-8e97-57e908b1b994",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-05-16T17:14:46+02:00",
+    "timestamp": "2021-05-23T13:30:27+02:00",
     "tools": [
       {
         "vendor": "CycloneDX",
         "name": "cyclonedx-gomod",
-        "version": "v0.6.1",
+        "version": "v0.0.0-unset",
         "hashes": [
           {
             "alg": "MD5",
-            "content": "a92d9f6145a94c2c7ad8489d84301eb9"
+            "content": "142fff9077215945fd73923a45a56b73"
           },
           {
             "alg": "SHA-1",
-            "content": "a5af6c5ef3f21bf5425c680b64acf57cc6a90c69"
+            "content": "73517933740ecc1913e7c13ca7242fa2b0b07f8d"
           },
           {
             "alg": "SHA-256",
-            "content": "dc215a651772356eca763d6fe77169379c1cc25c2bb89c7d6df2e2170c3972ab"
+            "content": "44f141fa701492b9496a93fcde026edb9724681ec6f578b4b816376c24c010ce"
           },
           {
             "alg": "SHA-512",
-            "content": "387953ab509c31bf352693de9df617650c87494e607119bc284b91ba9a0a2d284a2e96946c272dc284c4370875412eea855bc30351faedd099dbdbed209e4636"
+            "content": "4f6b0e653fd44d245e17f28c1eb390e1c5e6604042d23e438f568e698ea63788252d435fc4efbf532d1829698a08013e92875c916acb5ec982e7bf0c2cbe0d4a"
           }
         ]
       }
@@ -254,7 +254,8 @@
       "dependsOn": [
         "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
         "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
-        "pkg:golang/github.com/stretchr/objx@v0.1.1"
+        "pkg:golang/github.com/stretchr/objx@v0.1.1",
+        "pkg:golang/github.com/stretchr/testify@v1.7.0"
       ]
     },
     {
@@ -269,7 +270,9 @@
     {
       "ref": "pkg:golang/github.com/stretchr/testify@v1.7.0",
       "dependsOn": [
+        "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
         "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
+        "pkg:golang/github.com/stretchr/objx@v0.1.1",
         "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"
       ]
     },
