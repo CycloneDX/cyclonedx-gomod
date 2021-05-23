@@ -58,8 +58,14 @@ func ListVendoredModules(modulePath string, writer io.Writer) error {
 
 // ListPackageDependencies executed `go list -deps -json` and writes the output to a given writer.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
-func ListPackageDependencies(modulePath, packagePath string, writer io.Writer) error {
-	cmd := exec.Command("go", "list", "-deps", "-json", filepath.Join(modulePath, packagePath))
+func ListPackageDependencies(modulePath, packagePath string, test bool, writer io.Writer) error {
+	args := []string{"list", "-mod", "readonly", "-deps", "-json"}
+	if test {
+		args = append(args, "-test")
+	}
+	args = append(args, filepath.Join(modulePath, packagePath))
+
+	cmd := exec.Command("go", args...)
 	cmd.Dir = modulePath
 	cmd.Stdout = writer
 	return cmd.Run()

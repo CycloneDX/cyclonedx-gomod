@@ -25,6 +25,7 @@ import (
 type GenerateOptions struct {
 	ComponentType   cdx.ComponentType
 	IncludeStdLib   bool
+	IncludeTest     bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
 	PackagePath     string
@@ -35,7 +36,7 @@ type GenerateOptions struct {
 
 func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	log.Println("enumerating modules")
-	modules, err := gomod.GetModules(modulePath, options.PackagePath)
+	modules, err := gomod.GetModules(modulePath, options.PackagePath, options.IncludeTest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enumerate modules: %w", err)
 	}

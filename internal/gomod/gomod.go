@@ -53,15 +53,15 @@ func init() {
 
 // See https://golang.org/ref/mod#go-list-m
 type Module struct {
-	Dir     string
-	Main    bool
-	Path    string
-	Replace *Module
-	Version string
+	Path    string  // module path
+	Version string  // module path
+	Replace *Module // replaced by this module
+	Main    bool    // is this the main module?
+	Dir     string  // directory holding files for this module, if any
 
-	Dependencies []*Module `json:"-"`
-	Local        bool      `json:"-"`
-	Vendored     bool      `json:"-"`
+	Dependencies []*Module `json:"-"` // dependencies of this module
+	Local        bool      `json:"-"` // is this a local module?
+	Vendored     bool      `json:"-"` // is this a vendored module?
 }
 
 func (m Module) Coordinates() string {
@@ -94,8 +94,8 @@ func (m Module) PackageURL() string {
 	return "pkg:golang/" + m.Coordinates()
 }
 
-func GetModules(path, pkgPath string) ([]Module, error) {
-	if !util.IsGoModule(path) {
+func GetModules(modulePath, pkgPath string, test bool) ([]Module, error) {
+	if !util.IsGoModule(modulePath) {
 		return nil, ErrNoGoModule
 	}
 
@@ -107,9 +107,9 @@ func GetModules(path, pkgPath string) ([]Module, error) {
 	// we'll (re-)use this buffer to write its output to.
 	buf := new(bytes.Buffer)
 
-	if !util.IsVendoring(path) {
-		if err = gocmd.ListPackageDependencies(path, pkgPath, buf); err != nil {
-			return nil, fmt.Errorf("listing modules failed: %w", err)
+	if !util.IsVendoring(modulePath) {
+		if err = gocmd.ListPackageDependencies(modulePath, pkgPath, test, buf); err != nil {
+			return nil, fmt.Errorf("listing packages failed: %w", err)
 		}
 
 		pkgs, err := parsePackages(buf)
@@ -139,11 +139,11 @@ func GetModules(path, pkgPath string) ([]Module, error) {
 			modules = append(modules, uniqModules[coordinates])
 		}
 	} else { // TODO: Is this still necessary if `go list -deps` works for vendored modules as well?
-		if err = gocmd.ListVendoredModules(path, buf); err != nil {
+		if err = gocmd.ListVendoredModules(modulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
 		}
 
-		modules, err = parseVendoredModules(path, buf)
+		modules, err = parseVendoredModules(modulePath, buf)
 		if err != nil {
 			return nil, fmt.Errorf("parsing vendored modules failed: %w", err)
 		}
@@ -151,7 +151,7 @@ func GetModules(path, pkgPath string) ([]Module, error) {
 		// Main module is not included in vendored module list, so we have
 		// to get it separately and prepend it to the module slice
 		buf.Reset()
-		if err = gocmd.GetModule(path, buf); err != nil {
+		if err = gocmd.GetModule(modulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing main module failed: %w", err)
 		}
 
@@ -178,7 +178,7 @@ func GetModules(path, pkgPath string) ([]Module, error) {
 		if filepath.IsAbs(modules[i].Replace.Path) {
 			localModulePath = modules[i].Replace.Path
 		} else {
-			localModulePath = filepath.Join(path, modules[i].Replace.Path)
+			localModulePath = filepath.Join(modulePath, modules[i].Replace.Path)
 		}
 		if !util.IsGoModule(localModulePath) {
 			continue
@@ -190,7 +190,7 @@ func GetModules(path, pkgPath string) ([]Module, error) {
 	}
 
 	buf.Reset()
-	if err = gocmd.GetModuleGraph(path, buf); err != nil {
+	if err = gocmd.GetModuleGraph(modulePath, buf); err != nil {
 		return nil, fmt.Errorf("listing module graph failed: %w", err)
 	}
 
@@ -295,7 +295,7 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 			return fmt.Errorf("expected two fields per line, but got %d: %s", len(fields), line)
 		}
 
-		// The module graph contains dependency relationships for multiple versions of a module.
+		// The module graph potentially contains dependency relationships for multiple versions of a module.
 		// When identifying the ACTUAL dependant, we search for it in strict mode (versions must match).
 		dependant := findModule(modules, fields[0], true)
 		if dependant == nil {
@@ -305,7 +305,8 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 
 		// The identified module may depend on an older version of its dependency.
 		// Due to Go's minimal version selection, that version may not be present in
-		// the effective modules slice. Hence, we search for the dependency in non-strict mode.
+		// the effective modules slice.
+		// Hence, we search for the dependency in non-strict mode (version doesn't matter).
 		dependency := findModule(modules, fields[1], false)
 		if dependency == nil {
 			// TODO: log this in DEBUG level once we use a more sophisticated logger

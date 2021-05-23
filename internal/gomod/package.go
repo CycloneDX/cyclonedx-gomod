@@ -15,7 +15,7 @@ type Package struct {
 	Module     *Module // info about package's containing module, if any (can be nil)
 }
 
-// parsePackages parses the output of `go list [-deps] -json` into a Package slice.
+// parsePackages parses the output of `go list -json` into a Package slice.
 func parsePackages(reader io.Reader) ([]Package, error) {
 	packages := make([]Package, 0)
 	jsonDecoder := json.NewDecoder(reader)
