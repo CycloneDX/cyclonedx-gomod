@@ -94,11 +94,12 @@ func (m Module) PackageURL() string {
 	return "pkg:golang/" + m.Coordinates()
 }
 
-func GetModules(path string) ([]Module, error) {
+func GetModules(path, pkgPath string) ([]Module, error) {
 	if !util.IsGoModule(path) {
 		return nil, ErrNoGoModule
 	}
 
+	var mainModule *Module
 	var modules []Module
 	var err error
 
@@ -107,15 +108,37 @@ func GetModules(path string) ([]Module, error) {
 	buf := new(bytes.Buffer)
 
 	if !util.IsVendoring(path) {
-		if err = gocmd.ListModules(path, buf); err != nil {
+		if err = gocmd.ListPackageDependencies(path, pkgPath, buf); err != nil {
 			return nil, fmt.Errorf("listing modules failed: %w", err)
 		}
 
-		modules, err = parseModules(buf)
+		pkgs, err := parsePackages(buf)
 		if err != nil {
-			return nil, fmt.Errorf("parsing modules failed: %w", err)
+			return nil, fmt.Errorf("parsing packages failed: %w", err)
 		}
-	} else {
+
+		uniqModules := make(map[string]Module)
+		for i := range pkgs {
+			if pkgs[i].Module == nil || pkgs[i].Standard {
+				continue
+			}
+
+			if pkgs[i].Module.Main {
+				if mainModule == nil {
+					mainModule = pkgs[i].Module
+				}
+				continue
+			}
+
+			if _, ok := uniqModules[pkgs[i].Module.Coordinates()]; !ok {
+				uniqModules[pkgs[i].Module.Coordinates()] = *pkgs[i].Module
+			}
+		}
+
+		for coordinates := range uniqModules {
+			modules = append(modules, uniqModules[coordinates])
+		}
+	} else { // TODO: Is this still necessary if `go list -deps` works for vendored modules as well?
 		if err = gocmd.ListVendoredModules(path, buf); err != nil {
 			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
 		}
@@ -132,13 +155,17 @@ func GetModules(path string) ([]Module, error) {
 			return nil, fmt.Errorf("listing main module failed: %w", err)
 		}
 
-		var mainModule Module
-		if err = json.NewDecoder(buf).Decode(&mainModule); err != nil {
+		if err = json.NewDecoder(buf).Decode(mainModule); err != nil {
 			return nil, fmt.Errorf("parsing main module failed: %w", err)
 		}
-
-		modules = append([]Module{mainModule}, modules...)
 	}
+
+	// TODO: sort modules so their order is deterministic?
+
+	if mainModule == nil {
+		return nil, fmt.Errorf("failed to identify main module")
+	}
+	modules = append([]Module{*mainModule}, modules...)
 
 	// Replacements may point to local directories, in which case their .Path is
 	// not the actual module's name, but the filepath as used in go.mod.

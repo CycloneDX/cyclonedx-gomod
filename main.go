@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
@@ -22,6 +23,7 @@ type Options struct {
 	NoSerialNumber   bool
 	NoVersionPrefix  bool
 	OutputPath       string
+	PackagePath      string
 	ResolveLicenses  bool
 	Reproducible     bool
 	SerialNumber     *uuid.UUID
@@ -39,6 +41,7 @@ func main() {
 	flag.BoolVar(&options.NoSerialNumber, "noserial", false, "Omit serial number")
 	flag.BoolVar(&options.NoVersionPrefix, "novprefix", false, "Omit \"v\" version prefix")
 	flag.StringVar(&options.OutputPath, "output", "-", "Output path")
+	flag.StringVar(&options.PackagePath, "package", "...", "Package path") // TODO: add better usage text
 	flag.BoolVar(&options.ResolveLicenses, "licenses", false, "Resolve module licenses")
 	flag.BoolVar(&options.Reproducible, "reproducible", false, "Make the SBOM reproducible by omitting dynamic content")
 	flag.StringVar(&options.SerialNumberStr, "serial", "", "Serial number (default [random UUID])")
@@ -94,6 +97,13 @@ func validateOptions(options *Options) error {
 		}
 	}
 
+	if options.ModulePath == "." {
+		abs, _ := filepath.Abs(options.ModulePath)
+		options.ModulePath = abs
+	}
+
+	// TODO: verify that PackagePath is either "all", "...", relative to ModulePath or an absolute path to a subdirectory of ModulePath
+
 	return nil
 }
 
@@ -104,6 +114,7 @@ func executeCommand(options Options) error {
 		IncludeStdLib:   options.IncludeStd,
 		NoSerialNumber:  options.NoSerialNumber,
 		NoVersionPrefix: options.NoVersionPrefix,
+		PackagePath:     options.PackagePath,
 		Reproducible:    options.Reproducible,
 		ResolveLicenses: options.ResolveLicenses,
 		SerialNumber:    options.SerialNumber,

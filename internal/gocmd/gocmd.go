@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -55,23 +56,20 @@ func ListVendoredModules(modulePath string, writer io.Writer) error {
 	return cmd.Run()
 }
 
+// ListPackageDependencies executed `go list -deps -json` and writes the output to a given writer.
+// See https://golang.org/cmd/go/#hdr-List_packages_or_modules
+func ListPackageDependencies(modulePath, packagePath string, writer io.Writer) error {
+	cmd := exec.Command("go", "list", "-deps", "-json", filepath.Join(modulePath, packagePath))
+	cmd.Dir = modulePath
+	cmd.Stdout = writer
+	return cmd.Run()
+}
+
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-graph
 func GetModuleGraph(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "mod", "graph")
 	cmd.Dir = modulePath
 	cmd.Stdout = writer
-	return cmd.Run()
-}
-
-func ModDownload(modulePath string) error {
-	cmd := exec.Command("go", "mod", "download")
-	cmd.Dir = modulePath
-	return cmd.Run()
-}
-
-func ModTidy(modulePath string) error {
-	cmd := exec.Command("go", "mod", "tidy")
-	cmd.Dir = modulePath
 	return cmd.Run()
 }

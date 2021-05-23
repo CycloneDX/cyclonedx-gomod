@@ -18,7 +18,6 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/google/uuid"
 )
@@ -28,26 +27,15 @@ type GenerateOptions struct {
 	IncludeStdLib   bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
+	PackagePath     string
 	Reproducible    bool
 	ResolveLicenses bool
 	SerialNumber    *uuid.UUID
 }
 
 func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
-	if !util.IsVendoring(modulePath) {
-		log.Println("downloading modules to cache")
-		if err := gocmd.ModDownload(modulePath); err != nil {
-			return nil, fmt.Errorf("failed to download modules: %w", err)
-		}
-
-		log.Println("tidying up go.mod and go.sum")
-		if err := gocmd.ModTidy(modulePath); err != nil {
-			return nil, fmt.Errorf("failed to tidy modules: %w", err)
-		}
-	}
-
 	log.Println("enumerating modules")
-	modules, err := gomod.GetModules(modulePath)
+	modules, err := gomod.GetModules(modulePath, options.PackagePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enumerate modules: %w", err)
 	}
@@ -79,6 +67,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 	mainComponent.Scope = "" // Main component can't have a scope
 	mainComponent.Type = options.ComponentType
+	// TODO: If options.PackagePath is not "...", it should be added to the PURL as qualifier or similar
 
 	component := new(cdx.Component)
 	components := make([]cdx.Component, len(modules))
