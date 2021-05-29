@@ -61,6 +61,7 @@ type Module struct {
 
 	Dependencies []*Module `json:"-"`
 	Local        bool      `json:"-"`
+	TestOnly     bool      `json:"-"`
 	Vendored     bool      `json:"-"`
 }
 
@@ -94,11 +95,12 @@ func (m Module) PackageURL() string {
 	return "pkg:golang/" + m.Coordinates()
 }
 
-func GetModules(path string) ([]Module, error) {
+func GetModules(path string, includeTest bool) ([]Module, error) {
 	if !util.IsGoModule(path) {
 		return nil, ErrNoGoModule
 	}
 
+	var mainModule *Module
 	var modules []Module
 	var err error
 
@@ -115,6 +117,9 @@ func GetModules(path string) ([]Module, error) {
 		if err != nil {
 			return nil, fmt.Errorf("parsing modules failed: %w", err)
 		}
+
+		mainModule = &modules[0]
+		modules = modules[1:]
 	} else {
 		if err = gocmd.ListVendoredModules(path, buf); err != nil {
 			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
@@ -132,13 +137,21 @@ func GetModules(path string) ([]Module, error) {
 			return nil, fmt.Errorf("listing main module failed: %w", err)
 		}
 
-		var mainModule Module
-		if err = json.NewDecoder(buf).Decode(&mainModule); err != nil {
+		mainModule = new(Module)
+		if err = json.NewDecoder(buf).Decode(mainModule); err != nil {
 			return nil, fmt.Errorf("parsing main module failed: %w", err)
 		}
-
-		modules = append([]Module{mainModule}, modules...)
 	}
+
+	modules, err = filterModules(path, modules, includeTest)
+	if err != nil {
+		return nil, fmt.Errorf("filtering modules failed: %w", err)
+	}
+
+	if mainModule == nil {
+		return nil, fmt.Errorf("failed to identify main module")
+	}
+	modules = append([]Module{*mainModule}, modules...)
 
 	// Replacements may point to local directories, in which case their .Path is
 	// not the actual module's name, but the filepath as used in go.mod.
@@ -295,6 +308,31 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 	return nil
 }
 
+// parseModWhy parses the output of `go mod why`,
+// populating a map with module paths as keys and a list of packages as values.
+func parseModWhy(reader io.Reader) map[string][]string {
+	modPkgs := make(map[string][]string)
+	currentModPath := ""
+
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "(main module does not need ") {
+			continue
+		}
+
+		if strings.HasPrefix(line, "#") {
+			currentModPath = strings.TrimSpace(strings.TrimPrefix(line, "#"))
+			modPkgs[currentModPath] = make([]string, 0)
+			continue
+		}
+
+		modPkgs[currentModPath] = append(modPkgs[currentModPath], line)
+	}
+
+	return modPkgs
+}
+
 func findModule(modules []Module, coordinates string, strict bool) *Module {
 	for i := range modules {
 		if coordinates == modules[i].Coordinates() || (!strict && strings.HasPrefix(coordinates, modules[i].Path+"@")) {
@@ -305,6 +343,63 @@ func findModule(modules []Module, coordinates string, strict bool) *Module {
 		}
 	}
 	return nil
+}
+
+// filterModules
+// Command length may be limited, with the actual limit depending on
+// the OS we're running on.
+//
+// The approach of calling the `go mod why` command in batches is taken
+// from Helcaraxan/gomod, see: https://github.com/Helcaraxan/gomod/blob/a406aedccfc9737d3aef1049d81c6977f5601fb0/internal/depgraph/deps_pkg.go#L112-L143
+func filterModules(modulePath string, modules []Module, includeTest bool) ([]Module, error) {
+	buf := new(bytes.Buffer)
+	batchSize := 20
+	modulesChecked := 0
+	filtered := make([]Module, 0)
+
+	for modulesChecked < len(modules) {
+		batch := modules[modulesChecked : modulesChecked+batchSize] // FIXME: Check boundaries
+		paths := make([]string, len(batch))
+		for i := range batch {
+			paths[i] = batch[i].Path
+		}
+
+		if err := gocmd.ModWhy(modulePath, paths, buf); err != nil {
+			return nil, err
+		}
+
+		for modPath, modPkgs := range parseModWhy(buf) {
+			if len(modPkgs) == 0 {
+				continue
+			}
+
+			// If the shortest package path contains test nodes, this is a test-only dependency.
+			// TODO: Verify that this is actually the case and hasn't just been coincidence until now.
+			testOnly := false
+			for _, pkg := range modPkgs {
+				if strings.HasSuffix(pkg, ".test") {
+					testOnly = true
+					break
+				}
+			}
+			if !includeTest && testOnly {
+				continue
+			}
+
+			for i := range batch {
+				if batch[i].Path == modPath {
+					mod := batch[i]
+					mod.TestOnly = testOnly
+					filtered = append(filtered, mod)
+				}
+			}
+		}
+
+		modulesChecked += len(batch)
+		buf.Reset()
+	}
+
+	return filtered, nil
 }
 
 func resolveLocalModule(localModulePath string, module *Module) error {

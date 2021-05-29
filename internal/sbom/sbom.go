@@ -7,6 +7,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"log"
 	"os"
@@ -18,14 +19,13 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
-	"github.com/google/uuid"
 )
 
 type GenerateOptions struct {
 	ComponentType   cdx.ComponentType
 	IncludeStdLib   bool
+	IncludeTest     bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
 	Reproducible    bool
@@ -34,20 +34,8 @@ type GenerateOptions struct {
 }
 
 func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
-	if !util.IsVendoring(modulePath) {
-		log.Println("downloading modules to cache")
-		if err := gocmd.ModDownload(modulePath); err != nil {
-			return nil, fmt.Errorf("failed to download modules: %w", err)
-		}
-
-		log.Println("tidying up go.mod and go.sum")
-		if err := gocmd.ModTidy(modulePath); err != nil {
-			return nil, fmt.Errorf("failed to tidy modules: %w", err)
-		}
-	}
-
 	log.Println("enumerating modules")
-	modules, err := gomod.GetModules(modulePath)
+	modules, err := gomod.GetModules(modulePath, options.IncludeTest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enumerate modules: %w", err)
 	}
@@ -172,8 +160,13 @@ func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Componen
 		Type:       cdx.ComponentTypeLibrary,
 		Name:       module.Path,
 		Version:    module.Version,
-		Scope:      cdx.ScopeRequired,
 		PackageURL: module.PackageURL(),
+	}
+
+	if module.TestOnly {
+		component.Scope = cdx.ScopeOptional
+	} else {
+		component.Scope = cdx.ScopeRequired
 	}
 
 	// We currently don't have an accurate way of hashing the main module, as it may contain

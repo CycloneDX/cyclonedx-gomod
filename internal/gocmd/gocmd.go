@@ -3,6 +3,7 @@ package gocmd
 import (
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -64,14 +65,15 @@ func GetModuleGraph(modulePath string, writer io.Writer) error {
 	return cmd.Run()
 }
 
-func ModDownload(modulePath string) error {
-	cmd := exec.Command("go", "mod", "download")
-	cmd.Dir = modulePath
-	return cmd.Run()
-}
+// ModWhy executes `go mod why -m -vendor` and writes the output to a given writer.
+// See https://golang.org/ref/mod#go-mod-why
+func ModWhy(modulePath string, modules []string, writer io.Writer) error {
+	args := []string{"mod", "why", "-m", "-vendor"}
+	args = append(args, modules...)
 
-func ModTidy(modulePath string) error {
-	cmd := exec.Command("go", "mod", "tidy")
+	cmd := exec.Command("go", args...)
 	cmd.Dir = modulePath
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = writer
 	return cmd.Run()
 }
