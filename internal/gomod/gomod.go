@@ -28,6 +28,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
@@ -164,6 +165,11 @@ func GetModules(path string, includeTest bool) ([]Module, error) {
 	if err != nil {
 		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
+
+	// Sort modules by path to have a deterministic order
+	sort.Slice(modules, func(i, j int) bool {
+		return modules[i].Path < modules[j].Path
+	})
 
 	if mainModule == nil {
 		return nil, fmt.Errorf("failed to identify main module")
@@ -362,20 +368,35 @@ func findModule(modules []Module, coordinates string, strict bool) *Module {
 	return nil
 }
 
-// filterModules
-// Command length may be limited, with the actual limit depending on
-// the OS we're running on.
+// filterModules queries `go mod why` with all provided modules to determine whether or not
+// they're required by the main module. Modules required by the main module are returned in
+// a new slice.
 //
-// The approach of calling the `go mod why` command in batches is taken
-// from Helcaraxan/gomod, see: https://github.com/Helcaraxan/gomod/blob/a406aedccfc9737d3aef1049d81c6977f5601fb0/internal/depgraph/deps_pkg.go#L112-L143
+// Unless includeTest is true, test-only dependencies are not included in the returned slice.
+// Test-only modules will have the TestOnly field set to true.
 func filterModules(modulePath string, modules []Module, includeTest bool) ([]Module, error) {
+	// Command length may be limited, with the actual limit depending on the OS we're running on.
+	//
+	// The approach of calling the command in batches to prevent hitting this limit is taken from Helcaraxan/gomod.
+	// See: https://github.com/Helcaraxan/gomod/blob/a406aedccfc9737d3aef1049d81c6977f5601fb0/internal/depgraph/deps_pkg.go#L112-L143
+
+	const maxBatchSize = 20
+
 	buf := new(bytes.Buffer)
-	batchSize := 20
 	modulesChecked := 0
 	filtered := make([]Module, 0)
 
 	for modulesChecked < len(modules) {
-		batch := modules[modulesChecked : modulesChecked+batchSize] // FIXME: Check boundaries
+		batchSize := 0
+		for {
+			if batchSize+1 > maxBatchSize || modulesChecked+batchSize+1 > len(modules) {
+				break
+			}
+			batchSize++
+		}
+
+		batch := modules[modulesChecked : modulesChecked+batchSize]
+
 		paths := make([]string, len(batch))
 		for i := range batch {
 			paths[i] = batch[i].Path
@@ -412,7 +433,7 @@ func filterModules(modulePath string, modules []Module, includeTest bool) ([]Mod
 			}
 		}
 
-		modulesChecked += len(batch)
+		modulesChecked += batchSize
 		buf.Reset()
 	}
 

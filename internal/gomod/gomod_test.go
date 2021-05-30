@@ -201,3 +201,25 @@ func TestParseVendoredModules(t *testing.T) {
 	assert.Equal(t, filepath.Join(cwd, "vendor", "github.com/CycloneDX/cyclonedx-go"), modules[4].Replace.Dir)
 	assert.True(t, modules[4].Replace.Vendored)
 }
+
+func TestParseModWhy(t *testing.T) {
+	modWhyOutput := `
+# github.com/stretchr/testify
+github.com/CycloneDX/cyclonedx-gomod
+github.com/CycloneDX/cyclonedx-gomod.test
+github.com/stretchr/testify/assert
+
+# github.com/CycloneDX/cyclonedx-go
+(main module does not need module github.com/CycloneDX/cyclonedx-go)
+
+# bazil.org/fuse
+(main module does not need to vendor module bazil.org/fuse)
+`
+
+	modulePkgs := parseModWhy(strings.NewReader(modWhyOutput))
+	require.Len(t, modulePkgs, 3)
+
+	assert.Len(t, modulePkgs["github.com/stretchr/testify"], 3)
+	assert.Len(t, modulePkgs["github.com/CycloneDX/cyclonedx-go"], 0)
+	assert.Len(t, modulePkgs["bazil.org/fuse"], 0)
+}
