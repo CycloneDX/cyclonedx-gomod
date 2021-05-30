@@ -47,7 +47,7 @@ var (
 	//
 	// See also:
 	//  - https://golang.org/ref/mod#private-module-privacy
-	//	- https://golang.org/ref/mod#environment-variables
+	//  - https://golang.org/ref/mod#environment-variables
 	PrivateModulePatterns []string
 )
 
@@ -78,9 +78,9 @@ type Module struct {
 	Version string
 
 	Dependencies []*Module `json:"-"`
-	Local        bool      `json:"-"`
-	TestOnly     bool      `json:"-"`
-	Vendored     bool      `json:"-"`
+	Local        bool      `json:"-"` // is this a local module?
+	TestOnly     bool      `json:"-"` // is this module only required for tests?
+	Vendored     bool      `json:"-"` // is this a vendored module?
 }
 
 func (m Module) Coordinates() string {
@@ -113,8 +113,8 @@ func (m Module) PackageURL() string {
 	return "pkg:golang/" + m.Coordinates()
 }
 
-func GetModules(path string, includeTest bool) ([]Module, error) {
-	if !util.IsGoModule(path) {
+func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
+	if !util.IsGoModule(mainModulePath) {
 		return nil, ErrNoGoModule
 	}
 
@@ -126,8 +126,8 @@ func GetModules(path string, includeTest bool) ([]Module, error) {
 	// we'll (re-)use this buffer to write its output to.
 	buf := new(bytes.Buffer)
 
-	if !util.IsVendoring(path) {
-		if err = gocmd.ListModules(path, buf); err != nil {
+	if !util.IsVendoring(mainModulePath) {
+		if err = gocmd.ListModules(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing modules failed: %w", err)
 		}
 
@@ -139,11 +139,11 @@ func GetModules(path string, includeTest bool) ([]Module, error) {
 		mainModule = &modules[0]
 		modules = modules[1:]
 	} else {
-		if err = gocmd.ListVendoredModules(path, buf); err != nil {
+		if err = gocmd.ListVendoredModules(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
 		}
 
-		modules, err = parseVendoredModules(path, buf)
+		modules, err = parseVendoredModules(mainModulePath, buf)
 		if err != nil {
 			return nil, fmt.Errorf("parsing vendored modules failed: %w", err)
 		}
@@ -151,7 +151,7 @@ func GetModules(path string, includeTest bool) ([]Module, error) {
 		// Main module is not included in vendored module list, so we have
 		// to get it separately and prepend it to the module slice
 		buf.Reset()
-		if err = gocmd.GetModule(path, buf); err != nil {
+		if err = gocmd.GetModule(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing main module failed: %w", err)
 		}
 
@@ -161,7 +161,7 @@ func GetModules(path string, includeTest bool) ([]Module, error) {
 		}
 	}
 
-	modules, err = filterModules(path, modules, includeTest)
+	modules, err = filterModules(mainModulePath, modules, includeTest)
 	if err != nil {
 		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
@@ -187,7 +187,7 @@ func GetModules(path string, includeTest bool) ([]Module, error) {
 		if filepath.IsAbs(modules[i].Replace.Path) {
 			localModulePath = modules[i].Replace.Path
 		} else {
-			localModulePath = filepath.Join(path, modules[i].Replace.Path)
+			localModulePath = filepath.Join(mainModulePath, modules[i].Replace.Path)
 		}
 		if !util.IsGoModule(localModulePath) {
 			continue
@@ -199,7 +199,7 @@ func GetModules(path string, includeTest bool) ([]Module, error) {
 	}
 
 	buf.Reset()
-	if err = gocmd.GetModuleGraph(path, buf); err != nil {
+	if err = gocmd.GetModuleGraph(mainModulePath, buf); err != nil {
 		return nil, fmt.Errorf("listing module graph failed: %w", err)
 	}
 
@@ -230,7 +230,7 @@ func parseModules(reader io.Reader) ([]Module, error) {
 }
 
 // parseVendoredModules parses the output of `go mod vendor -v` into a Module slice
-func parseVendoredModules(path string, reader io.Reader) ([]Module, error) {
+func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, error) {
 	modules := make([]Module, 0)
 
 	scanner := bufio.NewScanner(reader)
@@ -254,7 +254,7 @@ func parseVendoredModules(path string, reader io.Reader) ([]Module, error) {
 			modules = append(modules, Module{
 				Path:     fields[0],
 				Version:  fields[1],
-				Dir:      filepath.Join(path, "vendor", fields[0]),
+				Dir:      filepath.Join(mainModulePath, "vendor", fields[0]),
 				Vendored: true,
 			})
 		} else {
@@ -276,7 +276,7 @@ func parseVendoredModules(path string, reader io.Reader) ([]Module, error) {
 				Replace: &Module{
 					Path:     pathReplacement,
 					Version:  versionReplacement,
-					Dir:      filepath.Join(path, "vendor", pathParent), // Replacements are copied to their parents dir
+					Dir:      filepath.Join(mainModulePath, "vendor", pathParent), // Replacements are copied to their parents dir
 					Vendored: true,
 				},
 			})
@@ -374,18 +374,26 @@ func findModule(modules []Module, coordinates string, strict bool) *Module {
 //
 // Unless includeTest is true, test-only dependencies are not included in the returned slice.
 // Test-only modules will have the TestOnly field set to true.
-func filterModules(modulePath string, modules []Module, includeTest bool) ([]Module, error) {
+//
+// Note that this method doesn't work when replacements have already been applied to the module slice.
+// Consider a go.mod file containing the following lines:
+//
+// 		require golang.org/x/crypto v0.0.0-xxx-xxx
+//		replace golang.org/x/crypto => github.com/ProtonMail/go-crypto v0.0.0-xxx-xxx
+//
+// Querying `go mod why -m` with `golang.org/x/crypto` yields the expected result, querying it with
+// `github.com/ProtonMail/go-crypto` will always yield `(main module does not need github.com/ProtonMail/go-crypto)`.
+func filterModules(mainModulePath string, modules []Module, includeTest bool) ([]Module, error) {
 	// Command length may be limited, with the actual limit depending on the OS we're running on.
-	//
-	// The approach of calling the command in batches to prevent hitting this limit is taken from Helcaraxan/gomod.
+	// The approach of calling the command in batches to prevent hitting this limit is inspired by Helcaraxan/gomod.
 	// See: https://github.com/Helcaraxan/gomod/blob/a406aedccfc9737d3aef1049d81c6977f5601fb0/internal/depgraph/deps_pkg.go#L112-L143
 
-	const maxBatchSize = 20
+	const maxBatchSize = 20 // chosen more or less arbitrarily
 
 	buf := new(bytes.Buffer)
-	modulesChecked := 0
 	filtered := make([]Module, 0)
 
+	modulesChecked := 0
 	for modulesChecked < len(modules) {
 		batchSize := 0
 		for {
@@ -402,7 +410,7 @@ func filterModules(modulePath string, modules []Module, includeTest bool) ([]Mod
 			paths[i] = batch[i].Path
 		}
 
-		if err := gocmd.ModWhy(modulePath, paths, buf); err != nil {
+		if err := gocmd.ModWhy(mainModulePath, paths, buf); err != nil {
 			return nil, err
 		}
 
