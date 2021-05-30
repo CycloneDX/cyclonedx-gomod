@@ -13,7 +13,7 @@
       <version></version>
       <scope>required</scope>
       <hashes>
-        <hash alg="SHA-256">65009df47ee1a39691b02863775b1f95afb55d80acd57d5b871cfbc9cf951793</hash>
+        <hash alg="SHA-256">0fc77332094208335c4c70c9580b2a9c29ec4e7da87267a62e0dcfdc19608c85</hash>
       </hashes>
       <purl>pkg:golang/testmod-local-dependency</purl>
     </component>
