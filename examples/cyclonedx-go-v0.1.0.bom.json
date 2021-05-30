@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:26dbc58d-2eff-4f09-8e97-57e908b1b994",
+  "serialNumber": "urn:uuid:1d9cd7ad-60f1-438d-b8ba-c3ee1d45beab",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-05-23T13:30:27+02:00",
+    "timestamp": "2021-05-30T11:40:05+02:00",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -13,19 +13,19 @@
         "hashes": [
           {
             "alg": "MD5",
-            "content": "142fff9077215945fd73923a45a56b73"
+            "content": "d2ec25486f31405ad3d7ef7c7feb7a35"
           },
           {
             "alg": "SHA-1",
-            "content": "73517933740ecc1913e7c13ca7242fa2b0b07f8d"
+            "content": "cba109193f0c14bceb9b20b347bdded70819fc41"
           },
           {
             "alg": "SHA-256",
-            "content": "44f141fa701492b9496a93fcde026edb9724681ec6f578b4b816376c24c010ce"
+            "content": "735840bb0729432ccb18ad9e34d4a26dedae78ec89343e0abab0c453f4fca101"
           },
           {
             "alg": "SHA-512",
-            "content": "4f6b0e653fd44d245e17f28c1eb390e1c5e6604042d23e438f568e698ea63788252d435fc4efbf532d1829698a08013e92875c916acb5ec982e7bf0c2cbe0d4a"
+            "content": "4d7e05444abc8194a9ebed9ebdcc6eba3f83fc79e0302c179c9dc5a99512843b6cdd25a03c42c7f8c78d4ebb2adaa18b9191ff0cce14dc88dd9c38ca46499440"
           }
         ]
       }
@@ -50,7 +50,7 @@
       "type": "library",
       "name": "github.com/bradleyjkemp/cupaloy/v2",
       "version": "v2.6.0",
-      "scope": "required",
+      "scope": "optional",
       "hashes": [
         {
           "alg": "SHA-256",
@@ -78,7 +78,7 @@
       "type": "library",
       "name": "github.com/davecgh/go-spew",
       "version": "v1.1.1",
-      "scope": "required",
+      "scope": "optional",
       "hashes": [
         {
           "alg": "SHA-256",
@@ -106,7 +106,7 @@
       "type": "library",
       "name": "github.com/pmezard/go-difflib",
       "version": "v1.0.0",
-      "scope": "required",
+      "scope": "optional",
       "hashes": [
         {
           "alg": "SHA-256",
@@ -130,39 +130,11 @@
       ]
     },
     {
-      "bom-ref": "pkg:golang/github.com/stretchr/objx@v0.1.1",
-      "type": "library",
-      "name": "github.com/stretchr/objx",
-      "version": "v0.1.1",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "daf7d1b82329e6c4952034aa3bca0d9d626aee63dae8a54fde23c8c0506ecbc0"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT",
-            "url": "https://spdx.org/licenses/MIT.html"
-          }
-        }
-      ],
-      "purl": "pkg:golang/github.com/stretchr/objx@v0.1.1",
-      "externalReferences": [
-        {
-          "url": "https://github.com/stretchr/objx",
-          "type": "vcs"
-        }
-      ]
-    },
-    {
       "bom-ref": "pkg:golang/github.com/stretchr/testify@v1.7.0",
       "type": "library",
       "name": "github.com/stretchr/testify",
       "version": "v1.7.0",
-      "scope": "required",
+      "scope": "optional",
       "hashes": [
         {
           "alg": "SHA-256",
@@ -186,39 +158,11 @@
       ]
     },
     {
-      "bom-ref": "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405",
-      "type": "library",
-      "name": "gopkg.in/check.v1",
-      "version": "v0.0.0-20161208181325-20d25e280405",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "ca10958320b8a3579509adad665ede4b4afe483a3af776c9955765946b4478a3"
-        }
-      ],
-      "licenses": [
-        {
-          "license": {
-            "id": "BSD-2-Clause",
-            "url": "https://spdx.org/licenses/BSD-2-Clause.html"
-          }
-        }
-      ],
-      "purl": "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405",
-      "externalReferences": [
-        {
-          "url": "https://github.com/go-check/check",
-          "type": "vcs"
-        }
-      ]
-    },
-    {
       "bom-ref": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
       "type": "library",
       "name": "gopkg.in/yaml.v3",
       "version": "v3.0.0-20200313102051-9f266ea9e77c",
-      "scope": "required",
+      "scope": "optional",
       "hashes": [
         {
           "alg": "SHA-256",
@@ -254,7 +198,6 @@
       "dependsOn": [
         "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
         "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
-        "pkg:golang/github.com/stretchr/objx@v0.1.1",
         "pkg:golang/github.com/stretchr/testify@v1.7.0"
       ]
     },
@@ -265,25 +208,15 @@
       "ref": "pkg:golang/github.com/pmezard/go-difflib@v1.0.0"
     },
     {
-      "ref": "pkg:golang/github.com/stretchr/objx@v0.1.1"
-    },
-    {
       "ref": "pkg:golang/github.com/stretchr/testify@v1.7.0",
       "dependsOn": [
         "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
         "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
-        "pkg:golang/github.com/stretchr/objx@v0.1.1",
         "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"
       ]
     },
     {
-      "ref": "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405"
-    },
-    {
-      "ref": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
-      "dependsOn": [
-        "pkg:golang/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405"
-      ]
+      "ref": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"
     },
     {
       "ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
