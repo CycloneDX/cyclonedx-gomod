@@ -19,12 +19,12 @@ Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/c
 ### From Source
 
 ```
-go install github.com/CycloneDX/cyclonedx-gomod@latest
+go install github.com/CycloneDX/cyclonedx-gomod@v0.7.1
 ```
 
 > This project is not in a stable state yet and may be subject to breaking changes.  
-> When using it in CI/CD pipelines, we recommend pinning its version instead of using `latest`.  
-> In that case, you'd use `go install github.com/CycloneDX/cyclonedx-gomod@v0.7.0` instead.
+> When using it in CI/CD pipelines, we recommend pinning its version instead of using `@latest`,
+> as shown in the command above.
 
 Building from source requires Go 1.16 or newer.
 
@@ -57,6 +57,8 @@ Usage of cyclonedx-gomod:
         Serial number (default [random UUID])
   -std
         Include Go standard library as component and dependency of the module
+  -test
+        Include test dependencies
   -type string
         Type of the main component (default "application")
   -version
