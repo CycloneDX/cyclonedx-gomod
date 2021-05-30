@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:1d9cd7ad-60f1-438d-b8ba-c3ee1d45beab",
+  "serialNumber": "urn:uuid:6db1631a-e698-4525-821d-4614954ca990",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-05-30T11:40:05+02:00",
+    "timestamp": "2021-05-30T22:00:04+02:00",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -13,19 +13,19 @@
         "hashes": [
           {
             "alg": "MD5",
-            "content": "d2ec25486f31405ad3d7ef7c7feb7a35"
+            "content": "00ddc04aeaa28ab41f263b321f1f1dbf"
           },
           {
             "alg": "SHA-1",
-            "content": "cba109193f0c14bceb9b20b347bdded70819fc41"
+            "content": "38a745c02a5eb811e83849f71dfc5a56c0ec5d15"
           },
           {
             "alg": "SHA-256",
-            "content": "735840bb0729432ccb18ad9e34d4a26dedae78ec89343e0abab0c453f4fca101"
+            "content": "81c71a9f4edf2b734f5ed65a4d6b8c5cbf9b2c73ee07fe28ea53890e84f0c01f"
           },
           {
             "alg": "SHA-512",
-            "content": "4d7e05444abc8194a9ebed9ebdcc6eba3f83fc79e0302c179c9dc5a99512843b6cdd25a03c42c7f8c78d4ebb2adaa18b9191ff0cce14dc88dd9c38ca46499440"
+            "content": "ddb8930455b9e70fa406459be83da8ede7608be0f8ebcd227e6c4d5b9ad6e1b132c6ad6e4b9151b08e31e0e627775bbf88d7ec1ce60ea737f606671ba32bcbf1"
           }
         ]
       }
