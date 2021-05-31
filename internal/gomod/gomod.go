@@ -71,13 +71,13 @@ func init() {
 
 // See https://golang.org/ref/mod#go-list-m
 type Module struct {
-	Dir     string
-	Main    bool
-	Path    string
-	Replace *Module
-	Version string
+	Path    string  // module path
+	Version string  // module version
+	Replace *Module // replaced by this module
+	Main    bool    // is this the main module?
+	Dir     string  // directory holding files for this module, if any
 
-	Dependencies []*Module `json:"-"`
+	Dependencies []*Module `json:"-"` // modules this module depends on
 	Local        bool      `json:"-"` // is this a local module?
 	TestOnly     bool      `json:"-"` // is this module only required for tests?
 	Vendored     bool      `json:"-"` // is this a vendored module?
@@ -123,7 +123,8 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 	var err error
 
 	// We're going to call the go command a few times and
-	// we'll (re-)use this buffer to write its output to.
+	// we'll (re-)use this buffer to write its output to
+	// and subsequently read from it.
 	buf := new(bytes.Buffer)
 
 	if !util.IsVendoring(mainModulePath) {
@@ -148,8 +149,8 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 			return nil, fmt.Errorf("parsing vendored modules failed: %w", err)
 		}
 
-		// Main module is not included in vendored module list, so we have
-		// to get it separately and prepend it to the module slice
+		// Main module is not included in vendored module list,
+		// so we have to get it separately
 		buf.Reset()
 		if err = gocmd.GetModule(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing main module failed: %w", err)
@@ -210,7 +211,7 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 	return modules, nil
 }
 
-// parseModules parses the output of `go list -json -m` into a Module slice
+// parseModules parses the output of `go list -json -m` into a Module slice.
 func parseModules(reader io.Reader) ([]Module, error) {
 	modules := make([]Module, 0)
 	jsonDecoder := json.NewDecoder(reader)
@@ -229,7 +230,7 @@ func parseModules(reader io.Reader) ([]Module, error) {
 	return modules, nil
 }
 
-// parseVendoredModules parses the output of `go mod vendor -v` into a Module slice
+// parseVendoredModules parses the output of `go mod vendor -v` into a Module slice.
 func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, error) {
 	modules := make([]Module, 0)
 
@@ -383,6 +384,9 @@ func findModule(modules []Module, coordinates string, strict bool) *Module {
 //
 // Querying `go mod why -m` with `golang.org/x/crypto` yields the expected result, querying it with
 // `github.com/ProtonMail/go-crypto` will always yield `(main module does not need github.com/ProtonMail/go-crypto)`.
+// See:
+//   - https://github.com/golang/go/issues/30720
+//   - https://github.com/golang/go/issues/26904
 func filterModules(mainModulePath string, modules []Module, includeTest bool) ([]Module, error) {
 	// Command length may be limited, with the actual limit depending on the OS we're running on.
 	// The approach of calling the command in batches to prevent hitting this limit is inspired by Helcaraxan/gomod.
@@ -416,11 +420,11 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 
 		for modPath, modPkgs := range parseModWhy(buf) {
 			if len(modPkgs) == 0 {
+				// TODO: log this in DEBUG level once we use a more sophisticated logger
 				continue
 			}
 
 			// If the shortest package path contains test nodes, this is a test-only dependency.
-			// TODO: Verify that this is actually the case and hasn't just been coincidence until now.
 			testOnly := false
 			for _, pkg := range modPkgs {
 				if strings.HasSuffix(pkg, ".test") {
@@ -429,6 +433,7 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 				}
 			}
 			if !includeTest && testOnly {
+				// TODO: log this in DEBUG level once we use a more sophisticated logger
 				continue
 			}
 
