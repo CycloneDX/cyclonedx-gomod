@@ -90,7 +90,7 @@ func ModWhy(modulePath string, modules []string, writer io.Writer) error {
 
 	cmd := exec.Command("go", args...)
 	cmd.Dir = modulePath
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = os.Stderr // so downloads can be observed
 	cmd.Stdout = writer
 	return cmd.Run()
 }
