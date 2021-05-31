@@ -35,6 +35,7 @@ type Options struct {
 	ComponentType    cdx.ComponentType
 	ComponentTypeStr string
 	IncludeStd       bool
+	IncludeTest      bool
 	ModulePath       string
 	NoSerialNumber   bool
 	NoVersionPrefix  bool
@@ -52,6 +53,7 @@ func main() {
 
 	flag.StringVar(&options.ComponentTypeStr, "type", string(cdx.ComponentTypeApplication), "Type of the main component")
 	flag.BoolVar(&options.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
+	flag.BoolVar(&options.IncludeTest, "test", false, "Include test dependencies")
 	flag.StringVar(&options.ModulePath, "module", ".", "Path to Go module")
 	flag.BoolVar(&options.NoSerialNumber, "noserial", false, "Omit serial number")
 	flag.BoolVar(&options.NoVersionPrefix, "novprefix", false, "Omit \"v\" version prefix")
@@ -119,6 +121,7 @@ func executeCommand(options Options) error {
 	bom, err := sbom.Generate(options.ModulePath, sbom.GenerateOptions{
 		ComponentType:   options.ComponentType,
 		IncludeStdLib:   options.IncludeStd,
+		IncludeTest:     options.IncludeTest,
 		NoSerialNumber:  options.NoSerialNumber,
 		NoVersionPrefix: options.NoVersionPrefix,
 		Reproducible:    options.Reproducible,

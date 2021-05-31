@@ -1,8 +1,8 @@
 before:
   hooks:
     - go install -trimpath -ldflags '-s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{ .Tag }}' github.com/CycloneDX/cyclonedx-gomod@{{ .Tag }}
-    - cyclonedx-gomod -module . -output bom.xml -licenses -std
-    - cyclonedx-gomod -module . -json -output bom.json -licenses -std
+    - cyclonedx-gomod -licenses -std -output bom.xml
+    - cyclonedx-gomod -licenses -std -output bom.json -json
 builds:
   - env:
       - CGO_ENABLED=0
