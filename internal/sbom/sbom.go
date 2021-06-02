@@ -51,6 +51,13 @@ type GenerateOptions struct {
 }
 
 func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
+	// Cheap trick to make Go download all required modules in the module graph
+	// without modifying go.sum (as `go mod download` would do).
+	log.Println("downloading modules")
+	if err := gocmd.ModWhy(modulePath, []string{"github.com/CycloneDX/cyclonedx-go"}, io.Discard); err != nil {
+		return nil, fmt.Errorf("downloading modules failed: %w", err)
+	}
+
 	log.Println("enumerating modules")
 	modules, err := gomod.GetModules(modulePath, options.IncludeTest)
 	if err != nil {
