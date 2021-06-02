@@ -19,7 +19,7 @@ Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/c
 ### From Source
 
 ```shell
-go install github.com/CycloneDX/cyclonedx-gomod@v0.8.0
+go install github.com/CycloneDX/cyclonedx-gomod@v0.8.1
 ```
 
 > This project is not in a stable state yet and may be subject to breaking changes.  
@@ -92,7 +92,7 @@ $ docker run -it --rm \
     cyclonedx/cyclonedx-gomod -module /mymodule -output /out/bom.xml -licenses
 ```
 
-Note how the host's module cache is mounted into the container to avoid re-downloading modules. This is optional.
+Note how the host's module cache (`$GOPATH/pkg/mod`) is mounted into the container to avoid re-downloading modules. This is optional.
 
 ### Vendoring
 
