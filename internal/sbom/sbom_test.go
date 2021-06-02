@@ -62,6 +62,14 @@ func TestResolveVcsURL(t *testing.T) {
 		Path: "github.com/CycloneDX/cyclonedx-go",
 	}))
 
+	// GitHub with major version >= v2
+	assert.Equal(t, "https://github.com/CycloneDX/cyclonedx-go", resolveVcsURL(gomod.Module{
+		Path: "github.com/CycloneDX/cyclonedx-go/v2",
+	}))
+	assert.Equal(t, "https://github.com/CycloneDX/cyclonedx-go", resolveVcsURL(gomod.Module{
+		Path: "github.com/CycloneDX/cyclonedx-go/v222",
+	}))
+
 	// gopkg.in variant #1
 	assert.Equal(t, "https://github.com/go-playground/assert", resolveVcsURL(gomod.Module{
 		Path: "gopkg.in/go-playground/assert.v1",

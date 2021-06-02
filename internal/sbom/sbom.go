@@ -24,13 +24,14 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
-	"github.com/google/uuid"
 	"io"
 	"log"
 	"os"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
@@ -255,20 +256,26 @@ func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {
 }
 
 var (
-	// See https://labix.org/gopkg.in
-	// gopkg.in/pkg.v3		→ github.com/go-pkg/pkg	(branch/tag v3, v3.N, or v3.N.M)
-	// gopkg.in/user/pkg.v3	→ github.com/user/pkg  	(branch/tag v3, v3.N, or v3.N.M)
-	goPkgInRegex1 = regexp.MustCompile("^gopkg\\.in/([^/]+)/([^.]+)\\..*$") // With user segment
-	goPkgInRegex2 = regexp.MustCompile("^gopkg\\.in/([^.]+)\\..*$")         // Without user segment
+	// By convention, modules with a major version equal to or above v2
+	// have it as suffix in their module path.
+	vcsUrlMajorVersionSuffixRegex = regexp.MustCompile(`(/v[\d]+)$`)
+
+	// gopkg.in with user segment
+	// Example: gopkg.in/user/pkg.v3 -> github.com/user/pkg
+	vcsUrlGoPkgInRegexWithUser = regexp.MustCompile(`^gopkg\.in/([^/]+)/([^.]+)\..*$`)
+
+	// gopkg.in without user segment
+	// Example: gopkg.in/pkg.v3 -> github.com/go-pkg/pkg
+	vcsUrlGoPkgInRegexWithoutUser = regexp.MustCompile(`^gopkg\.in/([^.]+)\..*$`)
 )
 
 func resolveVcsURL(module gomod.Module) string {
 	if strings.HasPrefix(module.Path, "github.com/") {
-		return "https://" + module.Path
-	} else if goPkgInRegex1.MatchString(module.Path) {
-		return "https://" + goPkgInRegex1.ReplaceAllString(module.Path, "github.com/$1/$2")
-	} else if goPkgInRegex2.MatchString(module.Path) {
-		return "https://" + goPkgInRegex2.ReplaceAllString(module.Path, "github.com/go-$1/$1")
+		return "https://" + vcsUrlMajorVersionSuffixRegex.ReplaceAllString(module.Path, "")
+	} else if vcsUrlGoPkgInRegexWithUser.MatchString(module.Path) {
+		return "https://" + vcsUrlGoPkgInRegexWithUser.ReplaceAllString(module.Path, "github.com/$1/$2")
+	} else if vcsUrlGoPkgInRegexWithoutUser.MatchString(module.Path) {
+		return "https://" + vcsUrlGoPkgInRegexWithoutUser.ReplaceAllString(module.Path, "github.com/go-$1/$1")
 	}
 	return ""
 }
