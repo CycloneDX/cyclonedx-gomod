@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:6db1631a-e698-4525-821d-4614954ca990",
+  "serialNumber": "urn:uuid:f24076b7-6906-44ed-b528-4097ebaf7c4b",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-05-30T22:00:04+02:00",
+    "timestamp": "2021-06-02T17:48:36+02:00",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -13,19 +13,19 @@
         "hashes": [
           {
             "alg": "MD5",
-            "content": "00ddc04aeaa28ab41f263b321f1f1dbf"
+            "content": "73fa78a43d65452f64f8399a7a01ca63"
           },
           {
             "alg": "SHA-1",
-            "content": "38a745c02a5eb811e83849f71dfc5a56c0ec5d15"
+            "content": "06ce2b600b0c8d5f347ede9c92f4f09fe2d59e12"
           },
           {
             "alg": "SHA-256",
-            "content": "81c71a9f4edf2b734f5ed65a4d6b8c5cbf9b2c73ee07fe28ea53890e84f0c01f"
+            "content": "9f6992a7bce956355f57e2024230bae0f81bb243b067786ff07d883885b10f0e"
           },
           {
             "alg": "SHA-512",
-            "content": "ddb8930455b9e70fa406459be83da8ede7608be0f8ebcd227e6c4d5b9ad6e1b132c6ad6e4b9151b08e31e0e627775bbf88d7ec1ce60ea737f606671ba32bcbf1"
+            "content": "4bb528cfc6ad7dae1fdf0805a7642651e0ded989460c9b47b48d9e6314160187d5c870c88b5b90e7a090820f15977a8927a50407139ab8b7ffcd46e5c402ebb6"
           }
         ]
       }
@@ -68,7 +68,7 @@
       "purl": "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0",
       "externalReferences": [
         {
-          "url": "https://github.com/bradleyjkemp/cupaloy/v2",
+          "url": "https://github.com/bradleyjkemp/cupaloy",
           "type": "vcs"
         }
       ]

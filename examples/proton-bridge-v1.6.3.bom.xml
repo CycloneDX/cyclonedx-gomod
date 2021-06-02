@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:96b9e951-f81b-44df-8b9c-668940a0d3da" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:2d77d004-a26b-487e-8c00-5228c2fca83b" version="1">
   <metadata>
-    <timestamp>2021-05-30T22:01:54+02:00</timestamp>
+    <timestamp>2021-06-02T17:42:37+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
         <version>v0.0.0-unset</version>
         <hashes>
-          <hash alg="MD5">00ddc04aeaa28ab41f263b321f1f1dbf</hash>
-          <hash alg="SHA-1">38a745c02a5eb811e83849f71dfc5a56c0ec5d15</hash>
-          <hash alg="SHA-256">81c71a9f4edf2b734f5ed65a4d6b8c5cbf9b2c73ee07fe28ea53890e84f0c01f</hash>
-          <hash alg="SHA-512">ddb8930455b9e70fa406459be83da8ede7608be0f8ebcd227e6c4d5b9ad6e1b132c6ad6e4b9151b08e31e0e627775bbf88d7ec1ce60ea737f606671ba32bcbf1</hash>
+          <hash alg="MD5">73fa78a43d65452f64f8399a7a01ca63</hash>
+          <hash alg="SHA-1">06ce2b600b0c8d5f347ede9c92f4f09fe2d59e12</hash>
+          <hash alg="SHA-256">9f6992a7bce956355f57e2024230bae0f81bb243b067786ff07d883885b10f0e</hash>
+          <hash alg="SHA-512">4bb528cfc6ad7dae1fdf0805a7642651e0ded989460c9b47b48d9e6314160187d5c870c88b5b90e7a090820f15977a8927a50407139ab8b7ffcd46e5c402ebb6</hash>
         </hashes>
       </tool>
     </tools>
@@ -63,7 +63,7 @@
       <purl>pkg:golang/github.com/Masterminds/semver/v3@v3.1.0</purl>
       <externalReferences>
         <reference type="vcs">
-          <url>https://github.com/Masterminds/semver/v3</url>
+          <url>https://github.com/Masterminds/semver</url>
         </reference>
       </externalReferences>
     </component>
@@ -203,7 +203,7 @@
       <purl>pkg:golang/github.com/ProtonMail/gopenpgp/v2@v2.1.3</purl>
       <externalReferences>
         <reference type="vcs">
-          <url>https://github.com/ProtonMail/gopenpgp/v2</url>
+          <url>https://github.com/ProtonMail/gopenpgp</url>
         </reference>
       </externalReferences>
     </component>
@@ -347,7 +347,7 @@
       <purl>pkg:golang/github.com/cpuguy83/go-md2man/v2@v2.0.0-20190314233015-f79a8a8ca69d</purl>
       <externalReferences>
         <reference type="vcs">
-          <url>https://github.com/cpuguy83/go-md2man/v2</url>
+          <url>https://github.com/cpuguy83/go-md2man</url>
         </reference>
       </externalReferences>
     </component>
@@ -715,7 +715,7 @@
       <purl>pkg:golang/github.com/go-resty/resty/v2@v2.3.0</purl>
       <externalReferences>
         <reference type="vcs">
-          <url>https://github.com/go-resty/resty/v2</url>
+          <url>https://github.com/go-resty/resty</url>
         </reference>
       </externalReferences>
     </component>
@@ -1095,7 +1095,7 @@
       <purl>pkg:golang/github.com/russross/blackfriday/v2@v2.0.1</purl>
       <externalReferences>
         <reference type="vcs">
-          <url>https://github.com/russross/blackfriday/v2</url>
+          <url>https://github.com/russross/blackfriday</url>
         </reference>
       </externalReferences>
     </component>
@@ -1235,7 +1235,7 @@
       <purl>pkg:golang/github.com/urfave/cli/v2@v2.2.0</purl>
       <externalReferences>
         <reference type="vcs">
-          <url>https://github.com/urfave/cli/v2</url>
+          <url>https://github.com/urfave/cli</url>
         </reference>
       </externalReferences>
     </component>
@@ -1255,7 +1255,7 @@
       <purl>pkg:golang/github.com/vmihailenco/msgpack/v5@v5.1.3</purl>
       <externalReferences>
         <reference type="vcs">
-          <url>https://github.com/vmihailenco/msgpack/v5</url>
+          <url>https://github.com/vmihailenco/msgpack</url>
         </reference>
       </externalReferences>
     </component>
