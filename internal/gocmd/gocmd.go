@@ -47,6 +47,7 @@ func GetVersion() (string, error) {
 }
 
 // GetModule executes `go list -json -m` and writes the output to a given writer.
+//
 // See https://golang.org/ref/mod#go-list-m
 func GetModule(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m")
@@ -56,6 +57,7 @@ func GetModule(modulePath string, writer io.Writer) error {
 }
 
 // ListModules executes `go list -json -m all` and writes the output to a given writer.
+//
 // See https://golang.org/ref/mod#go-list-m
 func ListModules(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
@@ -64,7 +66,26 @@ func ListModules(modulePath string, writer io.Writer) error {
 	return cmd.Run()
 }
 
+// ListPackages executed `go list -deps -json` and writes the output to a given writer.
+// If includeTest is true, the `-test` flag is added.
+//
+// See https://golang.org/cmd/go/#hdr-List_packages_or_modules
+func ListPackages(modulePath string, includeTest bool, writer io.Writer) error {
+	args := []string{"list", "-deps", "-json"}
+	if includeTest {
+		args = append(args, "-test")
+	}
+	args = append(args, "./...") // TODO: accept this as parameter as well?
+
+	cmd := exec.Command("go", args...)
+	cmd.Dir = modulePath
+	cmd.Stdout = writer
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
 // ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
+//
 // See https://golang.org/ref/mod#go-mod-vendor
 func ListVendoredModules(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "mod", "vendor", "-v", "-e")
@@ -74,6 +95,7 @@ func ListVendoredModules(modulePath string, writer io.Writer) error {
 }
 
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.
+//
 // See https://golang.org/ref/mod#go-mod-graph
 func GetModuleGraph(modulePath string, writer io.Writer) error {
 	cmd := exec.Command("go", "mod", "graph")
@@ -83,6 +105,7 @@ func GetModuleGraph(modulePath string, writer io.Writer) error {
 }
 
 // ModWhy executes `go mod why -m -vendor` and writes the output to a given writer.
+//
 // See https://golang.org/ref/mod#go-mod-why
 func ModWhy(modulePath string, modules []string, writer io.Writer) error {
 	args := []string{"mod", "why", "-m", "-vendor"}
