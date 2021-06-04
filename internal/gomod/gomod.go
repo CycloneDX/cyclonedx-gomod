@@ -81,6 +81,9 @@ type Module struct {
 	Local        bool      `json:"-"` // is this a local module?
 	TestOnly     bool      `json:"-"` // is this module only required for tests?
 	Vendored     bool      `json:"-"` // is this a vendored module?
+
+	Files     []string `json:"-"`
+	TestFiles []string `json:"-"`
 }
 
 func (m Module) Coordinates() string {
@@ -113,7 +116,7 @@ func (m Module) PackageURL() string {
 	return "pkg:golang/" + m.Coordinates()
 }
 
-func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
+func GetModules(mainModulePath string, distribution, includeTest bool) ([]Module, error) {
 	if !util.IsGoModule(mainModulePath) {
 		return nil, ErrNoGoModule
 	}
@@ -127,7 +130,32 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 	// and subsequently read from it.
 	buf := new(bytes.Buffer)
 
-	if !util.IsVendoring(mainModulePath) {
+	if !util.IsVendoring(mainModulePath) && distribution {
+		if err = gocmd.ListPackages(mainModulePath, includeTest, buf); err != nil {
+			return nil, fmt.Errorf("listing packages failed: %w", err)
+		}
+
+		pkgMap, err := parsePackages(buf)
+		if err != nil {
+			return nil, fmt.Errorf("parsing packages failed: %w", err)
+		}
+
+		modules, err = convertPackages(pkgMap)
+		if err != nil {
+			return nil, fmt.Errorf("converting packages failed: %w", err)
+		}
+
+		mainModuleIndex := 0
+		for i := range modules {
+			if modules[i].Main {
+				mainModuleIndex = i
+				break
+			}
+		}
+		mainMod := modules[mainModuleIndex]
+		mainModule = &mainMod
+		modules = append(modules[:mainModuleIndex], modules[mainModuleIndex+1:]...)
+	} else if !util.IsVendoring(mainModulePath) && !distribution {
 		if err = gocmd.ListModules(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing modules failed: %w", err)
 		}

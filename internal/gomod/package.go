@@ -20,13 +20,15 @@ package gomod
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
-	"log"
+	"path/filepath"
+	"strings"
 )
 
-// PackageInfo represents parts of the struct that `go list` is working with.
+// Package represents parts of the struct that `go list` is working with.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
-type PackageInfo struct {
+type Package struct {
 	Dir         string   // directory containing package sources
 	ImportPath  string   // import path of package in dir
 	Name        string   // package name
@@ -39,12 +41,12 @@ type PackageInfo struct {
 // parsePackageInfo parses the output of `go list -json`.
 //
 // The keys of the returned map are module coordinates (path@version).
-func parsePackageInfo(reader io.Reader) (map[string][]PackageInfo, error) {
-	pkgsMap := make(map[string][]PackageInfo, 0)
+func parsePackages(reader io.Reader) (map[string][]Package, error) {
+	pkgsMap := make(map[string][]Package, 0)
 	jsonDecoder := json.NewDecoder(reader)
 
 	for {
-		var pkg PackageInfo
+		var pkg Package
 		if err := jsonDecoder.Decode(&pkg); err != nil {
 			if errors.Is(err, io.EOF) {
 				break
@@ -52,22 +54,50 @@ func parsePackageInfo(reader io.Reader) (map[string][]PackageInfo, error) {
 			return nil, err
 		}
 
-		if pkg.Standard {
-			log.Printf("skipping stdlib package %s\n", pkg.ImportPath)
-			continue
-		}
-		if pkg.Module == nil {
-			log.Printf("skipping package without module %s\n", pkg.ImportPath)
+		if pkg.Standard || pkg.Module == nil {
 			continue
 		}
 
 		pkgs, ok := pkgsMap[pkg.Module.Coordinates()]
 		if !ok {
-			pkgsMap[pkg.Module.Coordinates()] = []PackageInfo{pkg}
+			pkgsMap[pkg.Module.Coordinates()] = []Package{pkg}
 		} else {
 			pkgsMap[pkg.Module.Coordinates()] = append(pkgs, pkg)
 		}
 	}
 
 	return pkgsMap, nil
+}
+
+func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
+	modules := make([]Module, 0, len(pkgsMap))
+
+	for _, pkgs := range pkgsMap {
+		var module *Module
+
+		for i := range pkgs {
+			if module == nil {
+				module = pkgs[i].Module
+			}
+
+			for _, goFile := range pkgs[i].GoFiles {
+				if !strings.HasSuffix(goFile, ".go") {
+					// For some reason there are sometimes binary files from
+					// Go's build cache included when `-test` was passed to `go list`.
+					fmt.Printf("skipping %s\n", goFile)
+					continue
+				}
+				fp, err := filepath.Rel(module.Dir, filepath.Join(pkgs[i].Dir, goFile))
+				if err != nil {
+					return nil, err
+				}
+				fp = strings.ReplaceAll(fp, "\\", "/")
+				module.Files = append(module.Files, fp)
+			}
+		}
+
+		modules = append(modules, *module)
+	}
+
+	return modules, nil
 }

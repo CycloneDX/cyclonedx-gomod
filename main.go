@@ -34,6 +34,8 @@ import (
 type Options struct {
 	ComponentType    cdx.ComponentType
 	ComponentTypeStr string
+	Distribution     bool
+	IncludeFiles     bool
 	IncludeStd       bool
 	IncludeTest      bool
 	ModulePath       string
@@ -52,6 +54,8 @@ func main() {
 	var options Options
 
 	flag.StringVar(&options.ComponentTypeStr, "type", string(cdx.ComponentTypeApplication), "Type of the main component")
+	flag.BoolVar(&options.Distribution, "distribution", false, "Generate SBOM for distribution")
+	flag.BoolVar(&options.IncludeFiles, "files", false, "Include files")
 	flag.BoolVar(&options.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	flag.BoolVar(&options.IncludeTest, "test", false, "Include test dependencies")
 	flag.StringVar(&options.ModulePath, "module", ".", "Path to Go module")
@@ -120,6 +124,8 @@ func executeCommand(options Options) error {
 	log.Println("generating sbom")
 	bom, err := sbom.Generate(options.ModulePath, sbom.GenerateOptions{
 		ComponentType:   options.ComponentType,
+		Distribution:    options.Distribution,
+		IncludeFiles:    options.IncludeFiles,
 		IncludeStdLib:   options.IncludeStd,
 		IncludeTest:     options.IncludeTest,
 		NoSerialNumber:  options.NoSerialNumber,

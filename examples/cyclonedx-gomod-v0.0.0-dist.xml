@@ -1,0 +1,3776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:c27a0868-4385-41f7-8d14-5be843c5c14a" version="1">
+  <metadata>
+    <timestamp>2021-06-04T22:59:01+02:00</timestamp>
+    <tools>
+      <tool>
+        <vendor>CycloneDX</vendor>
+        <name>cyclonedx-gomod</name>
+        <version>v0.0.0-unset</version>
+        <hashes>
+          <hash alg="MD5">dda2dc75a518875e45627b452e928240</hash>
+          <hash alg="SHA-1">aea67ccbcce2128d14ebe1913fdcf830070b95a7</hash>
+          <hash alg="SHA-256">5fc684460f50a2b59b317791c71a79ecd3f326aaf59a973507df697208ded1b4</hash>
+          <hash alg="SHA-512">9044aaa16a2b09402d19e1d13022cb7b0f83f818f1a4314f38ec7b228ade14d5bad8e8433fc0d00d269606d48efdb60cd6c05d3933709a0c99e45e8dce05e8e3</hash>
+        </hashes>
+      </tool>
+    </tools>
+    <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210603200940-7137d9ff4d68" type="application">
+      <name>github.com/CycloneDX/cyclonedx-gomod</name>
+      <version>v0.0.0-20210603200940-7137d9ff4d68</version>
+      <purl>pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210603200940-7137d9ff4d68</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/CycloneDX/cyclonedx-gomod</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>internal/gocmd/gocmd.go</name>
+          <version>v0.0.0-31f328600be1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">dbd9459248e94dbe73bb0fa5f7d1e1e44896a439431c45c2b2fd597848b591c4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/util/util.go</name>
+          <version>v0.0.0-d951b1b61594</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8868708a5f11020356e8a6807c1f58a8ea7163f015a3f249b8b5fe80bd564674</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/gomod/gomod.go</name>
+          <version>v0.0.0-661ba4ecdb63</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e100b0ed599974a2de78fbde1820ee5532ee757c58991355c62e55b3b936a22b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/gomod/package.go</name>
+          <version>v0.0.0-3f5c9ca355cb</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">dc1bf07d9633010608d246ec79d7b6a48f42473a9f56484086730b1cfe6441af</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/gomod/version.go</name>
+          <version>v0.0.0-034b7fe23258</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">34ec1560f2513589b9e1ac4443eb709adb0b14170e6cdb9476d69bb1376b7292</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/version/version.go</name>
+          <version>v0.0.0-2a9b73866a0e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">89964f0e89c86758c6dcf59fd8d4485d2279f890c25cbd9feba5f172b22ad4a6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/license/license.go</name>
+          <version>v0.0.0-e23e4fa62a39</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b50942deb54ffc91dc2ece58b43ac891ca2df624cf90863bdc9e3b9e48c64cf9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/license/spdx.go</name>
+          <version>v0.0.0-0232c7fcf4e2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ef2c9ad62f23535540788390a4c39dffa5029079bb5a7c19a024a6166058a63b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/sbom/sbom.go</name>
+          <version>v0.0.0-1438382e647a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9db52a21f5db22b9e0fa216bd7cd6302d26e28426cf9fe3b8e96d3b53372eef3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>main.go</name>
+          <version>v0.0.0-963028601a86</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c1cf6ef8eef4e0868d3ad638feb097b92d11e088a838abbd95381af862bc69c2</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+  </metadata>
+  <components>
+    <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0" type="library">
+      <name>github.com/CycloneDX/cyclonedx-go</name>
+      <version>v0.1.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">c92dc729b69e0f3c13262d3ec62a6021f7060eb8e4af75e17d7e89b28f790588</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/CycloneDX/cyclonedx-go</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>cyclonedx.go</name>
+          <version>v0.0.0-82be36c3651b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7c2b05fbe85139862ce5eaf2c6fa812b052fce919c72d978ecad88be80da1bf1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>decode.go</name>
+          <version>v0.0.0-0e99682e3725</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2492a3fa46e2f545cb23fc66fc85d7343b81e2aed7d8d11c23f5908ccf9939d8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>encode.go</name>
+          <version>v0.0.0-7ce176247318</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a6854064bb3c48693a0c460ec9df12e20c01736dee7c326611dc66cd7be5fbba</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/Microsoft/go-winio@v0.4.16" type="library">
+      <name>github.com/Microsoft/go-winio</name>
+      <version>v0.4.16</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">16d496fe3a83fa5e1b6b988f063f4238356d81f6000fcc36c12f76de0fdc1439</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/Microsoft/go-winio@v0.4.16</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/Microsoft/go-winio</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>pkg/guid/guid.go</name>
+          <version>v0.0.0-b067b1cdf3a1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3952d42e6dfa615e464cd660636b788632758f192ed34d09ef0cf784b717142e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>backup.go</name>
+          <version>v0.0.0-888dabea25e0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8a373a8d2ff45dc2eece22813c77e61cb1039e7d102579bb8744d24331d2141d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ea.go</name>
+          <version>v0.0.0-4bfa9fa2c707</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f6e8e707f101dbfcf0daf3c875f04f2a5812e7269e2beb9d7a066dd908999c71</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>file.go</name>
+          <version>v0.0.0-6a86e8b1ded1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2c11dc37b23b383b0f1e24786d05fc7c69aca3f92c77620c97b191f43b74362c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>fileinfo.go</name>
+          <version>v0.0.0-9d7c972b3263</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">32eee303060d4df446a5ad5b27110be40334ffe20c041da4df92de9a827ec40c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>hvsock.go</name>
+          <version>v0.0.0-b4206b234ff9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6de5e21751caf94a3cd59d97ca26f725bae88beb0ffdda4e638a3fc6e7e66676</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>pipe.go</name>
+          <version>v0.0.0-90017e507891</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4f513b2ae0581b54c5d6fac2c3d5c844c27e7c7e1065dd9810d2fca7a9a869bc</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>privilege.go</name>
+          <version>v0.0.0-c398e966a23c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">01195b5c08737a19ff42eb9fde7040b6af68950953cccb8aa624a159e1e36945</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>reparse.go</name>
+          <version>v0.0.0-ec52122e0cc6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5ef115656312341a9165e15407b513f422896d5556358b3cbd07087a995158b4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>sd.go</name>
+          <version>v0.0.0-887095afe56d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7b85338f7c597b8563d424e81149cacce2b1f11a33ceab854d23173d8edef498</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>syscall.go</name>
+          <version>v0.0.0-82894f16331c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9c41c74246bfa17d3cab2517a52688c41f6dcae8cc4a0ae935469b6ba2013f64</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>zsyscall_windows.go</name>
+          <version>v0.0.0-6e728dc24c50</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">39b49de7cd26f391b8d7c2b9468c4635e9dee9d7cda8521c78d5d9ba368c7888</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/ProtonMail/go-crypto@v0.0.0-20210428141323-04723f9f07d7" type="library">
+      <name>github.com/ProtonMail/go-crypto</name>
+      <version>v0.0.0-20210428141323-04723f9f07d7</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">62825b7a72bd0baed29339037e642e5659f4e328078f7be365f77d14bf869904</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/ProtonMail/go-crypto@v0.0.0-20210428141323-04723f9f07d7</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/ProtonMail/go-crypto</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>openpgp/errors/errors.go</name>
+          <version>v0.0.0-929100ed5808</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e41ff287148a8031a34e2d99557d58cc74b6cdf57842c80f8a19a72c4fb0819f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/armor/armor.go</name>
+          <version>v0.0.0-8a2121036106</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">508db53e104423f63fe89dcda97acbaa25663f63dcf7d90d01731545cf3fab58</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/armor/encode.go</name>
+          <version>v0.0.0-7ef4d772364e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6f7bb3548e1ddb3d54f33e943f76dc0fb66512d2552690e73855ab02f7b6a211</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/aes/keywrap/keywrap.go</name>
+          <version>v0.0.0-6b6748b881c9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">928e0647a0ce266b2c025fca0ff6c97b68de277336e5dc4f893bef1582c6fd53</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/byteutil/byteutil.go</name>
+          <version>v0.0.0-2a632c864a47</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5b301248665fb0ba6f42d395e2f423d45edfd3423f15c316c47cd131c5e5264d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>eax/eax.go</name>
+          <version>v0.0.0-516153327f23</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">29f7f797c11ea54fe5945afc4e576b0e6b6a3739552aab7b55e1e077c423fcdb</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>eax/eax_test_vectors.go</name>
+          <version>v0.0.0-11bd33637897</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">390a179e02e057de02f2bfc7aa19691b9006a63180dc88b6e37058c907407ec6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>eax/random_vectors.go</name>
+          <version>v0.0.0-31ce9437d8ed</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">805142404c8c92808034453fc3cf2b1f5ec2c8acc3e8ba8706196e56828e6b91</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ocb/ocb.go</name>
+          <version>v0.0.0-4a1081d8eebe</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e8a5d21393ad12b444346c55cc61b08699fadc1813bd5cfcb3e5ccf6033ba5e5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ocb/random_vectors.go</name>
+          <version>v0.0.0-f87139dfcc43</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">52c4ddc9c7f1df1fa9c62222cfdd8513ef34370500fcb16f811056a2a5e223a8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ocb/rfc7253_test_vectors_suite_a.go</name>
+          <version>v0.0.0-b62c546a6600</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1fc37fa401231e46f23fef06458c4802584fe5f822206a7f90ea45f431d05d20</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ocb/rfc7253_test_vectors_suite_b.go</name>
+          <version>v0.0.0-17584d67069f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f48b06697899358cff81a65d05a273ce2b945be7f7fb455a268e4c0477c1e842</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/algorithm/aead.go</name>
+          <version>v0.0.0-8624fa2ae20e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0c75c9ff4af0773a1f31e0ce8d838b8b23d8afe00794ab6b9a3ee1529d57c9f5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/algorithm/cipher.go</name>
+          <version>v0.0.0-680989b90516</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ddb93ec3ddbe48d53dd68277afce1a1b53e083672f56d6c226f967eff199e7d1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/algorithm/hash.go</name>
+          <version>v0.0.0-4a55507c129c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f8f414f2af3c91c88b662865bcf1afc28d90efdb9dce58ddd2d65df654710661</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>bitcurves/bitcurve.go</name>
+          <version>v0.0.0-2472c8e5f796</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">92039fe14135b9ba7923c7f5e15a13764d141f0d009515bd4a28643a1e01ecfd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>brainpool/brainpool.go</name>
+          <version>v0.0.0-cf953061c57d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">862ffcddeb4b92ff77ad8abc0f936c4118e4add54f86626660eb6ac8234d9097</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>brainpool/rcurve.go</name>
+          <version>v0.0.0-094e04c9f040</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b5a56c49d7f6a1b941e646b6264affeba6e5385a611d0b4fd3789f468879c46f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/encoding/encoding.go</name>
+          <version>v0.0.0-6d0902809919</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">86eb38180996ce131c3e4d953f6f075292fa213576b88e3d67eb688c4e2bbbbb</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/encoding/mpi.go</name>
+          <version>v0.0.0-7ccfc8204888</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">43991e775e01460e239de8287dfc859b81ac975326023855123186aa532cc8a5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/encoding/oid.go</name>
+          <version>v0.0.0-2a1b193b778c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0c0e1a8d5678aedc967bcbd4b27b83e6af1556c3277c4249c6577bccd592b877</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/ecc/curveInfo.go</name>
+          <version>v0.0.0-2041ac951dac</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6d52315a6e65af61c6cf19d066c1ff1080924a7540af9f71a8f078fac63d9d2e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/internal/ecc/curveType.go</name>
+          <version>v0.0.0-b4582916c081</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e781ba8368a8222720825de13e590d2ea513c45dc988426d029cc8f21f1d4433</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/ecdh/ecdh.go</name>
+          <version>v0.0.0-6e7caf8f42e9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">266b25d635bfeeaa6dd600e254123edd5714e0d8b18186c2f06ad6f59d7d4adc</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/ecdh/x25519.go</name>
+          <version>v0.0.0-3abed8c19c97</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bd6339ae84b164636b86d90e33bcdaa2c64390f6f50d96a149dd78d46b093978</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/elgamal/elgamal.go</name>
+          <version>v0.0.0-8b06ba8afcb8</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f9d388e330312b77560c421e4f87170fca8b85d015ea33728bb0f1c873b8dd9f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/s2k/s2k.go</name>
+          <version>v0.0.0-a1220399bafb</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">550e0749810d1f2be2c540bd7fa679fcfed14907120778e75a3dbbccae2e47cf</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/aead_config.go</name>
+          <version>v0.0.0-4f1a7c22b16b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">aabc453cf23f8ca6673cb8e02ab8c6e6028b7b7e2ed9f06b15c2cb12f35d2221</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/aead_encrypted.go</name>
+          <version>v0.0.0-eab5a2090294</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bb31a5eff6e1f83dc142eac4deb5b2545f2117ec321d48357ff296676a424285</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/compressed.go</name>
+          <version>v0.0.0-fe5778fc28be</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">90e3daa043d3c76bf6b84f00a848cdb6118737ce626a70ae52d9fe2939b46ca4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/config.go</name>
+          <version>v0.0.0-cf8fae24993d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fb1b98a46008b3c62b8ae9f2167f9f9099bf10d5621dd8a202d6f3d9d9ae41f6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/encrypted_key.go</name>
+          <version>v0.0.0-e65e4916add3</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">aafcc58734a4a3b60a99b8d8de5c4f9e57a69a3b95354155dd3c70e99f2439b9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/literal.go</name>
+          <version>v0.0.0-a7522434490b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9b838feb9f60d47bcfd3663322991d2b7f920fd85efa785e153662de80088408</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/ocfb.go</name>
+          <version>v0.0.0-4994602af3b4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7a22b09ed6e833e3ddb3130b9b8f23a4ff1a257c43541306965d75c46175d2cd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/one_pass_signature.go</name>
+          <version>v0.0.0-33b42a197c6c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">86f0b9b27aef4391c90014c99d087a579c56ca85e31293f22dd2954580382691</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/opaque.go</name>
+          <version>v0.0.0-6cf0c080f825</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">77aaf10b5ea4d2fbbdfd5cf7bf6959ff3cf44a703cf3f98fb4814a00350723c6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/packet.go</name>
+          <version>v0.0.0-26a0f5b91217</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">22fab069af9854b77debebbaffed7df1fd771181e8a55160e8c2633719b6a3ce</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/private_key.go</name>
+          <version>v0.0.0-4365fe17fa07</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b50b87e9601194cddde15912b285e48fd9bbf4b62eb8301e04a9aa514e12e67f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/private_key_test_data.go</name>
+          <version>v0.0.0-a34e63fb0452</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ab3dae8e4528be7a6f401d5206735847547d78509b4e1bad4f13d13f6b839039</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/public_key.go</name>
+          <version>v0.0.0-b35a5657a3dd</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1759cec46969a3672567f90b1f437acee2553d7ad925d50b9f0bfa7aa4394a36</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/public_key_test_data.go</name>
+          <version>v0.0.0-2d42447e746c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">924bbaaa6359dd512f2ada6f88231f299d8f382cc318f8c2ef28c079f43ce4f6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/reader.go</name>
+          <version>v0.0.0-fa5b4c5e0408</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">78e0ebb98946cac7fadf9d47ddf0086e25f09736c63159f89e84137fc9e373e1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/signature.go</name>
+          <version>v0.0.0-c78d9ef8adf1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">692f34d35ec1dc1a14c372583d825390e7b89959c50f08d98144cd89bd1094a2</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/symmetric_key_encrypted.go</name>
+          <version>v0.0.0-682760e8ec33</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">809296ed43777e00b85e8017aa9c9895f3d7911f82439fe9c2eda9115c3bbe90</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/symmetrically_encrypted.go</name>
+          <version>v0.0.0-17db6fd305ec</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ee5b0076039ef6dca33e11c03de68b25a865f04d43fb0c62a195a092c385fca5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/userattribute.go</name>
+          <version>v0.0.0-0de9c5ab1f6b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0ae0163189aabd06f14df42218d368933765e80444e2b579420d54336bf463dc</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/packet/userid.go</name>
+          <version>v0.0.0-8d1e5899bc75</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f50b3b5760f300933970059244f9fd7df2ee5367bb1be554a3119883d3a4f0dc</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/canonical_text.go</name>
+          <version>v0.0.0-8d2d16e7d11e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2a82fe779694f4068ef896979651830b4a72a6b656ee3418f6813e6d30933b7c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/key_generation.go</name>
+          <version>v0.0.0-11d86d944bec</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fe40f5106d74a6d86bfbc00e3d95b93f7da65f088668141571fd744a2c00603d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/keys.go</name>
+          <version>v0.0.0-b9054d9e9f1c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">65cdac9f7728078aa07b6fccb161e87c18515bc872f5ce9a96649500dd888892</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/keys_test_data.go</name>
+          <version>v0.0.0-df4dc493821c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2cd5d7e829ccb0eca69b512a9c0fa639a01e27aa791aa83deeedce7216d40255</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/read.go</name>
+          <version>v0.0.0-003fbc6702e0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">513ae57c8c70e3fa8ab32b83ecaf7ad04a87311eb28bb35742c08ab4d06d5177</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/read_write_test_data.go</name>
+          <version>v0.0.0-51a0b24e642f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">72c8c630932e121f121447c1992c220cee9cf10a81c98a3d7deb1a510a782ed0</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>openpgp/write.go</name>
+          <version>v0.0.0-0d9ce762f540</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0616e7f2e0761d9071e3272ff6cd82647e922abbb4f66d4f365dd42a4bb3077e</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/PuerkitoBio/goquery@v1.6.1" type="library">
+      <name>github.com/PuerkitoBio/goquery</name>
+      <version>v1.6.1</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">1608db4192a5e474e6727e2c28182fc7cbefeb79e1ca1229bfb949a451825a99</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/PuerkitoBio/goquery@v1.6.1</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/PuerkitoBio/goquery</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>array.go</name>
+          <version>v0.0.0-067c3cd8ba23</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">55f527ce7b793d6edd0eadbe9e2308940983850b49bb495097ea32968dd7a420</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>doc.go</name>
+          <version>v0.0.0-c14d88f5de75</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8ab141cc7e1979920f320233da187fa55cc8a18c8a0ad141001a28582a6dd002</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>expand.go</name>
+          <version>v0.0.0-6048838005c0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bebcad172d6bc1607c06954205242570425fad3dad891d46c52d59222f6d2f9a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>filter.go</name>
+          <version>v0.0.0-50fb7ec6c30c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ca963bab442d70553d048219950b8a74009dac2ed085b517f62c2d8ad9ad5cba</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>iteration.go</name>
+          <version>v0.0.0-76a2beb7e82f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f8faf27b8dbf93955b52aa7a63421bb48ed543ada2b7cb735e8a2b6c3bb9303a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>manipulation.go</name>
+          <version>v0.0.0-520a8b8d0566</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e613a3aa780f27dc608c6a0b37820b75dfc05809b529ca5d6c217413054d6711</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>property.go</name>
+          <version>v0.0.0-75740f7cc01c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3580247808a024f717b1aeb41bffb47862ddfb14104f97688e6aadab7a44ddec</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>query.go</name>
+          <version>v0.0.0-18c05c69e0dd</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">85ea3ee8c1778909db3e9a3c3e1cb2bfcf90ec0f46c496e4718690121fe9e78f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>traversal.go</name>
+          <version>v0.0.0-aedadea4512b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7f94d240a64cc34239f8be4ed8b4b8c84969eafcdd061f826d81d64c003f6a63</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>type.go</name>
+          <version>v0.0.0-c0f13497d9dc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">93eb33887520c831eb3f518c158957cd63143f1c80cfc76e54160eb229f4caf1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utilities.go</name>
+          <version>v0.0.0-898477208d68</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ccf8de5bb64efccce4cce141cdba6f860f50ae821ce461d29bb6569b186d37f7</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/andybalholm/cascadia@v1.1.0" type="library">
+      <name>github.com/andybalholm/cascadia</name>
+      <version>v1.1.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">06eb8eeac49f40d151bb52e9a606c3db91ebdaf2d85b6e49bf11ece73cec2d3a</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/andybalholm/cascadia@v1.1.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/andybalholm/cascadia</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>parser.go</name>
+          <version>v0.0.0-694fbec84f0c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">11b6d8a5ea97181ecaaf9001fd3d92c5ab73c2a07000f6a885b4cad3982098b3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>selector.go</name>
+          <version>v0.0.0-83d40c8a3cdd</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c2f7e06665c6d802d61f4b8658f0fade4da75847efadfc8e048c43bbe3ed1cab</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>specificity.go</name>
+          <version>v0.0.0-853c5f49e739</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c6733e1e5278db3dcf2fa17afa82c03dd2264fc751e797e46668d9ccc27ad791</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/emirpasic/gods@v1.12.0" type="library">
+      <name>github.com/emirpasic/gods</name>
+      <version>v1.12.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">4005083d2682bb81be3ce725c5ea9bdc5f963e974aa851a5c37ebec8ecc696b8</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/emirpasic/gods@v1.12.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/emirpasic/gods</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>utils/comparator.go</name>
+          <version>v0.0.0-afb573be9ca2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1dbaadc79884c5497999748496333a2b150b318d08b54fd98bbf4eeef8521550</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/sort.go</name>
+          <version>v0.0.0-7d62364df8f1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b4c3af41880c52fb57bdfac04d1303a95d2ca777763a6acd7885b04a85013a7a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/utils.go</name>
+          <version>v0.0.0-e26757ded4dd</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">076ee89b1f5fa3e8022a380325d57578915cc42b1dc5b8e7a9579b2cd121df87</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>containers/containers.go</name>
+          <version>v0.0.0-944e266b9ea0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7e5c0bed5b01fe1fb100d74cd1feaadda2ab9876f6375ce39db971d56bc35244</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>containers/enumerable.go</name>
+          <version>v0.0.0-21540f1b040b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">567dd117587e04f321f936ddb96b3f9f7ae9999680e2521e94476e9e738d63c8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>containers/iterator.go</name>
+          <version>v0.0.0-1c563e15790c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3918ad3eb8550b95cf6652daf3c7d3965c18a32c4df1054f7f4a215d677e2f6b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>containers/serialization.go</name>
+          <version>v0.0.0-2271a569ab1b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9529d0f58e28f068f8236ab809fcee0e876ba35c53e19aee3f960deddcc0e971</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>lists/lists.go</name>
+          <version>v0.0.0-20ee58e95814</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6ea832f0c968ecc6d2fd852b9ec11443f0cd97226fd82418b0885664f0937675</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>lists/arraylist/arraylist.go</name>
+          <version>v0.0.0-9fc51682d842</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">380ac0bf82f5ec819eaedfbd84cf6515850e0e28ef41adaa9264605be6860288</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>lists/arraylist/enumerable.go</name>
+          <version>v0.0.0-da1d409a31cc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">650dc6ac8584ad09293547c695adb07fc58a967162a8c35cd7a758933e107e60</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>lists/arraylist/iterator.go</name>
+          <version>v0.0.0-10ad129e9184</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">503dd44fa6a5233f4005d038d3caaa0d036e8c277d8845e944ac94478ea30bf3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>lists/arraylist/serialization.go</name>
+          <version>v0.0.0-0a964a87ca10</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7c0376ace3b1faf56779af7be93518dc2e1181ca81573bfee268317f1e197117</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>trees/trees.go</name>
+          <version>v0.0.0-2ca4d662ef90</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2bfee74e1c7e253bb215533cb5cc7e8e50b7425c1b15d7f55da65f5db6c02fde</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>trees/binaryheap/binaryheap.go</name>
+          <version>v0.0.0-bd767011d3d6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b04c726f45cd382893f658a5421dea9bd35488a4ce110de2d2171bb23655928b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>trees/binaryheap/iterator.go</name>
+          <version>v0.0.0-c6554986dff4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bdcba8ccbf292a538bfdce03dcc7c6f92981372dd794ffdf6efc3556c15df987</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>trees/binaryheap/serialization.go</name>
+          <version>v0.0.0-740221fd6186</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">687a51cf0d4172ff0639199de27f24069edfafed67f57a38303bb8455709e8a5</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/go-git/gcfg@v1.5.0" type="library">
+      <name>github.com/go-git/gcfg</name>
+      <version>v1.5.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">43956235f185f33160c8958fa98c00eea185a0c4c488199d96471f466a4831ae</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/go-git/gcfg@v1.5.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/go-git/gcfg</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>token/position.go</name>
+          <version>v0.0.0-05a63da48b11</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fca1cb359728c194252a76b17144b41b310e3bb05dbc62ea3ad8b5ffa3790ec8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>token/serialize.go</name>
+          <version>v0.0.0-50d232c8f4ff</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6adf7e922a349527cc5314e972d2b9a91242c4edcead3beec4f2500147a59ca5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>token/token.go</name>
+          <version>v0.0.0-c91deb1476b9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">02aefd28704fd9397b8483b7ecd4f506472c7dde4023d3f7212752c4a52a7e07</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>scanner/errors.go</name>
+          <version>v0.0.0-ce9bcd819fe8</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6f010777aa3a9394ee728806f09c20934bdef28e49f875b59ef43a75d6318d20</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>scanner/scanner.go</name>
+          <version>v0.0.0-4483a3389871</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5ea3fd7b93ab596f9bb25bff020c192ae83a8cacc7e4306540e94550056891c6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>types/bool.go</name>
+          <version>v0.0.0-ad3c68925304</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">12ab665c72f7228b9815d3958032a7d5aca066fd6b7e9e249b5f6388563372b1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>types/doc.go</name>
+          <version>v0.0.0-5350ac51ad7a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a2d5bd1b8f41968d60110c411306aea71ce5c0b0a4b2aa4ed66d8f216dfe2804</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>types/enum.go</name>
+          <version>v0.0.0-da139951cacc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4783d96fb8ab4d684570b5299768430513ad667e6036a0db32c94f284ffc0d2d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>types/int.go</name>
+          <version>v0.0.0-3eb2e64d0b82</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">38ace3a3c2608b78db793ca66ac6c9c27a89e2fce1f54c5e8cfc357b3b737ccd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>types/scan.go</name>
+          <version>v0.0.0-4d70251c1c59</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">81410bc2a2d7fe874bfccfbd84700e1cf68769745de0a5e8deb91452558a8727</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>doc.go</name>
+          <version>v0.0.0-bdc8fc229681</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9225be11be6d5b8ad1787cd14a1df49c70d8fa163ccc56b3e55673a630eb0aff</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>errors.go</name>
+          <version>v0.0.0-47542c5c3714</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">042938abaf16ad6962dec27a6955977afda266a676ea4567fab7f704412eba74</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>go1_2.go</name>
+          <version>v0.0.0-34f796201d10</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7cd5135fdacbf568eab60d3c3b7534f3fab5cd57cbd72c49401ca8db0a6f73a8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>read.go</name>
+          <version>v0.0.0-4a7f4ab3fc6f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4f2003de1ec9b38be90b2fc75c701ecff13df24555b526d4b68d1a5b3707f4f2</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>set.go</name>
+          <version>v0.0.0-d2b0670c4fb0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ad8eacfe2c544cc5cf77ccfd3771dd0a5015d247e335368d6f00bd3f1349c409</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/go-git/go-billy/v5@v5.3.1" type="library">
+      <name>github.com/go-git/go-billy/v5</name>
+      <version>v5.3.1</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">08f88e500ccab4c46fa2510ac3e6c6d4f2d1a53ec3dcb22cdffddecb8022bb7e</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/go-git/go-billy/v5@v5.3.1</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/go-git/go-billy</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>fs.go</name>
+          <version>v0.0.0-e7c32c9894d4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">872741eb4e848fb251fa350aea5fc34a292da0a6a3a94dbf8da6fffec5429c52</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>helper/polyfill/polyfill.go</name>
+          <version>v0.0.0-07e08ca5cecf</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">165803b23850ee4df308ae5aba8cb1228ef56a8d3836b9abafc9d5a4a0f183bd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>helper/chroot/chroot.go</name>
+          <version>v0.0.0-9545577ea71b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d76e876a0532207ee834f669cecfaab38d271fcfa95dc4eab84e6d2b3b973c59</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>osfs/os.go</name>
+          <version>v0.0.0-0943d1e5be37</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8cfce4f9d9a0798d093a33b65e751b64ddcd8ca85a798019205824078bf8701a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>osfs/os_windows.go</name>
+          <version>v0.0.0-fd9c6d3ec56e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">90c5bc664262de11e143042067fbbfc479dfa7ac16ea1f398b9bc9ed92f1dd44</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>util/glob.go</name>
+          <version>v0.0.0-2c25355a1694</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fa8f7ef39c5375844395882273d8fd1d40f73576abef70f3c4a9a4d69e2d6f71</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>util/util.go</name>
+          <version>v0.0.0-31611eab6f01</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5ca155b34f425dc276efe474b53357f304aaf0b2cdc7e1186b43d584aa024f95</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/go-git/go-git/v5@v5.4.2" type="library">
+      <name>github.com/go-git/go-git/v5</name>
+      <version>v5.4.2</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">057c99bbdb745646e21edaabb2f76adfd503846253975879e555ba0920b8698e</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/go-git/go-git/v5@v5.4.2</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/go-git/go-git</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>internal/url/url.go</name>
+          <version>v0.0.0-af09fb916ef2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3f5314bc7949b8b5531f97ef56a7c0a614a8f3d562a5756b63b118000df20f0a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/error.go</name>
+          <version>v0.0.0-af4be1244170</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">47064cd6c8dff6c1d039b54eb4516430eb6c81df7162074930832be8c49e6492</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/hash.go</name>
+          <version>v0.0.0-ef91ec2f9249</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">27b5117d2babf813609897a565f91f3039f5b97f2b966b85f2a299b2bcc03a65</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/memory.go</name>
+          <version>v0.0.0-5a6192f284d5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a30bc108b89fae742732e5a0b320bdb3d48853b77438cbe28ee2968ce47308cb</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object.go</name>
+          <version>v0.0.0-c6806e3fa595</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1b521fc99cf8f0aa8ef992e0ea9944c7f927e6a8be00b47974f80443f8f352ae</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/reference.go</name>
+          <version>v0.0.0-b1c36021f805</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e905761ae8e964419588d65bf03c116de323dfda79ab130e60edbce609e18665</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/revision.go</name>
+          <version>v0.0.0-5516ae85efa0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ca4bd5ee46344d3491f3d4836f1b883f604b8c6359056b603ba9e2ed2c773242</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/config/common.go</name>
+          <version>v0.0.0-b21e7f2f269e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9b9280d5b8524e0314567af0234a37b3ddcd2654c1af629599ca0e756a829aa4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/config/decoder.go</name>
+          <version>v0.0.0-0fa580adbad7</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e5878190c8e2c5f7c5a145ac68b925b2c751684f9b120a2c9f186a3b5ac9df81</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/config/doc.go</name>
+          <version>v0.0.0-28f42c5bbcd2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e318f1a9de52ced2a93cebd276028f3fc06043a1ab957b74b61e9c316daff267</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/config/encoder.go</name>
+          <version>v0.0.0-dc01d0c92ace</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">dd1eec2603a245635be6d50f1e2292b6455b6e047341d7c2c0c1baef111e9aee</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/config/option.go</name>
+          <version>v0.0.0-9c10acc261a5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1b630072d26684df243fcf8197ab235ea527a33462f46f36045c0f5d2dfc97ab</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/config/section.go</name>
+          <version>v0.0.0-55ead5639b6f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">27bdc014e05db07e08647444413cd176203813ec2fe4d809d6e96a1fa105696a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>config/branch.go</name>
+          <version>v0.0.0-cb11af157d3d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">482a4bf4d0bb2f6d360e0c498b72f789286485712d11b9ee23d58ec3b45b4cab</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>config/config.go</name>
+          <version>v0.0.0-ad409137f1ca</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">061f036f3e9a72f8c70b88482225ef8a8b864c8541c94fdd08d06e083adb769c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>config/modules.go</name>
+          <version>v0.0.0-03271387234c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">410ca6650aa0b514affc508e7429ade73b88a70229041face72c3abf7d565b5d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>config/refspec.go</name>
+          <version>v0.0.0-b83313d5950d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b066b2eb3fa94da1ff818cc4b5f8b3819d005cd75dfb5a111fc9f62508f33b85</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>config/url.go</name>
+          <version>v0.0.0-d266b096945f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">cbc8010dfe9235e12e60fe4e7aa9879836eaed335ebb36cfe5eeda024cbdd031</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/revision/parser.go</name>
+          <version>v0.0.0-f153529755e5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3643945d111e00295775406f3c094f5af26a5d64ed4ff72b04bb42110b4f857a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/revision/scanner.go</name>
+          <version>v0.0.0-026ea4907191</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">afd583edee31ef8b4c8d87430f55653a01ff6bb28652d5459fe00235629dcedf</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/revision/token.go</name>
+          <version>v0.0.0-3a98bf773e20</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a784a592548b0afc0bc576adf6ca1c91b01172d1446294f17c408a14bab5ee84</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/cache/buffer_lru.go</name>
+          <version>v0.0.0-1ddf79495f0c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e6d478e2a0bc49c1af61daac07ea30394a2ff829b8b62bd3e4cdbc13ea70378c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/cache/common.go</name>
+          <version>v0.0.0-1054bc30f7f4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6dfd925f2ce55420dda8203b7bd2c3c07a4db73780c605417a1d56588cc9a3a4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/cache/object_lru.go</name>
+          <version>v0.0.0-7243e3694aab</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9b2e44f73c28eead22316c45aff5329afc609ad26f13da46442ec63afbf0a80b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/filemode/filemode.go</name>
+          <version>v0.0.0-12a748fe0da4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0b7c9126a2513b8636b72ae16c21eee5fe777a5f067e1b9b5d96b43d35c9d1fd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/ioutil/common.go</name>
+          <version>v0.0.0-23b9913aaae2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3ed16faa5b57d65ed05b1d7add80133518ed2ac01e3df81422e405006e2d79e7</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/ioutil/pipe.go</name>
+          <version>v0.0.0-b5feed3977d1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f31fed5c546d73bd062561e9485cf9fee963dc2b0d7b7dd6f6f1e6ed6c472099</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/gitignore/dir.go</name>
+          <version>v0.0.0-7afa9d4aa1af</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6a1f6b56d840a9c89299c2bdbc76adb1b93775b459ad2a7780cdeccc87237e4b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/gitignore/doc.go</name>
+          <version>v0.0.0-4df52cc3f198</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">28d8cc28e3793361bfe9d069d346541060f60d369af6eb004f4e09336f08f65d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/gitignore/matcher.go</name>
+          <version>v0.0.0-446b5603e55e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e104fc611ae78c88a9202fce457ef6ced879982c1d6eb179fd828996e06e69f3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/gitignore/pattern.go</name>
+          <version>v0.0.0-d52d363208d4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">af6c40599e47bae89d447c8ba150e89bbb2a8e781317fae0794ccf8520823ae1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/binary/read.go</name>
+          <version>v0.0.0-a9fda7575f50</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ed9eb4e81868f1044340b1b45d52a12f34fed2e3c313220f53325a880826a7e9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/binary/write.go</name>
+          <version>v0.0.0-3c23d3b3657a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1df840ad1cf7f4d3ccf91134aae4167c7cb6a30165b29ffc85ba3fea245d7f21</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/index/decoder.go</name>
+          <version>v0.0.0-b090f2325d1a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e8c0c465401f81e4c1dfd622f2f9fb29fd5598fb807e0dbe9b928b199ecdb3a5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/index/doc.go</name>
+          <version>v0.0.0-9a9ac48d76f7</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">60cb8dff36e1fd29cb22136d081e54e0d56af2ccf7a0c51e31bcf82cb8a6fde7</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/index/encoder.go</name>
+          <version>v0.0.0-5565af75c936</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">408f8732d04e2725861799a0335fae8d06fd46ca66ed97f3a8b2455fe35056c2</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/index/index.go</name>
+          <version>v0.0.0-826e0a16b28a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5edd116680ddad18b92d5855cf3a048e69bf92aab6a53b9d7b9e54e5d80f9131</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/index/match.go</name>
+          <version>v0.0.0-ee0d605c1262</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ace8dd9a7241447803707fe788b8f1d711f81139dffff0020ac33771980d4a32</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/idxfile/decoder.go</name>
+          <version>v0.0.0-5cb6bd820022</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5c82735d452ecfeee2368691c4c76eb43790de63aadea231111a1edc52b56be5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/idxfile/doc.go</name>
+          <version>v0.0.0-4cad1c1d5547</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e3a60b1122f25e79f3785d94f095485df05675c40549ec992ad377127a06ecf4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/idxfile/encoder.go</name>
+          <version>v0.0.0-deb031afb10b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9fa5d1635850f50b2eb0ddb7554c33a5efa9f65113ed80bc6dcd3cb397dab56b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/idxfile/idxfile.go</name>
+          <version>v0.0.0-e49e0a2a58aa</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">03bd79749d9f9550760005fada2c3f42078ba501f9bfc64e28cc6234ef939c2b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/idxfile/writer.go</name>
+          <version>v0.0.0-b37a8de1d92d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a1d1d7d235446de2593e6a18081959c0e4236a1cf54f264b9c0d63b64d107ffc</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/storer/doc.go</name>
+          <version>v0.0.0-b1859eab69df</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8c30a94a1e71e62c3f12306b601faa7c7bcefacd306a9effe10f97a66728f47e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/storer/index.go</name>
+          <version>v0.0.0-f29c6cdb4eec</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0ae1039b77e0c7a72521f64c34fc6d73aa32ca862ee0b5c241f1fd83f947ec4e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/storer/object.go</name>
+          <version>v0.0.0-c0455e0e2ff0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">aace8f1a2c31ad3ecbc68ed7e99979dc13ffce319c84d7056866718c9743419d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/storer/reference.go</name>
+          <version>v0.0.0-48410d905310</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fd0aa42d94bfc0f205db1bde2a56767d9ec284bf85d103ef55dfafe3042bc7f4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/storer/shallow.go</name>
+          <version>v0.0.0-5f78c4b54478</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0c441f9f24afbe8dc529d8df2022d7adc16e4264a79720c21275a663acaa8235</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/storer/storer.go</name>
+          <version>v0.0.0-c346b4478516</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c92e9be1267d8e24464e14329ecc1339da08bc86beaddf36e882be1a58327c9d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/common.go</name>
+          <version>v0.0.0-223111b33821</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">84f62527cfa1283eeb1449d920408a0a67e45ce55a0a504d1d3f1a0882213356</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/delta_index.go</name>
+          <version>v0.0.0-6cb3c8809085</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e2e6c3a60e592c888cdc181a62fffaf62915a0b3c5142b965d14d3d1abffde44</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/delta_selector.go</name>
+          <version>v0.0.0-2f831e974007</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">48ecd5890e784638a2377d04c0d7cbd06f5cf44984a96ac3c2c9693aae11218f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/diff_delta.go</name>
+          <version>v0.0.0-fe25927fd124</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b0699f8e7087d5c04d8b4d61b97ecc583a127f481533d752f35d7483406f988d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/doc.go</name>
+          <version>v0.0.0-c88afa918edf</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5c33757f688bdf7f94cc67858be280d25fb090eac416251309cdc2609d838c10</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/encoder.go</name>
+          <version>v0.0.0-54136cb49912</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">92e2ab45195e76d47ba6b4e76d88c6416b09d1a5cfcc1b74bf4cd42a9491b455</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/error.go</name>
+          <version>v0.0.0-0c5aec4d3cfd</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b560b987dcef029a0a4c492d3b4a5b90f304fc1b55160c28644bd8580f425d4c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/fsobject.go</name>
+          <version>v0.0.0-04209e3ab767</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3321fa107b69a489fc0cf5030a6a3953c6f59319694834d4f7849bd78e6e3f85</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/object_pack.go</name>
+          <version>v0.0.0-fcfc95130bc9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e490c4c75c2a73d250de2a2d9f25e8f7ca51df65616463519d7b5283f6859d1d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/packfile.go</name>
+          <version>v0.0.0-c45362a634d2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8dca8d2c32fc68de405c81a19f914fee41f3f12054d443bf11b868133d67a647</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/parser.go</name>
+          <version>v0.0.0-4a9f3e183962</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fdeec0dac5c273ac96cac234c2648dc9bcfa5011f069b4021b76dd04933f7473</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/patch_delta.go</name>
+          <version>v0.0.0-30e1594f222c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">39cc89d5b41dbf84e93ac88357297308289c2deecc1c401acfea25dcd9a3bb7a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/packfile/scanner.go</name>
+          <version>v0.0.0-6c0c1dce280c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5705298d8e0043bf456760f324cb114f2db8a766bf5c82f8f57dcfa4430b5182</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/color/color.go</name>
+          <version>v0.0.0-e8d098b04ba1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ec8e583416805579d85479a9387064dbaaf3dcfc0d3e03b45bf6164258041334</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/diff/colorconfig.go</name>
+          <version>v0.0.0-850ae840fd2c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">87cd4d241ac9eb3b3eadccab2f6f4115bd214f5cb0242b6d36f55b6053e62a82</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/diff/patch.go</name>
+          <version>v0.0.0-5029cdc28d5e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f0fc170bfe7e88b196af1a98f2776bf59bb5cd699466c6f31cd35dd6f346344c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/diff/unified_encoder.go</name>
+          <version>v0.0.0-29d85d1cd7f2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">73dd42b669ae035d214bf611c558d38ce0f49a4e7d590d793acb10514ca0d922</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/storer.go</name>
+          <version>v0.0.0-7a0832eafab5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">12cbbd8eb02be7d34ac723fd87b750257460d7cbcf96c1b0cb00de66837cfadd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/diff/diff.go</name>
+          <version>v0.0.0-2e4457e24414</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">acfaebaf9ca0342cbc49bc4cd7d060e9a656dcc48cc9bdc7c497ece39ee44185</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/noder/noder.go</name>
+          <version>v0.0.0-9d114df75001</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">21aceafd64d3f65ae06a1ddfc6908e8f17b738d40ba45c4d85f11cd6136b2161</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/noder/path.go</name>
+          <version>v0.0.0-63b256709ca6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">cca4ef2f4cd5fc6421a666499a6ebb39d26eeae2aa2dca26dcf248cc72973007</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/internal/frame/frame.go</name>
+          <version>v0.0.0-d04b4073510d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1404ffe2e6d3de9fcf54350aa49a2d22b84ea4d71611447cfbe09613d468c8d3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/change.go</name>
+          <version>v0.0.0-d33553c98ed6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">dd600f839dfbfd3641b229a35e89048edd3e8a84bf20c7f9672d197be13e7486</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/difftree.go</name>
+          <version>v0.0.0-6d59b3ee63f5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">eebcc280192fe0069dd73b9f9c988aab4ed0580fc946e2c7b027d9b3b3838e1c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/doc.go</name>
+          <version>v0.0.0-19ab127b8517</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ae60c7ca3af8aab115d157e209f38ddec88d908abd2908776787360b1102eb98</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/doubleiter.go</name>
+          <version>v0.0.0-ab67d31dfd6f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bb53f013153249dd4c888a17ce3cfb9df12239e0d42b17c175becb130dca4e2b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/iter.go</name>
+          <version>v0.0.0-36afd5f3d1d4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c391cfd5fb6d1c09d7eb8f618cade3a648aa54959e813a8fa67d1aab8070a81f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/blob.go</name>
+          <version>v0.0.0-9c3759cea284</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f34a47607c3b58511a049d12455a50ad034fa1fd2015ecce8dc6a4caeb44ddb8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/change.go</name>
+          <version>v0.0.0-8483e710516b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d377c0d80e46adcf3324432f52e33b3060cb325e8a8ced319ec9a3ae04090a57</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/change_adaptor.go</name>
+          <version>v0.0.0-59d3d3ee5421</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">305197baafc31c41100ff90feba3bba835db6d7564236b11f553a1dfdf7c9773</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/commit.go</name>
+          <version>v0.0.0-923460d508f1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d9002784d58df2199cde0ec9aa5d69c17dee91715b0287428f6a9f351ee4b559</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/commit_walker.go</name>
+          <version>v0.0.0-aa265cff2094</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9b5cbe1972beb2c6d823a17ef54924a9fe8968519b40dd3d123e430d46114bff</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/commit_walker_bfs.go</name>
+          <version>v0.0.0-a8630c5b52c3</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9eb50edaa2acb9396fc6bb1a8d7f7cf3de2969f9ea909914ac8f668b217c2ee5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/commit_walker_bfs_filtered.go</name>
+          <version>v0.0.0-d5a6f2e885af</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9015bfc65596a936c662b9da6f6a02ce4a661a1e0e7401180ff3c2e578c78c92</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/commit_walker_ctime.go</name>
+          <version>v0.0.0-8cfad49efe5d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4a4e56caad3ad2b66f9b78deb132716c527b5957f5355da49c1b2de51435e25b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/commit_walker_limit.go</name>
+          <version>v0.0.0-d05746e17d5a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e5fe52ea3433ff1cfa5d7fee12154a02a30efb3fa8322740fd1b2ac243e3c07c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/commit_walker_path.go</name>
+          <version>v0.0.0-40d264686ee2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8d53913389e4406324100e8befe5df7ae400cfe49ba6c616a1168019e91caed5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/common.go</name>
+          <version>v0.0.0-b3b937de9430</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">70e2c81ea3190c15c08a2bfe0dbd6b3d9aaf0e95925925deda642e3b1cee9bae</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/difftree.go</name>
+          <version>v0.0.0-e5b886fae11b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7c8a1582c58ebbea1c9d6da993427f2100f128e3b216109897f3aa9fe1dbaa2a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/file.go</name>
+          <version>v0.0.0-dfe3a63b5f9e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0a1da5601aba0f690015ff57f3299309505c102f9121e63edef18091d5ee722e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/merge_base.go</name>
+          <version>v0.0.0-6b0236c7a1b9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">138146d3aeb4a9f57bf8a2fa1c245b8f76dfddd96625b48a8a74ccbecd6a7bae</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/object.go</name>
+          <version>v0.0.0-9cb8969ff72e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">915ce2063c0747c1d8bf73cfcce2e1c9f67528df0ccc4932829af264e1e2096c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/patch.go</name>
+          <version>v0.0.0-7099c7e08f76</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">69e04d1c430ee47c5374d41e493c01efb631b6b99275537d728df1559e762221</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/rename.go</name>
+          <version>v0.0.0-37022860bbe2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a79cab88f7b5b6d2b7685d1e1616021bd62ff504c7c7ed6652937cfce7ad8367</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/tag.go</name>
+          <version>v0.0.0-e354c9123880</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">db722f54208191cff06206940e0e56f3476eaa621925a2baf0d1b1bfabce5713</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/tree.go</name>
+          <version>v0.0.0-c9fef479986a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bbae53068263dd86378a55cb2ccb67ad0af2673e563264926834a4a8384c05be</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/object/treenoder.go</name>
+          <version>v0.0.0-be51536fae17</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a716e619fb603bbd16038a86df9365182295918b8659f64994c1a2b84d997e3e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/pktline/encoder.go</name>
+          <version>v0.0.0-56b75229d930</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5dfe406939b6ae1d26629f587802060fe6efc7c4ddfde03e7e44958d24b94d79</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/pktline/scanner.go</name>
+          <version>v0.0.0-e39231d8a53a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e13eeb4beff2d921d0a4607c929385a0f8e63d2b2845f4b06634d12b808a0340</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/capability/capability.go</name>
+          <version>v0.0.0-6a02d7279683</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8a711fd50fae78d0bb62adc797e1f8aaa6aa2cd55990c9a8b405e5a17a99aadd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/capability/list.go</name>
+          <version>v0.0.0-6e0b3852e387</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9e1cb970b1e33e8cc4bd6ef660091e539728345a62d319ed082dcf461c0c4451</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/sideband/common.go</name>
+          <version>v0.0.0-25775a13ce43</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a164ea047e2da01f3914095784995928369573e186f535b9c503e9dbad079cc3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/sideband/demux.go</name>
+          <version>v0.0.0-89184684c944</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ff33311754e33cb39fb63e9a948f95d7b3495eb707df3da91670b3bb207a3b07</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/sideband/doc.go</name>
+          <version>v0.0.0-129f7e1f40df</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">48db6b84c9ba43db0fec401c3488aa35391b52fb9cf18586b4c2c418748c50e5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/sideband/muxer.go</name>
+          <version>v0.0.0-ea9f3b07d313</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1be3e868263d10ed655d12953c947f0fa174643904ef25acf0506c70512fb32e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/memory/storage.go</name>
+          <version>v0.0.0-e375c75131c1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">40d3ba4f26cd8bd545182a7020ffe9a4ca17be8484f7a715856d54d06a6466a5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/advrefs.go</name>
+          <version>v0.0.0-af81917cffa6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">024e3c34b925482a4eb8c0371548f4c3b2176095098a5e5ff615840dc59479a4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/advrefs_decode.go</name>
+          <version>v0.0.0-92c67070b087</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0e1f50b19341e5ca91ae81c79712d66649700c00482498ba2bea4b4842549b27</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/advrefs_encode.go</name>
+          <version>v0.0.0-4eac47853692</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d39581862654c11727c10fc656727e54745d7ac84e50d5598dab12705892015d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/common.go</name>
+          <version>v0.0.0-6fd9ddd6876a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">26fff2892def6ea82ccbb1ed66413e6de8ee0bada1a0648859e57136a4668fe7</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/doc.go</name>
+          <version>v0.0.0-de8c5d413ecc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bae4d796456991c45b295fc89b7565c9aae92f82fb955f9f8243e9d650ad5e3a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/report_status.go</name>
+          <version>v0.0.0-f41db9abbdd1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">183fbf74295d5af2a3b17fe38a7783786399c1656bb988283b0153abc4950f4d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/shallowupd.go</name>
+          <version>v0.0.0-a9ea37fb3e2f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">20c9c4b17344e0ba3b190b361010bafd906abc9994c62e025078b721c6eeeb23</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/srvresp.go</name>
+          <version>v0.0.0-90816e3bd973</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">dae652c443f789c237491e0c80c5e490e1248d35636b9529972c6cf5e03ed065</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/ulreq.go</name>
+          <version>v0.0.0-915c744f390e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2bd7eae615efcdecd5b8616bb19445fa721238ee0dbace5bea4876d55510eaa9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/ulreq_decode.go</name>
+          <version>v0.0.0-09eb035db6f0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b34fe779d58ba2b16079e18ab213aa542c92d4576dc01a38d7846e959d2f11b7</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/ulreq_encode.go</name>
+          <version>v0.0.0-bf7e267c4972</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7313a60bac318e33ca5094b7007f30242a845c014ab559b21b24d18aeca6f538</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/updreq.go</name>
+          <version>v0.0.0-7e74f80662ee</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6bd254a49a2ebf85867d0b3d774a3bb50948c85759e45a6ba4b59a69588df50e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/updreq_decode.go</name>
+          <version>v0.0.0-960dbd43ee34</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fde127b0173b33d7984877f866829fc634e73810bef619a13505e7f58d5651e1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/updreq_encode.go</name>
+          <version>v0.0.0-b5ee1e55054e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5adddf669418b7874a2695286a8ac4be7a61048593cb525bca0eb12e7c71ca9b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/uppackreq.go</name>
+          <version>v0.0.0-1d47dcd58097</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0938baa3386cb8d618642fa0c2c68ada40fe1e5638d9176aa85ab0a5ac5b86a0</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/protocol/packp/uppackresp.go</name>
+          <version>v0.0.0-8ceeeffc6896</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3f2f31065c252e6a7196e46c0bb13810fd021f1c4f8a6c9bbae4ac7e283ef5c2</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/revlist/revlist.go</name>
+          <version>v0.0.0-92b322ec89f8</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e95de6d0b829a297407345435e87d7135d5e4e4c339024dff0dd3e9b08cdf951</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/common.go</name>
+          <version>v0.0.0-53a343fd3aa1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">18d489eb4b3e97a1ce2bbd945c88ea9b30cdd84ec81d15ba2d15d94dfb95076e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/internal/common/common.go</name>
+          <version>v0.0.0-7ab8f854c644</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">362bb7ba5d096f534a591bf9fc882d171d2ba566995b8ad84b6e9e199052a58b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/internal/common/server.go</name>
+          <version>v0.0.0-6b9977ea7e70</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3fa3601093c69c648fb275e211ed9b5430029c790599f59f4c789ece8f94e86d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/objfile/doc.go</name>
+          <version>v0.0.0-b34c15a251a4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bb4e7fd6f4294696436fdf547befdf50351f15bc95734c276ab576818c2055be</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/objfile/reader.go</name>
+          <version>v0.0.0-96c529d96b4e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">142f92cc50dd412ac1e7cfd121118bb59cc4d42014c40a5832872fed5bca0c01</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/format/objfile/writer.go</name>
+          <version>v0.0.0-68b75b7b718a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">56827de4f9b593b484e823ca43ba842143ffed0f3ee1f4e3018b6ea03bbb03a1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/dotgit/dotgit.go</name>
+          <version>v0.0.0-cb6ee74fc5ee</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0aec39837f0abc2c77559ecc890f18cc3e71c272c6db554fb9ac5b3879df03a3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/dotgit/dotgit_rewrite_packed_refs.go</name>
+          <version>v0.0.0-98efeab25584</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">82c01acd3d8e09593f8e65277eed208f737fde4e256bbb208817dae2ae4e41ce</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/dotgit/dotgit_setref.go</name>
+          <version>v0.0.0-31d48abbc59a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">95e9606c00b329ed5d98a04bfd2f73fad69310b2c718480f6dcc3f7afcbcb9e8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/dotgit/repository_filesystem.go</name>
+          <version>v0.0.0-76d7221b5d3d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">774e4eab62e6d1ff3831d9bddce9d6296e39f63ce794a3a8e7e218773cc33754</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/dotgit/writers.go</name>
+          <version>v0.0.0-59622ee3dd85</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3bcc25c3f7163c0be43d4d8cabd31883f242c90c9065ea79379a2583be0a4619</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/config.go</name>
+          <version>v0.0.0-8845b3d1cfba</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">980a724585863a66b09f1b7a682aa431a246ebe8bb5492660c109f571b6f444c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/deltaobject.go</name>
+          <version>v0.0.0-64d190570ccc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f799dd741d84bcb99c0521523177822410754dc3097f3408f05e921d6d27f09a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/index.go</name>
+          <version>v0.0.0-b5a8539c2f5f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2ce1f8271ec768807777536ceabc4946ce9456e04a433de395cbbd8def389892</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/module.go</name>
+          <version>v0.0.0-2b6e828b55c6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">18c9920ee9a297a923a41844907cbcae9d1218b8d4803fed3cba60037b1b4ee6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/object.go</name>
+          <version>v0.0.0-e0cfa0313168</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9bc5c7ed4d70e227f06fea143440a129098a070d46c47cebcae0e4ff0a64adf9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/reference.go</name>
+          <version>v0.0.0-c6fe987b3fe5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">99465c4257e0fac1c93a5efe28a36a5c336e96f9d72b02e58d7d0db1b8e5ee20</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/shallow.go</name>
+          <version>v0.0.0-e216860c9ca4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">23ec545bb3a50dc6a100779a7872f93f25427b7fba3b2b09fa8150554fc45209</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>storage/filesystem/storage.go</name>
+          <version>v0.0.0-179a77af4044</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1f5fd3d91e7c3534982a8dc5ec9403a7888b31d1e585c2214e277eae978d68f9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/server/loader.go</name>
+          <version>v0.0.0-1b92c68a741c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d33103ab795829f1aed8c37b73d4c1a6e9ad3fc4806914f58aaa0c4aa9e1a1cd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/server/server.go</name>
+          <version>v0.0.0-fda27e76734d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c6bbb5d497ee80f22b72fb09696646503c8c7e4204a376c9612eff2c74e69d2b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/file/client.go</name>
+          <version>v0.0.0-6a7e4908ce57</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2566ffd35c036e5b4e764380a332c144dfe9d32ac3a27a1c7769c9196a2ab67f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/file/server.go</name>
+          <version>v0.0.0-50bcc3eb49d7</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9d226dd35c1d580a9e3d5b0a9a4a32c59a62c6c6c50f724db8ba4ffdab894a3a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/git/common.go</name>
+          <version>v0.0.0-e0b380297190</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">38a53046bc8f91fda83bd68567f252aa9f2d9211abebf263ad0df435a8aaa45c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/http/common.go</name>
+          <version>v0.0.0-1a09b487601b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3f73f94babc010ae16cdaae4c877db03cc7ae4255bcea3c67d0d57aaa94c0f8f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/http/receive_pack.go</name>
+          <version>v0.0.0-99cc4236ffcd</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e6c06d6557b5bffb7bcb1ee1ef2fc724f7a356089db23c9cf9f160799ef2f59d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/http/upload_pack.go</name>
+          <version>v0.0.0-6490611e5b03</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">77ddf44952c524086e259e3f24ee197f3815595145ee642cb2820f4f7a2f16ad</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/ssh/auth_method.go</name>
+          <version>v0.0.0-efb4447c98d6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0aa16285598d50eaa22612b9697f2d7c694231f1bdefbb5caf7f21e281ccd3ed</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/ssh/common.go</name>
+          <version>v0.0.0-7c671dd36f1f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d46b5a853d05945825edc01db5f00819a53b212a1f44e1af290ebc273491bb7b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>plumbing/transport/client/client.go</name>
+          <version>v0.0.0-983772a868a0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">17a976f7dd9f81eee8337be4cf25abfaf64646b804c51276a05cadf968d9dfee</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/filesystem/node.go</name>
+          <version>v0.0.0-fc8a46dccacc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">94331fd74d3a5b9f635a8ecb7684b98ced5a7e08be070a5d30519e95d69d7851</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>utils/merkletrie/index/node.go</name>
+          <version>v0.0.0-2c17dc9adb6c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9cd4a56c791ce973be645ef58158e6819a09237b0315a4932d8e7c0442e85e59</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>blame.go</name>
+          <version>v0.0.0-8bfe2e129c32</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">25becc1b858fa5c99c37fc707341125d64b4652ba47feaeed4465c75fdb614f6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>common.go</name>
+          <version>v0.0.0-f8d42f8fd458</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">25a395cb62f7656294e40a001ee19fefcdf3013d265dfcf4b744cd2549891dec</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>doc.go</name>
+          <version>v0.0.0-f19e9d35b14f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">aa95db1db2df91bd7200a892dd1c03bc2704c4793400d016b3ca08c148b0f7c1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>object_walker.go</name>
+          <version>v0.0.0-866168c532c6</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d0f8c768962418d5dc14ec713939f3a41e51e97296c66dbed6e2e69a58e231eb</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>options.go</name>
+          <version>v0.0.0-9ee4205a1b41</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">00d0a26d28080b75352a4cf082c17b3d80e3365aa4bebcca1648a383381180ac</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>prune.go</name>
+          <version>v0.0.0-689df58fb68c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">72e4062a7731f91f53e35f5f010e0f9d1f042d053cc9dcb05b19dcb4033a76bc</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>references.go</name>
+          <version>v0.0.0-14bbf0f8ef94</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e058348ee495cdaa32519d96bc820b5b04a1aeee35c8351add13ff30090d40a6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>remote.go</name>
+          <version>v0.0.0-226de66f3889</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">eb41e4f9a98f5b751c1c03ba6bb02a0539277e8165ccb3a7c569e89d103d7d15</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>repository.go</name>
+          <version>v0.0.0-f1793ce6181a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">cc7639a805cd1c03909dec8eb188dedc88a1402932042645fcff27845d4f0db5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>status.go</name>
+          <version>v0.0.0-d427454ae16c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b68c8a82cd5b839917e1058570a0408819b81d16dbab81db118cc8dfc3def044</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>submodule.go</name>
+          <version>v0.0.0-b286fcee0f50</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">30b09b19c3014a08a6fd6579e529641a6b3843281e4fd43003a2f8af776517e2</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>worktree.go</name>
+          <version>v0.0.0-319604c8dc4c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1038e1050c39113cc8c49df403da4a526f6a05de2e66a3c9d6ef4f04db016de5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>worktree_commit.go</name>
+          <version>v0.0.0-0cd0d8e1fe94</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9fcf177dbb6c5dc7d3a1a85f8605eec13e17c0fa35a3496ae4e92040aa9b1c80</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>worktree_status.go</name>
+          <version>v0.0.0-74e71a670df1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f11417d96f43b787ebd777699110b26336c7df3a94612c874e2587171ae00194</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>worktree_windows.go</name>
+          <version>v0.0.0-d137a06d9190</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3a00a29e08d29454b5197662f70ccab5699b0ce8c85af7fbf511b8915d97cfd0</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/google/uuid@v1.2.0" type="library">
+      <name>github.com/google/uuid</name>
+      <version>v1.2.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/google/uuid@v1.2.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/google/uuid</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>dce.go</name>
+          <version>v0.0.0-02a2efb3ec5b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6a4b89e7f6165a673e76f00bebaabf8d0d7eb4356a672c6cb771d95a45fb2695</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>doc.go</name>
+          <version>v0.0.0-a1e6141b5d53</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0b286e2af61ede9f58d2455781ea254284c477b7fce2447aab3203992cc51f9f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>hash.go</name>
+          <version>v0.0.0-f86842458f6e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a9af4e955bfa0854a9e4c949a09efead471dd1504ce4c2a336cc7a88365da6c6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>marshal.go</name>
+          <version>v0.0.0-7bab98ce43e2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">933eb226d049268e17809fd37f777c650b9ec8cb3fa988534b792610a64dcc43</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>node.go</name>
+          <version>v0.0.0-f343ad00cf81</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">73a93d192ca24078e0f93b8c1675e13adb442421252d3974d697b0821c4832cf</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>node_net.go</name>
+          <version>v0.0.0-19b6df35b399</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">78e274b465de8da8690f4ab06281f41025b142c1d093e337fda1d6726b35662b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>sql.go</name>
+          <version>v0.0.0-7ca24525c43c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">29281b11e8f97f1ddf73d087854cb401ba42a87c4f59ce45fc69763a4d927f2f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>time.go</name>
+          <version>v0.0.0-f5ad87aaae45</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">057f98f779afbc6d293330f7aa0aa5fcd09541ff008f93060bf644e6fb7df510</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>util.go</name>
+          <version>v0.0.0-24f078505eb1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">755f50afafb13dd89ae6177da7eb6dc31ae650ece2f9ba52821021e9f8de044e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>uuid.go</name>
+          <version>v0.0.0-f0b921e31459</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a5cec734b976d1af822bf774d95fb608a25f0f461a4febbf9d0e2dedd1f770e8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>version1.go</name>
+          <version>v0.0.0-48b1fecbc252</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">38a2c229a2aad4bb72d45529304f210b1f31e8ef60bbd2605690a10f0d8a8242</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>version4.go</name>
+          <version>v0.0.0-c8cc889d5f4b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c558a8c0f2a1f300656f92a156cc255465ede328774c66e0c1e8a2f736441058</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/imdario/mergo@v0.3.12" type="library">
+      <name>github.com/imdario/mergo</name>
+      <version>v0.3.12</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">6fa47606c9536c8113a002ca3fb2f152f8a34ec348f5301ef34a4b58dda0fc75</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/imdario/mergo@v0.3.12</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/imdario/mergo</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>doc.go</name>
+          <version>v0.0.0-66e9079889e1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">13c34a5512574953f0184a65a498ed776583825dde823342d44226c026c6a19e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>map.go</name>
+          <version>v0.0.0-25a9e2c24547</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f7aeaf17b10ded5cc7f366d30927250af2f70e10ecd4dd13b68e1eaf7091ccb1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>merge.go</name>
+          <version>v0.0.0-a8889114dccc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fb0204bb9118f5db0b7d74e1f6be105e51369dfe47d2f34373371cdb4c0c26b0</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>mergo.go</name>
+          <version>v0.0.0-4d0fe1ecfbcc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">78b872c7a2a18a89fbe0d8b5ea9d449a24606667cbb55a81d6057af1a4f8c99f</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/jbenet/go-context@v0.0.0-20150711004518-d14ea06fba99" type="library">
+      <name>github.com/jbenet/go-context</name>
+      <version>v0.0.0-20150711004518-d14ea06fba99</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">05048578f03545624e968707e85c72f0c9b00edfb25506142ca7cdd11a1337c0</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/jbenet/go-context@v0.0.0-20150711004518-d14ea06fba99</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/jbenet/go-context</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>io/ctxio.go</name>
+          <version>v0.0.0-37e9ce2a777b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">400e167e3a7ef514aef8ed0a86386c585537300ddadadb4ff93a639196a4dc6f</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/kevinburke/ssh_config@v0.0.0-20201106050909-4977a11b4351" type="library">
+      <name>github.com/kevinburke/ssh_config</name>
+      <version>v0.0.0-20201106050909-4977a11b4351</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">0e8c12f61be0c98497e133b9369c82eb4ebf6784b19cd61b4fe597dbba2be829</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/kevinburke/ssh_config@v0.0.0-20201106050909-4977a11b4351</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/kevinburke/ssh_config</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>config.go</name>
+          <version>v0.0.0-bcc5e5bdc68a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ef07ffbe49496cfee9eb3ad45836a7dd5db2c42e7d3402cefcf4bc703c74ee13</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>lexer.go</name>
+          <version>v0.0.0-44db9f2fe334</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7c237fa6dd6bb2f32a2cb66cf9c9d1d247e3d521f97f46ffd5538beb415b241c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>parser.go</name>
+          <version>v0.0.0-fd963d043a51</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">617b975cb44a902803191ff2674fa8f16e743b2505df1db716319a1c85cc5854</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>position.go</name>
+          <version>v0.0.0-a6e90e860c18</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a35ba5a2384156d0aff83849c69c18fbf767a42575a639dc0c8cc18d5379191a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>token.go</name>
+          <version>v0.0.0-15d3c8c1e6ed</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a94a0a751c2ba38946ffd198cd2d9e4c97b5f5cd1b9ec091f25d2678ba70b1ee</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>validators.go</name>
+          <version>v0.0.0-41826716ad49</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1ae215b31beca89e9e312fdf1b2c24362630d1ef955d450f9641b11ae98b45d3</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/mitchellh/go-homedir@v1.1.0" type="library">
+      <name>github.com/mitchellh/go-homedir</name>
+      <version>v1.1.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">96e905f738971710c53e4035becaf9ce97355ee3c39ffc059edab9986fb81346</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/mitchellh/go-homedir@v1.1.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/mitchellh/go-homedir</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>homedir.go</name>
+          <version>v0.0.0-829993ca7e9c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">94bccb1b8cd7f3ae2b71ff0ebacf6639384578c700b2ef01aaf183d9b581384a</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/sergi/go-diff@v1.1.0" type="library">
+      <name>github.com/sergi/go-diff</name>
+      <version>v1.1.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">c1ef0f5540b7144dae61fa1d287fe70473127ad49f1c347ab1c19d062f9eae1d</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/sergi/go-diff@v1.1.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/sergi/go-diff</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>diffmatchpatch/diff.go</name>
+          <version>v0.0.0-89c9172d4eb9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8639df4bfe6132c91455ea07c72fe4e0aed7db185ad63d989f93c06415dd0e5f</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>diffmatchpatch/diffmatchpatch.go</name>
+          <version>v0.0.0-eb6382f6f798</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">29ef08769017266a950012c49130325ab81ef80b400c1dd4fb5b7515703a65eb</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>diffmatchpatch/match.go</name>
+          <version>v0.0.0-ba7fb81c7ef5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">48296401f60c1f10caba93cfeeae9c164539cb7afaa0b434e010e61f5728c059</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>diffmatchpatch/mathutil.go</name>
+          <version>v0.0.0-dd605e427ce4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">232172e12e9abd0718fb0f3346a8f8849db0ecdd15cb873f91b6c2f7f5b453d3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>diffmatchpatch/operation_string.go</name>
+          <version>v0.0.0-4ac5686b4da1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">04806dd6b051379c86927815c23083f6d9089d23afcf3ebd8c486cff435de5b2</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>diffmatchpatch/patch.go</name>
+          <version>v0.0.0-a19d863b41e7</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">bfad7655c6e2058147d8f2dc8cbab9964041e21b8a41a0cc63aec3d3649a13d8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>diffmatchpatch/stringutil.go</name>
+          <version>v0.0.0-a2f072c4516b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">209cb46bd0b7d56885e63349c38de5b223d7aad5093cefdb2d30414ecad593f3</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/github.com/xanzy/ssh-agent@v0.3.0" type="library">
+      <name>github.com/xanzy/ssh-agent</name>
+      <version>v0.3.0</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">c14333b8ab4a8a54600400f5b146fc80ec3046bd851a8055ba6723a0e0020a52</hash>
+      </hashes>
+      <purl>pkg:golang/github.com/xanzy/ssh-agent@v0.3.0</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/xanzy/ssh-agent</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>pageant_windows.go</name>
+          <version>v0.0.0-805a4afae287</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2b00ccf1c28b9b10f040532a3eda88db1c68891903daef2864b56f3d36f17aa5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>sshagent_windows.go</name>
+          <version>v0.0.0-0805d5b48b7f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e3df563925c2d4550d8a488981f230b0929678447e1031be9d8660d9e3d21a63</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b" type="library">
+      <name>golang.org/x/crypto</name>
+      <version>v0.0.0-20210421170649-83a5a9bb288b</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">ee65abde4e3542dbfc5e596d0640e497c2e83f79a94a0056f01528c6d11d6d78</hash>
+      </hashes>
+      <purl>pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b</purl>
+      <components>
+        <component type="file">
+          <name>cast5/cast5.go</name>
+          <version>v0.0.0-51902a52a64f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">312586863f68f63c149768b01f66152f1504b0aeca910be621ff88e4f8d5967b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>curve25519/curve25519.go</name>
+          <version>v0.0.0-4259c3da1225</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">21f5e8cc7de724221b9f9884aa3043c8b57245434009388cc09f6ff25f2115b7</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>curve25519/curve25519_amd64.go</name>
+          <version>v0.0.0-b1fc0c72508a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">e88e6f273cc522e972039364d4118fd49dd54be980f5da80cacb8769f773a099</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>curve25519/curve25519_generic.go</name>
+          <version>v0.0.0-2447c0697a1a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5f35f5e60d342577eeb7cbbe424df32e821746b8656ade5039ff794b0353cdd9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ed25519/ed25519_go113.go</name>
+          <version>v0.0.0-9bc812e5b291</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">33071b7e257dc7e94e06226a912deda63aa405e267647c991b72d638d65d1399</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/subtle/aliasing.go</name>
+          <version>v0.0.0-3571292ab569</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9f64b9df76bad2baebef09dd18033f4863c7efeed39ca51771f2bbb86caaad46</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>chacha20/chacha_generic.go</name>
+          <version>v0.0.0-a82a45ee85e8</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2b2befcb17ce66ea73b6507f8fc758bcdd1ce1cd9080b203c13272348ecc0541</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>chacha20/chacha_noasm.go</name>
+          <version>v0.0.0-b676374ead2c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">aaeef92bf70f799a77b5a668b7348970b49e50812ab847707cb0187b531b3be2</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>chacha20/xor.go</name>
+          <version>v0.0.0-561bbe92d6fc</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c3adc8555766e36629b4dd3fcd579969d2d2737c65a379db997253a2b7b18072</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>poly1305/bits_go1.13.go</name>
+          <version>v0.0.0-9b5ce51c43d5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ed497d4c0b180005a44d8320b225b30b1b2158b1e23b68c0220a3e4665f40caa</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>poly1305/poly1305.go</name>
+          <version>v0.0.0-4da4f3ce8d58</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b3e7bd8fa3ab2afcfea83c29660f1cc637ee661b31072d04fae5ee31521e5943</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>poly1305/sum_amd64.go</name>
+          <version>v0.0.0-27f79661aff2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fdb7e4c38de1650e7d8409fd0948cfaa360f07c3a9ef330f9a062961cb4926ce</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>poly1305/sum_generic.go</name>
+          <version>v0.0.0-3b78a66efb0d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6341e97c0d4fd9d06ffe8d6dd3f90a877aaaf58a5c75db22ccc9d6a8dd869b39</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>blowfish/block.go</name>
+          <version>v0.0.0-e4dbe909d1e0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4f7eecb319e7c3d4018c0f8528be82cd889ae7b2829ee1f9c1f83a651a883b07</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>blowfish/cipher.go</name>
+          <version>v0.0.0-7ea01ad07acf</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">93c3da1dbcdd53b4d93f0dd92f4f74265434cb88208cbbe8b7d67e271702d111</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>blowfish/const.go</name>
+          <version>v0.0.0-a37179aa3a6d</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fbf914c515f87da351d3b8d1ffb3751ad73a26f6817ed0857470bd44c9479c0d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/internal/bcrypt_pbkdf/bcrypt_pbkdf.go</name>
+          <version>v0.0.0-ed6d03eb1e28</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4694b500beb45c7f61c050b59bd7f7aef88f87790234fa49d78379b032d63d9a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/buffer.go</name>
+          <version>v0.0.0-b7581d2021a7</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8a7997c253d676a137735b1d0d9b17b8bca33dc54d351bd86620a1e017ad3520</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/certs.go</name>
+          <version>v0.0.0-adc610059814</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b75ada6bf0c531d5ba390f51612326669934ea7e3b48f510898f009cf3db822b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/channel.go</name>
+          <version>v0.0.0-cacd05b2030b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a139d45297fe221c6564ffde2531998d977dc67a7e299e3ba1147aae21ad0a54</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/cipher.go</name>
+          <version>v0.0.0-838f9fc2bc86</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">419c656c17779a89e4278658e3dfefbe5eeda6f440ea82c276d585fa793cab64</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/client.go</name>
+          <version>v0.0.0-59f81f7c3e1c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b418bc843f3fc6c57dd46b704b22fe39fa9ad44ae8e96847278d0804f8479506</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/client_auth.go</name>
+          <version>v0.0.0-c1384a92ab8f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">79bae50a30a04671fc01765a90468e1d853d32371bfb2e6260679da97010caf4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/common.go</name>
+          <version>v0.0.0-b9d5900a50de</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">74e0af7277a424774b162db34295dfb7987760b646e96532ea4bc69bcea1eba9</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/connection.go</name>
+          <version>v0.0.0-135192e226df</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">415c7cc666c1111872a6b18dd062e859d07f6168cb7d492f9b3d040494eb3307</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/doc.go</name>
+          <version>v0.0.0-ddf710e10190</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">783c16fd83062104e3dec33135448b5b1c6c3001b3f844f57fd71bda136095ef</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/handshake.go</name>
+          <version>v0.0.0-a63301b2197a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c1969cf409bb6e77b3567c7289ae874b589cb167566225fd3a1b90dbb1dc512d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/kex.go</name>
+          <version>v0.0.0-060faa8a1c3a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">57dae5d946674e8c05a9b68de3fba6873c18e6c365715a5a4c08508e2efc8a2b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/keys.go</name>
+          <version>v0.0.0-7dcfc8c21da2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">2fe58d2768bacc513c3fa21e3cff1c6bc4113c725640fc9d3d54d12fa32b018c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/mac.go</name>
+          <version>v0.0.0-a40369523c17</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7192ad0ec175ea9b5a6ada4930476addf0c6d3bcc8d68261b4e5c84e47b70622</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/messages.go</name>
+          <version>v0.0.0-380c0e1d2670</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">ee7d9ae926d1c6af4947354450ff90b6ed98376a48be34f3f4e61d63988f9117</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/mux.go</name>
+          <version>v0.0.0-da5f3ffef77f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3ade458a2f37d5b501cbea044b391b5a0f1717bc1494c470671a6fbaddba517c</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/server.go</name>
+          <version>v0.0.0-1d301aa4483b</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">60df5aafa30866f6aca674bbdf14adff3de01c06a0601e119140bf8d661b7f43</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/session.go</name>
+          <version>v0.0.0-d6d0cdb0ffc8</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">efa1465678bb71fddd49e55b4bb57a3704f42213512b7eb221b963c644ef4b0d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/ssh_gss.go</name>
+          <version>v0.0.0-09dee6b031da</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6f9b42035bc787cce842f235f6017780561e5182032edfa1300f5f995008482b</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/streamlocal.go</name>
+          <version>v0.0.0-78f0ae570563</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5ed58dc890552785af37a4cd90096f064b27f7936e6b2b98c86dcabf5be3c314</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/tcpip.go</name>
+          <version>v0.0.0-582f8fbf3ef9</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c27ac8a248360557b265377b0cdbe6d7ffe28b72ab0753826d07656fc15c0226</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/transport.go</name>
+          <version>v0.0.0-0fa4d5c45ef4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3f32f3d93d1697a3b7dcd8b7fef998dcc69cdc52a37549e07e2aaebd666004e6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/agent/client.go</name>
+          <version>v0.0.0-ecbe15a7dfd2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9e3bd5cfa2da4855a1b600d2148637efab3c79fa95d3bb1e55a26d2da97fec13</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/agent/forward.go</name>
+          <version>v0.0.0-57cced96da81</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6cc3863ef6789d38762331764b0ab62efa6f78d2fe9d492ab112015114363e53</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/agent/keyring.go</name>
+          <version>v0.0.0-a0af6453fc66</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">850c84f49b49ef2ba44d9791a25010b81a412d2c7e232813e5862b48f7a0eaaf</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/agent/server.go</name>
+          <version>v0.0.0-71784a5980d4</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b3d568150d8ff6dfb8bf789de5730b8ea73b2fd742c679eec742d25d537a0334</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>ssh/knownhosts/knownhosts.go</name>
+          <version>v0.0.0-1bde5566019a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">7d57e7749b5f9c637dedd5e388d2a5af74d57cae821c3c14fb642384be2d54e1</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/golang.org/x/mod@v0.4.2" type="library">
+      <name>golang.org/x/mod</name>
+      <version>v0.4.2</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">1b3f7ab0858adce6a556ffc8fea37280fe36cf2a0aa77c69b5154259114406fa</hash>
+      </hashes>
+      <purl>pkg:golang/golang.org/x/mod@v0.4.2</purl>
+      <components>
+        <component type="file">
+          <name>sumdb/dirhash/hash.go</name>
+          <version>v0.0.0-7a7da6bbb5e1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a88efe6c26921bdbc846a27c44bd625fcf4db54128242eecc8a5a96c7bd44e55</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897" type="library">
+      <name>golang.org/x/net</name>
+      <version>v0.0.0-20210326060303-6b1517762897</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">2abb074e19b99c5937e18b404cad4bb138721a119b19ed6896bb5efc72271efb</hash>
+      </hashes>
+      <purl>pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897</purl>
+      <components>
+        <component type="file">
+          <name>context/context.go</name>
+          <version>v0.0.0-40e1b3c69aff</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">43e3d5240f339bb14ca931bf241dc7d6e1a8ddb3b7a313eb8252d32c806179cf</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>context/go17.go</name>
+          <version>v0.0.0-f253fda7777f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6b7e62702ac0075fea7b5f0592c11942462dfa939781c3e447411475179a27f7</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>context/go19.go</name>
+          <version>v0.0.0-46fc09a0420c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">9826bcea7f576b7956b47380ea8d7245094ed434d7cdd0edbb84b56bb3d5d6b6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/socks/client.go</name>
+          <version>v0.0.0-12b24e9eef85</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">5fa528d71ce4baad24458b91f4052a90ab17d4dc7f788b01d2abd3309adc6575</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>internal/socks/socks.go</name>
+          <version>v0.0.0-d77dd2fdb233</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8f01bee78b3b92cbe21772b41da26655f0de89f704b8e447e5559e9496dffbea</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>proxy/dial.go</name>
+          <version>v0.0.0-13f8550d679a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">368f80447d4f14041feb1bfa5494bfbaf99bc6892f20c3d3b3ac048809be759d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>proxy/direct.go</name>
+          <version>v0.0.0-2655f2effa35</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8113dae4885fca6c6c1780bfbe4adb21657db8832873bfb4decee809a5176654</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>proxy/per_host.go</name>
+          <version>v0.0.0-41467c4d53e0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">67231e68ce46130b7aa2d3363c380ad54a68bc372b0af11a6e5de9651e0eb564</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>proxy/proxy.go</name>
+          <version>v0.0.0-220e1a0e27e5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4d99c5fbc645f4cbcd70e414e66499f9287c82539d4202fc3177675a0ad9a5e5</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>proxy/socks5.go</name>
+          <version>v0.0.0-1882e9a9ea9c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0f7d58c78ba63a7e43470fa31a2779f56a98fcbf0a432b1b66ab17e5486b20b0</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/atom/atom.go</name>
+          <version>v0.0.0-9fcf16d94862</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">86490b2027af4443dacfe96c313a6c632c03ea1acdf85f7f61c4fdde32bc2f3d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/atom/table.go</name>
+          <version>v0.0.0-83ac34cc9ebd</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">643f9913d15beb98d2794f5a9f6b60691350d3525040d9cf6e4c6b8edd1ac547</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/const.go</name>
+          <version>v0.0.0-6c72b1faefe7</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">44c814afac4b0206a4f2af92607f93a72b93919ec2c3884d372edcdc24507584</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/doc.go</name>
+          <version>v0.0.0-7baa7491c08f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6e7d7f0519e4d8e1ff5c85da7985369d9d5685318fb100316cde716334a419b4</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/doctype.go</name>
+          <version>v0.0.0-5fe411c7d21e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">d61e3134cbc26d533b8c3ddff72f41872cbd9e077e1ab3a4241ebf427cfc2861</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/entity.go</name>
+          <version>v0.0.0-06009c44cdf2</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">eca9e6cac4ddb939ddce98f64e9c2f16031accaead07f1bbce2f37991cd618bd</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/escape.go</name>
+          <version>v0.0.0-da9637280b70</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">442fd20c315da78f43d976ebe1d61c69dd9c96a68b29352f650bc79e5162c3ec</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/foreign.go</name>
+          <version>v0.0.0-34456b3a2b11</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4bb48c05b855fd872bf3f8a10ff54759d756592588278e8bad2b8daabd509453</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/node.go</name>
+          <version>v0.0.0-675de83a60ef</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">4bfed9a1a0640864748b3649ad731a35ca2eae6bf720f769978b87c01d8623fb</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/parse.go</name>
+          <version>v0.0.0-cec19977e79f</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">26f322b5a0f8e1abdf11809b2afe0fe2897078890ff93297c8434b857040c07a</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/render.go</name>
+          <version>v0.0.0-c4774ff58037</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">0ade11c88b16f09450ce1e7beb6ef2928ffa0c02f81e4e903008c0679c5c5f13</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>html/token.go</name>
+          <version>v0.0.0-d06d6dc6aa12</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">352d3152a0924df16c5bdee8761b0f445b24463bd846a85c01e578e3028ecb50</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79" type="library">
+      <name>golang.org/x/sys</name>
+      <version>v0.0.0-20210502180810-71e4cd670f79</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">457f02f0f45973685322877876cf228feff84505f702a8588f7b8e1e6c9acf81</hash>
+      </hashes>
+      <purl>pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79</purl>
+      <components>
+        <component type="file">
+          <name>internal/unsafeheader/unsafeheader.go</name>
+          <version>v0.0.0-057e624278df</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8ab6b296b610d187578596c01c09ff0613d78d07a0d891d5e17aa5da375b6948</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/aliases.go</name>
+          <version>v0.0.0-e5e5e00f78a3</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">1ed908469d018fc34605124b47418422091f4aae525cd91561a9d94787934050</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/dll_windows.go</name>
+          <version>v0.0.0-cca2569d70ae</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c537db32b5a32d6951d0a0c5dbcda2882e75e5b712745a4e7d32fc37ce032d02</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/env_windows.go</name>
+          <version>v0.0.0-f8502f233ac1</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">69a9e0a6f465c88b24699ea8b6f587c679895ff2d34ff5a6a85c4635192f0a89</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/eventlog.go</name>
+          <version>v0.0.0-3ce2b39fa9a8</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">36e6102d274d20dbb5f740376453bb6ab13e02c86e2be706857a07a236b5682e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/exec_windows.go</name>
+          <version>v0.0.0-0be35fb5b565</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">b58efe21bd5fc302d220d20ae4f3e34c6846cc18c3ef3bf8537a2a38cf0a3723</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/memory_windows.go</name>
+          <version>v0.0.0-1a42b4f8cbc5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">82907ddb3340e172e94dabf6ef67c7ebad86a6ab64b6e7f120316342306125e3</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/race0.go</name>
+          <version>v0.0.0-ebda10ca4665</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f483ad20eef4aedcabc598060fa414eab96f19e3391d1d65d9aec420d64ffd9d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/security_windows.go</name>
+          <version>v0.0.0-72e76a5e5c62</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c28945766ada86876f435c717ac433327181f3d27311141ead6ff5b15a522e9d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/service.go</name>
+          <version>v0.0.0-fcc9d00ecc7e</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">074e76c507a2ee4f2f5d59e5d4b8138bf51c4762770d7150f936014de511b0a8</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/setupapierrors_windows.go</name>
+          <version>v0.0.0-436a97d64a05</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">725a91556b9733aced0d776a95a00ed0d91d7ef6c2c2c137235fa1b62225cabf</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/str.go</name>
+          <version>v0.0.0-e0412c7ae5a8</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a979ea38da92c56dc17baa7fce72bb82ac4353867d47c5240cee4404bf356875</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/syscall.go</name>
+          <version>v0.0.0-1f71ffcb90c5</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">870a4e27224aa6f110058b4b7756ef315ec0dc96060892f9d2a6fb49c3d72d82</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/syscall_windows.go</name>
+          <version>v0.0.0-0e8fa356e561</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">08712ee256f1572d10f2285206bc0798bb10547a78cec667333c75dba9b5cb0e</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/types_windows.go</name>
+          <version>v0.0.0-839755eb7f01</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">a775399006f3d60edb37cbc04abdeb6ab5848df65be8b95681faf26a65350d63</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/types_windows_amd64.go</name>
+          <version>v0.0.0-60d993369512</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">c375406875cabc6447a9a8ca917eccab2227ea33a17ac3ed02a3a8fca0af8ce1</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/zerrors_windows.go</name>
+          <version>v0.0.0-464075b780bb</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">fdf634bbd093494501a9aec0660aa53b434fdc2c2bb989e8d0925323e511358d</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/zknownfolderids_windows.go</name>
+          <version>v0.0.0-aac1a33e936a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">3815bbaa8adf5400041954decc56e8889eb56eb20bfc30053e7799703af0fc95</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>windows/zsyscall_windows.go</name>
+          <version>v0.0.0-fb061e5a804c</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">6e61c11f0515eb53223e4e6869341322284a8cbc7e06627bce27814adfe161e6</hash>
+          </hashes>
+        </component>
+        <component type="file">
+          <name>execabs/execabs.go</name>
+          <version>v0.0.0-7a20ff11bba0</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">8ff5dea017d7d2803551854045be5957bc0ae40ff304ec09ca7f65833da6c92b</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+    <component bom-ref="pkg:golang/gopkg.in/warnings.v0@v0.1.2" type="library">
+      <name>gopkg.in/warnings.v0</name>
+      <version>v0.1.2</version>
+      <scope>required</scope>
+      <hashes>
+        <hash alg="SHA-256">c055d56c563c0d8e7fc4e7b510289674a0b3665c60b2171854d9011ecb4044c1</hash>
+      </hashes>
+      <purl>pkg:golang/gopkg.in/warnings.v0@v0.1.2</purl>
+      <externalReferences>
+        <reference type="vcs">
+          <url>https://github.com/go-warnings/warnings</url>
+        </reference>
+      </externalReferences>
+      <components>
+        <component type="file">
+          <name>warnings.go</name>
+          <version>v0.0.0-5e43c85d874a</version>
+          <scope>required</scope>
+          <hashes>
+            <hash alg="SHA-256">f03b30f74cc2be263a09ace0399ee9685bc9ecfc36f42385c97d71f2d1ef7e84</hash>
+          </hashes>
+        </component>
+      </components>
+    </component>
+  </components>
+  <dependencies>
+    <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0"></dependency>
+    <dependency ref="pkg:golang/github.com/Microsoft/go-winio@v0.4.16">
+      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/github.com/ProtonMail/go-crypto@v0.0.0-20210428141323-04723f9f07d7">
+      <dependency ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/github.com/PuerkitoBio/goquery@v1.6.1">
+      <dependency ref="pkg:golang/github.com/andybalholm/cascadia@v1.1.0"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/github.com/andybalholm/cascadia@v1.1.0">
+      <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/github.com/emirpasic/gods@v1.12.0"></dependency>
+    <dependency ref="pkg:golang/github.com/go-git/gcfg@v1.5.0"></dependency>
+    <dependency ref="pkg:golang/github.com/go-git/go-billy/v5@v5.3.1">
+      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/github.com/go-git/go-git/v5@v5.4.2">
+      <dependency ref="pkg:golang/github.com/Microsoft/go-winio@v0.4.16"></dependency>
+      <dependency ref="pkg:golang/github.com/ProtonMail/go-crypto@v0.0.0-20210428141323-04723f9f07d7"></dependency>
+      <dependency ref="pkg:golang/github.com/emirpasic/gods@v1.12.0"></dependency>
+      <dependency ref="pkg:golang/github.com/go-git/gcfg@v1.5.0"></dependency>
+      <dependency ref="pkg:golang/github.com/go-git/go-billy/v5@v5.3.1"></dependency>
+      <dependency ref="pkg:golang/github.com/imdario/mergo@v0.3.12"></dependency>
+      <dependency ref="pkg:golang/github.com/jbenet/go-context@v0.0.0-20150711004518-d14ea06fba99"></dependency>
+      <dependency ref="pkg:golang/github.com/kevinburke/ssh_config@v0.0.0-20201106050909-4977a11b4351"></dependency>
+      <dependency ref="pkg:golang/github.com/mitchellh/go-homedir@v1.1.0"></dependency>
+      <dependency ref="pkg:golang/github.com/sergi/go-diff@v1.1.0"></dependency>
+      <dependency ref="pkg:golang/github.com/xanzy/ssh-agent@v0.3.0"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79"></dependency>
+      <dependency ref="pkg:golang/gopkg.in/warnings.v0@v0.1.2"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
+    <dependency ref="pkg:golang/github.com/imdario/mergo@v0.3.12"></dependency>
+    <dependency ref="pkg:golang/github.com/jbenet/go-context@v0.0.0-20150711004518-d14ea06fba99"></dependency>
+    <dependency ref="pkg:golang/github.com/kevinburke/ssh_config@v0.0.0-20201106050909-4977a11b4351"></dependency>
+    <dependency ref="pkg:golang/github.com/mitchellh/go-homedir@v1.1.0"></dependency>
+    <dependency ref="pkg:golang/github.com/sergi/go-diff@v1.1.0"></dependency>
+    <dependency ref="pkg:golang/github.com/xanzy/ssh-agent@v0.3.0">
+      <dependency ref="pkg:golang/github.com/Microsoft/go-winio@v0.4.16"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b">
+      <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/golang.org/x/mod@v0.4.2">
+      <dependency ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897">
+      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79"></dependency>
+    </dependency>
+    <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79"></dependency>
+    <dependency ref="pkg:golang/gopkg.in/warnings.v0@v0.1.2"></dependency>
+    <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.0.0-20210603200940-7137d9ff4d68">
+      <dependency ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0"></dependency>
+      <dependency ref="pkg:golang/github.com/PuerkitoBio/goquery@v1.6.1"></dependency>
+      <dependency ref="pkg:golang/github.com/go-git/go-git/v5@v5.4.2"></dependency>
+      <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/mod@v0.4.2"></dependency>
+    </dependency>
+  </dependencies>
+</bom>

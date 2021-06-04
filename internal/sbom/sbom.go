@@ -27,6 +27,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -42,6 +43,8 @@ import (
 
 type GenerateOptions struct {
 	ComponentType   cdx.ComponentType
+	Distribution    bool
+	IncludeFiles    bool
 	IncludeStdLib   bool
 	IncludeTest     bool
 	NoSerialNumber  bool
@@ -60,7 +63,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	log.Println("enumerating modules")
-	modules, err := gomod.GetModules(modulePath, options.IncludeTest)
+	modules, err := gomod.GetModules(modulePath, options.Distribution, options.IncludeTest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to enumerate modules: %w", err)
 	}
@@ -86,7 +89,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	log.Printf("converting main module %s\n", mainModule.Coordinates())
-	mainComponent, err := convertToComponent(mainModule, options.ResolveLicenses)
+	mainComponent, err := convertToComponent(mainModule, options.IncludeFiles, options.ResolveLicenses)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
@@ -96,7 +99,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	component := new(cdx.Component)
 	components := make([]cdx.Component, len(modules))
 	for i, module := range modules {
-		component, err = convertToComponent(module, options.ResolveLicenses)
+		component, err = convertToComponent(module, options.IncludeFiles, options.ResolveLicenses)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert module %s: %w", module.Coordinates(), err)
 		}
@@ -173,9 +176,9 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	return bom, nil
 }
 
-func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Component, error) {
+func convertToComponent(module gomod.Module, includeFiles, resolveLicense bool) (*cdx.Component, error) {
 	if module.Replace != nil {
-		return convertToComponent(*module.Replace, resolveLicense)
+		return convertToComponent(*module.Replace, includeFiles, resolveLicense)
 	}
 
 	log.Printf("converting module %s\n", module.Coordinates())
@@ -236,7 +239,51 @@ func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Componen
 		}
 	}
 
+	if includeFiles && len(module.Files) > 0 {
+		fileComponents := make([]cdx.Component, len(module.Files))
+		for i := range module.Files {
+			fileComponent, err := convertFileToComponent(module, module.Files[i])
+			if err != nil {
+				return nil, err
+			}
+			fileComponents[i] = *fileComponent
+		}
+		component.Components = &fileComponents
+	}
+
 	return &component, nil
+}
+
+func convertFileToComponent(module gomod.Module, filePath string) (*cdx.Component, error) {
+	fileComponent := cdx.Component{
+		Type:  cdx.ComponentTypeFile,
+		Name:  filePath,
+		Scope: cdx.ScopeRequired,
+	}
+
+	file, err := os.Open(filepath.Join(module.Dir, filePath))
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	hashSHA1 := sha1.New()
+	hashSHA256 := sha256.New()
+	hashWriter := io.MultiWriter(hashSHA1, hashSHA256)
+
+	if _, err = io.Copy(hashWriter, file); err != nil {
+		return nil, err
+	}
+
+	fileComponent.Version = "v0.0.0-" + fmt.Sprintf("%x", hashSHA1.Sum(nil))[:12]
+	fileComponent.Hashes = &[]cdx.Hash{
+		{
+			Algorithm: cdx.HashAlgoSHA256,
+			Value:     fmt.Sprintf("%x", hashSHA256.Sum(nil)),
+		},
+	}
+
+	return &fileComponent, nil
 }
 
 func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {
