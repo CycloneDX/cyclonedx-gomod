@@ -18,7 +18,7 @@ jobs:
         run: |
           mkdir -p "$HOME/.local/bin"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.15.1/cyclonedx-linux-x64
+          wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.15.2/cyclonedx-linux-x64
           chmod +x "$HOME/.local/bin/cyclonedx"
       - name: Checkout Repository
         uses: actions/checkout@v2
