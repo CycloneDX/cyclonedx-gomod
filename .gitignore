@@ -20,3 +20,7 @@
 
 # GoReleaser
 dist/
+
+# SBOMs generated during CI
+/bom.json
+/bom.xml
