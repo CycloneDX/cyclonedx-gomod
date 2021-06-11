@@ -18,7 +18,7 @@ jobs:
         run: |
           mkdir -p "$HOME/.local/bin"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.15.1/cyclonedx-linux-x64
+          wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.15.2/cyclonedx-linux-x64
           chmod +x "$HOME/.local/bin/cyclonedx"
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -27,9 +27,9 @@ jobs:
       - name: Test
         run: make test
       - name: Generate SBOM
-        uses: CycloneDX/gh-gomod-generate-sbom@v0.1.0
+        uses: CycloneDX/gh-gomod-generate-sbom@v0.2.0
         with:
           include-stdlib: true
           json: true
           resolve-licenses: true
-          version: 0.8.1
+          version: v0.8.1
