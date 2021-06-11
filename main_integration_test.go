@@ -77,19 +77,6 @@ func TestIntegrationNoDependencies(t *testing.T) {
 	})
 }
 
-// Integration test with a module that doesn't have any module dependencies,
-// but includes the Go standard library as component.
-func TestIntegrationNoDependenciesWithStd(t *testing.T) {
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		IncludeStd:      true,
-		ModulePath:      "./testdata/integration/no-dependencies",
-		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
-	})
-}
-
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
 func TestIntegrationVendored(t *testing.T) {
