@@ -130,7 +130,28 @@ func GetModules(mainModulePath string, distribution, includeTest bool) ([]Module
 	// and subsequently read from it.
 	buf := new(bytes.Buffer)
 
-	if !util.IsVendoring(mainModulePath) && distribution {
+	if util.IsVendoring(mainModulePath) {
+		if err = gocmd.ListVendoredModules(mainModulePath, buf); err != nil {
+			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
+		}
+
+		modules, err = parseVendoredModules(mainModulePath, buf)
+		if err != nil {
+			return nil, fmt.Errorf("parsing vendored modules failed: %w", err)
+		}
+
+		// Main module is not included in vendored module list,
+		// so we have to get it separately
+		buf.Reset()
+		if err = gocmd.GetModule(mainModulePath, buf); err != nil {
+			return nil, fmt.Errorf("listing main module failed: %w", err)
+		}
+
+		mainModule = new(Module)
+		if err = json.NewDecoder(buf).Decode(mainModule); err != nil {
+			return nil, fmt.Errorf("parsing main module failed: %w", err)
+		}
+	} else if distribution {
 		if err = gocmd.ListPackages(mainModulePath, includeTest, buf); err != nil {
 			return nil, fmt.Errorf("listing packages failed: %w", err)
 		}
@@ -155,7 +176,7 @@ func GetModules(mainModulePath string, distribution, includeTest bool) ([]Module
 		mainMod := modules[mainModuleIndex]
 		mainModule = &mainMod
 		modules = append(modules[:mainModuleIndex], modules[mainModuleIndex+1:]...)
-	} else if !util.IsVendoring(mainModulePath) && !distribution {
+	} else {
 		if err = gocmd.ListModules(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing modules failed: %w", err)
 		}
@@ -167,32 +188,13 @@ func GetModules(mainModulePath string, distribution, includeTest bool) ([]Module
 
 		mainModule = &modules[0]
 		modules = modules[1:]
-	} else {
-		if err = gocmd.ListVendoredModules(mainModulePath, buf); err != nil {
-			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
-		}
-
-		modules, err = parseVendoredModules(mainModulePath, buf)
-		if err != nil {
-			return nil, fmt.Errorf("parsing vendored modules failed: %w", err)
-		}
-
-		// Main module is not included in vendored module list,
-		// so we have to get it separately
-		buf.Reset()
-		if err = gocmd.GetModule(mainModulePath, buf); err != nil {
-			return nil, fmt.Errorf("listing main module failed: %w", err)
-		}
-
-		mainModule = new(Module)
-		if err = json.NewDecoder(buf).Decode(mainModule); err != nil {
-			return nil, fmt.Errorf("parsing main module failed: %w", err)
-		}
 	}
 
-	modules, err = filterModules(mainModulePath, modules, includeTest)
-	if err != nil {
-		return nil, fmt.Errorf("filtering modules failed: %w", err)
+	if !distribution {
+		modules, err = filterModules(mainModulePath, modules, includeTest)
+		if err != nil {
+			return nil, fmt.Errorf("filtering modules failed: %w", err)
+		}
 	}
 
 	// Sort modules by path to have a deterministic order
