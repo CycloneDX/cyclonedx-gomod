@@ -269,17 +269,28 @@ func convertFileToComponent(module gomod.Module, filePath string) (*cdx.Componen
 
 	hashSHA1 := sha1.New()
 	hashSHA256 := sha256.New()
-	hashWriter := io.MultiWriter(hashSHA1, hashSHA256)
+	hashSHA512 := sha512.New()
+	hashWriter := io.MultiWriter(hashSHA1, hashSHA256, hashSHA512)
 
 	if _, err = io.Copy(hashWriter, file); err != nil {
 		return nil, err
 	}
 
-	fileComponent.Version = "v0.0.0-" + fmt.Sprintf("%x", hashSHA1.Sum(nil))[:12]
+	hexSHA1 := fmt.Sprintf("%x", hashSHA1.Sum(nil))
+
+	fileComponent.Version = "v0.0.0-" + hexSHA1[:12]
 	fileComponent.Hashes = &[]cdx.Hash{
+		{
+			Algorithm: cdx.HashAlgoSHA1,
+			Value:     hexSHA1,
+		},
 		{
 			Algorithm: cdx.HashAlgoSHA256,
 			Value:     fmt.Sprintf("%x", hashSHA256.Sum(nil)),
+		},
+		{
+			Algorithm: cdx.HashAlgoSHA512,
+			Value:     fmt.Sprintf("%x", hashSHA512.Sum(nil)),
 		},
 	}
 
