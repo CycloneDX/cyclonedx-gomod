@@ -19,7 +19,7 @@ Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/c
 ### From Source
 
 ```shell
-go install github.com/CycloneDX/cyclonedx-gomod@v0.8.1
+go install github.com/CycloneDX/cyclonedx-gomod@v0.8.2
 ```
 
 > This project is not in a stable state yet and may be subject to breaking changes.  

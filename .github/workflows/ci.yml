@@ -32,4 +32,4 @@ jobs:
           include-stdlib: true
           json: true
           resolve-licenses: true
-          version: v0.8.1
+          version: v0.8.2

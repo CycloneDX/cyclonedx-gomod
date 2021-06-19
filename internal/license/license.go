@@ -83,7 +83,7 @@ func resolveForCoordinates(coordinates string) ([]cdx.License, error) {
 		return nil, err
 	}
 
-	sel := doc.Find("div.Container section.License h2").First()
+	sel := doc.Find(".Container section.License h2").First()
 	if len(sel.Nodes) == 0 {
 		return nil, ErrLicenseNotFound
 	}
