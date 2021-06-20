@@ -20,7 +20,6 @@ package gomod
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"path/filepath"
 	"strings"
@@ -29,13 +28,26 @@ import (
 // Package represents parts of the struct that `go list` is working with.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
 type Package struct {
-	Dir         string   // directory containing package sources
-	ImportPath  string   // import path of package in dir
-	Name        string   // package name
-	Standard    bool     // is this package part of the standard Go library?
-	Module      *Module  // info about package's containing module, if any (can be nil)
-	GoFiles     []string // .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)
-	TestGoFiles []string // _test.go files in package
+	Dir        string  // directory containing package sources
+	ImportPath string  // import path of package in dir
+	Name       string  // package name
+	Standard   bool    // is this package part of the standard Go library?
+	Module     *Module // info about package's containing module, if any (can be nil)
+
+	GoFiles        []string // .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)
+	CgoFiles       []string // .go source files that import "C"
+	CFiles         []string // .c source files
+	CXXFiles       []string // .cc, .cxx and .cpp source files
+	MFiles         []string // .m source files
+	HFiles         []string // .h, .hh, .hpp and .hxx source files
+	FFiles         []string // .f, .F, .for and .f90 Fortran source files
+	SFiles         []string // .s source files
+	SwigFiles      []string // .swig files
+	SwigCXXFiles   []string // .swigcxx files
+	SysoFiles      []string // .syso object files to add to archive
+	TestGoFiles    []string // _test.go files in package
+	EmbedFiles     []string // files matched by EmbedPatterns
+	TestEmbedFiles []string // files matched by TestEmbedPatterns
 }
 
 // parsePackageInfo parses the output of `go list -json`.
@@ -80,19 +92,38 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 				module = pkgs[i].Module
 			}
 
-			for _, goFile := range pkgs[i].GoFiles {
-				if !strings.HasSuffix(goFile, ".go") {
-					// For some reason there are sometimes binary files from
-					// Go's build cache included when `-test` was passed to `go list`.
-					fmt.Printf("skipping %s\n", goFile)
-					continue
-				}
-				fp, err := filepath.Rel(module.Dir, filepath.Join(pkgs[i].Dir, goFile))
-				if err != nil {
+			pkgFiles := make([]string, 0)
+			pkgFiles = append(pkgFiles, pkgs[i].GoFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].CgoFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].CFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].CXXFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].MFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].HFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].FFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].SFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].SwigFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].SwigCXXFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].SysoFiles...)
+			pkgFiles = append(pkgFiles, pkgs[i].EmbedFiles...)
+
+			for _, file := range pkgFiles {
+				if filePath, err := makePackageFileRelativeToModule(module.Dir, pkgs[i].Dir, file); err == nil {
+					module.Files = append(module.Files, filePath)
+				} else {
 					return nil, err
 				}
-				fp = strings.ReplaceAll(fp, "\\", "/")
-				module.Files = append(module.Files, fp)
+			}
+
+			pkgTestFiles := make([]string, 0)
+			pkgTestFiles = append(pkgTestFiles, pkgs[i].TestGoFiles...)
+			pkgTestFiles = append(pkgTestFiles, pkgs[i].TestEmbedFiles...)
+
+			for _, testFile := range pkgTestFiles {
+				if testFilePath, err := makePackageFileRelativeToModule(module.Dir, pkgs[i].Dir, testFile); err == nil {
+					module.TestFiles = append(module.TestFiles, testFilePath)
+				} else {
+					return nil, err
+				}
 			}
 		}
 
@@ -100,4 +131,12 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 	}
 
 	return modules, nil
+}
+
+func makePackageFileRelativeToModule(moduleDir, pkgDir, file string) (string, error) {
+	fp, err := filepath.Rel(moduleDir, filepath.Join(pkgDir, file))
+	if err != nil {
+		return "", err
+	}
+	return strings.ReplaceAll(fp, "\\", "/"), nil
 }
