@@ -244,7 +244,7 @@ func convertToComponent(module gomod.Module, options GenerateOptions) (*cdx.Comp
 		fileComponents := make([]cdx.Component, 0)
 
 		for i := range module.Files {
-			fileComponent, err := convertFileToComponent(module, module.Files[i], cdx.ScopeRequired)
+			fileComponent, err := convertFileToComponent(module, module.Files[i], cdx.ScopeRequired, options)
 			if err != nil {
 				return nil, err
 			}
@@ -253,7 +253,7 @@ func convertToComponent(module gomod.Module, options GenerateOptions) (*cdx.Comp
 
 		if options.IncludeTest {
 			for i := range module.TestFiles {
-				fileComponent, err := convertFileToComponent(module, module.TestFiles[i], cdx.ScopeExcluded)
+				fileComponent, err := convertFileToComponent(module, module.TestFiles[i], cdx.ScopeExcluded, options)
 				if err != nil {
 					return nil, err
 				}
@@ -273,7 +273,7 @@ func convertToComponent(module gomod.Module, options GenerateOptions) (*cdx.Comp
 	return &component, nil
 }
 
-func convertFileToComponent(module gomod.Module, filePath string, scope cdx.Scope) (*cdx.Component, error) {
+func convertFileToComponent(module gomod.Module, filePath string, scope cdx.Scope, options GenerateOptions) (*cdx.Component, error) {
 	fileComponent := cdx.Component{
 		Type:  cdx.ComponentTypeFile,
 		Name:  filePath,
@@ -298,6 +298,10 @@ func convertFileToComponent(module gomod.Module, filePath string, scope cdx.Scop
 	hexSHA1 := fmt.Sprintf("%x", hashSHA1.Sum(nil))
 
 	fileComponent.Version = "v0.0.0-" + hexSHA1[:12]
+	if options.NoVersionPrefix {
+		fileComponent.Version = strings.TrimPrefix(fileComponent.Version, "v")
+	}
+
 	fileComponent.Hashes = &[]cdx.Hash{
 		{
 			Algorithm: cdx.HashAlgoSHA1,
