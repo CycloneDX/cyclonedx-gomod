@@ -20,12 +20,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"golang.org/x/mod/semver"
 	"io"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+	"golang.org/x/mod/semver"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
@@ -37,6 +38,32 @@ import (
 // The minimum Go version required for cyclonedx-gomod to work.
 // This is currently 1.11, as modules were introduced in this version.
 const minimumGoVersion = "1.11"
+
+const (
+	usage = `Usage:
+  cyclonedx-gomod [-module PATH]
+`
+	usageFooter = `If distribution mode is enabled by providing the -distribution option, 
+build constraints are considered. That way, only modules that are compiled
+into the binary are included. Be aware that this is influenced by the
+environment variables GOOS, GOARCH, CGO_ENABLED, GOFLAGS etc.
+When using distribution mode, a SBOM should be generated for each binary built.
+
+By specifying -files, the imported files from each module are included as 
+sub-components, forming an assembly. For each file, the SHA-1, SHA-256 and 
+SHA-512 hashes are calculated. File versions are represented as v0.0.0-SHORTHASH, 
+where SHORTHASH are the first 12 characters of the SHA-1 hash.
+If -test is provided, files used in tests are included as well.
+
+If -reproducible is specified, dynamic content is omitted from the SBOM.
+Dynamic content refers to environment specific values like timestamps and
+information about the tool that generated the SBOM.
+
+Examples:
+  $ cyclonedx-gomod -module /path/to/module -licenses -json -output bom.json
+  $ cyclonedx-gomod -distribution -files -std -output bom.xml
+`
+)
 
 type Options struct {
 	ComponentType    cdx.ComponentType
@@ -74,6 +101,13 @@ func main() {
 	flag.StringVar(&options.SerialNumberStr, "serial", "", "Serial number (default [random UUID])")
 	flag.BoolVar(&options.ShowVersion, "version", false, "Show version")
 	flag.BoolVar(&options.UseJSON, "json", false, "Output in JSON format")
+
+	flag.Usage = func() {
+		_, _ = fmt.Fprintf(os.Stderr, "%s\nOptions:\n", usage)
+		flag.PrintDefaults()
+		_, _ = fmt.Fprintf(os.Stderr, "\n%s", usageFooter)
+	}
+
 	flag.Parse()
 
 	if options.ShowVersion {
