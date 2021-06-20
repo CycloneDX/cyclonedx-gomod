@@ -29,6 +29,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -89,7 +90,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	log.Printf("converting main module %s\n", mainModule.Coordinates())
-	mainComponent, err := convertToComponent(mainModule, options.IncludeFiles, options.ResolveLicenses)
+	mainComponent, err := convertToComponent(mainModule, options)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
@@ -99,7 +100,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	component := new(cdx.Component)
 	components := make([]cdx.Component, len(modules))
 	for i, module := range modules {
-		component, err = convertToComponent(module, options.IncludeFiles, options.ResolveLicenses)
+		component, err = convertToComponent(module, options)
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert module %s: %w", module.Coordinates(), err)
 		}
@@ -176,9 +177,9 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	return bom, nil
 }
 
-func convertToComponent(module gomod.Module, includeFiles, resolveLicense bool) (*cdx.Component, error) {
+func convertToComponent(module gomod.Module, options GenerateOptions) (*cdx.Component, error) {
 	if module.Replace != nil {
-		return convertToComponent(*module.Replace, includeFiles, resolveLicense)
+		return convertToComponent(*module.Replace, options)
 	}
 
 	log.Printf("converting module %s\n", module.Coordinates())
@@ -220,7 +221,7 @@ func convertToComponent(module gomod.Module, includeFiles, resolveLicense bool) 
 		return nil, fmt.Errorf("failed to determine if module is private: %w", err)
 	}
 
-	if resolveLicense && !module.Main && !private {
+	if options.ResolveLicenses && !module.Main && !private {
 		resolvedLicenses, err := license.Resolve(module)
 		if err == nil {
 			componentLicenses := make([]cdx.LicenseChoice, len(resolvedLicenses))
@@ -239,26 +240,44 @@ func convertToComponent(module gomod.Module, includeFiles, resolveLicense bool) 
 		}
 	}
 
-	if includeFiles && len(module.Files) > 0 {
-		fileComponents := make([]cdx.Component, len(module.Files))
+	if options.IncludeFiles {
+		fileComponents := make([]cdx.Component, 0)
+
 		for i := range module.Files {
-			fileComponent, err := convertFileToComponent(module, module.Files[i])
+			fileComponent, err := convertFileToComponent(module, module.Files[i], cdx.ScopeRequired)
 			if err != nil {
 				return nil, err
 			}
-			fileComponents[i] = *fileComponent
+			fileComponents = append(fileComponents, *fileComponent)
 		}
-		component.Components = &fileComponents
+
+		if options.IncludeTest {
+			for i := range module.TestFiles {
+				fileComponent, err := convertFileToComponent(module, module.TestFiles[i], cdx.ScopeExcluded)
+				if err != nil {
+					return nil, err
+				}
+				fileComponents = append(fileComponents, *fileComponent)
+			}
+		}
+
+		if len(fileComponents) > 0 {
+			sort.Slice(fileComponents, func(i, j int) bool {
+				return fileComponents[i].Name < fileComponents[j].Name
+			})
+
+			component.Components = &fileComponents
+		}
 	}
 
 	return &component, nil
 }
 
-func convertFileToComponent(module gomod.Module, filePath string) (*cdx.Component, error) {
+func convertFileToComponent(module gomod.Module, filePath string, scope cdx.Scope) (*cdx.Component, error) {
 	fileComponent := cdx.Component{
 		Type:  cdx.ComponentTypeFile,
 		Name:  filePath,
-		Scope: cdx.ScopeRequired,
+		Scope: scope,
 	}
 
 	file, err := os.Open(filepath.Join(module.Dir, filePath))

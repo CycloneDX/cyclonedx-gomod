@@ -152,7 +152,7 @@ func GetModules(mainModulePath string, distribution, includeTest bool) ([]Module
 			return nil, fmt.Errorf("parsing main module failed: %w", err)
 		}
 	} else if distribution {
-		if err = gocmd.ListPackages(mainModulePath, includeTest, buf); err != nil {
+		if err = gocmd.ListPackages(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing packages failed: %w", err)
 		}
 

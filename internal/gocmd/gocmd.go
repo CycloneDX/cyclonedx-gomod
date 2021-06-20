@@ -67,17 +67,10 @@ func ListModules(modulePath string, writer io.Writer) error {
 }
 
 // ListPackages executed `go list -deps -json` and writes the output to a given writer.
-// If includeTest is true, the `-test` flag is added.
 //
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
-func ListPackages(modulePath string, includeTest bool, writer io.Writer) error {
-	args := []string{"list", "-deps", "-json"}
-	if includeTest {
-		args = append(args, "-test")
-	}
-	args = append(args, "./...") // TODO: accept this as parameter as well?
-
-	cmd := exec.Command("go", args...)
+func ListPackages(modulePath string, writer io.Writer) error {
+	cmd := exec.Command("go", "list", "-deps", "-json", "./...")
 	cmd.Dir = modulePath
 	cmd.Stdout = writer
 	cmd.Stderr = os.Stderr
