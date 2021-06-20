@@ -20,9 +20,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+	"golang.org/x/mod/semver"
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
@@ -30,6 +33,10 @@ import (
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 )
+
+// The minimum Go version required for cyclonedx-gomod to work.
+// This is currently 1.11, as modules were introduced in this version.
+const minimumGoVersion = "1.11"
 
 type Options struct {
 	ComponentType    cdx.ComponentType
@@ -74,6 +81,10 @@ func main() {
 		return
 	}
 
+	if err := checkGoVersion(); err != nil {
+		log.Fatal(err)
+	}
+
 	if err := validateOptions(&options); err != nil {
 		log.Fatal(err)
 	}
@@ -81,6 +92,18 @@ func main() {
 	if err := executeCommand(options); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func checkGoVersion() error {
+	if goVersion, err := gocmd.GetVersion(); err == nil {
+		goVersion = strings.TrimPrefix(goVersion, "go")
+		if semver.Compare("v"+goVersion, "v"+minimumGoVersion) == -1 { // semver requires the v prefix
+			return fmt.Errorf("go >= %s is required, but is %s", minimumGoVersion, goVersion)
+		}
+	} else {
+		return fmt.Errorf("failed to determine go version: %w", err)
+	}
+	return nil
 }
 
 var allowedComponentTypes = []cdx.ComponentType{
