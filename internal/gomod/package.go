@@ -20,6 +20,7 @@ package gomod
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"path/filepath"
 	"strings"
@@ -86,12 +87,18 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 
 	for _, pkgs := range pkgsMap {
 		var module *Module
+		if len(pkgs) > 0 {
+			module = pkgs[0].Module
+			if module == nil {
+				// Shouldn't ever happen, because packages without module are not collected to pkgsMap.
+				// We do the nil check anyway to make linters happy. :)
+				return nil, fmt.Errorf("no module is associated with package %s", pkgs[0].ImportPath)
+			}
+		} else {
+			continue
+		}
 
 		for i := range pkgs {
-			if module == nil {
-				module = pkgs[i].Module
-			}
-
 			pkgFiles := make([]string, 0)
 			pkgFiles = append(pkgFiles, pkgs[i].GoFiles...)
 			pkgFiles = append(pkgFiles, pkgs[i].CgoFiles...)

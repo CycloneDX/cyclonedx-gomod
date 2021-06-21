@@ -41,12 +41,12 @@ const minimumGoVersion = "1.11"
 
 const (
 	usage = `Usage:
-  cyclonedx-gomod [-module PATH]
+  cyclonedx-gomod [OPTIONS...] 
 `
-	usageFooter = `If distribution mode is enabled by providing the -distribution option, 
+	usageFooter = `If distribution mode is enabled by providing the -dist option, 
 build constraints are considered. That way, only modules that are compiled
 into the binary are included. Be aware that this is influenced by the
-environment variables GOOS, GOARCH, CGO_ENABLED, GOFLAGS etc.
+environment variables GOOS, GOARCH, CGO_ENABLED, GOFLAGS etc. (and their implicit values).
 When using distribution mode, a SBOM should be generated for each binary built.
 
 By specifying -files, the imported files from each module are included as 
@@ -54,6 +54,7 @@ sub-components, forming an assembly. For each file, the SHA-1, SHA-256 and
 SHA-512 hashes are calculated. File versions are represented as v0.0.0-SHORTHASH, 
 where SHORTHASH are the first 12 characters of the SHA-1 hash.
 If -test is provided, files used in tests are included as well.
+-files can only be used in conjunction with -dist.
 
 If -reproducible is specified, dynamic content is omitted from the SBOM.
 Dynamic content refers to environment specific values like timestamps and
@@ -61,7 +62,7 @@ information about the tool that generated the SBOM.
 
 Examples:
   $ cyclonedx-gomod -module /path/to/module -licenses -json -output bom.json
-  $ cyclonedx-gomod -distribution -files -std -output bom.xml
+  $ GOOS=linux GOARCH=arm64 GOFLAGS="-tags foo,bar" cyclonedx-gomod -dist -files -std -output bom.xml
 `
 )
 
@@ -88,7 +89,7 @@ func main() {
 	var options Options
 
 	flag.StringVar(&options.ComponentTypeStr, "type", string(cdx.ComponentTypeApplication), "Type of the main component")
-	flag.BoolVar(&options.Distribution, "distribution", false, "Generate SBOM for distribution")
+	flag.BoolVar(&options.Distribution, "dist", false, "Generate SBOM for distribution")
 	flag.BoolVar(&options.IncludeFiles, "files", false, "Include files")
 	flag.BoolVar(&options.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	flag.BoolVar(&options.IncludeTest, "test", false, "Include test dependencies")
