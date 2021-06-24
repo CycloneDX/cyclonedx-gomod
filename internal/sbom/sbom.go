@@ -18,8 +18,8 @@
 package sbom
 
 import (
-	"crypto/md5"
-	"crypto/sha1"
+	"crypto/md5"  // #nosec G501
+	"crypto/sha1" // #nosec G505
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/base64"
@@ -97,7 +97,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	mainComponent.Scope = "" // Main component can't have a scope
 	mainComponent.Type = options.ComponentType
 
-	component := new(cdx.Component)
+	var component *cdx.Component
 	components := make([]cdx.Component, len(modules))
 	for i, module := range modules {
 		component, err = convertToComponent(module, options)
@@ -434,8 +434,8 @@ func calculateToolHashes() ([]cdx.Hash, error) {
 	}
 	defer exeFile.Close()
 
-	hashMD5 := md5.New()
-	hashSHA1 := sha1.New()
+	hashMD5 := md5.New()   // #nosec G401
+	hashSHA1 := sha1.New() // #nosec G401
 	hashSHA256 := sha256.New()
 	hashSHA512 := sha512.New()
 	hashWriter := io.MultiWriter(hashMD5, hashSHA1, hashSHA256, hashSHA512)
