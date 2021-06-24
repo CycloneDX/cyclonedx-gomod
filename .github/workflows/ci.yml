@@ -1,10 +1,27 @@
 name: CI
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
-  build:
-    name: Build
+  golangci:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+
+  test:
+    name: Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -32,4 +49,4 @@ jobs:
           include-stdlib: true
           json: true
           resolve-licenses: true
-          version: v0.8.2
+          version: latest

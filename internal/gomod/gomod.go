@@ -184,7 +184,7 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 			continue
 		}
 
-		localModulePath := ""
+		var localModulePath string
 		if filepath.IsAbs(modules[i].Replace.Path) {
 			localModulePath = modules[i].Replace.Path
 		} else {
