@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - examples/**
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - examples/**
 
 jobs:
   golangci:
