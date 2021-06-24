@@ -11,6 +11,8 @@ on:
       - main
     paths-ignore:
       - examples/**
+  schedule:
+    - cron: 0 0 * * *
 
 jobs:
   golangci:
