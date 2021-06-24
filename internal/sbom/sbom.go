@@ -286,7 +286,7 @@ func convertFileToComponent(module gomod.Module, filePath string, scope cdx.Scop
 	}
 	defer file.Close()
 
-	hashSHA1 := sha1.New()
+	hashSHA1 := sha1.New() // #nosec G401
 	hashSHA256 := sha256.New()
 	hashSHA512 := sha512.New()
 	hashWriter := io.MultiWriter(hashSHA1, hashSHA256, hashSHA512)

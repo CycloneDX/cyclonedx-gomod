@@ -55,7 +55,7 @@ type Package struct {
 //
 // The keys of the returned map are module coordinates (path@version).
 func parsePackages(reader io.Reader) (map[string][]Package, error) {
-	pkgsMap := make(map[string][]Package, 0)
+	pkgsMap := make(map[string][]Package)
 	jsonDecoder := json.NewDecoder(reader)
 
 	for {
