@@ -176,7 +176,7 @@ func validateOptions(options *Options) error {
 	}
 
 	if options.IncludeFiles && !options.Distribution {
-		return fmt.Errorf("-files cannot be used without -distribution")
+		return fmt.Errorf("-files cannot be used without -dist")
 	}
 
 	return nil

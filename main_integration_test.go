@@ -55,6 +55,18 @@ func TestIntegrationSimple(t *testing.T) {
 	})
 }
 
+func TestIntegrationSimpleDistFiles(t *testing.T) {
+	runSnapshotIT(t, Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		Distribution:    true,
+		IncludeFiles:    true,
+		ModulePath:      "./testdata/integration/simple",
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
+}
+
 // Integration test with a module that uses replacement with a local module.
 func TestIntegrationLocal(t *testing.T) {
 	runSnapshotIT(t, Options{
