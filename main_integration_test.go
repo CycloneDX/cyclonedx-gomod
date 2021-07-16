@@ -21,10 +21,13 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/google/uuid"
@@ -46,9 +49,12 @@ var (
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
 func TestIntegrationSimple(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/simple.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/simple",
+		ModulePath:      fixturePath,
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -56,10 +62,14 @@ func TestIntegrationSimple(t *testing.T) {
 }
 
 // Integration test with a module that uses replacement with a local module.
+// The local dependency is not a Git repository and thus won't have a version.
 func TestIntegrationLocal(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/local.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/local",
+		ModulePath:      filepath.Join(fixturePath, "local"),
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -68,9 +78,12 @@ func TestIntegrationLocal(t *testing.T) {
 
 // Integration test with a module that doesn't have any dependencies.
 func TestIntegrationNoDependencies(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/no-dependencies.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/no-dependencies",
+		ModulePath:      fixturePath,
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -78,11 +91,37 @@ func TestIntegrationNoDependencies(t *testing.T) {
 }
 
 // Integration test with a "simple" module with only a few dependencies,
-// no replacements and no vendoring.
+// no replacements, but vendoring.
 func TestIntegrationVendored(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/vendored.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/vendored",
+		ModulePath:      fixturePath,
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
+}
+
+// Integration test with a "simple" module with only a few dependencies,
+// but as a subdirectory of a Git repository. The expectation is that the
+// (pseudo-) version is inherited from the repository of the parent dir.
+//
+// nested/
+// |-+ .git/
+// |-+ simple/
+//   |-+ go.mod
+//   |-+ go.sum
+//   |-+ main.go
+func TestIntegrationNested(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/nested.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
+	runSnapshotIT(t, Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		ModulePath:      filepath.Join(fixturePath, "simple"),
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -111,8 +150,18 @@ func runSnapshotIT(t *testing.T, options Options) {
 	// Sanity check: Make sure the SBOM is valid
 	assertValidSBOM(t, bomFile.Name())
 
-	// Read SBOM and compare with snapshot
+	// The versions of the modules in ./testdata are dynamic and depend on the current HEAD commit,
+	// which would cause the snapshot comparisons to fail. Rest assured I felt dirty writing this.
+	moduleVersion, err := gomod.GetModuleVersion(".")
+	require.NoError(t, err)
 	bomFileContent, err := os.ReadFile(bomFile.Name())
+	require.NoError(t, err)
+	bomFileContent = regexp.MustCompile(`@?`+regexp.QuoteMeta(moduleVersion)).ReplaceAll(bomFileContent, nil)
+	err = os.WriteFile(bomFile.Name(), bomFileContent, 0600)
+	require.NoError(t, err)
+
+	// Read SBOM and compare with snapshot
+	bomFileContent, err = os.ReadFile(bomFile.Name())
 	require.NoError(t, err)
 	itSnapshotter.SnapshotT(t, string(bomFileContent))
 }
@@ -121,6 +170,20 @@ func skipIfShort(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
+}
+
+func extractFixture(t *testing.T, archivePath string) string {
+	tmpDir, err := os.MkdirTemp("", tmpPrefix+t.Name()+"_*")
+	require.NoError(t, err)
+
+	cmd := exec.Command("tar", "xzf", archivePath, "-C", tmpDir)
+	out, err := cmd.CombinedOutput()
+	if !assert.NoError(t, err) {
+		// Provide some context when test is failing
+		fmt.Printf("validation error: %s\n", string(out))
+	}
+
+	return tmpDir
 }
 
 func assertValidSBOM(t *testing.T, bomFilePath string) {

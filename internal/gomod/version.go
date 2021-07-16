@@ -18,7 +18,9 @@
 package gomod
 
 import (
+	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/go-git/go-git/v5"
@@ -28,24 +30,47 @@ import (
 
 // GetModuleVersion attempts to detect a given module's version by first
 // calling GetVersionFromTag and if that fails, GetPseudoVersion on it.
-func GetModuleVersion(modulePath string) (string, error) {
-	if tagVersion, err := GetVersionFromTag(modulePath); err != nil {
-		// TODO: Log err in DEBUG / verbose level
-		pseudoVersion, err := GetPseudoVersion(modulePath)
-		if err != nil {
+//
+// If no Git repository is found in moduleDir, directories will be traversed
+// upwards until the root directory is reached. This is done to accommodate
+// for multi-module repositories, where modules are not placed in the repo root.
+func GetModuleVersion(moduleDir string) (string, error) {
+	repoDir, err := filepath.Abs(moduleDir)
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		if tagVersion, err := GetVersionFromTag(repoDir); err == nil {
+			return tagVersion, nil
+		} else {
+			if errors.Is(err, git.ErrRepositoryNotExists) {
+				if strings.HasSuffix(repoDir, string(filepath.Separator)) {
+					// filepath.Abs and filepath.Dir both return paths
+					// that do not end with separators, UNLESS it's the
+					// root dir. We can't move up any further.
+					return "", fmt.Errorf("no git repository found")
+				}
+				repoDir = filepath.Dir(repoDir) // Move to the parent dir
+				continue
+			} else if errors.Is(err, plumbing.ErrObjectNotFound) {
+				// It's a Git repo, but there's no tag pointing at HEAD.
+				// Construct a pseudo version instead.
+				pseudoVersion, err := GetPseudoVersion(repoDir)
+				if err != nil {
+					return "", fmt.Errorf("constructing pseudo version failed: %w", err)
+				}
+				return pseudoVersion, nil
+			}
 			return "", err
 		}
-		return pseudoVersion, nil
-	} else {
-		return tagVersion, nil
 	}
 }
 
 // GetPseudoVersion constructs a pseudo version for a Go module at a given path.
-// Note that this is only possible when path points to a Git repository.
 // See https://golang.org/ref/mod#pseudo-versions
-func GetPseudoVersion(modulePath string) (string, error) {
-	repo, err := git.PlainOpen(modulePath)
+func GetPseudoVersion(moduleDir string) (string, error) {
+	repo, err := git.PlainOpen(moduleDir)
 	if err != nil {
 		return "", err
 	}
@@ -66,10 +91,9 @@ func GetPseudoVersion(modulePath string) (string, error) {
 	return fmt.Sprintf("v0.0.0-%s-%s", commitDate, commitHash), nil
 }
 
-// GetVersionFromTag checks if the current commit is annotated with a tag and if yes, returns that tag's name.
-// Note that this is only possible when path points to a Git repository.
-func GetVersionFromTag(modulePath string) (string, error) {
-	repo, err := git.PlainOpen(modulePath)
+// GetVersionFromTag checks if the current commit is annotated with a tag and if it is, returns that tag's name.
+func GetVersionFromTag(moduleDir string) (string, error) {
+	repo, err := git.PlainOpen(moduleDir)
 	if err != nil {
 		return "", err
 	}
@@ -84,7 +108,7 @@ func GetVersionFromTag(modulePath string) (string, error) {
 		return "", err
 	}
 
-	tagName := ""
+	var tagName string
 	err = tags.ForEach(func(reference *plumbing.Reference) error {
 		if reference.Hash() == headRef.Hash() && strings.HasPrefix(reference.Name().String(), "refs/tags/v") {
 			tagName = strings.TrimPrefix(reference.Name().String(), "refs/tags/")
