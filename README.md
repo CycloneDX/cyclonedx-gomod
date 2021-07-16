@@ -108,9 +108,9 @@ Limitations are as follows:
 
 There is currently no standard way for developers to declare their module's license.  
 Detecting licenses based on files in a repository is a non-trivial task, which is why *cyclonedx-gomod*  
-uses [`pkg.go.dev`](https://pkg.go.dev/) to resolve module licenses (please read their [license disclaimer](https://pkg.go.dev/license-policy)).
+uses [`go-license-detector`](https://github.com/go-enry/go-license-detector) to resolve module licenses.
 
-While `pkg.go.dev`'s license matching *may* be accurate most of the time, BOMs should state facts.  
+While `go-license-detector`'s license matching *may* be accurate most of the time, BOMs should state facts.  
 This is why license resolution is an opt-in feature (using the `-licenses` flag). If you are a vendor and legally
 required to provide 100% accurate BOMs, **do not** use this feature.
 
