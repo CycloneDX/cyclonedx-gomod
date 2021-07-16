@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -48,12 +49,12 @@ var (
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
 func TestIntegrationSimple(t *testing.T) {
-	modulePath := extractFixture(t, "./testdata/integration/simple.tar.gz")
-	defer os.RemoveAll(modulePath)
+	fixturePath := extractFixture(t, "./testdata/integration/simple.tar.gz")
+	defer os.RemoveAll(fixturePath)
 
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      modulePath,
+		ModulePath:      fixturePath,
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -61,10 +62,14 @@ func TestIntegrationSimple(t *testing.T) {
 }
 
 // Integration test with a module that uses replacement with a local module.
+// The local dependency is not a Git repository and thus won't have a version.
 func TestIntegrationLocal(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/local.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/local",
+		ModulePath:      filepath.Join(fixturePath, "local"),
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -73,9 +78,12 @@ func TestIntegrationLocal(t *testing.T) {
 
 // Integration test with a module that doesn't have any dependencies.
 func TestIntegrationNoDependencies(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/no-dependencies.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/no-dependencies",
+		ModulePath:      fixturePath,
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -83,11 +91,37 @@ func TestIntegrationNoDependencies(t *testing.T) {
 }
 
 // Integration test with a "simple" module with only a few dependencies,
-// no replacements and no vendoring.
+// no replacements, but vendoring.
 func TestIntegrationVendored(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/vendored.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/vendored",
+		ModulePath:      fixturePath,
+		ResolveLicenses: true,
+		Reproducible:    true,
+		SerialNumber:    &zeroUUID,
+	})
+}
+
+// Integration test with a "simple" module with only a few dependencies,
+// but as a subdirectory of a Git repository. The expectation is that the
+// (pseudo-) version is inherited from the repository of the parent dir.
+//
+// nested/
+// |-+ .git/
+// |-+ simple/
+//   |-+ go.mod
+//   |-+ go.sum
+//   |-+ main.go
+func TestIntegrationNested(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/integration/nested.tar.gz")
+	defer os.RemoveAll(fixturePath)
+
+	runSnapshotIT(t, Options{
+		ComponentType:   cdx.ComponentTypeLibrary,
+		ModulePath:      filepath.Join(fixturePath, "simple"),
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
