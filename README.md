@@ -67,9 +67,6 @@ Usage of cyclonedx-gomod:
         Show version
 ```
 
-> *cyclonedx-gomod* honors the `GONOPROXY` and `GOPRIVATE` environment variables and 
-> won't reach out to external data sources for private modules (e.g., for [license resolution](#licenses)).
-
 ### Example
 
 ```shell

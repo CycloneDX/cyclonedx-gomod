@@ -25,8 +25,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"os"
-	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -36,38 +34,8 @@ import (
 	"golang.org/x/mod/sumdb/dirhash"
 )
 
-var (
-	// ErrNoGoModule indicates that a given path is not a valid Go module
-	ErrNoGoModule = errors.New("not a Go module")
-
-	// PrivateModulePatterns holds all module patterns provided via the
-	// GONOPROXY and GOPRIVATE environment variables. If a module's path
-	// matches any of these, cyclonedx-gomod won't reach out to external
-	// data sources for it.
-	//
-	// See also:
-	//  - https://golang.org/ref/mod#private-module-privacy
-	//  - https://golang.org/ref/mod#environment-variables
-	PrivateModulePatterns []string
-)
-
-func init() {
-	patterns := make(map[string]bool)
-	for _, pattern := range strings.Split(os.Getenv("GONOPROXY"), ",") {
-		patterns[strings.TrimSpace(pattern)] = true
-	}
-	for _, pattern := range strings.Split(os.Getenv("GOPRIVATE"), ",") {
-		patterns[strings.TrimSpace(pattern)] = true
-	}
-
-	PrivateModulePatterns = make([]string, 0, len(patterns))
-	for pattern := range patterns {
-		if pattern == "" {
-			continue
-		}
-		PrivateModulePatterns = append(PrivateModulePatterns, pattern)
-	}
-}
+// ErrNoGoModule indicates that a given path is not a valid Go module
+var ErrNoGoModule = errors.New("not a Go module")
 
 // See https://golang.org/ref/mod#go-list-m
 type Module struct {
@@ -97,16 +65,6 @@ func (m Module) Hash() (string, error) {
 	}
 
 	return h1, nil
-}
-
-func (m Module) Private() (private bool, err error) {
-	for _, pattern := range PrivateModulePatterns {
-		private, err = path.Match(pattern, m.Path)
-		if private || err != nil {
-			return
-		}
-	}
-	return
 }
 
 func (m Module) PackageURL() string {
