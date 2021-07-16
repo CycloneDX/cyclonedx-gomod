@@ -190,3 +190,11 @@ Pull requests are welcome. But please read the
 
 It is generally expected that pull requests will include relevant tests. Tests are automatically run against all
 supported Go versions for every pull request.
+
+### Running Tests
+
+Some tests make use of the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli), e.g. to validate BOMs.  
+Make sure to download the CLI binary and make it available as `cyclonedx` in your `$PATH`.  
+See also *Setup CycloneDX CLI* in the [workflow](https://github.com/CycloneDX/cyclonedx-gomod/blob/master/.github/workflows/ci.yml).
+
+[Integration tests](./main_integration_test.go) additionally make use of the `tar` command, which may not be available in Windows environments.
