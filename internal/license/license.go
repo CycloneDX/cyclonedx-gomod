@@ -19,91 +19,62 @@ package license
 
 import (
 	"errors"
-	"fmt"
-	"net/http"
-	"strings"
+	"sort"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
-	"github.com/PuerkitoBio/goquery"
+	"github.com/go-enry/go-license-detector/v4/licensedb"
+	"github.com/go-enry/go-license-detector/v4/licensedb/filer"
 )
 
-var (
-	ErrModuleNotFound  = errors.New("module not found")
-	ErrLicenseNotFound = errors.New("no license found")
-	ErrLocalModule     = errors.New("license resolution isn't supported for local modules")
-)
+var ErrLicenseNotFound = errors.New("no license found")
+
+const minDetectionConfidence = 0.9
 
 func Resolve(module gomod.Module) ([]cdx.License, error) {
-	if module.Local {
-		return nil, ErrLocalModule
+	licensesFiler, err := filer.FromDirectory(module.Dir)
+	if err != nil {
+		return nil, err
 	}
 
-	licenses, err := resolveForCoordinates(module.Coordinates())
+	detectedLicenses, err := licensedb.Detect(licensesFiler)
 	if err != nil {
-		// The specific version of the module may not be present
-		// in the module proxy yet. Retry with just he module path
-		if errors.Is(err, ErrModuleNotFound) {
-			return resolveForCoordinates(module.Path)
+		return nil, err
+	}
+
+	// Eventually we'll get multiple matches with equal confidence.
+	// In order to at least make the output deterministic, we sort
+	// the license names before iterating over the matches.
+	// Maps are not sorted, so we need a temporary slice for this.
+	detectedLicenseNames := make([]string, 0, len(detectedLicenses))
+	for license := range detectedLicenses {
+		detectedLicenseNames = append(detectedLicenseNames, license)
+	}
+	sort.Slice(detectedLicenseNames, func(i, j int) bool {
+		return detectedLicenseNames[i] < detectedLicenseNames[j]
+	})
+
+	// Select the best match based on the highest confidence
+	var detectedLicense string
+	var detectedLicenseConfidence float32
+	for _, license := range detectedLicenseNames {
+		if detectedLicenses[license].Confidence > detectedLicenseConfidence {
+			detectedLicense = license
+			detectedLicenseConfidence = detectedLicenses[license].Confidence
 		}
-		return nil, err
-	}
-	return licenses, nil
-}
-
-func resolveForCoordinates(coordinates string) ([]cdx.License, error) {
-	req, err := http.NewRequest(http.MethodGet, "https://pkg.go.dev/"+coordinates, nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("User-Agent", fmt.Sprintf("%s/%s", version.Name, version.Version))
-
-	query := req.URL.Query()
-	query.Add("tab", "licenses")
-	req.URL.RawQuery = query.Encode()
-
-	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-
-	switch res.StatusCode {
-	case http.StatusOK:
-		break
-	case http.StatusNotFound:
-		return nil, ErrModuleNotFound
-	default:
-		return nil, fmt.Errorf("unexpected response status: %d", res.StatusCode)
 	}
 
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	sel := doc.Find(".License h2").First()
-	if len(sel.Nodes) == 0 {
+	if detectedLicense == "" || detectedLicenseConfidence < minDetectionConfidence {
 		return nil, ErrLicenseNotFound
 	}
 
-	licenseIDs := strings.TrimSpace(sel.Text())
+	// go-license-detector returns SPDX license IDs
+	license := cdx.License{ID: detectedLicense}
 
-	licenses := make([]cdx.License, 0)
-	for _, licenseID := range strings.Split(licenseIDs, ",") {
-		licenseID = strings.TrimSpace(licenseID)
-		if spdxLicense := getLicenseByID(licenseID); spdxLicense != nil {
-			licenses = append(licenses, cdx.License{
-				ID:  spdxLicense.ID,
-				URL: spdxLicense.Reference,
-			})
-		} else {
-			licenses = append(licenses, cdx.License{
-				Name: licenseID,
-			})
-		}
+	// Enrich license with URL (mainly for backwards-compatibility)
+	if spdxLicense := getLicenseByID(detectedLicense); spdxLicense != nil {
+		license.URL = spdxLicense.Reference
 	}
 
-	return licenses, nil
+	return []cdx.License{license}, nil
 }
