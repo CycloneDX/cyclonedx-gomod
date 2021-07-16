@@ -30,14 +30,20 @@ import (
 
 // GetModuleVersion attempts to detect a given module's version by first
 // calling GetVersionFromTag and if that fails, GetPseudoVersion on it.
-func GetModuleVersion(modulePath string) (string, error) {
-	repoDir, err := filepath.Abs(modulePath)
+//
+// If no Git repository is found in moduleDir, directories will be traversed
+// upwards until the root directory is reached. This is done to accommodate
+// for multi-module repositories, where modules are not placed in the repo root.
+func GetModuleVersion(moduleDir string) (string, error) {
+	repoDir, err := filepath.Abs(moduleDir)
 	if err != nil {
 		return "", err
 	}
 
 	for {
-		if tagVersion, err := GetVersionFromTag(repoDir); err != nil {
+		if tagVersion, err := GetVersionFromTag(repoDir); err == nil {
+			return tagVersion, nil
+		} else {
 			if errors.Is(err, git.ErrRepositoryNotExists) {
 				if strings.HasSuffix(repoDir, string(filepath.Separator)) {
 					// filepath.Abs and filepath.Dir both return paths
@@ -56,19 +62,15 @@ func GetModuleVersion(modulePath string) (string, error) {
 				}
 				return pseudoVersion, nil
 			}
-
 			return "", err
-		} else {
-			return tagVersion, nil
 		}
 	}
 }
 
 // GetPseudoVersion constructs a pseudo version for a Go module at a given path.
-// Note that this is only possible when path points to a Git repository.
 // See https://golang.org/ref/mod#pseudo-versions
-func GetPseudoVersion(modulePath string) (string, error) {
-	repo, err := git.PlainOpen(modulePath)
+func GetPseudoVersion(moduleDir string) (string, error) {
+	repo, err := git.PlainOpen(moduleDir)
 	if err != nil {
 		return "", err
 	}
@@ -90,9 +92,8 @@ func GetPseudoVersion(modulePath string) (string, error) {
 }
 
 // GetVersionFromTag checks if the current commit is annotated with a tag and if it is, returns that tag's name.
-// Note that this is only possible when path points to a Git repository.
-func GetVersionFromTag(modulePath string) (string, error) {
-	repo, err := git.PlainOpen(modulePath)
+func GetVersionFromTag(moduleDir string) (string, error) {
+	repo, err := git.PlainOpen(moduleDir)
 	if err != nil {
 		return "", err
 	}
