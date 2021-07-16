@@ -48,9 +48,12 @@ var (
 // Integration test with a "simple" module with only a few dependencies,
 // no replacements and no vendoring.
 func TestIntegrationSimple(t *testing.T) {
+	modulePath := extractFixture(t, "./testdata/integration/simple.tar.gz")
+	defer os.RemoveAll(modulePath)
+
 	runSnapshotIT(t, Options{
 		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      "./testdata/integration/simple",
+		ModulePath:      modulePath,
 		ResolveLicenses: true,
 		Reproducible:    true,
 		SerialNumber:    &zeroUUID,
@@ -133,6 +136,20 @@ func skipIfShort(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
+}
+
+func extractFixture(t *testing.T, archivePath string) string {
+	tmpDir, err := os.MkdirTemp("", tmpPrefix+t.Name()+"_*")
+	require.NoError(t, err)
+
+	cmd := exec.Command("tar", "xzf", archivePath, "-C", tmpDir)
+	out, err := cmd.CombinedOutput()
+	if !assert.NoError(t, err) {
+		// Provide some context when test is failing
+		fmt.Printf("validation error: %s\n", string(out))
+	}
+
+	return tmpDir
 }
 
 func assertValidSBOM(t *testing.T, bomFilePath string) {
