@@ -19,7 +19,7 @@ Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/c
 ### From Source
 
 ```shell
-go install github.com/CycloneDX/cyclonedx-gomod@v0.8.2
+go install github.com/CycloneDX/cyclonedx-gomod@v0.9.0
 ```
 
 Building from source requires Go 1.16 or newer.
