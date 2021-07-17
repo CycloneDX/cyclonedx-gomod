@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:2d77d004-a26b-487e-8c00-5228c2fca83b" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:d27ac3f9-c887-454a-b748-fcd625524a71" version="1">
   <metadata>
-    <timestamp>2021-06-02T17:42:37+02:00</timestamp>
+    <timestamp>2021-07-17T08:49:52+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
-        <version>v0.0.0-unset</version>
+        <version>v0.9.0</version>
         <hashes>
-          <hash alg="MD5">73fa78a43d65452f64f8399a7a01ca63</hash>
-          <hash alg="SHA-1">06ce2b600b0c8d5f347ede9c92f4f09fe2d59e12</hash>
-          <hash alg="SHA-256">9f6992a7bce956355f57e2024230bae0f81bb243b067786ff07d883885b10f0e</hash>
-          <hash alg="SHA-512">4bb528cfc6ad7dae1fdf0805a7642651e0ded989460c9b47b48d9e6314160187d5c870c88b5b90e7a090820f15977a8927a50407139ab8b7ffcd46e5c402ebb6</hash>
+          <hash alg="MD5">fbd6c9be6da0f447c40095c2713fe922</hash>
+          <hash alg="SHA-1">086cc0f0ffd38240d4362b87f2c2d66a7e83aa07</hash>
+          <hash alg="SHA-256">a05c272164e0f59937063a6304015286faa90f93b2985e67b60788dd7c69ad00</hash>
+          <hash alg="SHA-512">1938e8d1add284d2f308910a28f3ca8dd84ff4c84b67957a361e12527fef14cfae39ad2a02a5815dee6fba40b360a2e4cc74aeea2a5b5a39dc97dfb1545c0e34</hash>
         </hashes>
       </tool>
     </tools>
     <component bom-ref="pkg:golang/github.com/ProtonMail/proton-bridge@v1.6.3" type="application">
       <name>github.com/ProtonMail/proton-bridge</name>
       <version>v1.6.3</version>
+      <licenses>
+        <license>
+          <id>GPL-3.0-only</id>
+          <url>https://spdx.org/licenses/GPL-3.0-only.html</url>
+        </license>
+      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/proton-bridge@v1.6.3</purl>
       <externalReferences>
         <reference type="vcs">
@@ -319,10 +325,6 @@
           <id>BSD-3-Clause</id>
           <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
         </license>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
       </licenses>
       <purl>pkg:golang/github.com/antlr/antlr4@v0.0.0-20201029161626-9a95f0cc3d7c</purl>
       <externalReferences>
@@ -400,8 +402,8 @@
       </hashes>
       <licenses>
         <license>
-          <id>ISC</id>
-          <url>https://spdx.org/licenses/ISC.html</url>
+          <id>0BSD</id>
+          <url>https://spdx.org/licenses/0BSD.html</url>
         </license>
       </licenses>
       <purl>pkg:golang/github.com/davecgh/go-spew@v1.1.1</purl>
@@ -418,6 +420,12 @@
       <hashes>
         <hash alg="SHA-256">fa4bd4229c1671bb4fdd616fe6c4af9059ff5cbcd2a8f381e4002d86e93dc4f9</hash>
       </hashes>
+      <licenses>
+        <license>
+          <id>MIT</id>
+          <url>https://spdx.org/licenses/MIT.html</url>
+        </license>
+      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/docker-credential-helpers@v1.1.0</purl>
       <externalReferences>
         <reference type="vcs">
@@ -432,6 +440,12 @@
       <hashes>
         <hash alg="SHA-256">db1537427700892fd6dd495665391b34a5b95a42f393a1209754f4c57fac6e3b</hash>
       </hashes>
+      <licenses>
+        <license>
+          <id>MIT</id>
+          <url>https://spdx.org/licenses/MIT.html</url>
+        </license>
+      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-imap@v0.0.0-20201228133358-4db68cea0cac</purl>
       <externalReferences>
         <reference type="vcs">
@@ -646,12 +660,6 @@
       <hashes>
         <hash alg="SHA-256">f313c7978fead55caa1883e27f517ed55dd8de54a6aead3511a6d45b70a85b9b</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/fatih/color@v1.9.0</purl>
       <externalReferences>
         <reference type="vcs">
@@ -986,12 +994,6 @@
       <hashes>
         <hash alg="SHA-256">430c3a16c7859fc3d17f0d3b8ee7aa217aa8766d092a288ab8ad037974aa7f2a</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/miekg/dns@v1.1.30</purl>
       <externalReferences>
         <reference type="vcs">
@@ -1208,8 +1210,8 @@
       </hashes>
       <licenses>
         <license>
-          <id>LGPL-3.0</id>
-          <url>https://spdx.org/licenses/LGPL-3.0.html</url>
+          <id>LGPL-3.0-only</id>
+          <url>https://spdx.org/licenses/LGPL-3.0-only.html</url>
         </license>
       </licenses>
       <purl>pkg:golang/github.com/therecipe/qt@v0.0.0-20200701200531-7f61353ee73e</purl>
@@ -1286,12 +1288,6 @@
       <hashes>
         <hash alg="SHA-256">5c0cf1f608c26f44718fb128a9c0a53c3d5de590716499348dbba83c77a706dd</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/go.etcd.io/bbolt@v1.3.5</purl>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c" type="library">
@@ -1370,10 +1366,6 @@
         <license>
           <id>Apache-2.0</id>
           <url>https://spdx.org/licenses/Apache-2.0.html</url>
-        </license>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
         </license>
       </licenses>
       <purl>pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c</purl>

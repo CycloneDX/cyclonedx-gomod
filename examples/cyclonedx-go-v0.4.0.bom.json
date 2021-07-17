@@ -1,41 +1,49 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.2",
-  "serialNumber": "urn:uuid:f24076b7-6906-44ed-b528-4097ebaf7c4b",
+  "serialNumber": "urn:uuid:6851773a-8365-4efc-9210-2db3cbc7dcf8",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-06-02T17:48:36+02:00",
+    "timestamp": "2021-07-17T08:48:10+02:00",
     "tools": [
       {
         "vendor": "CycloneDX",
         "name": "cyclonedx-gomod",
-        "version": "v0.0.0-unset",
+        "version": "v0.9.0",
         "hashes": [
           {
             "alg": "MD5",
-            "content": "73fa78a43d65452f64f8399a7a01ca63"
+            "content": "fbd6c9be6da0f447c40095c2713fe922"
           },
           {
             "alg": "SHA-1",
-            "content": "06ce2b600b0c8d5f347ede9c92f4f09fe2d59e12"
+            "content": "086cc0f0ffd38240d4362b87f2c2d66a7e83aa07"
           },
           {
             "alg": "SHA-256",
-            "content": "9f6992a7bce956355f57e2024230bae0f81bb243b067786ff07d883885b10f0e"
+            "content": "a05c272164e0f59937063a6304015286faa90f93b2985e67b60788dd7c69ad00"
           },
           {
             "alg": "SHA-512",
-            "content": "4bb528cfc6ad7dae1fdf0805a7642651e0ded989460c9b47b48d9e6314160187d5c870c88b5b90e7a090820f15977a8927a50407139ab8b7ffcd46e5c402ebb6"
+            "content": "1938e8d1add284d2f308910a28f3ca8dd84ff4c84b67957a361e12527fef14cfae39ad2a02a5815dee6fba40b360a2e4cc74aeea2a5b5a39dc97dfb1545c0e34"
           }
         ]
       }
     ],
     "component": {
-      "bom-ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
+      "bom-ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.4.0",
       "type": "application",
       "name": "github.com/CycloneDX/cyclonedx-go",
-      "version": "v0.1.0",
-      "purl": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
+      "version": "v0.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0",
+            "url": "https://spdx.org/licenses/Apache-2.0.html"
+          }
+        }
+      ],
+      "purl": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.4.0",
       "externalReferences": [
         {
           "url": "https://github.com/CycloneDX/cyclonedx-go",
@@ -88,8 +96,8 @@
       "licenses": [
         {
           "license": {
-            "id": "ISC",
-            "url": "https://spdx.org/licenses/ISC.html"
+            "id": "0BSD",
+            "url": "https://spdx.org/licenses/0BSD.html"
           }
         }
       ],
@@ -175,12 +183,6 @@
             "id": "Apache-2.0",
             "url": "https://spdx.org/licenses/Apache-2.0.html"
           }
-        },
-        {
-          "license": {
-            "id": "MIT",
-            "url": "https://spdx.org/licenses/MIT.html"
-          }
         }
       ],
       "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
@@ -219,7 +221,7 @@
       "ref": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"
     },
     {
-      "ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0",
+      "ref": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.4.0",
       "dependsOn": [
         "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0",
         "pkg:golang/github.com/stretchr/testify@v1.7.0"
