@@ -114,11 +114,14 @@ func main() {
 	defer outputFile.Close()
 
 	log.Printf("writing licenses to %s", outputFilePath)
-	outputTemplate.Execute(outputFile, struct {
+	err = outputTemplate.Execute(outputFile, struct {
 		Timestamp string
 		List      LicenseList
 	}{
 		Timestamp: time.Now().Format(time.RFC3339),
 		List:      licenseList,
 	})
+	if err != nil {
+		log.Fatalf("failed to write licenses: %v", err)
+	}
 }
