@@ -23,6 +23,7 @@ import (
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/license/spdx"
 	"github.com/go-enry/go-license-detector/v4/licensedb"
 	"github.com/go-enry/go-license-detector/v4/licensedb/filer"
 )
@@ -72,7 +73,7 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 	license := cdx.License{ID: detectedLicense}
 
 	// Enrich license with URL (mainly for backwards-compatibility)
-	if spdxLicense := getLicenseByID(detectedLicense); spdxLicense != nil {
+	if spdxLicense := spdx.GetLicenseByID(detectedLicense); spdxLicense != nil {
 		license.URL = spdxLicense.Reference
 	}
 

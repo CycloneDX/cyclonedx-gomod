@@ -2,6 +2,10 @@ build:
 	go build -v
 .PHONY: build
 
+generate:
+	go generate -v ./...
+.PHONY: generate
+
 unit-test:
 	go test -v -short -cover ./...
 .PHONY: unit-test

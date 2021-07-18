@@ -15,38 +15,21 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) Niklas Düster. All Rights Reserved.
 
-package license
+package spdx
 
 import (
 	_ "embed"
-	"encoding/json"
-	"log"
 )
 
-var (
-	//go:embed spdx-licenses.json
-	licensesJSON []byte
+//go:generate go run ../../../tools/spdx-gen/main.go -o spdx_gen.go
+var licenses []License
 
-	licenses []SPDXLicense
-)
-
-type SPDXLicense struct {
+type License struct {
 	ID        string `json:"licenseId"`
-	Name      string `json:"name"`
 	Reference string `json:"reference"`
 }
 
-func init() {
-	licensesObj := struct {
-		Licenses []SPDXLicense `json:"licenses"`
-	}{}
-	if err := json.Unmarshal(licensesJSON, &licensesObj); err != nil {
-		log.Fatalf("failed to unmarshal SPDX license list: %v", err)
-	}
-	licenses = licensesObj.Licenses
-}
-
-func getLicenseByID(licenseID string) *SPDXLicense {
+func GetLicenseByID(licenseID string) *License {
 	for i := range licenses {
 		if licenses[i].ID == licenseID {
 			return &licenses[i]
