@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (c) Niklas Düster. All Rights Reserved.
+// Copyright (c) OWASP Foundation. All Rights Reserved.
 
 package main
 

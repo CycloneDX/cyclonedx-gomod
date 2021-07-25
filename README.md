@@ -175,7 +175,9 @@ SapHtgdNCeF00Cx8kqztePV24kgzNg++Xovae42HAMw=
 
 Line 2 of the response tells us that the checksum in our BOM matches that known to the checksum database.
 
-## License
+## Copyright & License
+
+CycloneDX GoMod is Copyright (c) OWASP Foundation. All Rights Reserved.
 
 Permission to modify and redistribute is granted under the terms of the Apache 2.0 license.  
 See the [LICENSE](./LICENSE) file for the full license.

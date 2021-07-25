@@ -13,19 +13,20 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-// Copyright (c) Niklas Düster. All Rights Reserved.
+// Copyright (c) OWASP Foundation. All Rights Reserved.
 
 package main
 
 import (
 	"flag"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"golang.org/x/mod/semver"
 	"io"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+	"golang.org/x/mod/semver"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
