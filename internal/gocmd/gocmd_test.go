@@ -66,3 +66,14 @@ func TestGetModuleGraph(t *testing.T) {
 
 	assert.Equal(t, 0, strings.Index(buf.String(), "github.com/CycloneDX/cyclonedx-gomod"))
 }
+
+func TestModWhy(t *testing.T) {
+	buf := new(bytes.Buffer)
+	err := ModWhy("../../", []string{"github.com/CycloneDX/cyclonedx-go"}, buf)
+	require.NoError(t, err)
+
+	require.Equal(t, `# github.com/CycloneDX/cyclonedx-go
+github.com/CycloneDX/cyclonedx-gomod
+github.com/CycloneDX/cyclonedx-go
+`, buf.String())
+}

@@ -48,49 +48,49 @@ func GetVersion() (string, error) {
 
 // GetModule executes `go list -json -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
-func GetModule(modulePath string, writer io.Writer) error {
-	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m")
-	cmd.Dir = modulePath
-	cmd.Stdout = writer
-	return cmd.Run()
+func GetModule(moduleDir string, writer io.Writer) error {
+	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m"}, moduleDir, writer, nil)
 }
 
 // ListModules executes `go list -json -m all` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
-func ListModules(modulePath string, writer io.Writer) error {
-	cmd := exec.Command("go", "list", "-mod", "readonly", "-json", "-m", "all")
-	cmd.Dir = modulePath
-	cmd.Stdout = writer
-	return cmd.Run()
+func ListModules(moduleDir string, writer io.Writer) error {
+	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m", "all"}, moduleDir, writer, nil)
 }
 
 // ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-vendor
-func ListVendoredModules(modulePath string, writer io.Writer) error {
-	cmd := exec.Command("go", "mod", "vendor", "-v", "-e")
-	cmd.Dir = modulePath
-	cmd.Stderr = writer
-	return cmd.Run()
+func ListVendoredModules(moduleDir string, writer io.Writer) error {
+	return executeGoCommand([]string{"mod", "vendor", "-v", "-e"}, moduleDir, nil, writer)
 }
 
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-graph
-func GetModuleGraph(modulePath string, writer io.Writer) error {
-	cmd := exec.Command("go", "mod", "graph")
-	cmd.Dir = modulePath
-	cmd.Stdout = writer
-	return cmd.Run()
+func GetModuleGraph(moduleDir string, writer io.Writer) error {
+	return executeGoCommand([]string{"mod", "graph"}, moduleDir, writer, nil)
 }
 
 // ModWhy executes `go mod why -m -vendor` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-why
-func ModWhy(modulePath string, modules []string, writer io.Writer) error {
+func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 	args := []string{"mod", "why", "-m", "-vendor"}
 	args = append(args, modules...)
+	return executeGoCommand(args, moduleDir, writer, os.Stderr)
+}
 
+func executeGoCommand(args []string, dir string, stdout, stderr io.Writer) error {
 	cmd := exec.Command("go", args...)
-	cmd.Dir = modulePath
-	cmd.Stderr = os.Stderr // so downloads can be observed
-	cmd.Stdout = writer
+
+	if dir != "" {
+		cmd.Dir = dir
+	}
+
+	if stdout != nil {
+		cmd.Stdout = stdout
+	}
+	if stderr != nil {
+		cmd.Stderr = stderr
+	}
+
 	return cmd.Run()
 }
