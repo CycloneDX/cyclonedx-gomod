@@ -246,7 +246,8 @@ func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, er
 }
 
 // parseModuleGraph parses the output of `go mod graph` and populates
-// the .Dependencies field of a given Module slice.
+// the .Dependencies field of a given Module slice. Dependencies are
+// sorted by module path in ascending order.
 //
 // The Module slice is expected to contain only "effective" modules,
 // with only a single version per module, as provided by `go list -m` or `go list -deps`.
@@ -285,6 +286,13 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		} else {
 			dependant.Dependencies = append(dependant.Dependencies, dependency)
 		}
+	}
+
+	// Sort dependencies by path to have a deterministic order
+	for i := range modules {
+		sort.Slice(modules[i].Dependencies, func(j, k int) bool {
+			return modules[i].Dependencies[j].Path < modules[i].Dependencies[k].Path
+		})
 	}
 
 	return nil
