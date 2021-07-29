@@ -32,9 +32,20 @@ BOM formats or specification versions.
 
 ## Accuracy
 
-Currently, SBOMs generated with *cyclonedx-gomod* include all modules that are required by the respective main module. 
-Technically speaking, you can call `go mod why -m -vendor` with any module in the SBOM, and you will get a non-empty 
-list of packages that use that module. We're working towards providing a higher accuracy for [specific use-cases](https://github.com/CycloneDX/cyclonedx-gomod/issues/20#issuecomment-847163027).
+Currently, SBOMs generated with *cyclonedx-gomod* are completely module-based. 
+
+What does this mean? Well, modules in Go can consist of multiple *commands* or *applications*.
+For example, [`k8s.io/minikube`](https://github.com/kubernetes/minikube/blob/master/go.mod) is a module, but it contains [multiple commands](https://github.com/kubernetes/minikube/tree/master/cmd). 
+Each of these commands is eventually compiled into its own binary. Most likely, each command only depends on a subset of the dependencies defined in the module's `go.mod`.
+
+Additionally, some dependencies may only be required when a given build constraint is in place.
+Build constraints can include the operating system (`GOOS`), the architecture (`GOARCH`) or build tags.
+As an example, [`github.com/Microsoft/go-winio`](https://github.com/microsoft/go-winio) provides Windows-specific
+functionality and won't be included in builds that target Linux or macOS.
+
+*cyclonedx-gomod* describes the module, not commands or binaries. See also the discussion in [#20](https://github.com/CycloneDX/cyclonedx-gomod/issues/20).
+
+We're in the process of adding support for generating command- or binary-specific SBOMs as well. Stay tuned!
 
 ## Usage
 
