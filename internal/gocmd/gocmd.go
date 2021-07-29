@@ -18,6 +18,7 @@
 package gocmd
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -27,14 +28,13 @@ import (
 
 // GetVersion returns the version of Go in the environment.
 func GetVersion() (string, error) {
-	cmd := exec.Command("go", "version")
-
-	output, err := cmd.Output()
-	if err != nil {
+	buf := new(bytes.Buffer)
+	if err := executeGoCommand([]string{"version"}, "", buf, nil); err != nil {
 		return "", err
 	}
 
-	fields := strings.Fields(string(output))
+	output := buf.String()
+	fields := strings.Fields(output)
 	if len(fields) != 4 {
 		return "", fmt.Errorf("expected four fields in output, but got %d: %s", len(fields), output)
 	}
