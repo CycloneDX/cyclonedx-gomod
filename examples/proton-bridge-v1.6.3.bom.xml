@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:d27ac3f9-c887-454a-b748-fcd625524a71" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:e5f3ff1e-050e-437c-92ac-62381af63ff9" version="1">
   <metadata>
-    <timestamp>2021-07-17T08:49:52+02:00</timestamp>
+    <timestamp>2021-07-31T22:33:34+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
-        <version>v0.9.0</version>
+        <version>v0.0.0-20210729183245-27eb9c8d1f90</version>
         <hashes>
-          <hash alg="MD5">fbd6c9be6da0f447c40095c2713fe922</hash>
-          <hash alg="SHA-1">086cc0f0ffd38240d4362b87f2c2d66a7e83aa07</hash>
-          <hash alg="SHA-256">a05c272164e0f59937063a6304015286faa90f93b2985e67b60788dd7c69ad00</hash>
-          <hash alg="SHA-512">1938e8d1add284d2f308910a28f3ca8dd84ff4c84b67957a361e12527fef14cfae39ad2a02a5815dee6fba40b360a2e4cc74aeea2a5b5a39dc97dfb1545c0e34</hash>
+          <hash alg="MD5">876cb6fddc1cf5faa72bb4f6f4356edf</hash>
+          <hash alg="SHA-1">9711bd6a951a5f30481a3f163ee1398ebb3d515c</hash>
+          <hash alg="SHA-256">9bc8fb8d2245a3b1f115e5baf51a88afa785e679469377587048ae652730b6b5</hash>
+          <hash alg="SHA-512">9c506ceb3915657824425ad180737dc2cf74f749db13edeb4a5fadc7ad0f54e43390945abe3c1ea405568f74a5980dcfa0b72f887ee1baf0bc4822a78829eb78</hash>
         </hashes>
       </tool>
     </tools>
@@ -1471,10 +1471,10 @@
     <dependency ref="pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998"></dependency>
     <dependency ref="pkg:golang/github.com/jaytaylor/html2text@v0.0.0-20200412013138-3577fbdbcff7"></dependency>
     <dependency ref="pkg:golang/github.com/keybase/go-keychain@v0.0.0-20200502122510-cda31fe0c86d">
+      <dependency ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c"></dependency>
       <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
       <dependency ref="pkg:golang/github.com/pkg/errors@v0.9.1"></dependency>
       <dependency ref="pkg:golang/github.com/stretchr/testify@v1.6.1"></dependency>
-      <dependency ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/logrusorgru/aurora@v2.0.3"></dependency>
     <dependency ref="pkg:golang/github.com/mattn/go-colorable@v0.1.4">
@@ -1511,10 +1511,10 @@
       <dependency ref="pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/therecipe/qt@v0.0.0-20200701200531-7f61353ee73e">
+      <dependency ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c"></dependency>
       <dependency ref="pkg:golang/github.com/gopherjs/gopherjs@v0.0.0-20190430165422-3e4dfb77656c"></dependency>
       <dependency ref="pkg:golang/github.com/sirupsen/logrus@v1.7.0"></dependency>
       <dependency ref="pkg:golang/github.com/stretchr/testify@v1.6.1"></dependency>
-      <dependency ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c"></dependency>
       <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20200707034311-ab3426394381"></dependency>
       <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20200323222414-85ca7c5b95cd"></dependency>
     </dependency>
@@ -1544,7 +1544,11 @@
     <dependency ref="pkg:golang/github.com/ProtonMail/proton-bridge@v1.6.3">
       <dependency ref="pkg:golang/github.com/0xAX/notificator@v0.0.0-20191016112426-3962a5ea8da1"></dependency>
       <dependency ref="pkg:golang/github.com/Masterminds/semver/v3@v3.1.0"></dependency>
+      <dependency ref="pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998"></dependency>
+      <dependency ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c"></dependency>
+      <dependency ref="pkg:golang/github.com/ProtonMail/docker-credential-helpers@v1.1.0"></dependency>
       <dependency ref="pkg:golang/github.com/ProtonMail/go-autostart@v0.0.0-20181114175602-c5272053443a"></dependency>
+      <dependency ref="pkg:golang/github.com/ProtonMail/go-imap@v0.0.0-20201228133358-4db68cea0cac"></dependency>
       <dependency ref="pkg:golang/github.com/ProtonMail/go-imap-id@v0.0.0-20190926060100-f94a56b9ecde"></dependency>
       <dependency ref="pkg:golang/github.com/ProtonMail/go-rfc5322@v0.5.0"></dependency>
       <dependency ref="pkg:golang/github.com/ProtonMail/go-vcard@v0.0.0-20180326232728-33aaa0a0c8a5"></dependency>
@@ -1554,8 +1558,6 @@
       <dependency ref="pkg:golang/github.com/abiosoft/readline@v0.0.0-20180607040430-155bce2042db"></dependency>
       <dependency ref="pkg:golang/github.com/allan-simon/go-singleinstance@v0.0.0-20160830203053-79edcfdc2dfc"></dependency>
       <dependency ref="pkg:golang/github.com/cucumber/godog@v0.8.1"></dependency>
-      <dependency ref="pkg:golang/github.com/ProtonMail/docker-credential-helpers@v1.1.0"></dependency>
-      <dependency ref="pkg:golang/github.com/ProtonMail/go-imap@v0.0.0-20201228133358-4db68cea0cac"></dependency>
       <dependency ref="pkg:golang/github.com/emersion/go-imap-appendlimit@v0.0.0-20190308131241-25671c986a6a"></dependency>
       <dependency ref="pkg:golang/github.com/emersion/go-imap-idle@v0.0.0-20200601154248-f05f54664cc4"></dependency>
       <dependency ref="pkg:golang/github.com/emersion/go-imap-move@v0.0.0-20190710073258-6e5a51a5b342"></dependency>
@@ -1575,7 +1577,6 @@
       <dependency ref="pkg:golang/github.com/google/uuid@v1.1.1"></dependency>
       <dependency ref="pkg:golang/github.com/gopherjs/gopherjs@v0.0.0-20190430165422-3e4dfb77656c"></dependency>
       <dependency ref="pkg:golang/github.com/hashicorp/go-multierror@v1.1.0"></dependency>
-      <dependency ref="pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998"></dependency>
       <dependency ref="pkg:golang/github.com/jaytaylor/html2text@v0.0.0-20200412013138-3577fbdbcff7"></dependency>
       <dependency ref="pkg:golang/github.com/keybase/go-keychain@v0.0.0-20200502122510-cda31fe0c86d"></dependency>
       <dependency ref="pkg:golang/github.com/logrusorgru/aurora@v2.0.3"></dependency>
@@ -1592,7 +1593,6 @@
       <dependency ref="pkg:golang/github.com/urfave/cli/v2@v2.2.0"></dependency>
       <dependency ref="pkg:golang/github.com/vmihailenco/msgpack/v5@v5.1.3"></dependency>
       <dependency ref="pkg:golang/go.etcd.io/bbolt@v1.3.5"></dependency>
-      <dependency ref="pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c"></dependency>
       <dependency ref="pkg:golang/golang.org/x/net@v0.0.0-20200707034311-ab3426394381"></dependency>
       <dependency ref="pkg:golang/golang.org/x/text@v0.3.5-0.20201125200606-c27b9fd57aec"></dependency>
     </dependency>
