@@ -23,7 +23,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 	"os"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -111,7 +110,6 @@ func execModCmd(modOptions ModOptions) error {
 		serial = &serialUUID
 	}
 
-	log.Println("generating sbom")
 	bom, err := sbom.Generate(modOptions.ModuleDir, sbom.GenerateOptions{
 		ComponentType:   cdx.ComponentType(modOptions.ComponentType),
 		IncludeStdLib:   modOptions.IncludeStd,
@@ -123,7 +121,7 @@ func execModCmd(modOptions ModOptions) error {
 		SerialNumber:    serial,
 	})
 	if err != nil {
-		return fmt.Errorf("generating sbom failed: %w", err)
+		return fmt.Errorf("failed to generate sbom: %w", err)
 	}
 
 	var outputFormat cdx.BOMFileFormat
@@ -133,7 +131,6 @@ func execModCmd(modOptions ModOptions) error {
 		outputFormat = cdx.BOMFileFormatXML
 	}
 
-	log.Println("writing sbom")
 	var outputWriter io.Writer
 	if modOptions.FilePath == "" || modOptions.FilePath == "-" {
 		outputWriter = os.Stdout
@@ -150,7 +147,7 @@ func execModCmd(modOptions ModOptions) error {
 	encoder.SetPretty(true)
 
 	if err = encoder.Encode(bom); err != nil {
-		return fmt.Errorf("encoding BOM failed: %w", err)
+		return fmt.Errorf("failed to encode sbom: %w", err)
 	}
 
 	return nil

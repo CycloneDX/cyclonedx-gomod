@@ -98,7 +98,7 @@ func (s SBOMOptions) Validate() error {
 		}
 	}
 	if !isAllowedComponentType {
-		errs = append(errs, fmt.Errorf("invalid component type %s. See https://cyclonedx.org/docs/1.3/#type_classification", s.ComponentType))
+		errs = append(errs, fmt.Errorf("invalid component type: \"%s\"", s.ComponentType))
 	}
 
 	// Serial numbers must be valid UUIDs
