@@ -18,21 +18,18 @@
 package cli
 
 import (
-	"context"
-	"flag"
+	"bytes"
+	"fmt"
+	"testing"
 
-	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
+	"github.com/stretchr/testify/require"
 )
 
-func NewRootCmd() *ffcli.Command {
-	return &ffcli.Command{
-		Name: "cyclonedx-gomod",
-		Subcommands: []*ffcli.Command{
-			newModCmd(),
-			newVersionCmd(),
-		},
-		Exec: func(_ context.Context, _ []string) error {
-			return flag.ErrHelp
-		},
-	}
+func TestExecVersionCmd(t *testing.T) {
+	buf := new(bytes.Buffer)
+
+	err := execVersionCmd(buf)
+	require.NoError(t, err)
+	require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
 }
