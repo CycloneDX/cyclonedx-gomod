@@ -83,7 +83,7 @@ func newModCmd() *ffcli.Command {
 	return &ffcli.Command{
 		Name:       "mod",
 		ShortHelp:  "Generate SBOM for a module",
-		ShortUsage: "cyclonedx-gomod mod [FLAGS...] PATH",
+		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [PATH]",
 		FlagSet:    fs,
 		Exec: func(ctx context.Context, args []string) error {
 			if len(args) > 1 {
