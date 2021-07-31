@@ -1,21 +1,4 @@
-// This file is part of CycloneDX GoMod
-//
-// Licensed under the Apache License, Version 2.0 (the “License”);
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an “AS IS” BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// SPDX-License-Identifier: Apache-2.0
-// Copyright (c) OWASP Foundation. All Rights Reserved.
-
-package main
+package cli
 
 import (
 	"fmt"
@@ -26,7 +9,6 @@ import (
 	"strings"
 	"testing"
 
-	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/bradleyjkemp/cupaloy/v2"
@@ -52,12 +34,13 @@ func TestIntegrationSimple(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/simple.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      fixturePath,
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -67,12 +50,13 @@ func TestIntegrationLocal(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/local.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      filepath.Join(fixturePath, "local"),
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
+		},
+		ModuleDir:       filepath.Join(fixturePath, "local"),
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -81,12 +65,13 @@ func TestIntegrationNoDependencies(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/no-dependencies.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      fixturePath,
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -96,12 +81,13 @@ func TestIntegrationVendored(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/vendored.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      fixturePath,
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -119,20 +105,21 @@ func TestIntegrationNested(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/nested.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      filepath.Join(fixturePath, "simple"),
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
+		},
+		ModuleDir:       filepath.Join(fixturePath, "simple"),
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
-func runSnapshotIT(t *testing.T, options Options) {
+func runSnapshotIT(t *testing.T, modOptions ModOptions) {
 	skipIfShort(t)
 
 	bomFileExtension := ".xml"
-	if options.UseJSON {
+	if modOptions.OutputOptions.UseJSON {
 		bomFileExtension = ".json"
 	}
 
@@ -143,8 +130,8 @@ func runSnapshotIT(t *testing.T, options Options) {
 	require.NoError(t, bomFile.Close())
 
 	// Generate the SBOM
-	options.OutputPath = bomFile.Name()
-	err = executeCommand(options)
+	modOptions.OutputOptions.FilePath = bomFile.Name()
+	err = execModCmd(modOptions)
 	require.NoError(t, err)
 
 	// Sanity check: Make sure the SBOM is valid
