@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
       - main
+      - develop-v1.0.0
     paths-ignore:
       - examples/**
   schedule:
