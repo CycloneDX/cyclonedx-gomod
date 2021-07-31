@@ -49,7 +49,7 @@ type OutputOptions struct {
 
 func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&o.UseJSON, "json", false, "Output in JSON")
-	fs.StringVar(&o.FilePath, "out", "-", "Output file path")
+	fs.StringVar(&o.FilePath, "output", "-", "Output file path (or - for STDOUT)")
 }
 
 func (o OutputOptions) Validate() error {
