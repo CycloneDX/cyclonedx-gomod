@@ -18,10 +18,15 @@
 package cli
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
+	"strings"
 
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/model"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
@@ -70,6 +75,46 @@ func newBinCmd() *ffcli.Command {
 func execBinCmd(options BinOptions) error {
 	if err := options.Validate(); err != nil {
 		return err
+	}
+
+	buf := new(bytes.Buffer)
+	if err := gocmd.GetModulesFromBinary(options.BinaryPath, buf); err != nil {
+		return err
+	}
+
+	modules := make([]model.Module, 0)
+
+	scanner := bufio.NewScanner(buf)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+
+		fields := strings.Fields(line)
+		switch fields[0] {
+		case options.BinaryPath:
+			continue
+		case "path":
+			continue
+		case "mod":
+			modules = append(modules, model.Module{
+				Path:    fields[1],
+				Version: fields[2],
+			})
+		case "dep":
+			modules = append(modules, model.Module{
+				Path:     fields[1],
+				Version:  fields[2],
+				Checksum: fields[3],
+			})
+		default:
+			break
+		}
+	}
+
+	if len(modules) == 0 {
+		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
 	}
 
 	return nil
