@@ -26,7 +26,8 @@ import (
 
 func NewRootCmd() *ffcli.Command {
 	return &ffcli.Command{
-		Name: "cyclonedx-gomod",
+		Name:       "cyclonedx-gomod",
+		ShortUsage: "cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]",
 		Subcommands: []*ffcli.Command{
 			newModCmd(),
 			newVersionCmd(),
