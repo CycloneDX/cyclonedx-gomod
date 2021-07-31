@@ -187,9 +187,9 @@ func extractFixture(t *testing.T, archivePath string) string {
 }
 
 func assertValidSBOM(t *testing.T, bomFilePath string) {
-	inputFormat := "xml_v1_2"
+	inputFormat := "xml_v1_3"
 	if strings.HasSuffix(bomFilePath, ".json") {
-		inputFormat = "json_v1_2"
+		inputFormat = "json_v1_3"
 	}
 	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFilePath, "--input-format", inputFormat, "--fail-on-errors")
 	valOut, err := valCmd.CombinedOutput()
