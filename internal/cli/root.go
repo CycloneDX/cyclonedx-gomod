@@ -33,7 +33,11 @@ func NewRootCmd() *ffcli.Command {
 			newVersionCmd(),
 		},
 		Exec: func(_ context.Context, _ []string) error {
-			return flag.ErrHelp
+			return execRootCmd()
 		},
 	}
+}
+
+func execRootCmd() error {
+	return flag.ErrHelp
 }
