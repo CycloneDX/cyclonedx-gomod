@@ -15,19 +15,29 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package main
+package cli
 
 import (
 	"context"
-	"fmt"
-	"os"
+	"flag"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/cli"
+	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
-func main() {
-	if err := cli.NewRootCmd().ParseAndRun(context.Background(), os.Args[1:]); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+func NewRootCmd() *ffcli.Command {
+	return &ffcli.Command{
+		Name:       "cyclonedx-gomod",
+		ShortUsage: "cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]",
+		Subcommands: []*ffcli.Command{
+			newModCmd(),
+			newVersionCmd(),
+		},
+		Exec: func(_ context.Context, _ []string) error {
+			return execRootCmd()
+		},
 	}
+}
+
+func execRootCmd() error {
+	return flag.ErrHelp
 }

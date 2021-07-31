@@ -1,6 +1,12 @@
+LDFLAGS="-s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version=v0.0.0-$(shell git show -s --date=format:'%Y%m%d%H%M%S' --format=%cd HEAD)-$(shell git rev-parse HEAD | head -c 12)"
+
 build:
-	go build -v
+	go build -v -ldflags=${LDFLAGS}
 .PHONY: build
+
+install:
+	go install -v -ldflags=${LDFLAGS}
+.PHONY: install
 
 generate:
 	go generate -v ./...

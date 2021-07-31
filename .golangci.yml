@@ -1,6 +1,12 @@
 linters:
   enable:
     - asciicheck
+    - exhaustive
+    - gochecknoinits
+    - goconst
     - gofmt
     - gosec
+    - predeclared
+    - unconvert
+    - unparam
     - wastedassign

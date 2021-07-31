@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package main
+package cli
 
 import (
 	"fmt"
@@ -52,12 +52,14 @@ func TestIntegrationSimple(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/simple.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      fixturePath,
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			ComponentType: string(cdx.ComponentTypeLibrary),
+			Reproducible:  true,
+			SerialNumber:  zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -67,12 +69,14 @@ func TestIntegrationLocal(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/local.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      filepath.Join(fixturePath, "local"),
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			ComponentType: string(cdx.ComponentTypeLibrary),
+			Reproducible:  true,
+			SerialNumber:  zeroUUID.String(),
+		},
+		ModuleDir:       filepath.Join(fixturePath, "local"),
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -81,12 +85,14 @@ func TestIntegrationNoDependencies(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/no-dependencies.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      fixturePath,
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			ComponentType: string(cdx.ComponentTypeLibrary),
+			Reproducible:  true,
+			SerialNumber:  zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -96,12 +102,14 @@ func TestIntegrationVendored(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/vendored.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      fixturePath,
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			ComponentType: string(cdx.ComponentTypeLibrary),
+			Reproducible:  true,
+			SerialNumber:  zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
@@ -119,20 +127,22 @@ func TestIntegrationNested(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/integration/nested.tar.gz")
 	defer os.RemoveAll(fixturePath)
 
-	runSnapshotIT(t, Options{
-		ComponentType:   cdx.ComponentTypeLibrary,
-		ModulePath:      filepath.Join(fixturePath, "simple"),
+	runSnapshotIT(t, ModOptions{
+		SBOMOptions: SBOMOptions{
+			ComponentType: string(cdx.ComponentTypeLibrary),
+			Reproducible:  true,
+			SerialNumber:  zeroUUID.String(),
+		},
+		ModuleDir:       filepath.Join(fixturePath, "simple"),
 		ResolveLicenses: true,
-		Reproducible:    true,
-		SerialNumber:    &zeroUUID,
 	})
 }
 
-func runSnapshotIT(t *testing.T, options Options) {
+func runSnapshotIT(t *testing.T, modOptions ModOptions) {
 	skipIfShort(t)
 
 	bomFileExtension := ".xml"
-	if options.UseJSON {
+	if modOptions.OutputOptions.UseJSON {
 		bomFileExtension = ".json"
 	}
 
@@ -143,8 +153,8 @@ func runSnapshotIT(t *testing.T, options Options) {
 	require.NoError(t, bomFile.Close())
 
 	// Generate the SBOM
-	options.OutputPath = bomFile.Name()
-	err = executeCommand(options)
+	modOptions.OutputOptions.FilePath = bomFile.Name()
+	err = execModCmd(modOptions)
 	require.NoError(t, err)
 
 	// Sanity check: Make sure the SBOM is valid
