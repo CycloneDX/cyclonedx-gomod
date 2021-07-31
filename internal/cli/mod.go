@@ -31,6 +31,7 @@ import (
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
+// ModOptions provides options for the `mod` command.
 type ModOptions struct {
 	OutputOptions
 	SBOMOptions
@@ -74,10 +75,10 @@ func (m ModOptions) Validate() error {
 }
 
 func newModCmd() *ffcli.Command {
-	var modOptions ModOptions
-
 	fs := flag.NewFlagSet("cyclonedx-gomod mod", flag.ExitOnError)
-	modOptions.RegisterFlags(fs)
+
+	var options ModOptions
+	options.RegisterFlags(fs)
 
 	return &ffcli.Command{
 		Name:       "mod",
@@ -89,35 +90,35 @@ func newModCmd() *ffcli.Command {
 				return flag.ErrHelp
 			}
 			if len(args) == 0 {
-				modOptions.ModuleDir = "."
+				options.ModuleDir = "."
 			} else {
-				modOptions.ModuleDir = args[0]
+				options.ModuleDir = args[0]
 			}
 
-			return execModCmd(modOptions)
+			return execModCmd(options)
 		},
 	}
 }
 
-func execModCmd(modOptions ModOptions) error {
-	if err := modOptions.Validate(); err != nil {
+func execModCmd(options ModOptions) error {
+	if err := options.Validate(); err != nil {
 		return err
 	}
 
 	var serial *uuid.UUID
-	if modOptions.SerialNumber != "" {
-		serialUUID := uuid.MustParse(modOptions.SerialNumber)
+	if !options.NoSerialNumber && options.SerialNumber != "" {
+		serialUUID := uuid.MustParse(options.SerialNumber)
 		serial = &serialUUID
 	}
 
-	bom, err := sbom.Generate(modOptions.ModuleDir, sbom.GenerateOptions{
-		ComponentType:   cdx.ComponentType(modOptions.ComponentType),
-		IncludeStdLib:   modOptions.IncludeStd,
-		IncludeTest:     modOptions.IncludeTest,
-		NoSerialNumber:  modOptions.NoSerialNumber,
-		NoVersionPrefix: modOptions.NoVersionPrefix,
-		Reproducible:    modOptions.Reproducible,
-		ResolveLicenses: modOptions.ResolveLicenses,
+	bom, err := sbom.Generate(options.ModuleDir, sbom.GenerateOptions{
+		ComponentType:   cdx.ComponentType(options.ComponentType),
+		IncludeStdLib:   options.IncludeStd,
+		IncludeTest:     options.IncludeTest,
+		NoSerialNumber:  options.NoSerialNumber,
+		NoVersionPrefix: options.NoVersionPrefix,
+		Reproducible:    options.Reproducible,
+		ResolveLicenses: options.ResolveLicenses,
 		SerialNumber:    serial,
 	})
 	if err != nil {
@@ -125,19 +126,19 @@ func execModCmd(modOptions ModOptions) error {
 	}
 
 	var outputFormat cdx.BOMFileFormat
-	if modOptions.UseJSON {
+	if options.UseJSON {
 		outputFormat = cdx.BOMFileFormatJSON
 	} else {
 		outputFormat = cdx.BOMFileFormatXML
 	}
 
 	var outputWriter io.Writer
-	if modOptions.FilePath == "" || modOptions.FilePath == "-" {
+	if options.FilePath == "" || options.FilePath == "-" {
 		outputWriter = os.Stdout
 	} else {
-		outputFile, err := os.Create(modOptions.FilePath)
+		outputFile, err := os.Create(options.FilePath)
 		if err != nil {
-			return fmt.Errorf("failed to create output file %s: %w", modOptions.FilePath, err)
+			return fmt.Errorf("failed to create output file %s: %w", options.FilePath, err)
 		}
 		defer outputFile.Close()
 		outputWriter = outputFile

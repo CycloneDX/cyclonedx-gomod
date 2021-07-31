@@ -25,6 +25,9 @@ import (
 	"github.com/google/uuid"
 )
 
+// OptionsValidationError represents a validation error for options.
+// It can contain multiple errors with details about which validation
+// operations failed. The Errors slice should never be empty.
 type OptionsValidationError struct {
 	Errors []error
 }
@@ -37,11 +40,7 @@ func (e OptionsValidationError) Error() string {
 	return err
 }
 
-type Options interface {
-	RegisterFlags(fs *flag.FlagSet)
-	Validate() error
-}
-
+// OutputOptions provides options for customizing the output.
 type OutputOptions struct {
 	FilePath string
 	UseJSON  bool
@@ -56,6 +55,7 @@ func (o OutputOptions) Validate() error {
 	return nil
 }
 
+// SBOMOptions provides options for customizing the SBOM.
 type SBOMOptions struct {
 	ComponentType   string
 	IncludeStd      bool
