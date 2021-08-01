@@ -15,7 +15,6 @@
       <licenses>
         <license>
           <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
         </license>
       </licenses>
       <purl>pkg:golang/github.com/google/uuid@v1.2.0</purl>

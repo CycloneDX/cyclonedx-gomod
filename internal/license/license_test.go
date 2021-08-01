@@ -33,5 +33,4 @@ func TestResolve(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, licenses, 1)
 	assert.Equal(t, "Apache-2.0", licenses[0].ID)
-	assert.NotEmpty(t, licenses[0].URL)
 }
