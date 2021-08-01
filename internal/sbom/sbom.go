@@ -218,7 +218,9 @@ func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Componen
 			for i := range resolvedLicenses {
 				componentLicenses[i] = cdx.LicenseChoice{License: &resolvedLicenses[i]}
 			}
-			component.Licenses = &componentLicenses
+			component.Evidence = &cdx.Evidence{
+				Licenses: &componentLicenses,
+			}
 		} else {
 			log.Printf("failed to resolve license of %s: %v\n", module.Coordinates(), err)
 		}
