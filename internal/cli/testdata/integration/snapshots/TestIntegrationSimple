@@ -15,17 +15,19 @@
       <hashes>
         <hash alg="SHA-256">a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/google/uuid@v1.2.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/google/uuid</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
   </components>
   <dependencies>
