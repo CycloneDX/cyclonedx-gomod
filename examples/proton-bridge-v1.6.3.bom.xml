@@ -1,35 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.2" serialNumber="urn:uuid:e5f3ff1e-050e-437c-92ac-62381af63ff9" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:79db8840-465e-4caf-9053-c8658dc5740a" version="1">
   <metadata>
-    <timestamp>2021-07-31T22:33:34+02:00</timestamp>
+    <timestamp>2021-08-01T12:39:52+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
-        <version>v0.0.0-20210729183245-27eb9c8d1f90</version>
+        <version>v0.0.0-20210801123916-0e0d3ea6e164</version>
         <hashes>
-          <hash alg="MD5">876cb6fddc1cf5faa72bb4f6f4356edf</hash>
-          <hash alg="SHA-1">9711bd6a951a5f30481a3f163ee1398ebb3d515c</hash>
-          <hash alg="SHA-256">9bc8fb8d2245a3b1f115e5baf51a88afa785e679469377587048ae652730b6b5</hash>
-          <hash alg="SHA-512">9c506ceb3915657824425ad180737dc2cf74f749db13edeb4a5fadc7ad0f54e43390945abe3c1ea405568f74a5980dcfa0b72f887ee1baf0bc4822a78829eb78</hash>
+          <hash alg="MD5">8f36acf3d4cfe2c553c66ba7655592b2</hash>
+          <hash alg="SHA-1">4fbc2bdb659e6e024bdd720fc83fee58a0c78ac5</hash>
+          <hash alg="SHA-256">602ddcfc4c1692f5c62e1b305340529a25ea5b53cfb004f6b055831f10f43e61</hash>
+          <hash alg="SHA-512">c42f3df181fc9322df3b0e65291fd99f139f3e44293c5acaead072a9516b4e2937c7f5457c1775b60ad533e91482247ecfe0218ec425c4a4deb1852368a020ad</hash>
         </hashes>
       </tool>
     </tools>
     <component bom-ref="pkg:golang/github.com/ProtonMail/proton-bridge@v1.6.3" type="application">
       <name>github.com/ProtonMail/proton-bridge</name>
       <version>v1.6.3</version>
-      <licenses>
-        <license>
-          <id>GPL-3.0-only</id>
-          <url>https://spdx.org/licenses/GPL-3.0-only.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/proton-bridge@v1.6.3</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/proton-bridge</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>GPL-3.0-only</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
   </metadata>
   <components>
@@ -40,18 +41,19 @@
       <hashes>
         <hash alg="SHA-256">8fd1da69f6a90db3db1910e4bba7bf1d1b3a28131c287896726d7ff526f19e5e</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/0xAX/notificator@v0.0.0-20191016112426-3962a5ea8da1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/0xAX/notificator</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/Masterminds/semver/v3@v3.1.0" type="library">
       <name>github.com/Masterminds/semver/v3</name>
@@ -60,18 +62,19 @@
       <hashes>
         <hash alg="SHA-256">6369540ec14a5514981a88cb275c8bc525dd3263184d896cd2b0afa2a98c5109</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/Masterminds/semver/v3@v3.1.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/Masterminds/semver</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-autostart@v0.0.0-20181114175602-c5272053443a" type="library">
       <name>github.com/ProtonMail/go-autostart</name>
@@ -80,18 +83,19 @@
       <hashes>
         <hash alg="SHA-256">7d72b62ac7e790157d361fbd48acc7721623b84f6cd2f236d091b599bb4401c7</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-autostart@v0.0.0-20181114175602-c5272053443a</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/go-autostart</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-crypto@v0.0.0-20201208171014-cdb7591792e2" type="library">
       <name>github.com/ProtonMail/go-crypto</name>
@@ -100,18 +104,19 @@
       <hashes>
         <hash alg="SHA-256">a509232442c76b25b9f63a7baf81b90e59a789caf931c7a30dfc2c8dcc08d525</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-crypto@v0.0.0-20201208171014-cdb7591792e2</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/go-crypto</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-imap-id@v0.0.0-20190926060100-f94a56b9ecde" type="library">
       <name>github.com/ProtonMail/go-imap-id</name>
@@ -120,18 +125,19 @@
       <hashes>
         <hash alg="SHA-256">e64a10a334c310bca660ec856d0fd54ae6dec40117cc347ca8633998ef0645dc</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-imap-id@v0.0.0-20190926060100-f94a56b9ecde</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/go-imap-id</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-mime@v0.0.0-20190923161245-9b5a4261663a" type="library">
       <name>github.com/ProtonMail/go-mime</name>
@@ -140,18 +146,19 @@
       <hashes>
         <hash alg="SHA-256">5ba46b80dfec4f18359acab31456fe1bcd0c166a63330eb5214fac966fb0967e</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-mime@v0.0.0-20190923161245-9b5a4261663a</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/go-mime</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-rfc5322@v0.5.0" type="library">
       <name>github.com/ProtonMail/go-rfc5322</name>
@@ -160,18 +167,19 @@
       <hashes>
         <hash alg="SHA-256">2db2968e07efba66190abf01806c93524dc44c69052c08d0764b9252967909c1</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-rfc5322@v0.5.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/go-rfc5322</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-vcard@v0.0.0-20180326232728-33aaa0a0c8a5" type="library">
       <name>github.com/ProtonMail/go-vcard</name>
@@ -180,18 +188,19 @@
       <hashes>
         <hash alg="SHA-256">5206b50c714de06531b8342bd05ef5b698bc23d1ea3c8959a1d640235951e954</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-vcard@v0.0.0-20180326232728-33aaa0a0c8a5</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/go-vcard</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/gopenpgp/v2@v2.1.3" type="library">
       <name>github.com/ProtonMail/gopenpgp/v2</name>
@@ -200,18 +209,19 @@
       <hashes>
         <hash alg="SHA-256">e3e9c50c9f56b5c5104e2a7f8ded8b9773f6d57840525e1ab16b1a7cbaf0f7b7</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/gopenpgp/v2@v2.1.3</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/gopenpgp</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/PuerkitoBio/goquery@v1.5.1" type="library">
       <name>github.com/PuerkitoBio/goquery</name>
@@ -220,18 +230,19 @@
       <hashes>
         <hash alg="SHA-256">3d23c11a77bc348516c3effbbc5055fa41b627fe4c3a36f373bd79e0e68a0921</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/PuerkitoBio/goquery@v1.5.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/PuerkitoBio/goquery</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/abiosoft/ishell@v2.0.0" type="library">
       <name>github.com/abiosoft/ishell</name>
@@ -240,18 +251,19 @@
       <hashes>
         <hash alg="SHA-256">8d07f1eba8739e5600b70cc656d8505a7d052643c1f03240f3d56c500f47b876</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/abiosoft/ishell@v2.0.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/abiosoft/ishell</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/abiosoft/readline@v0.0.0-20180607040430-155bce2042db" type="library">
       <name>github.com/abiosoft/readline</name>
@@ -260,18 +272,19 @@
       <hashes>
         <hash alg="SHA-256">0a33d44973a2629b4b6d376bd5171eb9981214343b535e484c44541ab50e471f</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/abiosoft/readline@v0.0.0-20180607040430-155bce2042db</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/abiosoft/readline</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/allan-simon/go-singleinstance@v0.0.0-20160830203053-79edcfdc2dfc" type="library">
       <name>github.com/allan-simon/go-singleinstance</name>
@@ -280,18 +293,19 @@
       <hashes>
         <hash alg="SHA-256">99971ad3f1d9fd75973fdb7191f765d861fa994cc1a80972273deee4b83c7ee0</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/allan-simon/go-singleinstance@v0.0.0-20160830203053-79edcfdc2dfc</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/allan-simon/go-singleinstance</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/andybalholm/cascadia@v1.1.0" type="library">
       <name>github.com/andybalholm/cascadia</name>
@@ -300,18 +314,19 @@
       <hashes>
         <hash alg="SHA-256">06eb8eeac49f40d151bb52e9a606c3db91ebdaf2d85b6e49bf11ece73cec2d3a</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-2-Clause</id>
-          <url>https://spdx.org/licenses/BSD-2-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/andybalholm/cascadia@v1.1.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/andybalholm/cascadia</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-2-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/antlr/antlr4@v0.0.0-20201029161626-9a95f0cc3d7c" type="library">
       <name>github.com/antlr/antlr4</name>
@@ -320,18 +335,19 @@
       <hashes>
         <hash alg="SHA-256">8ff0b69313dfc84d1df3bfe08008c8b0257909d92a9a36fe3b45bc5bed49f886</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/antlr/antlr4@v0.0.0-20201029161626-9a95f0cc3d7c</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/antlr/antlr4</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/cpuguy83/go-md2man/v2@v2.0.0-20190314233015-f79a8a8ca69d" type="library">
       <name>github.com/cpuguy83/go-md2man/v2</name>
@@ -340,18 +356,19 @@
       <hashes>
         <hash alg="SHA-256">53eb3dd144d2620a6d64cc10876691af72ee6b32c921af8f83729cd729526156</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/cpuguy83/go-md2man/v2@v2.0.0-20190314233015-f79a8a8ca69d</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/cpuguy83/go-md2man</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/cucumber/godog@v0.8.1" type="library">
       <name>github.com/cucumber/godog</name>
@@ -360,18 +377,19 @@
       <hashes>
         <hash alg="SHA-256">9556fe5f8d48e180eb784fa26d9e746dd5e6c92c6046f898160298e80c385c4f</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/cucumber/godog@v0.8.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/cucumber/godog</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/danieljoos/wincred@v1.1.0" type="library">
       <name>github.com/danieljoos/wincred</name>
@@ -380,18 +398,19 @@
       <hashes>
         <hash alg="SHA-256">dd135c129060e088480a165d15149d950b754230a9d6c3003c8ace9e6ed87fc8</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/danieljoos/wincred@v1.1.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/danieljoos/wincred</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1" type="library">
       <name>github.com/davecgh/go-spew</name>
@@ -400,18 +419,19 @@
       <hashes>
         <hash alg="SHA-256">be3f63feed5baa7bc211f24ec1486d94e011aacdfeae41d8635de36164d4f7b7</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>0BSD</id>
-          <url>https://spdx.org/licenses/0BSD.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/davecgh/go-spew@v1.1.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/davecgh/go-spew</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>0BSD</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/docker-credential-helpers@v1.1.0" type="library">
       <name>github.com/ProtonMail/docker-credential-helpers</name>
@@ -420,18 +440,19 @@
       <hashes>
         <hash alg="SHA-256">fa4bd4229c1671bb4fdd616fe6c4af9059ff5cbcd2a8f381e4002d86e93dc4f9</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/docker-credential-helpers@v1.1.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/docker-credential-helpers</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-imap@v0.0.0-20201228133358-4db68cea0cac" type="library">
       <name>github.com/ProtonMail/go-imap</name>
@@ -440,18 +461,19 @@
       <hashes>
         <hash alg="SHA-256">db1537427700892fd6dd495665391b34a5b95a42f393a1209754f4c57fac6e3b</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/go-imap@v0.0.0-20201228133358-4db68cea0cac</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/go-imap</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-imap-appendlimit@v0.0.0-20190308131241-25671c986a6a" type="library">
       <name>github.com/emersion/go-imap-appendlimit</name>
@@ -460,18 +482,19 @@
       <hashes>
         <hash alg="SHA-256">6cc7523e6eacb2cb8e16921abdebb75c60228cc4b74ead92dc4a8566667189d7</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-imap-appendlimit@v0.0.0-20190308131241-25671c986a6a</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-imap-appendlimit</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-imap-idle@v0.0.0-20200601154248-f05f54664cc4" type="library">
       <name>github.com/emersion/go-imap-idle</name>
@@ -480,18 +503,19 @@
       <hashes>
         <hash alg="SHA-256">fc92002f398276e7f9a3c4d625288e0734dbf7e47448287012552b24b969da9a</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-imap-idle@v0.0.0-20200601154248-f05f54664cc4</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-imap-idle</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-imap-move@v0.0.0-20190710073258-6e5a51a5b342" type="library">
       <name>github.com/emersion/go-imap-move</name>
@@ -500,18 +524,19 @@
       <hashes>
         <hash alg="SHA-256">e69d6ddded4fa266202d6c04c21c0453991507073201c56b3a97b1bfc01e671d</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-imap-move@v0.0.0-20190710073258-6e5a51a5b342</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-imap-move</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-imap-quota@v0.0.0-20200423100218-dcfd1b7d2b41" type="library">
       <name>github.com/emersion/go-imap-quota</name>
@@ -520,18 +545,19 @@
       <hashes>
         <hash alg="SHA-256">cf99431a749445ab8110374d2e3de8d3e1e881560a40219e63702797fc7245f5</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-imap-quota@v0.0.0-20200423100218-dcfd1b7d2b41</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-imap-quota</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-imap-unselect@v0.0.0-20171113212723-b985794e5f26" type="library">
       <name>github.com/emersion/go-imap-unselect</name>
@@ -540,18 +566,19 @@
       <hashes>
         <hash alg="SHA-256">16249bf3e5c14104a4717dee6ebfb5b40b6544905868599166a380c1e67d5b2f</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-imap-unselect@v0.0.0-20171113212723-b985794e5f26</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-imap-unselect</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-mbox@v1.0.2" type="library">
       <name>github.com/emersion/go-mbox</name>
@@ -560,18 +587,19 @@
       <hashes>
         <hash alg="SHA-256">b44feb4fe944ba02bdcb49b21329820879f0959374e219573eb6ca9314410392</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-mbox@v1.0.2</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-mbox</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-message@v0.12.1-0.20201221184100-40c3f864532b" type="library">
       <name>github.com/emersion/go-message</name>
@@ -580,18 +608,19 @@
       <hashes>
         <hash alg="SHA-256">c58ba15ba7a04da08ffb38db51c7e8cbf0ebdc049d54f47d5bb7e6907bd91cf1</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-message@v0.12.1-0.20201221184100-40c3f864532b</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-message</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-sasl@v0.0.0-20200509203442-7bfe0ed36a21" type="library">
       <name>github.com/emersion/go-sasl</name>
@@ -600,18 +629,19 @@
       <hashes>
         <hash alg="SHA-256">389c9418c253cc74ddd57429f7c4136877ab9f1318cd168e6ac462afd8549454</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-sasl@v0.0.0-20200509203442-7bfe0ed36a21</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-sasl</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-smtp@v0.14.0" type="library">
       <name>github.com/emersion/go-smtp</name>
@@ -620,18 +650,19 @@
       <hashes>
         <hash alg="SHA-256">4585b6d37a7e11c3e32fc67f6694fd959ea239cf0c1b5310cc4c7550a1245e50</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-smtp@v0.14.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-smtp</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/emersion/go-textwrapper@v0.0.0-20200911093747-65d896831594" type="library">
       <name>github.com/emersion/go-textwrapper</name>
@@ -640,18 +671,19 @@
       <hashes>
         <hash alg="SHA-256">21b141b70a13432c347c8339c6fd4717e63edd98a30d1f37f5632e960c427146</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/emersion/go-textwrapper@v0.0.0-20200911093747-65d896831594</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/emersion/go-textwrapper</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/fatih/color@v1.9.0" type="library">
       <name>github.com/fatih/color</name>
@@ -674,18 +706,19 @@
       <hashes>
         <hash alg="SHA-256">04c5d86115932ce24a961fa5381b7a9d44205c07c1ee854842de5c36b7aa48b2</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>Apache-2.0</id>
-          <url>https://spdx.org/licenses/Apache-2.0.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/flynn-archive/go-shlex@v0.0.0-20150515145356-3f9db97f8568</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/flynn-archive/go-shlex</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Apache-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/getsentry/sentry-go@v0.8.0" type="library">
       <name>github.com/getsentry/sentry-go</name>
@@ -694,18 +727,19 @@
       <hashes>
         <hash alg="SHA-256">179d9c8c154bba24df756ea9e0916ec65b77a4e8ca7d6613fda91aedc749eefd</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-2-Clause</id>
-          <url>https://spdx.org/licenses/BSD-2-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/getsentry/sentry-go@v0.8.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/getsentry/sentry-go</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-2-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/go-resty/resty/v2@v2.3.0" type="library">
       <name>github.com/go-resty/resty/v2</name>
@@ -714,18 +748,19 @@
       <hashes>
         <hash alg="SHA-256">24e39e02f8d295aa534fdda9f31892d7d6717afd677868a4a07b1725e3aaf12a</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/go-resty/resty/v2@v2.3.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/go-resty/resty</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/golang/mock@v1.4.4" type="library">
       <name>github.com/golang/mock</name>
@@ -734,18 +769,19 @@
       <hashes>
         <hash alg="SHA-256">97be425c6452c1b69836997f6765f55c82003120aabaf5e0a5564387010826c7</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>Apache-2.0</id>
-          <url>https://spdx.org/licenses/Apache-2.0.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/golang/mock@v1.4.4</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/golang/mock</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Apache-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/google/go-cmp@v0.5.1" type="library">
       <name>github.com/google/go-cmp</name>
@@ -754,18 +790,19 @@
       <hashes>
         <hash alg="SHA-256">245ac51016f6c4ab9f83a5e426c26bf966ca6f8150954462e5151c06f798bbd9</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/google/go-cmp@v0.5.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/google/go-cmp</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/google/uuid@v1.1.1" type="library">
       <name>github.com/google/uuid</name>
@@ -774,18 +811,19 @@
       <hashes>
         <hash alg="SHA-256">1a46dcb21fc66e95f3ee53dfb4b0373fa4d83308c22d89bcde388541917fde06</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/google/uuid@v1.1.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/google/uuid</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/gopherjs/gopherjs@v0.0.0-20190430165422-3e4dfb77656c" type="library">
       <name>github.com/gopherjs/gopherjs</name>
@@ -794,18 +832,19 @@
       <hashes>
         <hash alg="SHA-256">ee517e573d0baa2462767cc2d4eabce9fa57d6afe212fd8a25dac2b6db588d3e</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-2-Clause</id>
-          <url>https://spdx.org/licenses/BSD-2-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/gopherjs/gopherjs@v0.0.0-20190430165422-3e4dfb77656c</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/gopherjs/gopherjs</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-2-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/hashicorp/errwrap@v1.0.0" type="library">
       <name>github.com/hashicorp/errwrap</name>
@@ -814,18 +853,19 @@
       <hashes>
         <hash alg="SHA-256">84baeab440e74727b7fac831eb3e2a54b36ebe21f7311e5a434ca43496bf5180</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MPL-2.0</id>
-          <url>https://spdx.org/licenses/MPL-2.0.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/hashicorp/errwrap@v1.0.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/hashicorp/errwrap</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MPL-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/hashicorp/go-multierror@v1.1.0" type="library">
       <name>github.com/hashicorp/go-multierror</name>
@@ -834,18 +874,19 @@
       <hashes>
         <hash alg="SHA-256">07d533c064097a19d4635c8dae7c111077377c66c2db179fa3c8384db12569c2</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MPL-2.0</id>
-          <url>https://spdx.org/licenses/MPL-2.0.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/hashicorp/go-multierror@v1.1.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/hashicorp/go-multierror</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MPL-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998" type="library">
       <name>github.com/ProtonMail/bcrypt</name>
@@ -854,18 +895,19 @@
       <hashes>
         <hash alg="SHA-256">613dae57042245067109a69a8707dc813ab68f78faeb0d349ffdbb81bff3b9bb</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/bcrypt@v0.0.0-20170924085257-7509ea014998</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/bcrypt</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/jaytaylor/html2text@v0.0.0-20200412013138-3577fbdbcff7" type="library">
       <name>github.com/jaytaylor/html2text</name>
@@ -874,18 +916,19 @@
       <hashes>
         <hash alg="SHA-256">8347c01818ac1da110d1346ad6206f7a61517fef0011612604449289607756c7</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/jaytaylor/html2text@v0.0.0-20200412013138-3577fbdbcff7</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/jaytaylor/html2text</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/keybase/go-keychain@v0.0.0-20200502122510-cda31fe0c86d" type="library">
       <name>github.com/keybase/go-keychain</name>
@@ -894,18 +937,19 @@
       <hashes>
         <hash alg="SHA-256">8158e10427d51a5df6448068a0e00dcdfc3ed14a97f0753ec8f94cbfcbf2a5c8</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/keybase/go-keychain@v0.0.0-20200502122510-cda31fe0c86d</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/keybase/go-keychain</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/logrusorgru/aurora@v2.0.3" type="library">
       <name>github.com/logrusorgru/aurora</name>
@@ -914,18 +958,19 @@
       <hashes>
         <hash alg="SHA-256">2dff73b09ee12bc6bd7e6adc7f970c0337de1439857bdb82bb555526f0382c32</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>Unlicense</id>
-          <url>https://spdx.org/licenses/Unlicense.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/logrusorgru/aurora@v2.0.3</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/logrusorgru/aurora</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Unlicense</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/mattn/go-colorable@v0.1.4" type="library">
       <name>github.com/mattn/go-colorable</name>
@@ -934,18 +979,19 @@
       <hashes>
         <hash alg="SHA-256">b276cf2c1f1f55f53d8b06dba37d133ed6cb473c16bba6894ba5e1e1e69abe20</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/mattn/go-colorable@v0.1.4</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/mattn/go-colorable</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/mattn/go-isatty@v0.0.11" type="library">
       <name>github.com/mattn/go-isatty</name>
@@ -954,18 +1000,19 @@
       <hashes>
         <hash alg="SHA-256">1713ce4c536a1a4b835068b71ffaa451b40ee198816b66eb2aae6bd25f1319e3</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/mattn/go-isatty@v0.0.11</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/mattn/go-isatty</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/mattn/go-runewidth@v0.0.9" type="library">
       <name>github.com/mattn/go-runewidth</name>
@@ -974,18 +1021,19 @@
       <hashes>
         <hash alg="SHA-256">2e6f7de5fdeb7f176977a4d29ae5421d56ff421ba9b97958afcb0223f41d13ed</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/mattn/go-runewidth@v0.0.9</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/mattn/go-runewidth</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/miekg/dns@v1.1.30" type="library">
       <name>github.com/miekg/dns</name>
@@ -1008,18 +1056,19 @@
       <hashes>
         <hash alg="SHA-256">44f7257e06b648426680c9b3da4f8c83b728c19f32bf84ebab0f54b096f2ef9f</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/nsf/jsondiff@v0.0.0-20200515183724-f29ed568f4ce</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/nsf/jsondiff</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/olekukonko/tablewriter@v0.0.4" type="library">
       <name>github.com/olekukonko/tablewriter</name>
@@ -1028,18 +1077,19 @@
       <hashes>
         <hash alg="SHA-256">bc70ff6187b55a8968efc9281b6f7d7fb57f5404b4f1ce88a422e7f848dfff0f</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/olekukonko/tablewriter@v0.0.4</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/olekukonko/tablewriter</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/pkg/errors@v0.9.1" type="library">
       <name>github.com/pkg/errors</name>
@@ -1048,18 +1098,19 @@
       <hashes>
         <hash alg="SHA-256">14404bc75cd2db5e28c298f2eeab017a2c5b51192e850030acae54c0b193c2de</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-2-Clause</id>
-          <url>https://spdx.org/licenses/BSD-2-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/pkg/errors@v0.9.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/pkg/errors</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-2-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/pmezard/go-difflib@v1.0.0" type="library">
       <name>github.com/pmezard/go-difflib</name>
@@ -1068,18 +1119,19 @@
       <hashes>
         <hash alg="SHA-256">e030700c4d0d1b24280476cb4183f04943e808c591e41133224fdfd6565b0103</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/pmezard/go-difflib@v1.0.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/pmezard/go-difflib</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/russross/blackfriday/v2@v2.0.1" type="library">
       <name>github.com/russross/blackfriday/v2</name>
@@ -1088,18 +1140,19 @@
       <hashes>
         <hash alg="SHA-256">94fa9502d7be1ee1cd7e127fd0b0bdf04496473f1a7f2f6d33fd112bc9bda3e4</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-2-Clause</id>
-          <url>https://spdx.org/licenses/BSD-2-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/russross/blackfriday/v2@v2.0.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/russross/blackfriday</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-2-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/shurcooL/sanitized_anchor_name@v1.0.0" type="library">
       <name>github.com/shurcooL/sanitized_anchor_name</name>
@@ -1108,18 +1161,19 @@
       <hashes>
         <hash alg="SHA-256">3dd9a808eeb0bdbb3eef2ac9c8c391b78fc1998e486322704bf90e896c7c987a</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/shurcooL/sanitized_anchor_name@v1.0.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/shurcooL/sanitized_anchor_name</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/sirupsen/logrus@v1.7.0" type="library">
       <name>github.com/sirupsen/logrus</name>
@@ -1128,18 +1182,19 @@
       <hashes>
         <hash alg="SHA-256">4a1ac3d54f69641d764d7d1c572d03b5e3e8087f7b2bc12d5fe9a0ed901152d3</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/sirupsen/logrus@v1.7.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/sirupsen/logrus</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/skratchdot/open-golang@v0.0.0-20200116055534-eef842397966" type="library">
       <name>github.com/skratchdot/open-golang</name>
@@ -1148,18 +1203,19 @@
       <hashes>
         <hash alg="SHA-256">24802eab71047fd7206d4e80b463cae024c6dd97fa08a30da9fd0c1d38200140</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/skratchdot/open-golang@v0.0.0-20200116055534-eef842397966</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/skratchdot/open-golang</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/ssor/bom@v0.0.0-20170718123548-6386211fdfcf" type="library">
       <name>github.com/ssor/bom</name>
@@ -1168,18 +1224,19 @@
       <hashes>
         <hash alg="SHA-256">a6f6d9d253345d63c1a942aa154f1c99abeca6f225f67ba5398c1dcba205451a</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ssor/bom@v0.0.0-20170718123548-6386211fdfcf</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ssor/bom</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/stretchr/testify@v1.6.1" type="library">
       <name>github.com/stretchr/testify</name>
@@ -1188,18 +1245,19 @@
       <hashes>
         <hash alg="SHA-256">8433ce1e6a4ea4fe3495250b72ac3b22b45bfeeef0e91a430bddfdf57ca835dd</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/stretchr/testify@v1.6.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/stretchr/testify</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/therecipe/qt@v0.0.0-20200701200531-7f61353ee73e" type="library">
       <name>github.com/therecipe/qt</name>
@@ -1208,18 +1266,19 @@
       <hashes>
         <hash alg="SHA-256">1b40d0fd3450cab1198ed2e52f07af163691886f1e782325abd59743638ed9b9</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>LGPL-3.0-only</id>
-          <url>https://spdx.org/licenses/LGPL-3.0-only.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/therecipe/qt@v0.0.0-20200701200531-7f61353ee73e</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/therecipe/qt</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>LGPL-3.0-only</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/urfave/cli/v2@v2.2.0" type="library">
       <name>github.com/urfave/cli/v2</name>
@@ -1228,18 +1287,19 @@
       <hashes>
         <hash alg="SHA-256">2534e733ac0acdd03426aa1d77deba3158f8bd66dbaae67291e5f5b0a6ded82e</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>MIT</id>
-          <url>https://spdx.org/licenses/MIT.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/urfave/cli/v2@v2.2.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/urfave/cli</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>MIT</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/vmihailenco/msgpack/v5@v5.1.3" type="library">
       <name>github.com/vmihailenco/msgpack/v5</name>
@@ -1248,18 +1308,19 @@
       <hashes>
         <hash alg="SHA-256">1700bd28f8f25bc3aa4d4a8cb7aad0c3dcb9d2f0367132d73ca09c04245b4208</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-2-Clause</id>
-          <url>https://spdx.org/licenses/BSD-2-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/vmihailenco/msgpack/v5@v5.1.3</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/vmihailenco/msgpack</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-2-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/vmihailenco/tagparser@v0.1.2" type="library">
       <name>github.com/vmihailenco/tagparser</name>
@@ -1268,18 +1329,19 @@
       <hashes>
         <hash alg="SHA-256">8278e856e07f9258c9e702021043a9c7df285cc58f2e3db61baed56ddd6a3ea7</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-2-Clause</id>
-          <url>https://spdx.org/licenses/BSD-2-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/vmihailenco/tagparser@v0.1.2</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/vmihailenco/tagparser</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-2-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/go.etcd.io/bbolt@v1.3.5" type="library">
       <name>go.etcd.io/bbolt</name>
@@ -1297,18 +1359,19 @@
       <hashes>
         <hash alg="SHA-256">89a55b10e9ec9121a0707ed74161c6e953e2ac70d1a187be21d774fdd9789bc0</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/ProtonMail/crypto@v0.0.0-20201112115411-41db4ea0dd1c</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/ProtonMail/crypto</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/golang.org/x/net@v0.0.0-20200707034311-ab3426394381" type="library">
       <name>golang.org/x/net</name>
@@ -1317,13 +1380,14 @@
       <hashes>
         <hash alg="SHA-256">5576a4e48e9a1169805de42303e41267396036ba6af668dc7c37a6b9ec482ac5</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/golang.org/x/net@v0.0.0-20200707034311-ab3426394381</purl>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/golang.org/x/sys@v0.0.0-20200323222414-85ca7c5b95cd" type="library">
       <name>golang.org/x/sys</name>
@@ -1332,13 +1396,14 @@
       <hashes>
         <hash alg="SHA-256">c619b0caf8b3b93802daacfb665325b8fdb4b96f82dd19b4143fd62c35fcf3ce</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/golang.org/x/sys@v0.0.0-20200323222414-85ca7c5b95cd</purl>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/golang.org/x/text@v0.3.5-0.20201125200606-c27b9fd57aec" type="library">
       <name>golang.org/x/text</name>
@@ -1347,13 +1412,14 @@
       <hashes>
         <hash alg="SHA-256">035a988e7789bb305967680807caddeb3adfaba97b4a810c27c12c4a294d2bf5</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-          <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/golang.org/x/text@v0.3.5-0.20201125200606-c27b9fd57aec</purl>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c" type="library">
       <name>gopkg.in/yaml.v3</name>
@@ -1362,18 +1428,19 @@
       <hashes>
         <hash alg="SHA-256">7545301e4d90102a3feafa80e38aed859f227b641730d78a4531c2358da75efa</hash>
       </hashes>
-      <licenses>
-        <license>
-          <id>Apache-2.0</id>
-          <url>https://spdx.org/licenses/Apache-2.0.html</url>
-        </license>
-      </licenses>
       <purl>pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/go-yaml/yaml</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Apache-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
   </components>
   <dependencies>

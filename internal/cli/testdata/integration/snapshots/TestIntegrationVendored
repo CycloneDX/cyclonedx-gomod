@@ -12,17 +12,19 @@
       <name>github.com/google/uuid</name>
       <version>v1.2.0</version>
       <scope>required</scope>
-      <licenses>
-        <license>
-          <id>BSD-3-Clause</id>
-        </license>
-      </licenses>
       <purl>pkg:golang/github.com/google/uuid@v1.2.0</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/google/uuid</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
   </components>
   <dependencies>

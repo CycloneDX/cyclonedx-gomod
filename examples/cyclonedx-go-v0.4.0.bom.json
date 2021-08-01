@@ -1,31 +1,31 @@
 {
   "bomFormat": "CycloneDX",
-  "specVersion": "1.2",
-  "serialNumber": "urn:uuid:4b21c403-047b-45d4-91ba-9b45448c0b69",
+  "specVersion": "1.3",
+  "serialNumber": "urn:uuid:21310aa4-f9ea-4900-b0d0-5b8c6997c2d6",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-07-31T22:31:40+02:00",
+    "timestamp": "2021-08-01T12:40:12+02:00",
     "tools": [
       {
         "vendor": "CycloneDX",
         "name": "cyclonedx-gomod",
-        "version": "v0.0.0-20210729183245-27eb9c8d1f90",
+        "version": "v0.0.0-20210801123916-0e0d3ea6e164",
         "hashes": [
           {
             "alg": "MD5",
-            "content": "876cb6fddc1cf5faa72bb4f6f4356edf"
+            "content": "8f36acf3d4cfe2c553c66ba7655592b2"
           },
           {
             "alg": "SHA-1",
-            "content": "9711bd6a951a5f30481a3f163ee1398ebb3d515c"
+            "content": "4fbc2bdb659e6e024bdd720fc83fee58a0c78ac5"
           },
           {
             "alg": "SHA-256",
-            "content": "9bc8fb8d2245a3b1f115e5baf51a88afa785e679469377587048ae652730b6b5"
+            "content": "602ddcfc4c1692f5c62e1b305340529a25ea5b53cfb004f6b055831f10f43e61"
           },
           {
             "alg": "SHA-512",
-            "content": "9c506ceb3915657824425ad180737dc2cf74f749db13edeb4a5fadc7ad0f54e43390945abe3c1ea405568f74a5980dcfa0b72f887ee1baf0bc4822a78829eb78"
+            "content": "c42f3df181fc9322df3b0e65291fd99f139f3e44293c5acaead072a9516b4e2937c7f5457c1775b60ad533e91482247ecfe0218ec425c4a4deb1852368a020ad"
           }
         ]
       }
@@ -35,21 +35,22 @@
       "type": "application",
       "name": "github.com/CycloneDX/cyclonedx-go",
       "version": "v0.4.0",
-      "licenses": [
-        {
-          "license": {
-            "id": "Apache-2.0",
-            "url": "https://spdx.org/licenses/Apache-2.0.html"
-          }
-        }
-      ],
       "purl": "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.4.0",
       "externalReferences": [
         {
           "url": "https://github.com/CycloneDX/cyclonedx-go",
           "type": "vcs"
         }
-      ]
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "Apache-2.0"
+            }
+          }
+        ]
+      }
     }
   },
   "components": [
@@ -65,21 +66,22 @@
           "content": "9274e83d86b6c6d7e0e3653723aa6e9c512368614a5904572708f4253bf8993b"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT",
-            "url": "https://spdx.org/licenses/MIT.html"
-          }
-        }
-      ],
       "purl": "pkg:golang/github.com/bradleyjkemp/cupaloy/v2@v2.6.0",
       "externalReferences": [
         {
           "url": "https://github.com/bradleyjkemp/cupaloy",
           "type": "vcs"
         }
-      ]
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "MIT"
+            }
+          }
+        ]
+      }
     },
     {
       "bom-ref": "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
@@ -93,21 +95,22 @@
           "content": "be3f63feed5baa7bc211f24ec1486d94e011aacdfeae41d8635de36164d4f7b7"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "0BSD",
-            "url": "https://spdx.org/licenses/0BSD.html"
-          }
-        }
-      ],
       "purl": "pkg:golang/github.com/davecgh/go-spew@v1.1.1",
       "externalReferences": [
         {
           "url": "https://github.com/davecgh/go-spew",
           "type": "vcs"
         }
-      ]
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "0BSD"
+            }
+          }
+        ]
+      }
     },
     {
       "bom-ref": "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
@@ -121,21 +124,22 @@
           "content": "e030700c4d0d1b24280476cb4183f04943e808c591e41133224fdfd6565b0103"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "BSD-3-Clause",
-            "url": "https://spdx.org/licenses/BSD-3-Clause.html"
-          }
-        }
-      ],
       "purl": "pkg:golang/github.com/pmezard/go-difflib@v1.0.0",
       "externalReferences": [
         {
           "url": "https://github.com/pmezard/go-difflib",
           "type": "vcs"
         }
-      ]
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "BSD-3-Clause"
+            }
+          }
+        ]
+      }
     },
     {
       "bom-ref": "pkg:golang/github.com/stretchr/testify@v1.7.0",
@@ -149,21 +153,22 @@
           "content": "9f07370c47879a62c07e866e71547cf35b804a4d0c7e3c3cc5827df6d6f909c6"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "MIT",
-            "url": "https://spdx.org/licenses/MIT.html"
-          }
-        }
-      ],
       "purl": "pkg:golang/github.com/stretchr/testify@v1.7.0",
       "externalReferences": [
         {
           "url": "https://github.com/stretchr/testify",
           "type": "vcs"
         }
-      ]
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "MIT"
+            }
+          }
+        ]
+      }
     },
     {
       "bom-ref": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
@@ -177,21 +182,22 @@
           "content": "7545301e4d90102a3feafa80e38aed859f227b641730d78a4531c2358da75efa"
         }
       ],
-      "licenses": [
-        {
-          "license": {
-            "id": "Apache-2.0",
-            "url": "https://spdx.org/licenses/Apache-2.0.html"
-          }
-        }
-      ],
       "purl": "pkg:golang/gopkg.in/yaml.v3@v3.0.0-20200313102051-9f266ea9e77c",
       "externalReferences": [
         {
           "url": "https://github.com/go-yaml/yaml",
           "type": "vcs"
         }
-      ]
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "Apache-2.0"
+            }
+          }
+        ]
+      }
     }
   ],
   "dependencies": [
