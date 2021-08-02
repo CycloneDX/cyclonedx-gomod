@@ -57,7 +57,7 @@ func WithComponentType(ctype cyclonedx.ComponentType) Option {
 	}
 }
 
-// WithTestScope sets the scope of the component to a given value,
+// WithTestScope overrides the scope of the component,
 // if the corresponding module has the TestOnly flag set.
 func WithTestScope(scope cyclonedx.Scope) Option {
 	return func(m gomod.Module, c *cyclonedx.Component) error {
