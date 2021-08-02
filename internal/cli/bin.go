@@ -106,6 +106,7 @@ func execBinCmd(options BinOptions) error {
 			modules = append(modules, gomod.Module{
 				Path:    fields[1],
 				Version: fields[2],
+				Main:    true,
 			})
 		case "dep":
 			module := gomod.Module{
@@ -123,10 +124,13 @@ func execBinCmd(options BinOptions) error {
 		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
 	}
 
-	mainModule := modules[0]
-	modules = modules[1:]
+	// Make all modules a direct dependency of the main module
+	for i := range modules {
+		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
+	}
+	dependencies := sbom.BuildDependencyGraph(modules)
 
-	mainComponent, err := convert.ToComponent(mainModule,
+	mainComponent, err := convert.ToComponent(modules[0],
 		convert.WithComponentType(cdx.ComponentType(options.ComponentType)))
 	if err != nil {
 		return err
@@ -136,8 +140,6 @@ func execBinCmd(options BinOptions) error {
 	if err != nil {
 		return err
 	}
-
-	dependencies := sbom.BuildDependencyGraph(modules)
 
 	bom := cdx.NewBOM()
 	bom.Metadata = &cdx.Metadata{
