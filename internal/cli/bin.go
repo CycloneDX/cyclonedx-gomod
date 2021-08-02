@@ -23,10 +23,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
+	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/model"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
@@ -82,7 +86,8 @@ func execBinCmd(options BinOptions) error {
 		return err
 	}
 
-	modules := make([]model.Module, 0)
+	modules := make([]gomod.Module, 0)
+	hashes := make(map[string]string)
 
 	scanner := bufio.NewScanner(buf)
 	for scanner.Scan() {
@@ -98,16 +103,17 @@ func execBinCmd(options BinOptions) error {
 		case "path":
 			continue
 		case "mod":
-			modules = append(modules, model.Module{
+			modules = append(modules, gomod.Module{
 				Path:    fields[1],
 				Version: fields[2],
 			})
 		case "dep":
-			modules = append(modules, model.Module{
-				Path:     fields[1],
-				Version:  fields[2],
-				Checksum: fields[3],
-			})
+			module := gomod.Module{
+				Path:    fields[1],
+				Version: fields[2],
+			}
+			modules = append(modules, module)
+			hashes[module.Coordinates()] = fields[3]
 		default:
 			break
 		}
@@ -117,5 +123,45 @@ func execBinCmd(options BinOptions) error {
 		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
 	}
 
-	return nil
+	mainModule := modules[0]
+	modules = modules[1:]
+
+	mainComponent, err := convert.ToComponent(mainModule,
+		convert.WithComponentType(cdx.ComponentType(options.ComponentType)))
+	if err != nil {
+		return err
+	}
+
+	components, err := convert.ToComponents(modules, withModuleHashes(hashes))
+	if err != nil {
+		return err
+	}
+
+	dependencies := sbom.BuildDependencyGraph(modules)
+
+	bom := cdx.NewBOM()
+	bom.Metadata = &cdx.Metadata{
+		Component: mainComponent,
+	}
+	bom.Components = &components
+	bom.Dependencies = &dependencies
+
+	bomEncoder := cdx.NewBOMEncoder(os.Stdout, cdx.BOMFileFormatXML)
+	bomEncoder.SetPretty(true)
+	return bomEncoder.Encode(bom)
+}
+
+func withModuleHashes(hashes map[string]string) convert.Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		checksum, ok := hashes[m.Coordinates()]
+		if ok {
+			c.Hashes = &[]cdx.Hash{
+				{
+					Algorithm: cdx.HashAlgoSHA256,
+					Value:     checksum,
+				},
+			}
+		}
+		return nil
+	}
 }

@@ -104,7 +104,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	log.Println("building dependency graph")
-	dependencyGraph := buildDependencyGraph(append(modules, mainModule))
+	dependencyGraph := BuildDependencyGraph(append(modules, mainModule))
 
 	log.Println("calculating tool hashes")
 	toolHashes := make([]cdx.Hash, 0)
@@ -309,7 +309,7 @@ func buildStdComponent() (*cdx.Component, error) {
 	}, nil
 }
 
-func buildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
+func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	depGraph := make([]cdx.Dependency, 0)
 
 	for _, module := range modules {
