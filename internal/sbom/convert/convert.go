@@ -68,11 +68,11 @@ func WithTestScope(scope cyclonedx.Scope) Option {
 	}
 }
 
-// ToComponent converts a gomod.Module to a CycloneDX component.
+// ModuleToComponent converts a gomod.Module to a CycloneDX component.
 // The component can be further customized using options, before it's returned.
-func ToComponent(module gomod.Module, options ...Option) (*cyclonedx.Component, error) {
+func ModuleToComponent(module gomod.Module, options ...Option) (*cyclonedx.Component, error) {
 	if module.Replace != nil {
-		return ToComponent(*module.Replace, options...)
+		return ModuleToComponent(*module.Replace, options...)
 	}
 
 	component := cyclonedx.Component{
@@ -102,11 +102,11 @@ func ToComponent(module gomod.Module, options ...Option) (*cyclonedx.Component, 
 	return &component, nil
 }
 
-func ToComponents(modules []gomod.Module, options ...Option) ([]cyclonedx.Component, error) {
+func ModulesToComponents(modules []gomod.Module, options ...Option) ([]cyclonedx.Component, error) {
 	components := make([]cyclonedx.Component, 0, len(modules))
 
 	for i := range modules {
-		component, err := ToComponent(modules[i], options...)
+		component, err := ModuleToComponent(modules[i], options...)
 		if err != nil {
 			return nil, err
 		}

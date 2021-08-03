@@ -323,6 +323,61 @@ func parseModWhy(reader io.Reader) map[string][]string {
 	return modPkgs
 }
 
+func GetModulesFromBinary(binaryPath string) ([]Module, map[string]string, error) {
+	buf := new(bytes.Buffer)
+	if err := gocmd.GetModulesFromBinary(binaryPath, buf); err != nil {
+		return nil, nil, err
+	}
+
+	modules, hashes := parseModulesFromBinary(buf)
+
+	return modules, hashes, nil
+}
+
+func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
+	modules := make([]Module, 0)
+	hashes := make(map[string]string)
+
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+
+		fields := strings.Fields(line)
+		switch fields[0] {
+		case "path":
+			continue
+		case "mod":
+			modules = append(modules, Module{
+				Path:    fields[1],
+				Version: fields[2],
+				Main:    true,
+			})
+		case "dep":
+			module := Module{
+				Path:    fields[1],
+				Version: fields[2],
+			}
+			modules = append(modules, module)
+			hashes[module.Coordinates()] = fields[3]
+		}
+	}
+
+	return modules, hashes
+}
+
+func RemoveModule(modules []Module, coordinates string) []Module {
+	for i, module := range modules {
+		if module.Coordinates() == coordinates {
+			return append(modules[:i], modules[i+1:]...)
+		}
+	}
+
+	return modules
+}
+
 func findModule(modules []Module, coordinates string, strict bool) *Module {
 	for i := range modules {
 		if coordinates == modules[i].Coordinates() || (!strict && strings.HasPrefix(coordinates, modules[i].Path+"@")) {

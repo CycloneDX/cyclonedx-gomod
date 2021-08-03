@@ -18,16 +18,13 @@
 package cli
 
 import (
-	"bufio"
-	"bytes"
 	"context"
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert"
@@ -81,65 +78,56 @@ func execBinCmd(options BinOptions) error {
 		return err
 	}
 
-	buf := new(bytes.Buffer)
-	if err := gocmd.GetModulesFromBinary(options.BinaryPath, buf); err != nil {
-		return err
-	}
-
-	modules := make([]gomod.Module, 0)
-	hashes := make(map[string]string)
-
-	scanner := bufio.NewScanner(buf)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.TrimSpace(line) == "" {
-			continue
-		}
-
-		fields := strings.Fields(line)
-		switch fields[0] {
-		case options.BinaryPath:
-			continue
-		case "path":
-			continue
-		case "mod":
-			modules = append(modules, gomod.Module{
-				Path:    fields[1],
-				Version: fields[2],
-				Main:    true,
-			})
-		case "dep":
-			module := gomod.Module{
-				Path:    fields[1],
-				Version: fields[2],
-			}
-			modules = append(modules, module)
-			hashes[module.Coordinates()] = fields[3]
-		default:
-			break
-		}
-	}
-
-	if len(modules) == 0 {
+	modules, hashes, err := gomod.GetModulesFromBinary(options.BinaryPath)
+	if err != nil {
+		return fmt.Errorf("failed to extract modules: %w", err)
+	} else if len(modules) == 0 {
 		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
 	}
 
 	// Make all modules a direct dependency of the main module
-	for i := range modules {
-		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
+	for i, module := range modules {
+		if !module.Main {
+			modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
+		}
 	}
+
 	dependencies := sbom.BuildDependencyGraph(modules)
 
-	mainComponent, err := convert.ToComponent(modules[0],
+	mainComponent, err := convert.ModuleToComponent(modules[0],
 		convert.WithComponentType(cdx.ComponentType(options.ComponentType)))
 	if err != nil {
 		return err
 	}
 
-	components, err := convert.ToComponents(modules, withModuleHashes(hashes))
+	// Remove main module, we don't need it anymore
+	modules = gomod.RemoveModule(modules, modules[0].Coordinates())
+
+	components, err := convert.ModulesToComponents(modules, withModuleHashes(hashes))
 	if err != nil {
 		return err
 	}
+
+	compositions := make([]cdx.Composition, 0)
+
+	// We know all components that the main component directly or indirectly depends on,
+	// thus the dependencies of it are considered complete.
+	compositions = append(compositions, cdx.Composition{
+		Aggregate: cdx.CompositionAggregateComplete,
+		Dependencies: &[]cdx.BOMReference{
+			cdx.BOMReference(mainComponent.BOMRef),
+		},
+	})
+
+	// The exact relationships between the dependencies are unknown
+	dependencyRefs := make([]cdx.BOMReference, 0, len(components))
+	for _, component := range components {
+		dependencyRefs = append(dependencyRefs, cdx.BOMReference(component.BOMRef))
+	}
+	compositions = append(compositions, cdx.Composition{
+		Aggregate:    cdx.CompositionAggregateUnknown,
+		Dependencies: &dependencyRefs,
+	})
 
 	bom := cdx.NewBOM()
 	bom.Metadata = &cdx.Metadata{
@@ -147,23 +135,33 @@ func execBinCmd(options BinOptions) error {
 	}
 	bom.Components = &components
 	bom.Dependencies = &dependencies
+	bom.Compositions = &compositions
 
 	bomEncoder := cdx.NewBOMEncoder(os.Stdout, cdx.BOMFileFormatXML)
 	bomEncoder.SetPretty(true)
+
 	return bomEncoder.Encode(bom)
 }
 
 func withModuleHashes(hashes map[string]string) convert.Option {
 	return func(m gomod.Module, c *cdx.Component) error {
-		checksum, ok := hashes[m.Coordinates()]
-		if ok {
-			c.Hashes = &[]cdx.Hash{
-				{
-					Algorithm: cdx.HashAlgoSHA256,
-					Value:     checksum,
-				},
-			}
+		h1, ok := hashes[m.Coordinates()]
+		if !ok {
+			return nil
 		}
+
+		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
+		if err != nil {
+			return fmt.Errorf("failed to base64 decode h1 hash: %w", err)
+		}
+
+		c.Hashes = &[]cdx.Hash{
+			{
+				Algorithm: cdx.HashAlgoSHA256,
+				Value:     fmt.Sprintf("%x", h1Bytes),
+			},
+		}
+
 		return nil
 	}
 }
