@@ -27,6 +27,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// SetSerialNumber sets the serial number of a given BOM according to the
+// provided SBOMOptions.
 func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	if sbomOptions.NoSerialNumber {
 		return nil
@@ -45,6 +47,7 @@ func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	return nil
 }
 
+// WriteBOM writes the given bom according to the provided OutputOptions.
 func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
 	var outputFormat cdx.BOMFileFormat
 	if outputOptions.UseJSON {
