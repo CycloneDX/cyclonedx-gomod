@@ -21,11 +21,33 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	"github.com/google/uuid"
 )
+
+func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
+	if sbomOptions.Reproducible {
+		return nil
+	}
+
+	if bom.Metadata == nil {
+		bom.Metadata = &cdx.Metadata{}
+	}
+
+	tool, err := sbom.BuildToolMetadata()
+	if err != nil {
+		return fmt.Errorf("failed to build tool metadata: %w", err)
+	}
+
+	bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
+	bom.Metadata.Tools = &[]cdx.Tool{*tool}
+
+	return nil
+}
 
 // SetSerialNumber sets the serial number of a given BOM according to the
 // provided SBOMOptions.

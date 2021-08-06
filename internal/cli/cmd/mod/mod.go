@@ -26,7 +26,6 @@ import (
 	"io"
 	"log"
 	"strings"
-	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
@@ -178,14 +177,8 @@ func execModCmd(modOptions ModOptions) error {
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
-	if !modOptions.Reproducible {
-		tool, err := sbom.BuildToolMetadata()
-		if err != nil {
-			return fmt.Errorf("failed to build tool metadata: %w", err)
-		}
-
-		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
-		bom.Metadata.Tools = &[]cdx.Tool{*tool}
+	if err = cliutil.AddCommonMetadata(bom, modOptions.SBOMOptions); err != nil {
+		return err
 	}
 
 	bom.Components = &components

@@ -24,7 +24,6 @@ import (
 	"flag"
 	"fmt"
 	"path/filepath"
-	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
@@ -92,7 +91,12 @@ func New() *ffcli.Command {
 		Name:       "bin",
 		ShortHelp:  "Generate SBOM for a binary",
 		ShortUsage: "cyclonedx-gomod bin [FLAGS...] PATH",
-		FlagSet:    fs,
+		LongHelp: `Generate SBOM for a binary.
+
+Please note that data embedded in binaries shouldn't be trusted,
+unless there's evidence that the binaries haven't been modified
+since they've been built.`,
+		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) != 1 {
 				return fmt.Errorf("no binary path provided")
@@ -166,17 +170,9 @@ func execBinCmd(binOptions BinOptions) error {
 		Dependencies: &dependencyRefs,
 	})
 
-	binaryHashes, err := sbom.CalculateFileHashes(binOptions.BinaryPath,
-		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
+	binaryProperties, err := createBinaryProperties(binOptions.BinaryPath)
 	if err != nil {
-		return fmt.Errorf("failed to calculate binary hashes: %w", err)
-	}
-
-	properties := []cdx.Property{
-		sbom.NewProperty("binary:name", filepath.Base(binOptions.BinaryPath)),
-	}
-	for _, hash := range binaryHashes {
-		properties = append(properties, sbom.NewProperty(fmt.Sprintf("binary:hash:%s", hash.Algorithm), hash.Value))
+		return err
 	}
 
 	bom := cdx.NewBOM()
@@ -187,17 +183,12 @@ func execBinCmd(binOptions BinOptions) error {
 
 	bom.Metadata = &cdx.Metadata{
 		Component:  mainComponent,
-		Properties: &properties,
+		Properties: &binaryProperties,
 	}
-	if !binOptions.Reproducible {
-		tool, err := sbom.BuildToolMetadata()
-		if err != nil {
-			return fmt.Errorf("failed to build tool metadata: %w", err)
-		}
+	if err = cliutil.AddCommonMetadata(bom, binOptions.SBOMOptions); err != nil {
+		return err
+	}
 
-		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
-		bom.Metadata.Tools = &[]cdx.Tool{*tool}
-	}
 	bom.Components = &components
 	bom.Dependencies = &dependencies
 	bom.Compositions = &compositions
@@ -226,4 +217,21 @@ func withModuleHashes(hashes map[string]string) modconv.Option {
 
 		return nil
 	}
+}
+
+func createBinaryProperties(binaryPath string) ([]cdx.Property, error) {
+	binaryHashes, err := sbom.CalculateFileHashes(binaryPath,
+		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
+	if err != nil {
+		return nil, fmt.Errorf("failed to calculate binary hashes: %w", err)
+	}
+
+	properties := []cdx.Property{
+		sbom.NewProperty("binary:name", filepath.Base(binaryPath)),
+	}
+	for _, hash := range binaryHashes {
+		properties = append(properties, sbom.NewProperty(fmt.Sprintf("binary:hash:%s", hash.Algorithm), hash.Value))
+	}
+
+	return properties, nil
 }
