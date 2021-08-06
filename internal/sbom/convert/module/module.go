@@ -18,6 +18,9 @@
 package module
 
 import (
+	"errors"
+	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -30,21 +33,28 @@ type Option func(gomod.Module, *cdx.Component) error
 
 // WithLicenses attempts to resolve licenses for the module and attach them
 // to the component's license evidence.
-// Unless failOnError is true, a resolution failure will no cause an error.
-func WithLicenses(failOnError bool) Option {
+func WithLicenses() Option {
 	return func(m gomod.Module, c *cdx.Component) error {
 		resolvedLicenses, err := license.Resolve(m)
+
 		if err == nil {
 			componentLicenses := make(cdx.Licenses, len(resolvedLicenses))
 			for i := range resolvedLicenses {
 				componentLicenses[i] = cdx.LicenseChoice{License: &resolvedLicenses[i]}
 			}
+
 			c.Evidence = &cdx.Evidence{
 				Licenses: &componentLicenses,
 			}
-		} else if failOnError {
-			return err
+		} else {
+			if errors.Is(err, license.ErrNoLicenseFound) {
+				log.Printf("no license found for %s", m.Coordinates())
+				return nil
+			}
+
+			return fmt.Errorf("failed to resolve license for %s: %v", m.Coordinates(), err)
 		}
+
 		return nil
 	}
 }
@@ -53,6 +63,14 @@ func WithLicenses(failOnError bool) Option {
 func WithComponentType(ctype cdx.ComponentType) Option {
 	return func(_ gomod.Module, c *cdx.Component) error {
 		c.Type = ctype
+		return nil
+	}
+}
+
+// WithScope overrides the scope of the component.
+func WithScope(scope cdx.Scope) Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		c.Scope = scope
 		return nil
 	}
 }
@@ -89,7 +107,7 @@ func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error)
 		component.Scope = cdx.ScopeRequired
 	}
 
-	vcsURL := resolveVCSURL(module.Path)
+	vcsURL := ResolveVCSURL(module.Path)
 	if vcsURL != "" {
 		component.ExternalReferences = &[]cdx.ExternalReference{
 			{
@@ -137,7 +155,7 @@ var (
 	vcsUrlGoPkgInRegexWithoutUser = regexp.MustCompile(`^gopkg\.in/([^.]+)\..*$`)
 )
 
-func resolveVCSURL(modulePath string) string {
+func ResolveVCSURL(modulePath string) string {
 	switch {
 	case strings.HasPrefix(modulePath, "github.com/"):
 		return "https://" + vcsUrlMajorVersionSuffixRegex.ReplaceAllString(modulePath, "")

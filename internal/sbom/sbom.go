@@ -28,7 +28,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"regexp"
 	"strings"
 	"time"
 
@@ -38,7 +37,7 @@ import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
+	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 )
 
@@ -88,21 +87,19 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	log.Printf("converting main module %s\n", mainModule.Coordinates())
-	mainComponent, err := convertToComponent(mainModule, options.ResolveLicenses)
+	mainComponent, err := modconv.ToComponent(mainModule,
+		modconv.WithComponentType(options.ComponentType),
+		modconv.WithLicenses(),
+		modconv.WithScope(""), // Main component can't have a scope
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
-	mainComponent.Scope = "" // Main component can't have a scope
-	mainComponent.Type = options.ComponentType
 
-	var component *cdx.Component
-	components := make([]cdx.Component, len(modules))
-	for i, module := range modules {
-		component, err = convertToComponent(module, options.ResolveLicenses)
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert module %s: %w", module.Coordinates(), err)
-		}
-		components[i] = *component
+	components, err := modconv.ToComponents(modules,
+		withModuleHashes(), modconv.WithLicenses(), modconv.WithTestScope(cdx.ScopeOptional))
+	if err != nil {
+		return nil, fmt.Errorf("failed to convert modules: %w", err)
 	}
 
 	log.Println("building dependency graph")
@@ -164,107 +161,28 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	return bom, nil
 }
 
-func convertToComponent(module gomod.Module, resolveLicense bool) (*cdx.Component, error) {
-	if module.Replace != nil {
-		return convertToComponent(*module.Replace, resolveLicense)
-	}
+func withModuleHashes() modconv.Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		if m.Main || m.Vendored {
+			return nil
+		}
 
-	log.Printf("converting module %s\n", module.Coordinates())
-
-	component := cdx.Component{
-		BOMRef:     module.PackageURL(),
-		Type:       cdx.ComponentTypeLibrary,
-		Name:       module.Path,
-		Version:    module.Version,
-		PackageURL: module.PackageURL(),
-	}
-
-	if module.TestOnly {
-		component.Scope = cdx.ScopeOptional
-	} else {
-		component.Scope = cdx.ScopeRequired
-	}
-
-	// We currently don't have an accurate way of hashing the main module, as it may contain
-	// files that are .gitignore'd and thus not part of the hashes in Go's sumdb.
-	//
-	// Go's vendoring mechanism doesn't copy all files that make up a module to the vendor dir.
-	// Hashing vendored modules thus won't result in the expected hash, probably causing more
-	// confusion than anything else.
-	//
-	// TODO: Research how we can provide accurate hashes for main modules
-	// TODO: Research how we can provide meaningful hashes for vendored modules
-	if !module.Main && !module.Vendored {
-		hashes, err := calculateModuleHashes(module)
+		h1, err := m.Hash()
 		if err != nil {
-			return nil, err
+			return fmt.Errorf("failed to calculate h1 hash: %w", err)
 		}
-		component.Hashes = &hashes
-	}
 
-	if resolveLicense {
-		resolvedLicenses, err := license.Resolve(module)
-		if err == nil {
-			componentLicenses := make(cdx.Licenses, len(resolvedLicenses))
-			for i := range resolvedLicenses {
-				componentLicenses[i] = cdx.LicenseChoice{License: &resolvedLicenses[i]}
-			}
-			component.Evidence = &cdx.Evidence{
-				Licenses: &componentLicenses,
-			}
-		} else {
-			log.Printf("failed to resolve license of %s: %v\n", module.Coordinates(), err)
+		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
+		if err != nil {
+			return fmt.Errorf("failed to base64 decode h1 hash: %w", err)
 		}
-	}
 
-	if vcsURL := resolveVcsURL(module); vcsURL != "" {
-		component.ExternalReferences = &[]cdx.ExternalReference{
-			{Type: cdx.ERTypeVCS, URL: vcsURL},
+		c.Hashes = &[]cdx.Hash{
+			{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
 		}
+
+		return nil
 	}
-
-	return &component, nil
-}
-
-func calculateModuleHashes(module gomod.Module) ([]cdx.Hash, error) {
-	h1, err := module.Hash()
-	if err != nil {
-		return nil, fmt.Errorf("failed to calculate h1 hash: %w", err)
-	}
-
-	h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
-	if err != nil {
-		return nil, fmt.Errorf("failed to base64 decode h1 hash: %w", err)
-	}
-
-	return []cdx.Hash{
-		{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
-	}, nil
-}
-
-var (
-	// By convention, modules with a major version equal to or above v2
-	// have it as suffix in their module path.
-	vcsUrlMajorVersionSuffixRegex = regexp.MustCompile(`(/v[\d]+)$`)
-
-	// gopkg.in with user segment
-	// Example: gopkg.in/user/pkg.v3 -> github.com/user/pkg
-	vcsUrlGoPkgInRegexWithUser = regexp.MustCompile(`^gopkg\.in/([^/]+)/([^.]+)\..*$`)
-
-	// gopkg.in without user segment
-	// Example: gopkg.in/pkg.v3 -> github.com/go-pkg/pkg
-	vcsUrlGoPkgInRegexWithoutUser = regexp.MustCompile(`^gopkg\.in/([^.]+)\..*$`)
-)
-
-func resolveVcsURL(module gomod.Module) string {
-	if strings.HasPrefix(module.Path, "github.com/") {
-		return "https://" + vcsUrlMajorVersionSuffixRegex.ReplaceAllString(module.Path, "")
-	} else if vcsUrlGoPkgInRegexWithUser.MatchString(module.Path) {
-		return "https://" + vcsUrlGoPkgInRegexWithUser.ReplaceAllString(module.Path, "github.com/$1/$2")
-	} else if vcsUrlGoPkgInRegexWithoutUser.MatchString(module.Path) {
-		return "https://" + vcsUrlGoPkgInRegexWithoutUser.ReplaceAllString(module.Path, "github.com/go-$1/$1")
-	}
-	return ""
 }
 
 func BuildStdComponent() (*cdx.Component, error) {

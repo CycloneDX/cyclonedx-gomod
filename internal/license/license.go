@@ -27,7 +27,7 @@ import (
 	"github.com/go-enry/go-license-detector/v4/licensedb/filer"
 )
 
-var ErrLicenseNotFound = errors.New("no license found")
+var ErrNoLicenseFound = errors.New("no license found")
 
 const minDetectionConfidence = 0.9
 
@@ -39,6 +39,9 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 
 	detectedLicenses, err := licensedb.Detect(licensesFiler)
 	if err != nil {
+		if errors.Is(err, licensedb.ErrNoLicenseFound) {
+			return nil, ErrNoLicenseFound
+		}
 		return nil, err
 	}
 
@@ -65,7 +68,7 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 	}
 
 	if detectedLicense == "" || detectedLicenseConfidence < minDetectionConfidence {
-		return nil, ErrLicenseNotFound
+		return nil, ErrNoLicenseFound
 	}
 
 	return []cdx.License{

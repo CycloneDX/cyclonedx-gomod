@@ -18,6 +18,8 @@
 package license
 
 import (
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
@@ -26,11 +28,24 @@ import (
 )
 
 func TestResolve(t *testing.T) {
-	// Success with single license
-	licenses, err := Resolve(gomod.Module{
-		Dir: "../../",
+	t.Run("Success", func(t *testing.T) {
+		licenses, err := Resolve(gomod.Module{
+			Dir: "../../",
+		})
+		require.NoError(t, err)
+		require.Len(t, licenses, 1)
+		assert.Equal(t, "Apache-2.0", licenses[0].ID)
 	})
-	require.NoError(t, err)
-	require.Len(t, licenses, 1)
-	assert.Equal(t, "Apache-2.0", licenses[0].ID)
+
+	t.Run("NoLicenseFound", func(t *testing.T) {
+		tmpDir, err := os.MkdirTemp("", strings.ReplaceAll(t.Name()+"_*", "/", "_"))
+		require.NoError(t, err)
+		defer os.RemoveAll(tmpDir)
+
+		_, err = Resolve(gomod.Module{
+			Dir: tmpDir,
+		})
+		require.Error(t, err)
+		require.ErrorIs(t, err, ErrNoLicenseFound)
+	})
 }
