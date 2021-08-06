@@ -170,7 +170,11 @@ func execModCmd(modOptions ModOptions) error {
 
 	log.Println("assembling sbom")
 	bom := cdx.NewBOM()
-	cliutil.SetSerialNumber(bom, modOptions.SBOMOptions)
+
+	if err = cliutil.SetSerialNumber(bom, modOptions.SBOMOptions); err != nil {
+		return err
+	}
+
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}

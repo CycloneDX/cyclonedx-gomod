@@ -180,7 +180,11 @@ func execBinCmd(binOptions BinOptions) error {
 	}
 
 	bom := cdx.NewBOM()
-	cliutil.SetSerialNumber(bom, binOptions.SBOMOptions)
+
+	if err = cliutil.SetSerialNumber(bom, binOptions.SBOMOptions); err != nil {
+		return err
+	}
+
 	bom.Metadata = &cdx.Metadata{
 		Component:  mainComponent,
 		Properties: &properties,
