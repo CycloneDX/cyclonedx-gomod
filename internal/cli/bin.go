@@ -20,9 +20,10 @@ package cli
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"flag"
 	"fmt"
-	"os"
+	"path/filepath"
 	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -49,8 +50,31 @@ func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
 }
 
 func (b BinOptions) Validate() error {
+	errs := make([]error, 0)
+
+	if err := b.OutputOptions.Validate(); err != nil {
+		var verr *OptionsValidationError
+		if errors.As(err, &verr) {
+			errs = append(errs, verr.Errors...)
+		} else {
+			return err
+		}
+	}
+	if err := b.SBOMOptions.Validate(); err != nil {
+		var verr *OptionsValidationError
+		if errors.As(err, &verr) {
+			errs = append(errs, verr.Errors...)
+		} else {
+			return err
+		}
+	}
+
 	if !util.FileExists(b.BinaryPath) {
-		return &OptionsValidationError{Errors: []error{fmt.Errorf("binary at %s does not exist", b.BinaryPath)}}
+		errs = append(errs, fmt.Errorf("binary at %s does not exist", b.BinaryPath))
+	}
+
+	if len(errs) > 0 {
+		return &OptionsValidationError{Errors: errs}
 	}
 
 	return nil
@@ -104,7 +128,9 @@ func execBinCmd(options BinOptions) error {
 	dependencies := sbom.BuildDependencyGraph(modules)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)))
+		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)),
+		modconv.WithScope(""), // Main component can't have a scope
+	)
 	if err != nil {
 		return err
 	}
@@ -138,9 +164,23 @@ func execBinCmd(options BinOptions) error {
 		Dependencies: &dependencyRefs,
 	})
 
+	binaryHashes, err := sbom.CalculateFileHashes(options.BinaryPath,
+		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
+	if err != nil {
+		return fmt.Errorf("failed to calculate binary hashes: %w", err)
+	}
+
+	properties := []cdx.Property{
+		sbom.NewProperty("binary:name", filepath.Base(options.BinaryPath)),
+	}
+	for _, hash := range binaryHashes {
+		properties = append(properties, sbom.NewProperty(fmt.Sprintf("binary:hash:%s", hash.Algorithm), hash.Value))
+	}
+
 	bom := cdx.NewBOM()
 	bom.Metadata = &cdx.Metadata{
-		Component: mainComponent,
+		Component:  mainComponent,
+		Properties: &properties,
 	}
 	if !options.Reproducible {
 		tool, err := sbom.BuildToolMetadata()
@@ -155,10 +195,7 @@ func execBinCmd(options BinOptions) error {
 	bom.Dependencies = &dependencies
 	bom.Compositions = &compositions
 
-	bomEncoder := cdx.NewBOMEncoder(os.Stdout, cdx.BOMFileFormatXML)
-	bomEncoder.SetPretty(true)
-
-	return bomEncoder.Encode(bom)
+	return WriteBOM(bom, options.OutputOptions)
 }
 
 func withModuleHashes(hashes map[string]string) modconv.Option {

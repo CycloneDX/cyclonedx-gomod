@@ -20,6 +20,8 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"io"
+	"os"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/google/uuid"
@@ -42,16 +44,46 @@ func (e OptionsValidationError) Error() string {
 
 // OutputOptions provides options for customizing the output.
 type OutputOptions struct {
-	FilePath string
-	UseJSON  bool
+	OutputFilePath string
+	UseJSON        bool
 }
 
 func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&o.UseJSON, "json", false, "Output in JSON")
-	fs.StringVar(&o.FilePath, "output", "-", "Output file path (or - for STDOUT)")
+	fs.StringVar(&o.OutputFilePath, "output", "-", "Output file path (or - for STDOUT)")
 }
 
 func (o OutputOptions) Validate() error {
+	return nil
+}
+
+func WriteBOM(bom *cdx.BOM, options OutputOptions) error {
+	var outputFormat cdx.BOMFileFormat
+	if options.UseJSON {
+		outputFormat = cdx.BOMFileFormatJSON
+	} else {
+		outputFormat = cdx.BOMFileFormatXML
+	}
+
+	var outputWriter io.Writer
+	if options.OutputFilePath == "" || options.OutputFilePath == "-" {
+		outputWriter = os.Stdout
+	} else {
+		outputFile, err := os.Create(options.OutputFilePath)
+		if err != nil {
+			return fmt.Errorf("failed to create output file %s: %w", options.OutputFilePath, err)
+		}
+		defer outputFile.Close()
+		outputWriter = outputFile
+	}
+
+	encoder := cdx.NewBOMEncoder(outputWriter, outputFormat)
+	encoder.SetPretty(true)
+
+	if err := encoder.Encode(bom); err != nil {
+		return fmt.Errorf("failed to encode sbom: %w", err)
+	}
+
 	return nil
 }
 

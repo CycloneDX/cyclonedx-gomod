@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bom xmlns="http://cyclonedx.org/schema/bom/1.3" version="1">
   <metadata>
+    <timestamp>2021-08-06T21:18:40+02:00</timestamp>
+    <tools>
+      <tool>
+        <vendor>CycloneDX</vendor>
+        <name>cyclonedx-gomod</name>
+        <version>v0.0.0-20210806204602-e2edcb4dea4d</version>
+        <hashes>
+          <hash alg="MD5">1d007765ada79ab7102def7b86da5fb7</hash>
+          <hash alg="SHA-1">e0bb20da3133f539289706c100ebe2bb91f2c88d</hash>
+          <hash alg="SHA-256">628046bd42fcf0069b5e8b1dac58d04870b3ba84b5cac55f58955018378ef3a7</hash>
+          <hash alg="SHA-384">fbefcdb01a99fadad14872284fdfb5146e606aebee6cc363eba0ce51541cc20885466f8dc9d4df531181c713c51f3d22</hash>
+          <hash alg="SHA-512">e0af82c741dc0750d888040c6e69aea546ee674e083a8db795e104c7138e4a2bbae04d95fa42a05d979a12beab39d3df41df14450b38001cf4250bdc3358ad89</hash>
+        </hashes>
+      </tool>
+    </tools>
     <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-gomod@v0.10.0" type="application">
       <name>github.com/CycloneDX/cyclonedx-gomod</name>
       <version>v0.10.0</version>
@@ -11,11 +26,20 @@
         </reference>
       </externalReferences>
     </component>
+    <properties>
+      <property name="cdx:gomod:binary:name">cyclonedx-gomod</property>
+      <property name="cdx:gomod:binary:hash:MD5">d36ed44fb366e47f6461e9013f451068</property>
+      <property name="cdx:gomod:binary:hash:SHA-1">22c7c677a20bb3f3d5f824941e75efab18df269b</property>
+      <property name="cdx:gomod:binary:hash:SHA-256">7abf9d71e80744b9b2b6d7d5d5556159307060cb5635f926084296361edc16d4</property>
+      <property name="cdx:gomod:binary:hash:SHA-384">8f75b4a4abae3836721ef002dfdd94f30a1be8d49fa1c85675af190880830ec5fa6b94cf168b15089a118d7a18e8af18</property>
+      <property name="cdx:gomod:binary:hash:SHA-512">217834ca3a311f92a03fec43207104c0e72cb1d615c76b0479acd0e7c4865978541a8b83c2f71c8255dd711ca21201af0b20ea22d920cdff2acdd55bb8ef3457</property>
+    </properties>
   </metadata>
   <components>
     <component bom-ref="pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.3.0" type="library">
       <name>github.com/CycloneDX/cyclonedx-go</name>
       <version>v0.3.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">828593725143df7be71ddb823b06c041c1c36280a74d1605d599b5d4f6f56283</hash>
       </hashes>
@@ -29,6 +53,7 @@
     <component bom-ref="pkg:golang/github.com/ProtonMail/go-crypto@v0.0.0-20210428141323-04723f9f07d7" type="library">
       <name>github.com/ProtonMail/go-crypto</name>
       <version>v0.0.0-20210428141323-04723f9f07d7</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">62825b7a72bd0baed29339037e642e5659f4e328078f7be365f77d14bf869904</hash>
       </hashes>
@@ -42,6 +67,7 @@
     <component bom-ref="pkg:golang/github.com/dgryski/go-minhash@v0.0.0-20170608043002-7fe510aff544" type="library">
       <name>github.com/dgryski/go-minhash</name>
       <version>v0.0.0-20170608043002-7fe510aff544</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">e7863fd86179d8c489e27eb71d6bcd0c546dced826eadab652b397eb5b2318a7</hash>
       </hashes>
@@ -55,6 +81,7 @@
     <component bom-ref="pkg:golang/github.com/ekzhu/minhash-lsh@v0.0.0-20171225071031-5c06ee8586a1" type="library">
       <name>github.com/ekzhu/minhash-lsh</name>
       <version>v0.0.0-20171225071031-5c06ee8586a1</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">ffb1bbabc48325dada8798c362a648f291858d2aa20b37d210ef8d82a282617d</hash>
       </hashes>
@@ -68,6 +95,7 @@
     <component bom-ref="pkg:golang/github.com/emirpasic/gods@v1.12.0" type="library">
       <name>github.com/emirpasic/gods</name>
       <version>v1.12.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">4005083d2682bb81be3ce725c5ea9bdc5f963e974aa851a5c37ebec8ecc696b8</hash>
       </hashes>
@@ -81,6 +109,7 @@
     <component bom-ref="pkg:golang/github.com/go-enry/go-license-detector/v4@v4.3.0" type="library">
       <name>github.com/go-enry/go-license-detector/v4</name>
       <version>v4.3.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">385950015370e4594a5235f83ae5bc24e69bbbc3101e34ca0dbf6975e358314c</hash>
       </hashes>
@@ -94,6 +123,7 @@
     <component bom-ref="pkg:golang/github.com/go-git/gcfg@v1.5.0" type="library">
       <name>github.com/go-git/gcfg</name>
       <version>v1.5.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">43956235f185f33160c8958fa98c00eea185a0c4c488199d96471f466a4831ae</hash>
       </hashes>
@@ -107,6 +137,7 @@
     <component bom-ref="pkg:golang/github.com/go-git/go-billy/v5@v5.3.1" type="library">
       <name>github.com/go-git/go-billy/v5</name>
       <version>v5.3.1</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">08f88e500ccab4c46fa2510ac3e6c6d4f2d1a53ec3dcb22cdffddecb8022bb7e</hash>
       </hashes>
@@ -120,6 +151,7 @@
     <component bom-ref="pkg:golang/github.com/go-git/go-git/v5@v5.4.2" type="library">
       <name>github.com/go-git/go-git/v5</name>
       <version>v5.4.2</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">057c99bbdb745646e21edaabb2f76adfd503846253975879e555ba0920b8698e</hash>
       </hashes>
@@ -133,6 +165,7 @@
     <component bom-ref="pkg:golang/github.com/google/uuid@v1.3.0" type="library">
       <name>github.com/google/uuid</name>
       <version>v1.3.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">b7a2625e09b05cc8c4b3c56eb172099360571ec9fec31f0165d4daa19e5fbbb2</hash>
       </hashes>
@@ -146,6 +179,7 @@
     <component bom-ref="pkg:golang/github.com/hhatto/gorst@v0.0.0-20181029133204-ca9f730cac5b" type="library">
       <name>github.com/hhatto/gorst</name>
       <version>v0.0.0-20181029133204-ca9f730cac5b</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">25dbb6b5b031911a2e4882e9d846e9a2c21bf21e203bed90b99127dddf6c2807</hash>
       </hashes>
@@ -159,6 +193,7 @@
     <component bom-ref="pkg:golang/github.com/imdario/mergo@v0.3.12" type="library">
       <name>github.com/imdario/mergo</name>
       <version>v0.3.12</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">6fa47606c9536c8113a002ca3fb2f152f8a34ec348f5301ef34a4b58dda0fc75</hash>
       </hashes>
@@ -172,6 +207,7 @@
     <component bom-ref="pkg:golang/github.com/jbenet/go-context@v0.0.0-20150711004518-d14ea06fba99" type="library">
       <name>github.com/jbenet/go-context</name>
       <version>v0.0.0-20150711004518-d14ea06fba99</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">05048578f03545624e968707e85c72f0c9b00edfb25506142ca7cdd11a1337c0</hash>
       </hashes>
@@ -185,6 +221,7 @@
     <component bom-ref="pkg:golang/github.com/jdkato/prose@v1.1.0" type="library">
       <name>github.com/jdkato/prose</name>
       <version>v1.1.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">2e9be60c6c1b2864e07421f76bc5492f9eacafba7fc0e14fc3f47894ce0f7c58</hash>
       </hashes>
@@ -198,6 +235,7 @@
     <component bom-ref="pkg:golang/github.com/kevinburke/ssh_config@v0.0.0-20201106050909-4977a11b4351" type="library">
       <name>github.com/kevinburke/ssh_config</name>
       <version>v0.0.0-20201106050909-4977a11b4351</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">0e8c12f61be0c98497e133b9369c82eb4ebf6784b19cd61b4fe597dbba2be829</hash>
       </hashes>
@@ -211,6 +249,7 @@
     <component bom-ref="pkg:golang/github.com/mitchellh/go-homedir@v1.1.0" type="library">
       <name>github.com/mitchellh/go-homedir</name>
       <version>v1.1.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">96e905f738971710c53e4035becaf9ce97355ee3c39ffc059edab9986fb81346</hash>
       </hashes>
@@ -224,6 +263,7 @@
     <component bom-ref="pkg:golang/github.com/montanaflynn/stats@v0.0.0-20151014174947-eeaced052adb" type="library">
       <name>github.com/montanaflynn/stats</name>
       <version>v0.0.0-20151014174947-eeaced052adb</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">6ec8cd003b231ead208d4eca3bbcf0a17e64dc7b4575fe930f30779dc979894b</hash>
       </hashes>
@@ -237,6 +277,7 @@
     <component bom-ref="pkg:golang/github.com/pkg/errors@v0.9.1" type="library">
       <name>github.com/pkg/errors</name>
       <version>v0.9.1</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">14404bc75cd2db5e28c298f2eeab017a2c5b51192e850030acae54c0b193c2de</hash>
       </hashes>
@@ -250,6 +291,7 @@
     <component bom-ref="pkg:golang/github.com/russross/blackfriday/v2@v2.0.1" type="library">
       <name>github.com/russross/blackfriday/v2</name>
       <version>v2.0.1</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">94fa9502d7be1ee1cd7e127fd0b0bdf04496473f1a7f2f6d33fd112bc9bda3e4</hash>
       </hashes>
@@ -263,6 +305,7 @@
     <component bom-ref="pkg:golang/github.com/sergi/go-diff@v1.1.0" type="library">
       <name>github.com/sergi/go-diff</name>
       <version>v1.1.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">c1ef0f5540b7144dae61fa1d287fe70473127ad49f1c347ab1c19d062f9eae1d</hash>
       </hashes>
@@ -276,6 +319,7 @@
     <component bom-ref="pkg:golang/github.com/shogo82148/go-shuffle@v0.0.0-20170808115208-59829097ff3b" type="library">
       <name>github.com/shogo82148/go-shuffle</name>
       <version>v0.0.0-20170808115208-59829097ff3b</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">548d6efa8d8a64f679021b8fa5763424176940f9e44f1e837795c984affd3181</hash>
       </hashes>
@@ -289,6 +333,7 @@
     <component bom-ref="pkg:golang/github.com/shurcooL/sanitized_anchor_name@v0.0.0-20170918181015-86672fcb3f95" type="library">
       <name>github.com/shurcooL/sanitized_anchor_name</name>
       <version>v0.0.0-20170918181015-86672fcb3f95</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">fef756f026fb117ae4a961ae7d53044b5387dac53d80a55bda7f7fd72e4d3016</hash>
       </hashes>
@@ -302,6 +347,7 @@
     <component bom-ref="pkg:golang/github.com/xanzy/ssh-agent@v0.3.0" type="library">
       <name>github.com/xanzy/ssh-agent</name>
       <version>v0.3.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">c14333b8ab4a8a54600400f5b146fc80ec3046bd851a8055ba6723a0e0020a52</hash>
       </hashes>
@@ -315,6 +361,7 @@
     <component bom-ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210421170649-83a5a9bb288b" type="library">
       <name>golang.org/x/crypto</name>
       <version>v0.0.0-20210421170649-83a5a9bb288b</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">ee65abde4e3542dbfc5e596d0640e497c2e83f79a94a0056f01528c6d11d6d78</hash>
       </hashes>
@@ -323,6 +370,7 @@
     <component bom-ref="pkg:golang/golang.org/x/exp@v0.0.0-20190125153040-c74c464bbbf2" type="library">
       <name>golang.org/x/exp</name>
       <version>v0.0.0-20190125153040-c74c464bbbf2</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">cb5d367ce2c5aa1578d5bfb818f889a1ad24ff1fa925c122dbf1c1d58e53e9f5</hash>
       </hashes>
@@ -331,6 +379,7 @@
     <component bom-ref="pkg:golang/golang.org/x/mod@v0.4.2" type="library">
       <name>golang.org/x/mod</name>
       <version>v0.4.2</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">1b3f7ab0858adce6a556ffc8fea37280fe36cf2a0aa77c69b5154259114406fa</hash>
       </hashes>
@@ -339,6 +388,7 @@
     <component bom-ref="pkg:golang/golang.org/x/net@v0.0.0-20210326060303-6b1517762897" type="library">
       <name>golang.org/x/net</name>
       <version>v0.0.0-20210326060303-6b1517762897</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">2abb074e19b99c5937e18b404cad4bb138721a119b19ed6896bb5efc72271efb</hash>
       </hashes>
@@ -347,6 +397,7 @@
     <component bom-ref="pkg:golang/golang.org/x/sys@v0.0.0-20210502180810-71e4cd670f79" type="library">
       <name>golang.org/x/sys</name>
       <version>v0.0.0-20210502180810-71e4cd670f79</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">457f02f0f45973685322877876cf228feff84505f702a8588f7b8e1e6c9acf81</hash>
       </hashes>
@@ -355,6 +406,7 @@
     <component bom-ref="pkg:golang/golang.org/x/text@v0.3.6" type="library">
       <name>golang.org/x/text</name>
       <version>v0.3.6</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">691631371bfa886425c956999a4e998181036be260d7c0f179b3d2adde9b8353</hash>
       </hashes>
@@ -363,6 +415,7 @@
     <component bom-ref="pkg:golang/gonum.org/v1/gonum@v0.7.0" type="library">
       <name>gonum.org/v1/gonum</name>
       <version>v0.7.0</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">1dd92cd0bd218339d92c6f67cd76fcbd9d2b46fa8dbc0720029f38cbb330920c</hash>
       </hashes>
@@ -371,6 +424,7 @@
     <component bom-ref="pkg:golang/gopkg.in/neurosnap/sentences.v1@v1.0.6" type="library">
       <name>gopkg.in/neurosnap/sentences.v1</name>
       <version>v1.0.6</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">bfb125c8fd36d2211940e3722e57777c720b1d638fb3e9edcee41334f92e97c1</hash>
       </hashes>
@@ -384,6 +438,7 @@
     <component bom-ref="pkg:golang/gopkg.in/warnings.v0@v0.1.2" type="library">
       <name>gopkg.in/warnings.v0</name>
       <version>v0.1.2</version>
+      <scope>required</scope>
       <hashes>
         <hash alg="SHA-256">c055d56c563c0d8e7fc4e7b510289674a0b3665c60b2171854d9011ecb4044c1</hash>
       </hashes>

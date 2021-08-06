@@ -22,8 +22,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
-	"os"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
@@ -125,31 +123,5 @@ func execModCmd(options ModOptions) error {
 		return fmt.Errorf("failed to generate sbom: %w", err)
 	}
 
-	var outputFormat cdx.BOMFileFormat
-	if options.UseJSON {
-		outputFormat = cdx.BOMFileFormatJSON
-	} else {
-		outputFormat = cdx.BOMFileFormatXML
-	}
-
-	var outputWriter io.Writer
-	if options.FilePath == "" || options.FilePath == "-" {
-		outputWriter = os.Stdout
-	} else {
-		outputFile, err := os.Create(options.FilePath)
-		if err != nil {
-			return fmt.Errorf("failed to create output file %s: %w", options.FilePath, err)
-		}
-		defer outputFile.Close()
-		outputWriter = outputFile
-	}
-
-	encoder := cdx.NewBOMEncoder(outputWriter, outputFormat)
-	encoder.SetPretty(true)
-
-	if err = encoder.Encode(bom); err != nil {
-		return fmt.Errorf("failed to encode sbom: %w", err)
-	}
-
-	return nil
+	return WriteBOM(bom, options.OutputOptions)
 }

@@ -153,7 +153,7 @@ func runSnapshotIT(t *testing.T, modOptions ModOptions) {
 	require.NoError(t, bomFile.Close())
 
 	// Generate the SBOM
-	modOptions.OutputOptions.FilePath = bomFile.Name()
+	modOptions.OutputFilePath = bomFile.Name()
 	err = execModCmd(modOptions)
 	require.NoError(t, err)
 

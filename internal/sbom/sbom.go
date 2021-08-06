@@ -333,3 +333,12 @@ func CalculateFileHashes(filePath string, algos ...cdx.HashAlgorithm) ([]cdx.Has
 
 	return cdxHashes, nil
 }
+
+const PropertyPrefix = "cdx:gomod"
+
+func NewProperty(name, value string) cdx.Property {
+	return cdx.Property{
+		Name:  fmt.Sprintf("%s:%s", PropertyPrefix, name),
+		Value: value,
+	}
+}
