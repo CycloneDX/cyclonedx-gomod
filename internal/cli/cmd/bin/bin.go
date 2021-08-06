@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package bin
 
 import (
 	"context"
@@ -27,6 +27,8 @@ import (
 	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
@@ -35,8 +37,8 @@ import (
 )
 
 type BinOptions struct {
-	OutputOptions
-	SBOMOptions
+	options.OutputOptions
+	options.SBOMOptions
 
 	BinaryPath string
 	Version    string
@@ -53,7 +55,7 @@ func (b BinOptions) Validate() error {
 	errs := make([]error, 0)
 
 	if err := b.OutputOptions.Validate(); err != nil {
-		var verr *OptionsValidationError
+		var verr *options.ValidationError
 		if errors.As(err, &verr) {
 			errs = append(errs, verr.Errors...)
 		} else {
@@ -61,7 +63,7 @@ func (b BinOptions) Validate() error {
 		}
 	}
 	if err := b.SBOMOptions.Validate(); err != nil {
-		var verr *OptionsValidationError
+		var verr *options.ValidationError
 		if errors.As(err, &verr) {
 			errs = append(errs, verr.Errors...)
 		} else {
@@ -74,13 +76,13 @@ func (b BinOptions) Validate() error {
 	}
 
 	if len(errs) > 0 {
-		return &OptionsValidationError{Errors: errs}
+		return &options.ValidationError{Errors: errs}
 	}
 
 	return nil
 }
 
-func newBinCmd() *ffcli.Command {
+func New() *ffcli.Command {
 	fs := flag.NewFlagSet("cyclonedx-gomod bin", flag.ExitOnError)
 
 	var options BinOptions
@@ -102,20 +104,20 @@ func newBinCmd() *ffcli.Command {
 	}
 }
 
-func execBinCmd(options BinOptions) error {
-	if err := options.Validate(); err != nil {
+func execBinCmd(binOptions BinOptions) error {
+	if err := binOptions.Validate(); err != nil {
 		return err
 	}
 
-	modules, hashes, err := gomod.GetModulesFromBinary(options.BinaryPath)
+	modules, hashes, err := gomod.GetModulesFromBinary(binOptions.BinaryPath)
 	if err != nil {
 		return fmt.Errorf("failed to extract modules: %w", err)
 	} else if len(modules) == 0 {
-		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
+		return fmt.Errorf("couldn't parse any modules from %s", binOptions.BinaryPath)
 	}
 
-	if options.Version != "" {
-		modules[0].Version = options.Version
+	if binOptions.Version != "" {
+		modules[0].Version = binOptions.Version
 	}
 
 	// Make all modules a direct dependency of the main module
@@ -128,7 +130,7 @@ func execBinCmd(options BinOptions) error {
 	dependencies := sbom.BuildDependencyGraph(modules)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)),
+		modconv.WithComponentType(cdx.ComponentType(binOptions.ComponentType)),
 		modconv.WithScope(""), // Main component can't have a scope
 	)
 	if err != nil {
@@ -164,14 +166,14 @@ func execBinCmd(options BinOptions) error {
 		Dependencies: &dependencyRefs,
 	})
 
-	binaryHashes, err := sbom.CalculateFileHashes(options.BinaryPath,
+	binaryHashes, err := sbom.CalculateFileHashes(binOptions.BinaryPath,
 		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
 	if err != nil {
 		return fmt.Errorf("failed to calculate binary hashes: %w", err)
 	}
 
 	properties := []cdx.Property{
-		sbom.NewProperty("binary:name", filepath.Base(options.BinaryPath)),
+		sbom.NewProperty("binary:name", filepath.Base(binOptions.BinaryPath)),
 	}
 	for _, hash := range binaryHashes {
 		properties = append(properties, sbom.NewProperty(fmt.Sprintf("binary:hash:%s", hash.Algorithm), hash.Value))
@@ -182,7 +184,7 @@ func execBinCmd(options BinOptions) error {
 		Component:  mainComponent,
 		Properties: &properties,
 	}
-	if !options.Reproducible {
+	if !binOptions.Reproducible {
 		tool, err := sbom.BuildToolMetadata()
 		if err != nil {
 			return fmt.Errorf("failed to build tool metadata: %w", err)
@@ -195,7 +197,7 @@ func execBinCmd(options BinOptions) error {
 	bom.Dependencies = &dependencies
 	bom.Compositions = &compositions
 
-	return WriteBOM(bom, options.OutputOptions)
+	return cliutil.WriteBOM(bom, binOptions.OutputOptions)
 }
 
 func withModuleHashes(hashes map[string]string) modconv.Option {

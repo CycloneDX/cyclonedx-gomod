@@ -22,179 +22,19 @@ import (
 	"crypto/sha1" // #nosec G505
 	"crypto/sha256"
 	"crypto/sha512"
-	"encoding/base64"
 	"fmt"
 	"hash"
 	"io"
-	"log"
 	"os"
 	"strings"
-	"time"
 
-	"github.com/google/uuid"
 	"golang.org/x/crypto/sha3"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 )
-
-type GenerateOptions struct {
-	ComponentType   cdx.ComponentType
-	IncludeStdLib   bool
-	IncludeTest     bool
-	NoSerialNumber  bool
-	NoVersionPrefix bool
-	Reproducible    bool
-	ResolveLicenses bool
-	SerialNumber    *uuid.UUID
-}
-
-func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
-	// Cheap trick to make Go download all required modules in the module graph
-	// without modifying go.sum (as `go mod download` would do).
-	log.Println("downloading modules")
-	if err := gocmd.ModWhy(modulePath, []string{"github.com/CycloneDX/cyclonedx-go"}, io.Discard); err != nil {
-		return nil, fmt.Errorf("downloading modules failed: %w", err)
-	}
-
-	log.Println("enumerating modules")
-	modules, err := gomod.GetModules(modulePath, options.IncludeTest)
-	if err != nil {
-		return nil, fmt.Errorf("failed to enumerate modules: %w", err)
-	}
-
-	log.Println("normalizing module versions")
-	for i := range modules {
-		modules[i].Version = strings.TrimSuffix(modules[i].Version, "+incompatible")
-
-		if options.NoVersionPrefix {
-			modules[i].Version = strings.TrimPrefix(modules[i].Version, "v")
-		}
-	}
-
-	mainModule := modules[0]
-	modules = modules[1:]
-
-	log.Println("determining version of main module")
-	if mainModule.Version, err = gomod.GetModuleVersion(mainModule.Dir); err != nil {
-		log.Printf("failed to get version of main module: %v\n", err)
-	}
-	if mainModule.Version != "" && options.NoVersionPrefix {
-		mainModule.Version = strings.TrimPrefix(mainModule.Version, "v")
-	}
-
-	log.Printf("converting main module %s\n", mainModule.Coordinates())
-	mainComponent, err := modconv.ToComponent(mainModule,
-		modconv.WithComponentType(options.ComponentType),
-		withLicenses(options.ResolveLicenses),
-		modconv.WithScope(""), // Main component can't have a scope
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert main module: %w", err)
-	}
-
-	components, err := modconv.ToComponents(modules,
-		withModuleHashes(),
-		withLicenses(options.ResolveLicenses),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to convert modules: %w", err)
-	}
-
-	log.Println("building dependency graph")
-	dependencyGraph := BuildDependencyGraph(append(modules, mainModule))
-
-	log.Println("assembling sbom")
-	bom := cdx.NewBOM()
-	if !options.NoSerialNumber {
-		if options.SerialNumber == nil {
-			bom.SerialNumber = uuid.New().URN()
-		} else {
-			bom.SerialNumber = options.SerialNumber.URN()
-		}
-	}
-
-	bom.Metadata = &cdx.Metadata{
-		Component: mainComponent,
-	}
-	if !options.Reproducible {
-		tool, err := BuildToolMetadata()
-		if err != nil {
-			return nil, fmt.Errorf("failed to build tool metadata: %w", err)
-		}
-
-		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
-		bom.Metadata.Tools = &[]cdx.Tool{*tool}
-	}
-
-	bom.Components = &components
-	bom.Dependencies = &dependencyGraph
-
-	if options.IncludeStdLib {
-		log.Println("gathering info about standard library")
-		stdComponent, err := BuildStdComponent()
-		if err != nil {
-			return nil, fmt.Errorf("failed to build std component: %w", err)
-		}
-
-		log.Println("adding standard library to sbom")
-		*bom.Components = append(*bom.Components, *stdComponent)
-
-		// Add std to dependency graph
-		stdDependency := cdx.Dependency{Ref: stdComponent.BOMRef}
-		*bom.Dependencies = append(*bom.Dependencies, stdDependency)
-
-		// Add std as dependency of main module
-		for i, dependency := range *bom.Dependencies {
-			if dependency.Ref == mainComponent.BOMRef {
-				if dependency.Dependencies == nil {
-					(*bom.Dependencies)[i].Dependencies = &[]cdx.Dependency{stdDependency}
-				} else {
-					*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
-				}
-				break
-			}
-		}
-	}
-
-	return bom, nil
-}
-
-func withLicenses(enabled bool) modconv.Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if enabled {
-			return modconv.WithLicenses()(m, c)
-		}
-		return nil
-	}
-}
-
-func withModuleHashes() modconv.Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if m.Main || m.Vendored {
-			return nil
-		}
-
-		h1, err := m.Hash()
-		if err != nil {
-			return fmt.Errorf("failed to calculate h1 hash: %w", err)
-		}
-
-		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
-		if err != nil {
-			return fmt.Errorf("failed to base64 decode h1 hash: %w", err)
-		}
-
-		c.Hashes = &[]cdx.Hash{
-			{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
-		}
-
-		return nil
-	}
-}
 
 func BuildStdComponent() (*cdx.Component, error) {
 	goVersion, err := gocmd.GetVersion()

@@ -18,18 +18,30 @@
 package cli
 
 import (
-	"bytes"
-	"fmt"
-	"testing"
+	"context"
+	"flag"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
-	"github.com/stretchr/testify/require"
+	bincmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/bin"
+	modcmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/mod"
+	versioncmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/version"
+	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
-func TestExecVersionCmd(t *testing.T) {
-	buf := new(bytes.Buffer)
+func NewRootCmd() *ffcli.Command {
+	return &ffcli.Command{
+		Name:       "cyclonedx-gomod",
+		ShortUsage: "cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]",
+		Subcommands: []*ffcli.Command{
+			bincmd.New(),
+			modcmd.New(),
+			versioncmd.New(),
+		},
+		Exec: func(_ context.Context, _ []string) error {
+			return execRootCmd()
+		},
+	}
+}
 
-	err := execVersionCmd(buf)
-	require.NoError(t, err)
-	require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
+func execRootCmd() error {
+	return flag.ErrHelp
 }

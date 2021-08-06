@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package version
 
 import (
 	"context"
@@ -27,7 +27,7 @@ import (
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
-func newVersionCmd() *ffcli.Command {
+func New() *ffcli.Command {
 	return &ffcli.Command{
 		Name:       "version",
 		ShortHelp:  "Show version information",

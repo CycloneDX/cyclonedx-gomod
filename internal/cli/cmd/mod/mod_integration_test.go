@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package mod
 
 import (
 	"fmt"
@@ -27,6 +27,7 @@ import (
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/bradleyjkemp/cupaloy/v2"
@@ -53,7 +54,7 @@ func TestIntegrationSimple(t *testing.T) {
 	defer os.RemoveAll(fixturePath)
 
 	runSnapshotIT(t, ModOptions{
-		SBOMOptions: SBOMOptions{
+		SBOMOptions: options.SBOMOptions{
 			ComponentType: string(cdx.ComponentTypeLibrary),
 			Reproducible:  true,
 			SerialNumber:  zeroUUID.String(),
@@ -70,7 +71,7 @@ func TestIntegrationLocal(t *testing.T) {
 	defer os.RemoveAll(fixturePath)
 
 	runSnapshotIT(t, ModOptions{
-		SBOMOptions: SBOMOptions{
+		SBOMOptions: options.SBOMOptions{
 			ComponentType: string(cdx.ComponentTypeLibrary),
 			Reproducible:  true,
 			SerialNumber:  zeroUUID.String(),
@@ -86,7 +87,7 @@ func TestIntegrationNoDependencies(t *testing.T) {
 	defer os.RemoveAll(fixturePath)
 
 	runSnapshotIT(t, ModOptions{
-		SBOMOptions: SBOMOptions{
+		SBOMOptions: options.SBOMOptions{
 			ComponentType: string(cdx.ComponentTypeLibrary),
 			Reproducible:  true,
 			SerialNumber:  zeroUUID.String(),
@@ -103,7 +104,7 @@ func TestIntegrationVendored(t *testing.T) {
 	defer os.RemoveAll(fixturePath)
 
 	runSnapshotIT(t, ModOptions{
-		SBOMOptions: SBOMOptions{
+		SBOMOptions: options.SBOMOptions{
 			ComponentType: string(cdx.ComponentTypeLibrary),
 			Reproducible:  true,
 			SerialNumber:  zeroUUID.String(),
@@ -128,7 +129,7 @@ func TestIntegrationNested(t *testing.T) {
 	defer os.RemoveAll(fixturePath)
 
 	runSnapshotIT(t, ModOptions{
-		SBOMOptions: SBOMOptions{
+		SBOMOptions: options.SBOMOptions{
 			ComponentType: string(cdx.ComponentTypeLibrary),
 			Reproducible:  true,
 			SerialNumber:  zeroUUID.String(),

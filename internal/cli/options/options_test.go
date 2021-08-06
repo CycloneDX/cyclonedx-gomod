@@ -15,7 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package options
 
 import (
 	"testing"
@@ -38,7 +38,7 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		err := options.Validate()
 		require.Error(t, err)
 
-		var validationError *OptionsValidationError
+		var validationError *ValidationError
 		require.ErrorAs(t, err, &validationError)
 
 		require.Len(t, validationError.Errors, 1)
@@ -52,7 +52,7 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		err := options.Validate()
 		require.Error(t, err)
 
-		var validationError *OptionsValidationError
+		var validationError *ValidationError
 		require.ErrorAs(t, err, &validationError)
 
 		require.Len(t, validationError.Errors, 1)
@@ -67,7 +67,7 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		err := options.Validate()
 		require.Error(t, err)
 
-		var validationError *OptionsValidationError
+		var validationError *ValidationError
 		require.ErrorAs(t, err, &validationError)
 
 		require.Len(t, validationError.Errors, 1)

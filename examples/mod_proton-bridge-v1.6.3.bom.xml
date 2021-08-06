@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:79db8840-465e-4caf-9053-c8658dc5740a" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:ed5992a3-1576-4277-9916-17096ddf9342" version="1">
   <metadata>
-    <timestamp>2021-08-01T12:39:52+02:00</timestamp>
+    <timestamp>2021-08-06T21:57:21+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
-        <version>v0.0.0-20210801123916-0e0d3ea6e164</version>
+        <version>v0.0.0-20210806212106-4c0fcdc6dd84</version>
         <hashes>
-          <hash alg="MD5">8f36acf3d4cfe2c553c66ba7655592b2</hash>
-          <hash alg="SHA-1">4fbc2bdb659e6e024bdd720fc83fee58a0c78ac5</hash>
-          <hash alg="SHA-256">602ddcfc4c1692f5c62e1b305340529a25ea5b53cfb004f6b055831f10f43e61</hash>
-          <hash alg="SHA-512">c42f3df181fc9322df3b0e65291fd99f139f3e44293c5acaead072a9516b4e2937c7f5457c1775b60ad533e91482247ecfe0218ec425c4a4deb1852368a020ad</hash>
+          <hash alg="MD5">ce1a46a77c93e8c73327648c34ea3558</hash>
+          <hash alg="SHA-1">e8619018a0e7199335e9ad8e7f4336f8dd52f872</hash>
+          <hash alg="SHA-256">86af05b597621c3b569c6b584c3868cc42d9c790c1378ec832d8bbc04a99b7c7</hash>
+          <hash alg="SHA-384">d2f7aa96a9a5447f4cb6ee58aeba854d8c22b5a044d15e47728139a09afb0b6402867f85888d2aa534c87a4ea5eefb6e</hash>
+          <hash alg="SHA-512">d49be70a2b99b59c9a2beeda7c09f93c68bf63969234a0e50ab8d3ecc018c87fa73ef84dfe55b41e18b64fc16818a3cd459140d6aca0cf135df414f51d7750f4</hash>
         </hashes>
       </tool>
     </tools>

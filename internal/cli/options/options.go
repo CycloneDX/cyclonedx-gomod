@@ -15,26 +15,24 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package options
 
 import (
 	"flag"
 	"fmt"
-	"io"
-	"os"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/google/uuid"
 )
 
-// OptionsValidationError represents a validation error for options.
+// ValidationError represents a validation error for options.
 // It can contain multiple errors with details about which validation
 // operations failed. The Errors slice should never be empty.
-type OptionsValidationError struct {
+type ValidationError struct {
 	Errors []error
 }
 
-func (e OptionsValidationError) Error() string {
+func (e ValidationError) Error() string {
 	err := "invalid options:\n"
 	for _, e := range e.Errors {
 		err += fmt.Sprintf(" - %s\n", e)
@@ -54,36 +52,6 @@ func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 }
 
 func (o OutputOptions) Validate() error {
-	return nil
-}
-
-func WriteBOM(bom *cdx.BOM, options OutputOptions) error {
-	var outputFormat cdx.BOMFileFormat
-	if options.UseJSON {
-		outputFormat = cdx.BOMFileFormatJSON
-	} else {
-		outputFormat = cdx.BOMFileFormatXML
-	}
-
-	var outputWriter io.Writer
-	if options.OutputFilePath == "" || options.OutputFilePath == "-" {
-		outputWriter = os.Stdout
-	} else {
-		outputFile, err := os.Create(options.OutputFilePath)
-		if err != nil {
-			return fmt.Errorf("failed to create output file %s: %w", options.OutputFilePath, err)
-		}
-		defer outputFile.Close()
-		outputWriter = outputFile
-	}
-
-	encoder := cdx.NewBOMEncoder(outputWriter, outputFormat)
-	encoder.SetPretty(true)
-
-	if err := encoder.Encode(bom); err != nil {
-		return fmt.Errorf("failed to encode sbom: %w", err)
-	}
-
 	return nil
 }
 
@@ -141,7 +109,7 @@ func (s SBOMOptions) Validate() error {
 	}
 
 	if len(errs) > 0 {
-		return &OptionsValidationError{Errors: errs}
+		return &ValidationError{Errors: errs}
 	}
 
 	return nil
