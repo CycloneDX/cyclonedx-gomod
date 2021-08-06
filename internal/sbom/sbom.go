@@ -89,7 +89,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	log.Printf("converting main module %s\n", mainModule.Coordinates())
 	mainComponent, err := modconv.ToComponent(mainModule,
 		modconv.WithComponentType(options.ComponentType),
-		modconv.WithLicenses(),
+		withLicenses(options.ResolveLicenses),
 		modconv.WithScope(""), // Main component can't have a scope
 	)
 	if err != nil {
@@ -97,7 +97,9 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	components, err := modconv.ToComponents(modules,
-		withModuleHashes(), modconv.WithLicenses(), modconv.WithTestScope(cdx.ScopeOptional))
+		withModuleHashes(),
+		withLicenses(options.ResolveLicenses),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
 	}
@@ -159,6 +161,15 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	}
 
 	return bom, nil
+}
+
+func withLicenses(enabled bool) modconv.Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		if enabled {
+			return modconv.WithLicenses()(m, c)
+		}
+		return nil
+	}
 }
 
 func withModuleHashes() modconv.Option {
@@ -253,7 +264,7 @@ func BuildToolMetadata() (*cdx.Tool, error) {
 	}
 
 	toolHashes, err := CalculateFileHashes(toolExePath,
-		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA512)
+		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
 	}
