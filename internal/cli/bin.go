@@ -37,11 +37,14 @@ type BinOptions struct {
 	SBOMOptions
 
 	BinaryPath string
+	Version    string
 }
 
 func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
 	b.OutputOptions.RegisterFlags(fs)
 	b.SBOMOptions.RegisterFlags(fs)
+
+	fs.StringVar(&b.Version, "version", "", "Version of the main component")
 }
 
 func (b BinOptions) Validate() error {
@@ -62,6 +65,7 @@ func newBinCmd() *ffcli.Command {
 		Name:       "bin",
 		ShortHelp:  "Generate SBOM for a binary",
 		ShortUsage: "cyclonedx-gomod bin [FLAGS...] PATH",
+		FlagSet:    fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) != 1 {
 				return fmt.Errorf("no binary path provided")
@@ -83,6 +87,10 @@ func execBinCmd(options BinOptions) error {
 		return fmt.Errorf("failed to extract modules: %w", err)
 	} else if len(modules) == 0 {
 		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
+	}
+
+	if options.Version != "" {
+		modules[0].Version = options.Version
 	}
 
 	// Make all modules a direct dependency of the main module
