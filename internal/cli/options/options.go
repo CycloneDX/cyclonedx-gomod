@@ -59,7 +59,6 @@ func (o OutputOptions) Validate() error {
 type SBOMOptions struct {
 	ComponentType   string
 	IncludeStd      bool
-	IncludeTest     bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
 	Reproducible    bool
@@ -69,7 +68,6 @@ type SBOMOptions struct {
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.StringVar(&s.ComponentType, "type", "application", "Type of the main component")
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
-	fs.BoolVar(&s.IncludeTest, "test", false, "Include test dependencies")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
 	fs.BoolVar(&s.NoVersionPrefix, "novprefix", false, "Omit \"v\" prefix from versions")
 	fs.BoolVar(&s.Reproducible, "reproducible", false, "Make the SBOM reproducible by omitting dynamic content")

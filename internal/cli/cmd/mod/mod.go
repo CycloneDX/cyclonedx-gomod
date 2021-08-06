@@ -44,6 +44,7 @@ type ModOptions struct {
 	options.SBOMOptions
 
 	ModuleDir       string
+	IncludeTest     bool
 	ResolveLicenses bool
 }
 
@@ -51,6 +52,7 @@ func (m *ModOptions) RegisterFlags(fs *flag.FlagSet) {
 	m.OutputOptions.RegisterFlags(fs)
 	m.SBOMOptions.RegisterFlags(fs)
 
+	fs.BoolVar(&m.IncludeTest, "test", false, "Include test dependencies")
 	fs.BoolVar(&m.ResolveLicenses, "licenses", false, "Resolve module licenses")
 }
 
