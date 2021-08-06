@@ -199,3 +199,90 @@ github.com/stretchr/testify/assert
 	assert.Len(t, modulePkgs["github.com/CycloneDX/cyclonedx-go"], 0)
 	assert.Len(t, modulePkgs["bazil.org/fuse"], 0)
 }
+
+func TestRemoveModule(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		modules := make([]Module, 0)
+		require.Empty(t, RemoveModule(modules, "path@version"))
+	})
+
+	t.Run("Single", func(t *testing.T) {
+		modules := []Module{
+			{
+				Path:    "path",
+				Version: "version",
+			},
+		}
+
+		require.Empty(t, RemoveModule(modules, "path@version"))
+	})
+
+	t.Run("Multiple", func(t *testing.T) {
+		modules := []Module{
+			{
+				Path:    "path1",
+				Version: "version",
+			},
+			{
+				Path:    "path2",
+				Version: "version",
+			},
+			{
+				Path:    "path3",
+				Version: "version",
+			},
+		}
+
+		require.Len(t, RemoveModule(modules, "path2@version"), 2)
+		require.Equal(t, "path1@version", modules[0].Coordinates())
+		require.Equal(t, "path3@version", modules[1].Coordinates())
+	})
+}
+
+func TestFindModule(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		modules := make([]Module, 0)
+		require.Nil(t, findModule(modules, "path@version", true))
+	})
+
+	t.Run("Strict", func(t *testing.T) {
+		modules := []Module{
+			{
+				Path:    "path",
+				Version: "version1",
+			},
+			{
+				Path:    "path",
+				Version: "version2",
+			},
+		}
+
+		require.Nil(t, findModule(modules, "path@version0", true))
+		require.Nil(t, findModule(modules, "otherpath@version1", true))
+
+		module := findModule(modules, "path@version2", true)
+		require.NotNil(t, module)
+		require.Equal(t, "path@version2", module.Coordinates())
+	})
+
+	t.Run("NonStrict", func(t *testing.T) {
+		modules := []Module{
+			{
+				Path:    "path",
+				Version: "version1",
+			},
+			{
+				Path:    "path",
+				Version: "version2",
+			},
+		}
+
+		module := findModule(modules, "path@version0", false)
+		require.NotNil(t, module)
+		require.Equal(t, "path@version1", module.Coordinates())
+
+		require.Nil(t, findModule(modules, "otherpath@version1", false))
+
+		require.Equal(t, module, findModule(modules, "path@version2", false))
+	})
+}
