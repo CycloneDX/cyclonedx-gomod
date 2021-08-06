@@ -24,23 +24,42 @@ import (
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/google/uuid"
 )
 
-func WriteBOM(bom *cdx.BOM, options options.OutputOptions) error {
+func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
+	if sbomOptions.NoSerialNumber {
+		return nil
+	}
+
+	if sbomOptions.SerialNumber == "" {
+		bom.SerialNumber = uuid.New().URN()
+	} else {
+		serial, err := uuid.Parse(sbomOptions.SerialNumber)
+		if err != nil {
+			return err
+		}
+		bom.SerialNumber = serial.URN()
+	}
+
+	return nil
+}
+
+func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
 	var outputFormat cdx.BOMFileFormat
-	if options.UseJSON {
+	if outputOptions.UseJSON {
 		outputFormat = cdx.BOMFileFormatJSON
 	} else {
 		outputFormat = cdx.BOMFileFormatXML
 	}
 
 	var outputWriter io.Writer
-	if options.OutputFilePath == "" || options.OutputFilePath == "-" {
+	if outputOptions.OutputFilePath == "" || outputOptions.OutputFilePath == "-" {
 		outputWriter = os.Stdout
 	} else {
-		outputFile, err := os.Create(options.OutputFilePath)
+		outputFile, err := os.Create(outputOptions.OutputFilePath)
 		if err != nil {
-			return fmt.Errorf("failed to create output file %s: %w", options.OutputFilePath, err)
+			return fmt.Errorf("failed to create output file %s: %w", outputOptions.OutputFilePath, err)
 		}
 		defer outputFile.Close()
 		outputWriter = outputFile

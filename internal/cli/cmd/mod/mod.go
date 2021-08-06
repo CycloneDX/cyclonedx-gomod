@@ -35,7 +35,6 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
-	"github.com/google/uuid"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
@@ -113,12 +112,6 @@ func execModCmd(modOptions ModOptions) error {
 		return err
 	}
 
-	var serial *uuid.UUID
-	if !modOptions.NoSerialNumber && modOptions.SerialNumber != "" {
-		serialUUID := uuid.MustParse(modOptions.SerialNumber)
-		serial = &serialUUID
-	}
-
 	// Cheap trick to make Go download all required modules in the module graph
 	// without modifying go.sum (as `go mod download` would do).
 	log.Println("downloading modules")
@@ -175,14 +168,7 @@ func execModCmd(modOptions ModOptions) error {
 
 	log.Println("assembling sbom")
 	bom := cdx.NewBOM()
-	if !modOptions.NoSerialNumber {
-		if serial == nil {
-			bom.SerialNumber = uuid.New().URN()
-		} else {
-			bom.SerialNumber = serial.URN()
-		}
-	}
-
+	cliutil.SetSerialNumber(bom, modOptions.SBOMOptions)
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
