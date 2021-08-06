@@ -338,6 +338,7 @@ func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
 	modules := make([]Module, 0)
 	hashes := make(map[string]string)
 
+	moduleIndex := 0
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -347,20 +348,30 @@ func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
 
 		fields := strings.Fields(line)
 		switch fields[0] {
-		case "path":
-			continue
-		case "mod":
+		case "mod": // Main module
 			modules = append(modules, Module{
 				Path:    fields[1],
 				Version: fields[2],
 				Main:    true,
 			})
-		case "dep":
+			moduleIndex += 1
+		case "dep": // Depdendency module
 			module := Module{
 				Path:    fields[1],
 				Version: fields[2],
 			}
 			modules = append(modules, module)
+			if len(fields) == 4 {
+				// Hash won't be available when the module is replaced
+				hashes[module.Coordinates()] = fields[3]
+			}
+			moduleIndex += 1
+		case "=>": // Replacement
+			module := Module{
+				Path:    fields[1],
+				Version: fields[2],
+			}
+			modules[moduleIndex-1].Replace = &module
 			hashes[module.Coordinates()] = fields[3]
 		}
 	}
