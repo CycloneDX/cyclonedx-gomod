@@ -15,31 +15,31 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package convert
+package module
 
 import (
 	"regexp"
 	"strings"
 
-	"github.com/CycloneDX/cyclonedx-go"
+	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
 )
 
-type Option func(gomod.Module, *cyclonedx.Component) error
+type Option func(gomod.Module, *cdx.Component) error
 
-// WithResolvedLicenses attempts to resolve licenses for the module
-// and attach it to the component's license evidence.
+// WithLicenses attempts to resolve licenses for the module and attach them
+// to the component's license evidence.
 // Unless failOnError is true, a resolution failure will no cause an error.
-func WithResolvedLicenses(failOnError bool) Option {
-	return func(m gomod.Module, c *cyclonedx.Component) error {
+func WithLicenses(failOnError bool) Option {
+	return func(m gomod.Module, c *cdx.Component) error {
 		resolvedLicenses, err := license.Resolve(m)
 		if err == nil {
-			componentLicenses := make(cyclonedx.Licenses, len(resolvedLicenses))
+			componentLicenses := make(cdx.Licenses, len(resolvedLicenses))
 			for i := range resolvedLicenses {
-				componentLicenses[i] = cyclonedx.LicenseChoice{License: &resolvedLicenses[i]}
+				componentLicenses[i] = cdx.LicenseChoice{License: &resolvedLicenses[i]}
 			}
-			c.Evidence = &cyclonedx.Evidence{
+			c.Evidence = &cdx.Evidence{
 				Licenses: &componentLicenses,
 			}
 		} else if failOnError {
@@ -50,8 +50,8 @@ func WithResolvedLicenses(failOnError bool) Option {
 }
 
 // WithComponentType overrides the type of the component.
-func WithComponentType(ctype cyclonedx.ComponentType) Option {
-	return func(_ gomod.Module, c *cyclonedx.Component) error {
+func WithComponentType(ctype cdx.ComponentType) Option {
+	return func(_ gomod.Module, c *cdx.Component) error {
 		c.Type = ctype
 		return nil
 	}
@@ -59,8 +59,8 @@ func WithComponentType(ctype cyclonedx.ComponentType) Option {
 
 // WithTestScope overrides the scope of the component,
 // if the corresponding module has the TestOnly flag set.
-func WithTestScope(scope cyclonedx.Scope) Option {
-	return func(m gomod.Module, c *cyclonedx.Component) error {
+func WithTestScope(scope cdx.Scope) Option {
+	return func(m gomod.Module, c *cdx.Component) error {
 		if m.TestOnly {
 			c.Scope = scope
 		}
@@ -68,26 +68,32 @@ func WithTestScope(scope cyclonedx.Scope) Option {
 	}
 }
 
-// ModuleToComponent converts a gomod.Module to a CycloneDX component.
+// ToComponent converts a gomod.Module to a CycloneDX component.
 // The component can be further customized using options, before it's returned.
-func ModuleToComponent(module gomod.Module, options ...Option) (*cyclonedx.Component, error) {
+func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error) {
 	if module.Replace != nil {
-		return ModuleToComponent(*module.Replace, options...)
+		return ToComponent(*module.Replace, options...)
 	}
 
-	component := cyclonedx.Component{
+	component := cdx.Component{
 		BOMRef:     module.PackageURL(),
-		Type:       cyclonedx.ComponentTypeLibrary,
+		Type:       cdx.ComponentTypeLibrary,
 		Name:       module.Path,
 		Version:    module.Version,
 		PackageURL: module.PackageURL(),
 	}
 
+	if module.TestOnly {
+		component.Scope = cdx.ScopeOptional
+	} else {
+		component.Scope = cdx.ScopeRequired
+	}
+
 	vcsURL := resolveVCSURL(module.Path)
 	if vcsURL != "" {
-		component.ExternalReferences = &[]cyclonedx.ExternalReference{
+		component.ExternalReferences = &[]cdx.ExternalReference{
 			{
-				Type: cyclonedx.ERTypeVCS,
+				Type: cdx.ERTypeVCS,
 				URL:  vcsURL,
 			},
 		}
@@ -102,11 +108,12 @@ func ModuleToComponent(module gomod.Module, options ...Option) (*cyclonedx.Compo
 	return &component, nil
 }
 
-func ModulesToComponents(modules []gomod.Module, options ...Option) ([]cyclonedx.Component, error) {
-	components := make([]cyclonedx.Component, 0, len(modules))
+// ToComponents converts a slice of gomod.Module to a slice of CycloneDX components.
+func ToComponents(modules []gomod.Module, options ...Option) ([]cdx.Component, error) {
+	components := make([]cdx.Component, 0, len(modules))
 
 	for i := range modules {
-		component, err := ModuleToComponent(modules[i], options...)
+		component, err := ToComponent(modules[i], options...)
 		if err != nil {
 			return nil, err
 		}

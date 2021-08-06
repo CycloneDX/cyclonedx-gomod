@@ -24,6 +24,7 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
+	"hash"
 	"io"
 	"log"
 	"os"
@@ -32,6 +33,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/sha3"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
@@ -106,15 +108,6 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 	log.Println("building dependency graph")
 	dependencyGraph := BuildDependencyGraph(append(modules, mainModule))
 
-	log.Println("calculating tool hashes")
-	toolHashes := make([]cdx.Hash, 0)
-	if !options.Reproducible {
-		toolHashes, err = calculateToolHashes()
-		if err != nil {
-			return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
-		}
-	}
-
 	log.Println("assembling sbom")
 	bom := cdx.NewBOM()
 	if !options.NoSerialNumber {
@@ -129,15 +122,13 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 		Component: mainComponent,
 	}
 	if !options.Reproducible {
-		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
-		bom.Metadata.Tools = &[]cdx.Tool{
-			{
-				Vendor:  version.Author,
-				Name:    version.Name,
-				Version: version.Version,
-				Hashes:  &toolHashes,
-			},
+		tool, err := BuildToolMetadata()
+		if err != nil {
+			return nil, fmt.Errorf("failed to build tool metadata: %w", err)
 		}
+
+		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
+		bom.Metadata.Tools = &[]cdx.Tool{*tool}
 	}
 
 	bom.Components = &components
@@ -145,7 +136,7 @@ func Generate(modulePath string, options GenerateOptions) (*cdx.BOM, error) {
 
 	if options.IncludeStdLib {
 		log.Println("gathering info about standard library")
-		stdComponent, err := buildStdComponent()
+		stdComponent, err := BuildStdComponent()
 		if err != nil {
 			return nil, fmt.Errorf("failed to build std component: %w", err)
 		}
@@ -276,7 +267,7 @@ func resolveVcsURL(module gomod.Module) string {
 	return ""
 }
 
-func buildStdComponent() (*cdx.Component, error) {
+func BuildStdComponent() (*cdx.Component, error) {
 	goVersion, err := gocmd.GetVersion()
 	if err != nil {
 		return nil, fmt.Errorf("failed to determine Go version: %w", err)
@@ -337,32 +328,79 @@ func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	return depGraph
 }
 
-func calculateToolHashes() ([]cdx.Hash, error) {
-	exePath, err := os.Executable()
+func BuildToolMetadata() (*cdx.Tool, error) {
+	toolExePath, err := os.Executable()
 	if err != nil {
 		return nil, err
 	}
 
-	exeFile, err := os.Open(exePath)
+	toolHashes, err := CalculateFileHashes(toolExePath,
+		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA512)
 	if err != nil {
-		return nil, err
-	}
-	defer exeFile.Close()
-
-	hashMD5 := md5.New()   // #nosec G401
-	hashSHA1 := sha1.New() // #nosec G401
-	hashSHA256 := sha256.New()
-	hashSHA512 := sha512.New()
-	hashWriter := io.MultiWriter(hashMD5, hashSHA1, hashSHA256, hashSHA512)
-
-	if _, err = io.Copy(hashWriter, exeFile); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
 	}
 
-	return []cdx.Hash{
-		{Algorithm: cdx.HashAlgoMD5, Value: fmt.Sprintf("%x", hashMD5.Sum(nil))},
-		{Algorithm: cdx.HashAlgoSHA1, Value: fmt.Sprintf("%x", hashSHA1.Sum(nil))},
-		{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", hashSHA256.Sum(nil))},
-		{Algorithm: cdx.HashAlgoSHA512, Value: fmt.Sprintf("%x", hashSHA512.Sum(nil))},
+	return &cdx.Tool{
+		Vendor:  version.Author,
+		Name:    version.Name,
+		Version: version.Version,
+		Hashes:  &toolHashes,
 	}, nil
+}
+
+func CalculateFileHashes(filePath string, algos ...cdx.HashAlgorithm) ([]cdx.Hash, error) {
+	if len(algos) == 0 {
+		return make([]cdx.Hash, 0), nil
+	}
+
+	hashMap := make(map[cdx.HashAlgorithm]hash.Hash)
+	hashWriters := make([]io.Writer, 0)
+
+	for _, algo := range algos {
+		var hashWriter hash.Hash
+
+		switch algo { //exhaustive:ignore
+		case cdx.HashAlgoMD5:
+			hashWriter = md5.New() // #nosec G401
+		case cdx.HashAlgoSHA1:
+			hashWriter = sha1.New() // #nosec G401
+		case cdx.HashAlgoSHA256:
+			hashWriter = sha256.New()
+		case cdx.HashAlgoSHA384:
+			hashWriter = sha512.New384()
+		case cdx.HashAlgoSHA512:
+			hashWriter = sha512.New()
+		case cdx.HashAlgoSHA3_256:
+			hashWriter = sha3.New256()
+		case cdx.HashAlgoSHA3_512:
+			hashWriter = sha3.New512()
+		default:
+			return nil, fmt.Errorf("unsupported hash algorithm: %s", algo)
+		}
+
+		hashWriters = append(hashWriters, hashWriter)
+		hashMap[algo] = hashWriter
+	}
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	multiWriter := io.MultiWriter(hashWriters...)
+	if _, err = io.Copy(multiWriter, file); err != nil {
+		return nil, err
+	}
+	file.Close()
+
+	cdxHashes := make([]cdx.Hash, 0, len(hashMap))
+	for _, algo := range algos { // Don't iterate over hashMap, as it doesn't retain order
+		cdxHashes = append(cdxHashes, cdx.Hash{
+			Algorithm: algo,
+			Value:     fmt.Sprintf("%x", hashMap[algo].Sum(nil)),
+		})
+	}
+
+	return cdxHashes, nil
 }

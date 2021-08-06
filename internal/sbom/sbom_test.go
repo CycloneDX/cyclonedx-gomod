@@ -80,3 +80,51 @@ func TestResolveVcsURL(t *testing.T) {
 		Path: "gopkg.in/check.v1",
 	}))
 }
+
+func TestCalculateFileHashes(t *testing.T) {
+	t.Run("AllSupported", func(t *testing.T) {
+		algos := []cdx.HashAlgorithm{
+			cdx.HashAlgoMD5,
+			cdx.HashAlgoSHA1,
+			cdx.HashAlgoSHA256,
+			cdx.HashAlgoSHA384,
+			cdx.HashAlgoSHA512,
+			cdx.HashAlgoSHA3_256,
+			cdx.HashAlgoSHA3_512,
+		}
+
+		hashes, err := CalculateFileHashes("../../NOTICE", algos...) // TODO: use another file (create a tempfile?)
+		require.NoError(t, err)
+		require.Len(t, hashes, 7)
+		require.Equal(t, "90b8bc82c30341e88830b0ea82f18548", hashes[0].Value)
+		require.Equal(t, "8767825dace783fb1570510e21ab84ad59baa39c", hashes[1].Value)
+		require.Equal(t, "02fa11d51d573ee6f4e1133cb4b5c7b8ade1eeadb951875dfc2a67c0122add65", hashes[2].Value)
+		require.Equal(t, "3200f7c24a80080a7d7979aaaad480749b1fc5b07f0609749d47004c7e39265569ed17b2db5eea1f961543cc7a9627f2", hashes[3].Value)
+		require.Equal(t, "afef70a115ee95c3e7d966322898909964399186b9cdd877b5d7ea12352b2b5f8b54902e674875be0fc84affe86d28fdca7893b5e7da45241f3e1e646ab0f32b", hashes[4].Value)
+		require.Equal(t, "436042da3bf8a7b9bebeed1913c8e6ebf3b800aaaa1864690351754ece07caea", hashes[5].Value)
+		require.Equal(t, "cb6b4798adf21d3604dbf089f410edb1d2be31d958d2c859a3bf64a7c3d8b8df29c2218a47e80e026e44ff2932771123a8e5ea9019b18bdce7a0781d4379dd9a", hashes[6].Value)
+	})
+
+	t.Run("UnsupportedAlgorithm", func(t *testing.T) {
+		algos := []cdx.HashAlgorithm{
+			cdx.HashAlgoBlake2b_256,
+			cdx.HashAlgoBlake2b_384,
+			cdx.HashAlgoBlake2b_512,
+			cdx.HashAlgoBlake3,
+		}
+
+		for _, algo := range algos {
+			t.Run(string(algo), func(t *testing.T) {
+				_, err := CalculateFileHashes("", algo)
+				require.Error(t, err)
+				require.Contains(t, err.Error(), "unsupported hash algorithm")
+			})
+		}
+	})
+
+	t.Run("NoAlgorithms", func(t *testing.T) {
+		hashes, err := CalculateFileHashes("")
+		require.NoError(t, err)
+		require.Empty(t, hashes)
+	})
+}

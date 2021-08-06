@@ -23,11 +23,12 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert"
+	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
@@ -102,8 +103,8 @@ func execBinCmd(options BinOptions) error {
 
 	dependencies := sbom.BuildDependencyGraph(modules)
 
-	mainComponent, err := convert.ModuleToComponent(modules[0],
-		convert.WithComponentType(cdx.ComponentType(options.ComponentType)))
+	mainComponent, err := modconv.ToComponent(modules[0],
+		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)))
 	if err != nil {
 		return err
 	}
@@ -111,7 +112,7 @@ func execBinCmd(options BinOptions) error {
 	// Remove main module, we don't need it anymore
 	modules = gomod.RemoveModule(modules, modules[0].Coordinates())
 
-	components, err := convert.ModulesToComponents(modules, withModuleHashes(hashes))
+	components, err := modconv.ToComponents(modules, withModuleHashes(hashes))
 	if err != nil {
 		return err
 	}
@@ -141,6 +142,15 @@ func execBinCmd(options BinOptions) error {
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
+	if !options.Reproducible {
+		tool, err := sbom.BuildToolMetadata()
+		if err != nil {
+			return fmt.Errorf("failed to build tool metadata: %w", err)
+		}
+
+		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
+		bom.Metadata.Tools = &[]cdx.Tool{*tool}
+	}
 	bom.Components = &components
 	bom.Dependencies = &dependencies
 	bom.Compositions = &compositions
@@ -151,7 +161,7 @@ func execBinCmd(options BinOptions) error {
 	return bomEncoder.Encode(bom)
 }
 
-func withModuleHashes(hashes map[string]string) convert.Option {
+func withModuleHashes(hashes map[string]string) modconv.Option {
 	return func(m gomod.Module, c *cdx.Component) error {
 		h1, ok := hashes[m.Coordinates()]
 		if !ok {
