@@ -286,3 +286,51 @@ func TestFindModule(t *testing.T) {
 		require.Equal(t, module, findModule(modules, "path@version2", false))
 	})
 }
+
+func TestSortModules(t *testing.T) {
+	modules := []Module{
+		{
+			Path:    "path",
+			Version: "v1.3.2",
+		},
+		{
+			Path:    "path",
+			Version: "v1.2.3",
+		},
+		{
+			Path:    "path/v2",
+			Version: "v2.0.0",
+			Main:    true,
+		},
+	}
+
+	SortModules(modules)
+
+	require.Equal(t, "v2.0.0", modules[0].Version) // main
+	require.Equal(t, "v1.2.3", modules[1].Version)
+	require.Equal(t, "v1.3.2", modules[2].Version)
+}
+
+func TestSortDependencies(t *testing.T) {
+	modules := []*Module{
+		{
+			Path:    "path",
+			Version: "v1.3.2",
+		},
+		{
+			Path:    "path",
+			Version: "v1.2.3",
+		},
+		{
+			Path:    "path/v2",
+			Version: "v2.0.0",
+			Main:    true,
+		},
+	}
+
+	SortDependencies(modules)
+
+	require.Equal(t, "v1.2.3", modules[0].Version)
+	require.Equal(t, "v1.3.2", modules[1].Version)
+	require.Equal(t, "v2.0.0", modules[2].Version) // main
+}

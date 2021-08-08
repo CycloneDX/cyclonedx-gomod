@@ -31,6 +31,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/mod/semver"
 	"golang.org/x/mod/sumdb/dirhash"
 )
 
@@ -76,9 +77,10 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 		return nil, ErrNoGoModule
 	}
 
-	var mainModule *Module
-	var modules []Module
-	var err error
+	var (
+		modules []Module
+		err     error
+	)
 
 	// We're going to call the go command a few times and
 	// we'll (re-)use this buffer to write its output to
@@ -94,9 +96,6 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 		if err != nil {
 			return nil, fmt.Errorf("parsing modules failed: %w", err)
 		}
-
-		mainModule = &modules[0]
-		modules = modules[1:]
 	} else {
 		if err = gocmd.ListVendoredModules(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
@@ -114,10 +113,12 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 			return nil, fmt.Errorf("listing main module failed: %w", err)
 		}
 
-		mainModule = new(Module)
-		if err = json.NewDecoder(buf).Decode(mainModule); err != nil {
+		mainModule := Module{}
+		if err = json.NewDecoder(buf).Decode(&mainModule); err != nil {
 			return nil, fmt.Errorf("parsing main module failed: %w", err)
 		}
+
+		modules = append(modules, mainModule)
 	}
 
 	modules, err = filterModules(mainModulePath, modules, includeTest)
@@ -125,15 +126,7 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
 
-	// Sort modules by path to have a deterministic order
-	sort.Slice(modules, func(i, j int) bool {
-		return modules[i].Path < modules[j].Path
-	})
-
-	if mainModule == nil {
-		return nil, fmt.Errorf("failed to identify main module")
-	}
-	modules = append([]Module{*mainModule}, modules...)
+	SortModules(modules)
 
 	// Replacements may point to local directories, in which case their .Path is
 	// not the actual module's name, but the filepath as used in go.mod.
@@ -290,11 +283,8 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		}
 	}
 
-	// Sort dependencies by path to have a deterministic order
 	for i := range modules {
-		sort.Slice(modules[i].Dependencies, func(j, k int) bool {
-			return modules[i].Dependencies[j].Path < modules[i].Dependencies[k].Path
-		})
+		SortDependencies(modules[i].Dependencies)
 	}
 
 	return nil
@@ -332,6 +322,7 @@ func GetModulesFromBinary(binaryPath string) ([]Module, map[string]string, error
 	}
 
 	modules, hashes := parseModulesFromBinary(buf)
+	SortModules(modules)
 
 	return modules, hashes, nil
 }
@@ -485,6 +476,37 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 	}
 
 	return filtered, nil
+}
+
+// SortModules sorts a given Module slice ascendingly by path.
+// Main modules take precedence, so that they will represent the first elements of the sorted slice.
+// If the path of two modules are equal, they'll be compared by their semantic version instead.
+func SortModules(modules []Module) {
+	sort.Slice(modules, func(i, j int) bool {
+		if modules[i].Main && !modules[j].Main {
+			return true
+		} else if !modules[i].Main && modules[j].Main {
+			return false
+		}
+
+		if modules[i].Path == modules[j].Path {
+			return semver.Compare(modules[i].Version, modules[j].Version) == -1
+		}
+
+		return modules[i].Path < modules[j].Path
+	})
+}
+
+// SortDependencies sorts a given Module pointer slice ascendingly by path.
+// If the path of two modules are equal, they'll be compared by their semantic version instead.
+func SortDependencies(dependencies []*Module) {
+	sort.Slice(dependencies, func(i, j int) bool {
+		if dependencies[i].Path == dependencies[j].Path {
+			return semver.Compare(dependencies[i].Version, dependencies[j].Version) == -1
+		}
+
+		return dependencies[i].Path < dependencies[j].Path
+	})
 }
 
 func resolveLocalModule(localModulePath string, module *Module) error {

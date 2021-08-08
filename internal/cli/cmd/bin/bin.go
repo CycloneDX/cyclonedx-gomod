@@ -84,8 +84,8 @@ func execBinCmd(binOptions BinOptions) error {
 	sbom.NormalizeVersions(modules, binOptions.NoVersionPrefix)
 
 	// Make all modules a direct dependency of the main module
-	for i := range modules[1:] {
-		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i+1])
+	for i := 1; i < len(modules); i++ {
+		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
 	}
 
 	dependencies := sbom.BuildDependencyGraph(modules)
