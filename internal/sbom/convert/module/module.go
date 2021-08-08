@@ -20,13 +20,13 @@ package module
 import (
 	"errors"
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
+	"github.com/rs/zerolog/log"
 )
 
 type Option func(gomod.Module, *cdx.Component) error
@@ -48,7 +48,7 @@ func WithLicenses() Option {
 			}
 		} else {
 			if errors.Is(err, license.ErrNoLicenseFound) {
-				log.Printf("no license found for %s", m.Coordinates())
+				log.Warn().Msgf("no license found for %s", m.Coordinates())
 				return nil
 			}
 

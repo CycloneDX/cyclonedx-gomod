@@ -39,6 +39,14 @@ func (e ValidationError) Error() string {
 	return err
 }
 
+type LogOptions struct {
+	Verbose bool
+}
+
+func (l *LogOptions) RegisterFlags(fs *flag.FlagSet) {
+	fs.BoolVar(&l.Verbose, "verbose", false, "Enable verbose output")
+}
+
 // OutputOptions provides options for customizing the output.
 type OutputOptions struct {
 	OutputFilePath string

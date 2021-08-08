@@ -63,9 +63,12 @@ Example:
 }
 
 func execBinCmd(binOptions BinOptions) error {
-	if err := binOptions.Validate(); err != nil {
+	err := binOptions.Validate()
+	if err != nil {
 		return err
 	}
+
+	cliutil.ConfigureLogger(binOptions.LogOptions)
 
 	modules, hashes, err := gomod.GetModulesFromBinary(binOptions.BinaryPath)
 	if err != nil {

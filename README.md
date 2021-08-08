@@ -65,6 +65,7 @@ FLAGS
   -reproducible=false  Make the SBOM reproducible by omitting dynamic content
   -serial ...          Serial number
   -std=false           Include Go standard library as component and dependency of the module
+  -verbose=false       Enable verbose output
   -version ...         Version of the main component
 ```
 
@@ -85,6 +86,7 @@ FLAGS
   -std=false           Include Go standard library as component and dependency of the module
   -test=false          Include test dependencies
   -type application    Type of the main component
+  -verbose=false       Enable verbose output
 ```
 
 ### Examples

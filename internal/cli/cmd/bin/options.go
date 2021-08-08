@@ -10,6 +10,7 @@ import (
 )
 
 type BinOptions struct {
+	options.LogOptions
 	options.OutputOptions
 	options.SBOMOptions
 
@@ -18,6 +19,7 @@ type BinOptions struct {
 }
 
 func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
+	b.LogOptions.RegisterFlags(fs)
 	b.OutputOptions.RegisterFlags(fs)
 	b.SBOMOptions.RegisterFlags(fs)
 

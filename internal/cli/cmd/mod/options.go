@@ -12,6 +12,7 @@ import (
 
 // ModOptions provides options for the `mod` command.
 type ModOptions struct {
+	options.LogOptions
 	options.OutputOptions
 	options.SBOMOptions
 
@@ -22,6 +23,7 @@ type ModOptions struct {
 }
 
 func (m *ModOptions) RegisterFlags(fs *flag.FlagSet) {
+	m.LogOptions.RegisterFlags(fs)
 	m.OutputOptions.RegisterFlags(fs)
 	m.SBOMOptions.RegisterFlags(fs)
 

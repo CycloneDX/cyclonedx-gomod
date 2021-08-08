@@ -24,13 +24,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/mod/sumdb/dirhash"
 )
 
@@ -452,7 +452,7 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 
 		for modPath, modPkgs := range parseModWhy(buf) {
 			if len(modPkgs) == 0 {
-				// TODO: log this in DEBUG level once we use a more sophisticated logger
+				log.Debug().Caller().Str("module", modPath).Msg("filtering unneeded module")
 				continue
 			}
 
@@ -465,7 +465,7 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 				}
 			}
 			if !includeTest && testOnly {
-				// TODO: log this in DEBUG level once we use a more sophisticated logger
+				log.Debug().Caller().Str("module", modPath).Msg("filtering test-only module")
 				continue
 			}
 
@@ -514,7 +514,7 @@ func resolveLocalModule(localModulePath string, module *Module) error {
 			// We don't fail with an error here, because our possibilities are limited.
 			// module.Dir may be a Mercurial repo or just a normal directory, in which case we
 			// cannot detect versions reliably right now.
-			log.Printf("failed to resolve version of local module %s: %v\n", module.Path, err)
+			log.Warn().Err(err).Str("module", module.Path).Msg("failed to resolve version of local module")
 		}
 	}
 

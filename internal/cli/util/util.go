@@ -27,6 +27,8 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
@@ -47,6 +49,16 @@ func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	bom.Metadata.Tools = &[]cdx.Tool{*tool}
 
 	return nil
+}
+
+func ConfigureLogger(logOptions options.LogOptions) {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
+	if logOptions.Verbose {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	} else {
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	}
 }
 
 // SetSerialNumber sets the serial number of a given BOM according to the

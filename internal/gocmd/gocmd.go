@@ -24,6 +24,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 // GetVersion returns the version of Go in the environment.
@@ -85,6 +87,7 @@ func GetModulesFromBinary(binaryPath string, writer io.Writer) error {
 
 func executeGoCommand(args []string, dir string, stdout, stderr io.Writer) error {
 	cmd := exec.Command("go", args...)
+	log.Debug().Caller().Str("cmd", cmd.String()).Msg("executing command")
 
 	if dir != "" {
 		cmd.Dir = dir

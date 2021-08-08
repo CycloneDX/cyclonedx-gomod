@@ -23,7 +23,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
@@ -32,6 +31,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/rs/zerolog/log"
 )
 
 func New() *ffcli.Command {
@@ -61,9 +61,12 @@ func New() *ffcli.Command {
 }
 
 func execModCmd(modOptions ModOptions) error {
-	if err := modOptions.Validate(); err != nil {
+	err := modOptions.Validate()
+	if err != nil {
 		return err
 	}
+
+	cliutil.ConfigureLogger(modOptions.LogOptions)
 
 	// Cheap trick to make Go download all required modules in the module graph
 	// without modifying go.sum (as `go mod download` would do).
@@ -78,7 +81,7 @@ func execModCmd(modOptions ModOptions) error {
 
 	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
 	if err != nil {
-		log.Printf("failed to determine version of main module: %v\n", err)
+		log.Warn().Err(err).Msg("failed to determine version of main module")
 	}
 
 	sbom.NormalizeVersions(modules, modOptions.NoVersionPrefix)
