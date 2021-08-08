@@ -88,8 +88,6 @@ func execBinCmd(binOptions BinOptions) error {
 		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
 	}
 
-	dependencies := sbom.BuildDependencyGraph(modules)
-
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentTypeApplication),
 		modconv.WithScope(""), // Main component can't have a scope
@@ -103,26 +101,7 @@ func execBinCmd(binOptions BinOptions) error {
 		return err
 	}
 
-	compositions := make([]cdx.Composition, 0)
-
-	// We know all components that the main component directly or indirectly depends on,
-	// thus the dependencies of it are considered complete.
-	compositions = append(compositions, cdx.Composition{
-		Aggregate: cdx.CompositionAggregateComplete,
-		Dependencies: &[]cdx.BOMReference{
-			cdx.BOMReference(mainComponent.BOMRef),
-		},
-	})
-
-	// The exact relationships between the dependencies are unknown
-	dependencyRefs := make([]cdx.BOMReference, 0, len(components))
-	for _, component := range components {
-		dependencyRefs = append(dependencyRefs, cdx.BOMReference(component.BOMRef))
-	}
-	compositions = append(compositions, cdx.Composition{
-		Aggregate:    cdx.CompositionAggregateUnknown,
-		Dependencies: &dependencyRefs,
-	})
+	dependencies := sbom.BuildDependencyGraph(modules)
 
 	binaryProperties, err := createBinaryProperties(binOptions.BinaryPath)
 	if err != nil {
@@ -145,7 +124,7 @@ func execBinCmd(binOptions BinOptions) error {
 
 	bom.Components = &components
 	bom.Dependencies = &dependencies
-	bom.Compositions = &compositions
+	bom.Compositions = createCompositions(*mainComponent, components)
 
 	return cliutil.WriteBOM(bom, binOptions.OutputOptions)
 }
@@ -188,4 +167,29 @@ func createBinaryProperties(binaryPath string) ([]cdx.Property, error) {
 	}
 
 	return properties, nil
+}
+
+func createCompositions(mainComponent cdx.Component, components []cdx.Component) *[]cdx.Composition {
+	compositions := make([]cdx.Composition, 0)
+
+	// We know all components that the main component directly or indirectly depends on,
+	// thus the dependencies of it are considered complete.
+	compositions = append(compositions, cdx.Composition{
+		Aggregate: cdx.CompositionAggregateComplete,
+		Dependencies: &[]cdx.BOMReference{
+			cdx.BOMReference(mainComponent.BOMRef),
+		},
+	})
+
+	// The exact relationships between the dependencies are unknown
+	dependencyRefs := make([]cdx.BOMReference, 0, len(components))
+	for _, component := range components {
+		dependencyRefs = append(dependencyRefs, cdx.BOMReference(component.BOMRef))
+	}
+	compositions = append(compositions, cdx.Composition{
+		Aggregate:    cdx.CompositionAggregateUnknown,
+		Dependencies: &dependencyRefs,
+	})
+
+	return &compositions
 }
