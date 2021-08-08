@@ -44,7 +44,12 @@ func New() *ffcli.Command {
 		Name:       "mod",
 		ShortHelp:  "Generate SBOM for a module",
 		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [PATH]",
-		FlagSet:    fs,
+		LongHelp: `Generate SBOM for a module.
+
+Examples:
+  $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
+  $ cyclonedx-gomod mod -reproducible -test -output bom.xml ./cyclonedx-go`,
+		FlagSet: fs,
 		Exec: func(ctx context.Context, args []string) error {
 			if len(args) > 1 {
 				return flag.ErrHelp

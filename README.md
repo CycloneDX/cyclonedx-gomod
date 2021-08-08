@@ -75,6 +75,12 @@ FLAGS
 USAGE
   cyclonedx-gomod mod [FLAGS...] [PATH]
 
+Generate SBOM for a module.
+
+Examples:
+  $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
+  $ cyclonedx-gomod mod -reproducible -test -output bom.xml ./cyclonedx-go
+
 FLAGS
   -json=false          Output in JSON
   -licenses=false      Resolve module licenses
