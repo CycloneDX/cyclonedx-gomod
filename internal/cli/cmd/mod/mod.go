@@ -162,7 +162,18 @@ func withLicenses(enabled bool) modconv.Option {
 
 func withModuleHashes() modconv.Option {
 	return func(m gomod.Module, c *cdx.Component) error {
-		if m.Main || m.Vendored {
+		if m.Main {
+			// We currently don't have an accurate way of hashing the main module, as it may contain
+			// files that are .gitignore'd and thus not part of the hashes in Go's sumdb.
+			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for main module")
+			return nil
+		}
+
+		if m.Vendored {
+			// Go's vendoring mechanism doesn't copy all files that make up a module to the vendor dir.
+			// Hashing vendored modules thus won't result in the expected hash, probably causing more
+			// confusion than anything else.
+			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for vendored module")
 			return nil
 		}
 
