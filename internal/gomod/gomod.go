@@ -452,7 +452,7 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 
 		for modPath, modPkgs := range parseModWhy(buf) {
 			if len(modPkgs) == 0 {
-				log.Debug().Caller().Str("module", modPath).Msg("filtering unneeded module")
+				log.Debug().Str("module", modPath).Msg("filtering unneeded module")
 				continue
 			}
 
@@ -465,7 +465,7 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 				}
 			}
 			if !includeTest && testOnly {
-				log.Debug().Caller().Str("module", modPath).Msg("filtering test-only module")
+				log.Debug().Str("module", modPath).Msg("filtering test-only module")
 				continue
 			}
 

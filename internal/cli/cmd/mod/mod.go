@@ -166,6 +166,7 @@ func withModuleHashes() modconv.Option {
 			return nil
 		}
 
+		log.Debug().Str("module", m.Coordinates()).Msg("calculating hash")
 		h1, err := m.Hash()
 		if err != nil {
 			return fmt.Errorf("failed to calculate h1 hash: %w", err)

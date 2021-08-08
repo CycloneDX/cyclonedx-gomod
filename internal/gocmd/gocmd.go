@@ -87,7 +87,7 @@ func GetModulesFromBinary(binaryPath string, writer io.Writer) error {
 
 func executeGoCommand(args []string, dir string, stdout, stderr io.Writer) error {
 	cmd := exec.Command("go", args...)
-	log.Debug().Caller().Str("cmd", cmd.String()).Msg("executing command")
+	log.Debug().Str("cmd", cmd.String()).Msg("executing command")
 
 	if dir != "" {
 		cmd.Dir = dir

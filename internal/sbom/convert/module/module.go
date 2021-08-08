@@ -35,6 +35,7 @@ type Option func(gomod.Module, *cdx.Component) error
 // to the component's license evidence.
 func WithLicenses() Option {
 	return func(m gomod.Module, c *cdx.Component) error {
+		log.Debug().Str("module", m.Coordinates()).Msg("resolving licenses")
 		resolvedLicenses, err := license.Resolve(m)
 
 		if err == nil {
