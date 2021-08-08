@@ -182,15 +182,15 @@ func withModuleHashes() modconv.Option {
 			return nil
 		}
 
-		log.Debug().Str("module", m.Coordinates()).Msg("calculating hash")
+		log.Debug().Str("module", m.Coordinates()).Msg("calculating module hash")
 		h1, err := m.Hash()
 		if err != nil {
-			return fmt.Errorf("failed to calculate h1 hash: %w", err)
+			return fmt.Errorf("failed to calculate module hash: %w", err)
 		}
 
 		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
 		if err != nil {
-			return fmt.Errorf("failed to base64 decode h1 hash: %w", err)
+			return fmt.Errorf("failed to base64 decode module hash: %w", err)
 		}
 
 		c.Hashes = &[]cdx.Hash{

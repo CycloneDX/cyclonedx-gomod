@@ -34,6 +34,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
+	"github.com/rs/zerolog/log"
 )
 
 func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
@@ -121,6 +122,11 @@ func CalculateFileHashes(filePath string, algos ...cdx.HashAlgorithm) ([]cdx.Has
 	if len(algos) == 0 {
 		return make([]cdx.Hash, 0), nil
 	}
+
+	log.Debug().
+		Str("file", filePath).
+		Interface("algos", algos).
+		Msg("calculating file hashes")
 
 	hashMap := make(map[cdx.HashAlgorithm]hash.Hash)
 	hashWriters := make([]io.Writer, 0)

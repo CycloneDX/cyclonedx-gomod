@@ -268,7 +268,6 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		// When identifying the ACTUAL dependant, we search for it in strict mode (versions must match).
 		dependant := findModule(modules, fields[0], true)
 		if dependant == nil {
-			// TODO: log this in DEBUG level once we use a more sophisticated logger
 			continue
 		}
 
@@ -277,7 +276,10 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		// the effective modules slice. Hence, we search for the dependency in non-strict mode.
 		dependency := findModule(modules, fields[1], false)
 		if dependency == nil {
-			// TODO: log this in DEBUG level once we use a more sophisticated logger
+			log.Debug().
+				Str("dependant", dependant.Coordinates()).
+				Str("dependency", fields[1]).
+				Msg("dependency not found")
 			continue
 		}
 
