@@ -48,7 +48,7 @@ func WithLicenses() Option {
 			}
 		} else {
 			if errors.Is(err, license.ErrNoLicenseFound) {
-				log.Warn().Msgf("no license found for %s", m.Coordinates())
+				log.Warn().Str("module", m.Coordinates()).Msg("no license found")
 				return nil
 			}
 
