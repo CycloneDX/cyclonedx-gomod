@@ -21,7 +21,6 @@ import (
 	"flag"
 	"fmt"
 
-	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/google/uuid"
 )
 
@@ -57,7 +56,6 @@ func (o OutputOptions) Validate() error {
 
 // SBOMOptions provides options for customizing the SBOM.
 type SBOMOptions struct {
-	ComponentType   string
 	IncludeStd      bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
@@ -66,7 +64,6 @@ type SBOMOptions struct {
 }
 
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
-	fs.StringVar(&s.ComponentType, "type", "application", "Type of the main component")
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
 	fs.BoolVar(&s.NoVersionPrefix, "novprefix", false, "Omit \"v\" prefix from versions")
@@ -74,30 +71,8 @@ func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
 }
 
-var allowedComponentTypes = []cdx.ComponentType{
-	cdx.ComponentTypeApplication,
-	cdx.ComponentTypeContainer,
-	cdx.ComponentTypeDevice,
-	cdx.ComponentTypeFile,
-	cdx.ComponentTypeFirmware,
-	cdx.ComponentTypeFramework,
-	cdx.ComponentTypeLibrary,
-	cdx.ComponentTypeOS,
-}
-
 func (s SBOMOptions) Validate() error {
 	errs := make([]error, 0)
-
-	isAllowedComponentType := false
-	for i := range allowedComponentTypes {
-		if allowedComponentTypes[i] == cdx.ComponentType(s.ComponentType) {
-			isAllowedComponentType = true
-			break
-		}
-	}
-	if !isAllowedComponentType {
-		errs = append(errs, fmt.Errorf("invalid component type: \"%s\"", s.ComponentType))
-	}
 
 	// Serial numbers must be valid UUIDs
 	if !s.NoSerialNumber && s.SerialNumber != "" {

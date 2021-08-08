@@ -20,15 +20,12 @@ package mod
 import (
 	"context"
 	"encoding/base64"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"log"
-	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
@@ -36,51 +33,6 @@ import (
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
-
-// ModOptions provides options for the `mod` command.
-type ModOptions struct {
-	options.OutputOptions
-	options.SBOMOptions
-
-	ModuleDir       string
-	IncludeTest     bool
-	ResolveLicenses bool
-}
-
-func (m *ModOptions) RegisterFlags(fs *flag.FlagSet) {
-	m.OutputOptions.RegisterFlags(fs)
-	m.SBOMOptions.RegisterFlags(fs)
-
-	fs.BoolVar(&m.IncludeTest, "test", false, "Include test dependencies")
-	fs.BoolVar(&m.ResolveLicenses, "licenses", false, "Resolve module licenses")
-}
-
-func (m ModOptions) Validate() error {
-	errs := make([]error, 0)
-
-	if err := m.OutputOptions.Validate(); err != nil {
-		var verr *options.ValidationError
-		if errors.As(err, &verr) {
-			errs = append(errs, verr.Errors...)
-		} else {
-			return err
-		}
-	}
-	if err := m.SBOMOptions.Validate(); err != nil {
-		var verr *options.ValidationError
-		if errors.As(err, &verr) {
-			errs = append(errs, verr.Errors...)
-		} else {
-			return err
-		}
-	}
-
-	if len(errs) > 0 {
-		return &options.ValidationError{Errors: errs}
-	}
-
-	return nil
-}
 
 func New() *ffcli.Command {
 	fs := flag.NewFlagSet("cyclonedx-gomod mod", flag.ExitOnError)
@@ -115,39 +67,23 @@ func execModCmd(modOptions ModOptions) error {
 
 	// Cheap trick to make Go download all required modules in the module graph
 	// without modifying go.sum (as `go mod download` would do).
-	log.Println("downloading modules")
 	if err := gocmd.ModWhy(modOptions.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-go"}, io.Discard); err != nil {
 		return fmt.Errorf("downloading modules failed: %w", err)
 	}
 
-	log.Println("enumerating modules")
 	modules, err := gomod.GetModules(modOptions.ModuleDir, modOptions.IncludeTest)
 	if err != nil {
 		return fmt.Errorf("failed to enumerate modules: %w", err)
 	}
 
-	log.Println("normalizing module versions")
-	for i := range modules {
-		modules[i].Version = strings.TrimSuffix(modules[i].Version, "+incompatible")
-
-		if modOptions.NoVersionPrefix {
-			modules[i].Version = strings.TrimPrefix(modules[i].Version, "v")
-		}
+	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
+	if err != nil {
+		log.Printf("failed to determine version of main module: %v\n", err)
 	}
 
-	mainModule := modules[0]
-	modules = modules[1:]
+	sbom.NormalizeVersions(modules, modOptions.NoVersionPrefix)
 
-	log.Println("determining version of main module")
-	if mainModule.Version, err = gomod.GetModuleVersion(mainModule.Dir); err != nil {
-		log.Printf("failed to get version of main module: %v\n", err)
-	}
-	if mainModule.Version != "" && modOptions.NoVersionPrefix {
-		mainModule.Version = strings.TrimPrefix(mainModule.Version, "v")
-	}
-
-	log.Printf("converting main module %s\n", mainModule.Coordinates())
-	mainComponent, err := modconv.ToComponent(mainModule,
+	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentType(modOptions.ComponentType)),
 		withLicenses(modOptions.ResolveLicenses),
 		modconv.WithScope(""), // Main component can't have a scope
@@ -156,7 +92,7 @@ func execModCmd(modOptions ModOptions) error {
 		return fmt.Errorf("failed to convert main module: %w", err)
 	}
 
-	components, err := modconv.ToComponents(modules,
+	components, err := modconv.ToComponents(modules[1:],
 		withModuleHashes(),
 		withLicenses(modOptions.ResolveLicenses),
 	)
@@ -164,20 +100,20 @@ func execModCmd(modOptions ModOptions) error {
 		return fmt.Errorf("failed to convert modules: %w", err)
 	}
 
-	log.Println("building dependency graph")
-	dependencyGraph := sbom.BuildDependencyGraph(append(modules, mainModule))
+	dependencyGraph := sbom.BuildDependencyGraph(modules)
 
-	log.Println("assembling sbom")
 	bom := cdx.NewBOM()
 
-	if err = cliutil.SetSerialNumber(bom, modOptions.SBOMOptions); err != nil {
+	err = cliutil.SetSerialNumber(bom, modOptions.SBOMOptions)
+	if err != nil {
 		return err
 	}
 
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
-	if err = cliutil.AddCommonMetadata(bom, modOptions.SBOMOptions); err != nil {
+	err = cliutil.AddCommonMetadata(bom, modOptions.SBOMOptions)
+	if err != nil {
 		return err
 	}
 
@@ -185,13 +121,11 @@ func execModCmd(modOptions ModOptions) error {
 	bom.Dependencies = &dependencyGraph
 
 	if modOptions.IncludeStd {
-		log.Println("gathering info about standard library")
 		stdComponent, err := sbom.BuildStdComponent()
 		if err != nil {
 			return fmt.Errorf("failed to build std component: %w", err)
 		}
 
-		log.Println("adding standard library to sbom")
 		*bom.Components = append(*bom.Components, *stdComponent)
 
 		// Add std to dependency graph

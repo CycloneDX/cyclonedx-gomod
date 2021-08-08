@@ -31,9 +31,9 @@
     </component>
   </components>
   <dependencies>
-    <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
     <dependency ref="pkg:golang/testmod-simple@v0.0.0-20210716210707-a62fcff56e7e">
       <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
     </dependency>
+    <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
   </dependencies>
 </bom>

@@ -55,10 +55,10 @@ func TestIntegrationSimple(t *testing.T) {
 
 	runSnapshotIT(t, ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			ComponentType: string(cdx.ComponentTypeLibrary),
-			Reproducible:  true,
-			SerialNumber:  zeroUUID.String(),
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
 		},
+		ComponentType:   string(cdx.ComponentTypeLibrary),
 		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
 	})
@@ -72,10 +72,10 @@ func TestIntegrationLocal(t *testing.T) {
 
 	runSnapshotIT(t, ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			ComponentType: string(cdx.ComponentTypeLibrary),
-			Reproducible:  true,
-			SerialNumber:  zeroUUID.String(),
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
 		},
+		ComponentType:   string(cdx.ComponentTypeLibrary),
 		ModuleDir:       filepath.Join(fixturePath, "local"),
 		ResolveLicenses: true,
 	})
@@ -88,10 +88,10 @@ func TestIntegrationNoDependencies(t *testing.T) {
 
 	runSnapshotIT(t, ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			ComponentType: string(cdx.ComponentTypeLibrary),
-			Reproducible:  true,
-			SerialNumber:  zeroUUID.String(),
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
 		},
+		ComponentType:   string(cdx.ComponentTypeLibrary),
 		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
 	})
@@ -105,10 +105,10 @@ func TestIntegrationVendored(t *testing.T) {
 
 	runSnapshotIT(t, ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			ComponentType: string(cdx.ComponentTypeLibrary),
-			Reproducible:  true,
-			SerialNumber:  zeroUUID.String(),
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
 		},
+		ComponentType:   string(cdx.ComponentTypeLibrary),
 		ModuleDir:       fixturePath,
 		ResolveLicenses: true,
 	})
@@ -130,10 +130,10 @@ func TestIntegrationNested(t *testing.T) {
 
 	runSnapshotIT(t, ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			ComponentType: string(cdx.ComponentTypeLibrary),
-			Reproducible:  true,
-			SerialNumber:  zeroUUID.String(),
+			Reproducible: true,
+			SerialNumber: zeroUUID.String(),
 		},
+		ComponentType:   string(cdx.ComponentTypeLibrary),
 		ModuleDir:       filepath.Join(fixturePath, "simple"),
 		ResolveLicenses: true,
 	})

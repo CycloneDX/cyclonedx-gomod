@@ -48,6 +48,15 @@ SUBCOMMANDS
 USAGE
   cyclonedx-gomod bin [FLAGS...] PATH
 
+Generate SBOM for a binary.
+
+Please note that data embedded in binaries shouldn't be trusted,
+unless there's solid evidence that the binaries haven't been modified
+since they've been built.
+
+Example:
+  $ cyclonedx-gomod bin -json -output minikube-v1.22.0.bom.json -version v1.22.0 ./minikube
+
 FLAGS
   -json=false          Output in JSON
   -noserial=false      Omit serial number
@@ -56,7 +65,6 @@ FLAGS
   -reproducible=false  Make the SBOM reproducible by omitting dynamic content
   -serial ...          Serial number
   -std=false           Include Go standard library as component and dependency of the module
-  -type application    Type of the main component
   -version ...         Version of the main component
 ```
 

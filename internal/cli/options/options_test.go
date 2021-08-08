@@ -20,7 +20,6 @@ package options
 import (
 	"testing"
 
-	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -36,32 +35,11 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		var options SBOMOptions
 
 		err := options.Validate()
-		require.Error(t, err)
-
-		var validationError *ValidationError
-		require.ErrorAs(t, err, &validationError)
-
-		require.Len(t, validationError.Errors, 1)
-		require.Contains(t, validationError.Errors[0].Error(), "invalid component type")
-	})
-
-	t.Run("InvalidComponentType", func(t *testing.T) {
-		var options SBOMOptions
-		options.ComponentType = "foobar"
-
-		err := options.Validate()
-		require.Error(t, err)
-
-		var validationError *ValidationError
-		require.ErrorAs(t, err, &validationError)
-
-		require.Len(t, validationError.Errors, 1)
-		require.Contains(t, validationError.Errors[0].Error(), "invalid component type")
+		require.NoError(t, err)
 	})
 
 	t.Run("InvalidSerialNumber", func(t *testing.T) {
 		var options SBOMOptions
-		options.ComponentType = string(cdx.ComponentTypeApplication)
 		options.SerialNumber = "foobar"
 
 		err := options.Validate()

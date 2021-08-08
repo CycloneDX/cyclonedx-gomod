@@ -36,39 +36,6 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 )
 
-func BuildStdComponent() (*cdx.Component, error) {
-	goVersion, err := gocmd.GetVersion()
-	if err != nil {
-		return nil, fmt.Errorf("failed to determine Go version: %w", err)
-	}
-	goVersion = strings.TrimPrefix(goVersion, "go")
-	stdPURL := "pkg:golang/std@" + goVersion
-
-	return &cdx.Component{
-		BOMRef:      stdPURL,
-		Type:        cdx.ComponentTypeLibrary,
-		Name:        "std",
-		Version:     goVersion,
-		Description: "The Go standard library",
-		Scope:       cdx.ScopeRequired,
-		PackageURL:  stdPURL,
-		ExternalReferences: &[]cdx.ExternalReference{
-			{
-				Type: cdx.ERTypeDocumentation,
-				URL:  "https://golang.org/pkg/",
-			},
-			{
-				Type: cdx.ERTypeVCS,
-				URL:  "https://go.googlesource.com/go",
-			},
-			{
-				Type: cdx.ERTypeWebsite,
-				URL:  "https://golang.org/",
-			},
-		},
-	}, nil
-}
-
 func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	depGraph := make([]cdx.Dependency, 0)
 
@@ -114,6 +81,39 @@ func BuildToolMetadata() (*cdx.Tool, error) {
 		Name:    version.Name,
 		Version: version.Version,
 		Hashes:  &toolHashes,
+	}, nil
+}
+
+func BuildStdComponent() (*cdx.Component, error) {
+	goVersion, err := gocmd.GetVersion()
+	if err != nil {
+		return nil, fmt.Errorf("failed to determine Go version: %w", err)
+	}
+	goVersion = strings.TrimPrefix(goVersion, "go")
+	stdPURL := "pkg:golang/std@" + goVersion
+
+	return &cdx.Component{
+		BOMRef:      stdPURL,
+		Type:        cdx.ComponentTypeLibrary,
+		Name:        "std",
+		Version:     goVersion,
+		Description: "The Go standard library",
+		Scope:       cdx.ScopeRequired,
+		PackageURL:  stdPURL,
+		ExternalReferences: &[]cdx.ExternalReference{
+			{
+				Type: cdx.ERTypeDocumentation,
+				URL:  "https://golang.org/pkg/",
+			},
+			{
+				Type: cdx.ERTypeVCS,
+				URL:  "https://go.googlesource.com/go",
+			},
+			{
+				Type: cdx.ERTypeWebsite,
+				URL:  "https://golang.org/",
+			},
+		},
 	}, nil
 }
 
@@ -180,5 +180,23 @@ func NewProperty(name, value string) cdx.Property {
 	return cdx.Property{
 		Name:  fmt.Sprintf("%s:%s", PropertyPrefix, name),
 		Value: value,
+	}
+}
+
+func NormalizeVersions(modules []gomod.Module, trimPrefix bool) {
+	for i, module := range modules {
+		NormalizeVersion(&modules[i], trimPrefix)
+
+		if module.Replace != nil {
+			NormalizeVersion(modules[i].Replace, trimPrefix)
+		}
+	}
+}
+
+func NormalizeVersion(module *gomod.Module, trimPrefix bool) {
+	module.Version = strings.TrimSuffix(module.Version, "+incompatible")
+
+	if trimPrefix {
+		module.Version = strings.TrimPrefix(module.Version, "v")
 	}
 }

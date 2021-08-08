@@ -20,66 +20,17 @@ package bin
 import (
 	"context"
 	"encoding/base64"
-	"errors"
 	"flag"
 	"fmt"
 	"path/filepath"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
-
-type BinOptions struct {
-	options.OutputOptions
-	options.SBOMOptions
-
-	BinaryPath string
-	Version    string
-}
-
-func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
-	b.OutputOptions.RegisterFlags(fs)
-	b.SBOMOptions.RegisterFlags(fs)
-
-	fs.StringVar(&b.Version, "version", "", "Version of the main component")
-}
-
-func (b BinOptions) Validate() error {
-	errs := make([]error, 0)
-
-	if err := b.OutputOptions.Validate(); err != nil {
-		var verr *options.ValidationError
-		if errors.As(err, &verr) {
-			errs = append(errs, verr.Errors...)
-		} else {
-			return err
-		}
-	}
-	if err := b.SBOMOptions.Validate(); err != nil {
-		var verr *options.ValidationError
-		if errors.As(err, &verr) {
-			errs = append(errs, verr.Errors...)
-		} else {
-			return err
-		}
-	}
-
-	if !util.FileExists(b.BinaryPath) {
-		errs = append(errs, fmt.Errorf("binary at %s does not exist", b.BinaryPath))
-	}
-
-	if len(errs) > 0 {
-		return &options.ValidationError{Errors: errs}
-	}
-
-	return nil
-}
 
 func New() *ffcli.Command {
 	fs := flag.NewFlagSet("cyclonedx-gomod bin", flag.ExitOnError)
@@ -94,8 +45,11 @@ func New() *ffcli.Command {
 		LongHelp: `Generate SBOM for a binary.
 
 Please note that data embedded in binaries shouldn't be trusted,
-unless there's evidence that the binaries haven't been modified
-since they've been built.`,
+unless there's solid evidence that the binaries haven't been modified
+since they've been built.
+
+Example:
+  $ cyclonedx-gomod bin -json -output minikube-v1.22.0.bom.json -version v1.22.0 ./minikube`,
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) != 1 {
@@ -124,27 +78,24 @@ func execBinCmd(binOptions BinOptions) error {
 		modules[0].Version = binOptions.Version
 	}
 
+	sbom.NormalizeVersions(modules, binOptions.NoVersionPrefix)
+
 	// Make all modules a direct dependency of the main module
-	for i, module := range modules {
-		if !module.Main {
-			modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
-		}
+	for i := range modules[1:] {
+		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i+1])
 	}
 
 	dependencies := sbom.BuildDependencyGraph(modules)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentType(binOptions.ComponentType)),
+		modconv.WithComponentType(cdx.ComponentTypeApplication),
 		modconv.WithScope(""), // Main component can't have a scope
 	)
 	if err != nil {
 		return err
 	}
 
-	// Remove main module, we don't need it anymore
-	modules = gomod.RemoveModule(modules, modules[0].Coordinates())
-
-	components, err := modconv.ToComponents(modules, withModuleHashes(hashes))
+	components, err := modconv.ToComponents(modules[1:], withModuleHashes(hashes))
 	if err != nil {
 		return err
 	}

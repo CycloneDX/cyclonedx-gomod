@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:646f2508-f34d-4d60-a341-104327505ac5" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:2e4e90df-ffee-466a-ba21-7993367e905a" version="1">
   <metadata>
-    <timestamp>2021-08-06T23:37:55+02:00</timestamp>
+    <timestamp>2021-08-08T19:09:16+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
-        <version>v0.0.0-20210806224527-e314f81cd628</version>
+        <version>v0.0.0-20210806234054-8e6e5d7e4328</version>
         <hashes>
-          <hash alg="MD5">86d1f7d06f929f5f631a403ceaa0e7c2</hash>
-          <hash alg="SHA-1">95bee6dba4931442f6a52d22c223509fb0d28b20</hash>
-          <hash alg="SHA-256">05121c68779d528b876754e67e786f5cd9ca58b1ca39b6327518ca83bc277654</hash>
-          <hash alg="SHA-384">4b359c316cfa3a8e52fbd174faad98d2722df4be22f220e6768361204a2ffd4e48635782ea60ff78f79f69e4a14cc641</hash>
-          <hash alg="SHA-512">f5103e6c1cbaf076e20670f7178f6e11f8460e3a0398c92ded19ef6a67f893f75ea48f6a1905638d9c35569f04162effa2ebe602ab582370d48dd906a965fde3</hash>
+          <hash alg="MD5">6f45202f726c6e76f1a09b201324056d</hash>
+          <hash alg="SHA-1">e62130d5e266c0eb9bf65c884e5070ee4d60090b</hash>
+          <hash alg="SHA-256">a4f31c0d02b0c4a9c900975c9e61f7efaf094c1b9f85656feb0e746cfa187054</hash>
+          <hash alg="SHA-384">d42f0f4014a1608467e881c95fa4d3a640c838baf30cead07ef4733784590efb9ea5f20e05d76f2ff4d64f10ea9175fb</hash>
+          <hash alg="SHA-512">d517e7ffc5a38094431f5a991227a3256600825d5ff46718380b9e6b043a6fb387276a6fec1cf35872ab9b81838bc9993fa3b812cb07a7885c52dec540d5e70d</hash>
         </hashes>
       </tool>
     </tools>
@@ -287,28 +287,22 @@
         </reference>
       </externalReferences>
     </component>
-    <component bom-ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible" type="library">
+    <component bom-ref="pkg:golang/github.com/docker/distribution@v2.7.1" type="library">
       <name>github.com/docker/distribution</name>
-      <version>v2.7.1+incompatible</version>
+      <version>v2.7.1</version>
       <scope>required</scope>
-      <hashes>
-        <hash alg="SHA-256">6b99a5915ced87a5b90387ceb12dc3d843b90549ac269701f9c4652d4edc4ae8</hash>
-      </hashes>
-      <purl>pkg:golang/github.com/docker/distribution@v2.7.1+incompatible</purl>
+      <purl>pkg:golang/github.com/docker/distribution@v2.7.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/docker/distribution</url>
         </reference>
       </externalReferences>
     </component>
-    <component bom-ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible" type="library">
+    <component bom-ref="pkg:golang/github.com/docker/docker@v20.10.7" type="library">
       <name>github.com/docker/docker</name>
-      <version>v20.10.7+incompatible</version>
+      <version>v20.10.7</version>
       <scope>required</scope>
-      <hashes>
-        <hash alg="SHA-256">67a3bd361b23bfe6b2504788d48a2329b61cb0676061236ac5ed6cd8c6335214</hash>
-      </hashes>
-      <purl>pkg:golang/github.com/docker/docker@v20.10.7+incompatible</purl>
+      <purl>pkg:golang/github.com/docker/docker@v20.10.7</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/docker/docker</url>
@@ -1773,8 +1767,8 @@
       <dependency ref="pkg:golang/github.com/containerd/stargz-snapshotter/estargz@v0.4.1"></dependency>
       <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
       <dependency ref="pkg:golang/github.com/docker/cli@v0.0.0-20200303162255-7d407207c304"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
       <dependency ref="pkg:golang/github.com/docker/docker-credential-helpers@v0.6.3"></dependency>
       <dependency ref="pkg:golang/github.com/docker/go-connections@v0.4.0"></dependency>
       <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
@@ -1909,8 +1903,8 @@
     <dependency ref="pkg:golang/github.com/containerd/stargz-snapshotter/estargz@v0.4.1"></dependency>
     <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
     <dependency ref="pkg:golang/github.com/docker/cli@v0.0.0-20200303162255-7d407207c304"></dependency>
-    <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible"></dependency>
-    <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
+    <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1"></dependency>
+    <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
     <dependency ref="pkg:golang/github.com/docker/docker-credential-helpers@v0.6.3"></dependency>
     <dependency ref="pkg:golang/github.com/docker/go-connections@v0.4.0"></dependency>
     <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
@@ -2055,8 +2049,8 @@
         <dependency ref="pkg:golang/github.com/containerd/stargz-snapshotter/estargz@v0.4.1"></dependency>
         <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
         <dependency ref="pkg:golang/github.com/docker/cli@v0.0.0-20200303162255-7d407207c304"></dependency>
-        <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible"></dependency>
-        <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
+        <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1"></dependency>
+        <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
         <dependency ref="pkg:golang/github.com/docker/docker-credential-helpers@v0.6.3"></dependency>
         <dependency ref="pkg:golang/github.com/docker/go-connections@v0.4.0"></dependency>
         <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
