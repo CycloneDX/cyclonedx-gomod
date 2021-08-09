@@ -22,13 +22,11 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/google/uuid"
@@ -161,18 +159,8 @@ func runSnapshotIT(t *testing.T, modOptions ModOptions) {
 	// Sanity check: Make sure the SBOM is valid
 	assertValidSBOM(t, bomFile.Name())
 
-	// The versions of the modules in ./testdata are dynamic and depend on the current HEAD commit,
-	// which would cause the snapshot comparisons to fail. Rest assured I felt dirty writing this.
-	moduleVersion, err := gomod.GetModuleVersion(".")
-	require.NoError(t, err)
-	bomFileContent, err := os.ReadFile(bomFile.Name())
-	require.NoError(t, err)
-	bomFileContent = regexp.MustCompile(`@?`+regexp.QuoteMeta(moduleVersion)).ReplaceAll(bomFileContent, nil)
-	err = os.WriteFile(bomFile.Name(), bomFileContent, 0600)
-	require.NoError(t, err)
-
 	// Read SBOM and compare with snapshot
-	bomFileContent, err = os.ReadFile(bomFile.Name())
+	bomFileContent, err := os.ReadFile(bomFile.Name())
 	require.NoError(t, err)
 	itSnapshotter.SnapshotT(t, string(bomFileContent))
 }
