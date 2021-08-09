@@ -200,43 +200,42 @@ github.com/stretchr/testify/assert
 	assert.Len(t, modulePkgs["bazil.org/fuse"], 0)
 }
 
-func TestRemoveModule(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
-		modules := make([]Module, 0)
-		require.Empty(t, RemoveModule(modules, "path@version"))
-	})
+func TestParseModulesFromBinary(t *testing.T) {
+	cmdOutput := `minikube: go1.16.4
+path    k8s.io/minikube/cmd/minikube
+mod     k8s.io/minikube (devel) 
+dep     cloud.google.com/go     v0.84.0 h1:hVhK90DwCdOAYGME/FJd9vNIZye9HBR6Yy3fu4js3N8=
+dep     github.com/briandowns/spinner   v1.11.1
+=>      github.com/alonyb/spinner       v1.12.7 h1:FflTMA9I2xRd8OQ5swyZY6Q1DFeaicA/bWo6/oM82a8=
+`
 
-	t.Run("Single", func(t *testing.T) {
-		modules := []Module{
-			{
-				Path:    "path",
-				Version: "version",
-			},
-		}
+	modules, hashes := parseModulesFromBinary(strings.NewReader(cmdOutput))
+	require.Len(t, modules, 3)
+	require.Len(t, hashes, 2)
 
-		require.Empty(t, RemoveModule(modules, "path@version"))
-	})
+	// Main module
+	require.Equal(t, "k8s.io/minikube", modules[0].Path)
+	require.Equal(t, "(devel)", modules[0].Version)
+	require.True(t, modules[0].Main)
+	require.NotContains(t, hashes, modules[0].Coordinates())
 
-	t.Run("Multiple", func(t *testing.T) {
-		modules := []Module{
-			{
-				Path:    "path1",
-				Version: "version",
-			},
-			{
-				Path:    "path2",
-				Version: "version",
-			},
-			{
-				Path:    "path3",
-				Version: "version",
-			},
-		}
+	// Module w/o replacement
+	require.Equal(t, "cloud.google.com/go", modules[1].Path)
+	require.Equal(t, "v0.84.0", modules[1].Version)
+	require.Contains(t, hashes, modules[1].Coordinates())
+	require.Equal(t, "h1:hVhK90DwCdOAYGME/FJd9vNIZye9HBR6Yy3fu4js3N8=", hashes["cloud.google.com/go@v0.84.0"])
 
-		require.Len(t, RemoveModule(modules, "path2@version"), 2)
-		require.Equal(t, "path1@version", modules[0].Coordinates())
-		require.Equal(t, "path3@version", modules[1].Coordinates())
-	})
+	// Module with replacement
+	require.Equal(t, "github.com/briandowns/spinner", modules[2].Path)
+	require.Equal(t, "v1.11.1", modules[2].Version)
+	require.NotContains(t, hashes, modules[2].Coordinates())
+	require.NotNil(t, modules[2].Replace)
+
+	// Replacement
+	require.Equal(t, "github.com/alonyb/spinner", modules[2].Replace.Path)
+	require.Equal(t, "v1.12.7", modules[2].Replace.Version)
+	require.Contains(t, hashes, modules[2].Replace.Coordinates())
+	require.Equal(t, "h1:FflTMA9I2xRd8OQ5swyZY6Q1DFeaicA/bWo6/oM82a8=", hashes["github.com/alonyb/spinner@v1.12.7"])
 }
 
 func TestFindModule(t *testing.T) {

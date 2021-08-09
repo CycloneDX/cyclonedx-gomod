@@ -372,16 +372,6 @@ func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
 	return modules, hashes
 }
 
-func RemoveModule(modules []Module, coordinates string) []Module {
-	for i, module := range modules {
-		if module.Coordinates() == coordinates {
-			return append(modules[:i], modules[i+1:]...)
-		}
-	}
-
-	return modules
-}
-
 func findModule(modules []Module, coordinates string, strict bool) *Module {
 	for i := range modules {
 		if coordinates == modules[i].Coordinates() || (!strict && strings.HasPrefix(coordinates, modules[i].Path+"@")) {

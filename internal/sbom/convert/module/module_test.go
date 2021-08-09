@@ -20,9 +20,151 @@ package module
 import (
 	"testing"
 
+	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestWithLicenses(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		module := gomod.Module{
+			Dir: "../../../",
+		}
+		component := cdx.Component{}
+
+		err := WithLicenses()(module, &component)
+		require.NoError(t, err)
+		require.NotNil(t, component.Evidence)
+		require.NotNil(t, component.Evidence.Licenses)
+		require.Len(t, *component.Evidence.Licenses, 1)
+	})
+
+	t.Run("Not Found", func(t *testing.T) {
+		module := gomod.Module{
+			Dir: ".",
+		}
+		component := cdx.Component{}
+
+		err := WithLicenses()(module, &component)
+		require.NoError(t, err)
+		require.Nil(t, component.Evidence)
+	})
+
+	t.Run("Other Error", func(t *testing.T) {
+		module := gomod.Module{
+			Dir: "./doesNotExist",
+		}
+		component := cdx.Component{}
+
+		err := WithLicenses()(module, &component)
+		require.Error(t, err)
+		require.Nil(t, component.Evidence)
+	})
+}
+
+func TestWithComponentType(t *testing.T) {
+	module := gomod.Module{}
+	component := cdx.Component{}
+
+	err := WithComponentType(cdx.ComponentTypeContainer)(module, &component)
+	require.NoError(t, err)
+	require.Equal(t, cdx.ComponentTypeContainer, component.Type)
+}
+
+func TestWithScope(t *testing.T) {
+	module := gomod.Module{}
+	component := cdx.Component{}
+
+	err := WithScope(cdx.ScopeExcluded)(module, &component)
+	require.NoError(t, err)
+	require.Equal(t, cdx.ScopeExcluded, component.Scope)
+}
+
+func TestWithTestScope(t *testing.T) {
+	t.Run("TestOnly", func(t *testing.T) {
+		module := gomod.Module{
+			TestOnly: true,
+		}
+		component := cdx.Component{}
+
+		err := WithTestScope(cdx.ScopeExcluded)(module, &component)
+		require.NoError(t, err)
+		require.Equal(t, cdx.ScopeExcluded, component.Scope)
+	})
+
+	t.Run("Not TestOnly", func(t *testing.T) {
+		module := gomod.Module{
+			TestOnly: false,
+		}
+		component := cdx.Component{}
+
+		err := WithTestScope(cdx.ScopeExcluded)(module, &component)
+		require.NoError(t, err)
+		require.Equal(t, cdx.Scope(""), component.Scope)
+	})
+}
+
+func TestToComponent(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		module := gomod.Module{
+			Path:    "path",
+			Version: "version",
+		}
+
+		component, err := ToComponent(module)
+		require.NoError(t, err)
+		require.NotNil(t, component)
+
+		require.Equal(t, "pkg:golang/path@version", component.BOMRef)
+		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
+		require.Equal(t, "path", component.Name)
+		require.Equal(t, "version", component.Version)
+		require.Equal(t, "pkg:golang/path@version", component.PackageURL)
+		require.Equal(t, cdx.ScopeRequired, component.Scope)
+	})
+
+	t.Run("With TestOnly", func(t *testing.T) {
+		module := gomod.Module{
+			Path:     "path",
+			Version:  "version",
+			TestOnly: true,
+		}
+
+		component, err := ToComponent(module)
+		require.NoError(t, err)
+		require.NotNil(t, component)
+
+		require.Equal(t, "pkg:golang/path@version", component.BOMRef)
+		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
+		require.Equal(t, "path", component.Name)
+		require.Equal(t, "version", component.Version)
+		require.Equal(t, "pkg:golang/path@version", component.PackageURL)
+		require.Equal(t, cdx.ScopeOptional, component.Scope)
+	})
+
+	t.Run("With Replace", func(t *testing.T) {
+		module := gomod.Module{
+			Path:    "path",
+			Version: "version",
+			Replace: &gomod.Module{
+				Path:    "pathReplace",
+				Version: "versionReplace",
+			},
+		}
+
+		component, err := ToComponent(module)
+		require.NoError(t, err)
+		require.NotNil(t, component)
+
+		require.Equal(t, "pkg:golang/pathReplace@versionReplace", component.BOMRef)
+		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
+		require.Equal(t, "pathReplace", component.Name)
+		require.Equal(t, "versionReplace", component.Version)
+		require.Equal(t, "pkg:golang/pathReplace@versionReplace", component.PackageURL)
+		require.Equal(t, cdx.ScopeRequired, component.Scope)
+	})
+}
 
 func TestResolveVCSURL(t *testing.T) {
 	t.Run("GitHub", func(t *testing.T) {
