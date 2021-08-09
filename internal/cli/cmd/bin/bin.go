@@ -59,12 +59,12 @@ Example:
 			cliutil.ConfigureLogger(options.LogOptions)
 
 			options.BinaryPath = args[0]
-			return execBinCmd(options)
+			return Exec(options)
 		},
 	}
 }
 
-func execBinCmd(binOptions BinOptions) error {
+func Exec(binOptions BinOptions) error {
 	err := binOptions.Validate()
 	if err != nil {
 		return err
