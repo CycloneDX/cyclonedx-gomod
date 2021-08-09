@@ -24,6 +24,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 // GetVersion returns the version of Go in the environment.
@@ -78,8 +80,14 @@ func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 	return executeGoCommand(args, moduleDir, writer, os.Stderr)
 }
 
+// ModWhy executes `go version -m` and writes the output to a given writer.
+func GetModulesFromBinary(binaryPath string, writer io.Writer) error {
+	return executeGoCommand([]string{"version", "-m", binaryPath}, "", writer, nil)
+}
+
 func executeGoCommand(args []string, dir string, stdout, stderr io.Writer) error {
 	cmd := exec.Command("go", args...)
+	log.Debug().Str("cmd", cmd.String()).Msg("executing command")
 
 	if dir != "" {
 		cmd.Dir = dir

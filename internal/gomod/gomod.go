@@ -24,13 +24,14 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/mod/semver"
 	"golang.org/x/mod/sumdb/dirhash"
 )
 
@@ -76,9 +77,10 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 		return nil, ErrNoGoModule
 	}
 
-	var mainModule *Module
-	var modules []Module
-	var err error
+	var (
+		modules []Module
+		err     error
+	)
 
 	// We're going to call the go command a few times and
 	// we'll (re-)use this buffer to write its output to
@@ -94,9 +96,6 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 		if err != nil {
 			return nil, fmt.Errorf("parsing modules failed: %w", err)
 		}
-
-		mainModule = &modules[0]
-		modules = modules[1:]
 	} else {
 		if err = gocmd.ListVendoredModules(mainModulePath, buf); err != nil {
 			return nil, fmt.Errorf("listing vendored modules failed: %w", err)
@@ -114,10 +113,12 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 			return nil, fmt.Errorf("listing main module failed: %w", err)
 		}
 
-		mainModule = new(Module)
-		if err = json.NewDecoder(buf).Decode(mainModule); err != nil {
+		mainModule := Module{}
+		if err = json.NewDecoder(buf).Decode(&mainModule); err != nil {
 			return nil, fmt.Errorf("parsing main module failed: %w", err)
 		}
+
+		modules = append(modules, mainModule)
 	}
 
 	modules, err = filterModules(mainModulePath, modules, includeTest)
@@ -125,15 +126,7 @@ func GetModules(mainModulePath string, includeTest bool) ([]Module, error) {
 		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
 
-	// Sort modules by path to have a deterministic order
-	sort.Slice(modules, func(i, j int) bool {
-		return modules[i].Path < modules[j].Path
-	})
-
-	if mainModule == nil {
-		return nil, fmt.Errorf("failed to identify main module")
-	}
-	modules = append([]Module{*mainModule}, modules...)
+	SortModules(modules)
 
 	// Replacements may point to local directories, in which case their .Path is
 	// not the actual module's name, but the filepath as used in go.mod.
@@ -268,7 +261,6 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		// When identifying the ACTUAL dependant, we search for it in strict mode (versions must match).
 		dependant := findModule(modules, fields[0], true)
 		if dependant == nil {
-			// TODO: log this in DEBUG level once we use a more sophisticated logger
 			continue
 		}
 
@@ -277,7 +269,10 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		// the effective modules slice. Hence, we search for the dependency in non-strict mode.
 		dependency := findModule(modules, fields[1], false)
 		if dependency == nil {
-			// TODO: log this in DEBUG level once we use a more sophisticated logger
+			log.Debug().
+				Str("dependant", dependant.Coordinates()).
+				Str("dependency", fields[1]).
+				Msg("dependency not found")
 			continue
 		}
 
@@ -288,11 +283,8 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		}
 	}
 
-	// Sort dependencies by path to have a deterministic order
 	for i := range modules {
-		sort.Slice(modules[i].Dependencies, func(j, k int) bool {
-			return modules[i].Dependencies[j].Path < modules[i].Dependencies[k].Path
-		})
+		SortDependencies(modules[i].Dependencies)
 	}
 
 	return nil
@@ -321,6 +313,63 @@ func parseModWhy(reader io.Reader) map[string][]string {
 	}
 
 	return modPkgs
+}
+
+func GetModulesFromBinary(binaryPath string) ([]Module, map[string]string, error) {
+	buf := new(bytes.Buffer)
+	if err := gocmd.GetModulesFromBinary(binaryPath, buf); err != nil {
+		return nil, nil, err
+	}
+
+	modules, hashes := parseModulesFromBinary(buf)
+	SortModules(modules)
+
+	return modules, hashes, nil
+}
+
+func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
+	modules := make([]Module, 0)
+	hashes := make(map[string]string)
+
+	moduleIndex := 0
+	scanner := bufio.NewScanner(reader)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+
+		fields := strings.Fields(line)
+		switch fields[0] {
+		case "mod": // Main module
+			modules = append(modules, Module{
+				Path:    fields[1],
+				Version: fields[2],
+				Main:    true,
+			})
+			moduleIndex += 1
+		case "dep": // Depdendency module
+			module := Module{
+				Path:    fields[1],
+				Version: fields[2],
+			}
+			modules = append(modules, module)
+			if len(fields) == 4 {
+				// Hash won't be available when the module is replaced
+				hashes[module.Coordinates()] = fields[3]
+			}
+			moduleIndex += 1
+		case "=>": // Replacement
+			module := Module{
+				Path:    fields[1],
+				Version: fields[2],
+			}
+			modules[moduleIndex-1].Replace = &module
+			hashes[module.Coordinates()] = fields[3]
+		}
+	}
+
+	return modules, hashes
 }
 
 func findModule(modules []Module, coordinates string, strict bool) *Module {
@@ -386,7 +435,7 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 
 		for modPath, modPkgs := range parseModWhy(buf) {
 			if len(modPkgs) == 0 {
-				// TODO: log this in DEBUG level once we use a more sophisticated logger
+				log.Debug().Str("module", modPath).Msg("filtering unneeded module")
 				continue
 			}
 
@@ -399,7 +448,7 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 				}
 			}
 			if !includeTest && testOnly {
-				// TODO: log this in DEBUG level once we use a more sophisticated logger
+				log.Debug().Str("module", modPath).Msg("filtering test-only module")
 				continue
 			}
 
@@ -417,6 +466,37 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 	}
 
 	return filtered, nil
+}
+
+// SortModules sorts a given Module slice ascendingly by path.
+// Main modules take precedence, so that they will represent the first elements of the sorted slice.
+// If the path of two modules are equal, they'll be compared by their semantic version instead.
+func SortModules(modules []Module) {
+	sort.Slice(modules, func(i, j int) bool {
+		if modules[i].Main && !modules[j].Main {
+			return true
+		} else if !modules[i].Main && modules[j].Main {
+			return false
+		}
+
+		if modules[i].Path == modules[j].Path {
+			return semver.Compare(modules[i].Version, modules[j].Version) == -1
+		}
+
+		return modules[i].Path < modules[j].Path
+	})
+}
+
+// SortDependencies sorts a given Module pointer slice ascendingly by path.
+// If the path of two modules are equal, they'll be compared by their semantic version instead.
+func SortDependencies(dependencies []*Module) {
+	sort.Slice(dependencies, func(i, j int) bool {
+		if dependencies[i].Path == dependencies[j].Path {
+			return semver.Compare(dependencies[i].Version, dependencies[j].Version) == -1
+		}
+
+		return dependencies[i].Path < dependencies[j].Path
+	})
 }
 
 func resolveLocalModule(localModulePath string, module *Module) error {
@@ -448,7 +528,7 @@ func resolveLocalModule(localModulePath string, module *Module) error {
 			// We don't fail with an error here, because our possibilities are limited.
 			// module.Dir may be a Mercurial repo or just a normal directory, in which case we
 			// cannot detect versions reliably right now.
-			log.Printf("failed to resolve version of local module %s: %v\n", module.Path, err)
+			log.Warn().Err(err).Str("module", module.Path).Msg("failed to resolve version of local module")
 		}
 	}
 

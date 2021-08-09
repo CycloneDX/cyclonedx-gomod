@@ -19,9 +19,9 @@
     </component>
   </components>
   <dependencies>
-    <dependency ref="pkg:golang/testmod-local-dependency"></dependency>
     <dependency ref="pkg:golang/testmod-local@v0.0.0-20210716205356-32d6b8adc872">
       <dependency ref="pkg:golang/testmod-local-dependency"></dependency>
     </dependency>
+    <dependency ref="pkg:golang/testmod-local-dependency"></dependency>
   </dependencies>
 </bom>

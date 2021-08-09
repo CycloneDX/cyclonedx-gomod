@@ -15,29 +15,27 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package mod
 
 import (
-	"context"
-	"flag"
+	"testing"
 
-	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/stretchr/testify/require"
 )
 
-func NewRootCmd() *ffcli.Command {
-	return &ffcli.Command{
-		Name:       "cyclonedx-gomod",
-		ShortUsage: "cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]",
-		Subcommands: []*ffcli.Command{
-			newModCmd(),
-			newVersionCmd(),
-		},
-		Exec: func(_ context.Context, _ []string) error {
-			return execRootCmd()
-		},
-	}
-}
+func TestOptions_Validate(t *testing.T) {
+	t.Run("InvalidComponentType", func(t *testing.T) {
+		var modOptions ModOptions
+		modOptions.ComponentType = "foobar"
 
-func execRootCmd() error {
-	return flag.ErrHelp
+		err := modOptions.Validate()
+		require.Error(t, err)
+
+		var validationError *options.ValidationError
+		require.ErrorAs(t, err, &validationError)
+
+		require.Len(t, validationError.Errors, 1)
+		require.Contains(t, validationError.Errors[0].Error(), "invalid component type")
+	})
 }

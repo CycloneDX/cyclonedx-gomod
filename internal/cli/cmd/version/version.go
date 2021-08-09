@@ -15,21 +15,30 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package version
 
 import (
-	"bytes"
+	"context"
 	"fmt"
-	"testing"
+	"io"
+	"os"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
-	"github.com/stretchr/testify/require"
+	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
-func TestExecVersionCmd(t *testing.T) {
-	buf := new(bytes.Buffer)
+func New() *ffcli.Command {
+	return &ffcli.Command{
+		Name:       "version",
+		ShortHelp:  "Show version information",
+		ShortUsage: "cyclonedx-gomod version",
+		Exec: func(_ context.Context, _ []string) error {
+			return execVersionCmd(os.Stdout)
+		},
+	}
+}
 
-	err := execVersionCmd(buf)
-	require.NoError(t, err)
-	require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
+func execVersionCmd(writer io.Writer) error {
+	fmt.Fprintln(writer, version.Version)
+	return nil
 }

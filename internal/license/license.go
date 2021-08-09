@@ -25,9 +25,10 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/go-enry/go-license-detector/v4/licensedb"
 	"github.com/go-enry/go-license-detector/v4/licensedb/filer"
+	"github.com/rs/zerolog/log"
 )
 
-var ErrLicenseNotFound = errors.New("no license found")
+var ErrNoLicenseFound = errors.New("no license found")
 
 const minDetectionConfidence = 0.9
 
@@ -39,6 +40,9 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 
 	detectedLicenses, err := licensedb.Detect(licensesFiler)
 	if err != nil {
+		if errors.Is(err, licensedb.ErrNoLicenseFound) {
+			return nil, ErrNoLicenseFound
+		}
 		return nil, err
 	}
 
@@ -65,8 +69,14 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 	}
 
 	if detectedLicense == "" || detectedLicenseConfidence < minDetectionConfidence {
-		return nil, ErrLicenseNotFound
+		return nil, ErrNoLicenseFound
 	}
+
+	log.Debug().
+		Str("module", module.Coordinates()).
+		Str("license", detectedLicense).
+		Float32("confidence", detectedLicenseConfidence).
+		Msg("license detected")
 
 	return []cdx.License{
 		{

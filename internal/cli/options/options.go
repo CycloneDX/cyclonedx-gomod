@@ -15,24 +15,23 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package cli
+package options
 
 import (
 	"flag"
 	"fmt"
 
-	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/google/uuid"
 )
 
-// OptionsValidationError represents a validation error for options.
+// ValidationError represents a validation error for options.
 // It can contain multiple errors with details about which validation
 // operations failed. The Errors slice should never be empty.
-type OptionsValidationError struct {
+type ValidationError struct {
 	Errors []error
 }
 
-func (e OptionsValidationError) Error() string {
+func (e ValidationError) Error() string {
 	err := "invalid options:\n"
 	for _, e := range e.Errors {
 		err += fmt.Sprintf(" - %s\n", e)
@@ -40,15 +39,23 @@ func (e OptionsValidationError) Error() string {
 	return err
 }
 
+type LogOptions struct {
+	Verbose bool
+}
+
+func (l *LogOptions) RegisterFlags(fs *flag.FlagSet) {
+	fs.BoolVar(&l.Verbose, "verbose", false, "Enable verbose output")
+}
+
 // OutputOptions provides options for customizing the output.
 type OutputOptions struct {
-	FilePath string
-	UseJSON  bool
+	OutputFilePath string
+	UseJSON        bool
 }
 
 func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&o.UseJSON, "json", false, "Output in JSON")
-	fs.StringVar(&o.FilePath, "output", "-", "Output file path (or - for STDOUT)")
+	fs.StringVar(&o.OutputFilePath, "output", "-", "Output file path (or - for STDOUT)")
 }
 
 func (o OutputOptions) Validate() error {
@@ -57,9 +64,7 @@ func (o OutputOptions) Validate() error {
 
 // SBOMOptions provides options for customizing the SBOM.
 type SBOMOptions struct {
-	ComponentType   string
 	IncludeStd      bool
-	IncludeTest     bool
 	NoSerialNumber  bool
 	NoVersionPrefix bool
 	Reproducible    bool
@@ -67,39 +72,15 @@ type SBOMOptions struct {
 }
 
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
-	fs.StringVar(&s.ComponentType, "type", "application", "Type of the main component")
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
-	fs.BoolVar(&s.IncludeTest, "test", false, "Include test dependencies")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
 	fs.BoolVar(&s.NoVersionPrefix, "novprefix", false, "Omit \"v\" prefix from versions")
 	fs.BoolVar(&s.Reproducible, "reproducible", false, "Make the SBOM reproducible by omitting dynamic content")
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
 }
 
-var allowedComponentTypes = []cdx.ComponentType{
-	cdx.ComponentTypeApplication,
-	cdx.ComponentTypeContainer,
-	cdx.ComponentTypeDevice,
-	cdx.ComponentTypeFile,
-	cdx.ComponentTypeFirmware,
-	cdx.ComponentTypeFramework,
-	cdx.ComponentTypeLibrary,
-	cdx.ComponentTypeOS,
-}
-
 func (s SBOMOptions) Validate() error {
 	errs := make([]error, 0)
-
-	isAllowedComponentType := false
-	for i := range allowedComponentTypes {
-		if allowedComponentTypes[i] == cdx.ComponentType(s.ComponentType) {
-			isAllowedComponentType = true
-			break
-		}
-	}
-	if !isAllowedComponentType {
-		errs = append(errs, fmt.Errorf("invalid component type: \"%s\"", s.ComponentType))
-	}
 
 	// Serial numbers must be valid UUIDs
 	if !s.NoSerialNumber && s.SerialNumber != "" {
@@ -109,7 +90,7 @@ func (s SBOMOptions) Validate() error {
 	}
 
 	if len(errs) > 0 {
-		return &OptionsValidationError{Errors: errs}
+		return &ValidationError{Errors: errs}
 	}
 
 	return nil
