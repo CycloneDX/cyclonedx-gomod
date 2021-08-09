@@ -24,7 +24,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestOptions_Validate(t *testing.T) {
+func TestModOptions_Validate(t *testing.T) {
 	t.Run("InvalidComponentType", func(t *testing.T) {
 		var modOptions ModOptions
 		modOptions.ComponentType = "foobar"

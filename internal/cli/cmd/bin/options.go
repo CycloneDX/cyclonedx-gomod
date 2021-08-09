@@ -21,9 +21,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 type BinOptions struct {
@@ -63,8 +63,16 @@ func (b BinOptions) Validate() error {
 		}
 	}
 
-	if !util.FileExists(b.BinaryPath) {
-		errs = append(errs, fmt.Errorf("binary at %s does not exist", b.BinaryPath))
+	fileInfo, err := os.Stat(b.BinaryPath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			errs = append(errs, fmt.Errorf("binary at %s does not exist", b.BinaryPath))
+		} else {
+			return err
+		}
+	}
+	if fileInfo != nil && fileInfo.IsDir() {
+		errs = append(errs, fmt.Errorf("%s is a directory", b.BinaryPath))
 	}
 
 	if len(errs) > 0 {
