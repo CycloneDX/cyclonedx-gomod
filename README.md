@@ -37,12 +37,33 @@ USAGE
   cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]
 
 SUBCOMMANDS
+  app      Generate SBOM for an application
   bin      Generate SBOM for a binary
   mod      Generate SBOM for a module
   version  Show version information
 ```
 
 ### Subcommands
+
+#### `app`
+
+```
+USAGE
+  cyclonedx-gomod app [FLAGS...] PATH
+
+FLAGS
+  -json=false          Output in JSON
+  -licenses=false      Resolve module licenses
+  -main ...            Path to the application's main package
+  -noserial=false      Omit serial number
+  -novprefix=false     Omit "v" prefix from versions
+  -output -            Output file path (or - for STDOUT)
+  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
+  -serial ...          Serial number
+  -std=false           Include Go standard library as component and dependency of the module
+  -test=false          Include test dependencies
+  -verbose=false       Enable verbose output
+```
 
 #### `bin`
 
