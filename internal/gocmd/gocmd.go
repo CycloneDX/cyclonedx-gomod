@@ -60,6 +60,12 @@ func ListModules(moduleDir string, writer io.Writer) error {
 	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m", "all"}, moduleDir, writer, nil)
 }
 
+// ListPackages executed `go list -deps -json` and writes the output to a given writer.
+// See https://golang.org/cmd/go/#hdr-List_packages_or_modules
+func ListPackages(moduleDir string, writer io.Writer) error {
+	return executeGoCommand([]string{"list", "-deps", "-json", "./..."}, moduleDir, writer, os.Stderr)
+}
+
 // ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-vendor
 func ListVendoredModules(moduleDir string, writer io.Writer) error {

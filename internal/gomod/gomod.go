@@ -50,6 +50,9 @@ type Module struct {
 	Local        bool      `json:"-"` // is this a local module?
 	TestOnly     bool      `json:"-"` // is this module only required for tests?
 	Vendored     bool      `json:"-"` // is this a vendored module?
+
+	Files     []string `json:"-"` // files in this module
+	TestFiles []string `json:"-"` // test files in this module
 }
 
 func (m Module) Coordinates() string {

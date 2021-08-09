@@ -21,6 +21,7 @@ import (
 	"context"
 	"flag"
 
+	appcmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/app"
 	bincmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/bin"
 	modcmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/mod"
 	versioncmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/version"
@@ -32,6 +33,7 @@ func NewRootCmd() *ffcli.Command {
 		Name:       "cyclonedx-gomod",
 		ShortUsage: "cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]",
 		Subcommands: []*ffcli.Command{
+			appcmd.New(),
 			bincmd.New(),
 			modcmd.New(),
 			versioncmd.New(),

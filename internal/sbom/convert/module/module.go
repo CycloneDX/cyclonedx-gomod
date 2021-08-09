@@ -20,12 +20,14 @@ package module
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/file"
 	"github.com/rs/zerolog/log"
 )
 
@@ -64,6 +66,32 @@ func WithLicenses() Option {
 func WithComponentType(ctype cdx.ComponentType) Option {
 	return func(_ gomod.Module, c *cdx.Component) error {
 		c.Type = ctype
+		return nil
+	}
+}
+
+func WithFiles() Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		var fileComponents []cdx.Component
+
+		for _, filePath := range m.Files {
+			fileComponent, err := file.ToComponent(filepath.Join(m.Dir, filePath), filePath,
+				file.WithScope(cdx.ScopeRequired),
+				file.WithHashes(cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512),
+			)
+			if err != nil {
+				return err
+			}
+
+			fileComponents = append(fileComponents, *fileComponent)
+		}
+
+		if len(fileComponents) == 0 {
+			return nil
+		}
+
+		c.Components = &fileComponents
+
 		return nil
 	}
 }
