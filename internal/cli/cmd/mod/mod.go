@@ -75,7 +75,8 @@ func execModCmd(modOptions ModOptions) error {
 
 	// Cheap trick to make Go download all required modules in the module graph
 	// without modifying go.sum (as `go mod download` would do).
-	if err := gocmd.ModWhy(modOptions.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-go"}, io.Discard); err != nil {
+	err = gocmd.ModWhy(modOptions.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
+	if err != nil {
 		return fmt.Errorf("downloading modules failed: %w", err)
 	}
 
@@ -120,6 +121,7 @@ func execModCmd(modOptions ModOptions) error {
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
+
 	err = cliutil.AddCommonMetadata(bom, modOptions.SBOMOptions)
 	if err != nil {
 		return err
@@ -129,27 +131,9 @@ func execModCmd(modOptions ModOptions) error {
 	bom.Dependencies = &dependencyGraph
 
 	if modOptions.IncludeStd {
-		stdComponent, err := sbom.BuildStdComponent()
+		err = addStdComponent(bom)
 		if err != nil {
-			return fmt.Errorf("failed to build std component: %w", err)
-		}
-
-		*bom.Components = append(*bom.Components, *stdComponent)
-
-		// Add std to dependency graph
-		stdDependency := cdx.Dependency{Ref: stdComponent.BOMRef}
-		*bom.Dependencies = append(*bom.Dependencies, stdDependency)
-
-		// Add std as dependency of main module
-		for i, dependency := range *bom.Dependencies {
-			if dependency.Ref == mainComponent.BOMRef {
-				if dependency.Dependencies == nil {
-					(*bom.Dependencies)[i].Dependencies = &[]cdx.Dependency{stdDependency}
-				} else {
-					*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
-				}
-				break
-			}
+			return err
 		}
 	}
 
@@ -199,4 +183,31 @@ func withModuleHashes() modconv.Option {
 
 		return nil
 	}
+}
+
+func addStdComponent(bom *cdx.BOM) error {
+	stdComponent, err := sbom.BuildStdComponent()
+	if err != nil {
+		return fmt.Errorf("failed to build std component: %w", err)
+	}
+
+	*bom.Components = append(*bom.Components, *stdComponent)
+
+	// Add std to dependency graph
+	stdDependency := cdx.Dependency{Ref: stdComponent.BOMRef}
+	*bom.Dependencies = append(*bom.Dependencies, stdDependency)
+
+	// Add std as dependency of main module
+	for i, dependency := range *bom.Dependencies {
+		if dependency.Ref == bom.Metadata.Component.BOMRef {
+			if dependency.Dependencies == nil {
+				(*bom.Dependencies)[i].Dependencies = &[]cdx.Dependency{stdDependency}
+			} else {
+				*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
+			}
+			break
+		}
+	}
+
+	return nil
 }

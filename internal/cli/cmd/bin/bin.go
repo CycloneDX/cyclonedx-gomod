@@ -101,7 +101,7 @@ func execBinCmd(binOptions BinOptions) error {
 		return err
 	}
 
-	dependencies := sbom.BuildDependencyGraph(modules)
+	dependencyGraph := sbom.BuildDependencyGraph(modules)
 
 	binaryProperties, err := createBinaryProperties(binOptions.BinaryPath)
 	if err != nil {
@@ -110,7 +110,8 @@ func execBinCmd(binOptions BinOptions) error {
 
 	bom := cdx.NewBOM()
 
-	if err = cliutil.SetSerialNumber(bom, binOptions.SBOMOptions); err != nil {
+	err = cliutil.SetSerialNumber(bom, binOptions.SBOMOptions)
+	if err != nil {
 		return err
 	}
 
@@ -118,12 +119,13 @@ func execBinCmd(binOptions BinOptions) error {
 		Component:  mainComponent,
 		Properties: &binaryProperties,
 	}
-	if err = cliutil.AddCommonMetadata(bom, binOptions.SBOMOptions); err != nil {
+	err = cliutil.AddCommonMetadata(bom, binOptions.SBOMOptions)
+	if err != nil {
 		return err
 	}
 
 	bom.Components = &components
-	bom.Dependencies = &dependencies
+	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
 
 	return cliutil.WriteBOM(bom, binOptions.OutputOptions)

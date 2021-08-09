@@ -108,7 +108,7 @@ func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error)
 		component.Scope = cdx.ScopeRequired
 	}
 
-	vcsURL := ResolveVCSURL(module.Path)
+	vcsURL := resolveVCSURL(module.Path)
 	if vcsURL != "" {
 		component.ExternalReferences = &[]cdx.ExternalReference{
 			{
@@ -156,7 +156,7 @@ var (
 	vcsUrlGoPkgInRegexWithoutUser = regexp.MustCompile(`^gopkg\.in/([^.]+)\..*$`)
 )
 
-func ResolveVCSURL(modulePath string) string {
+func resolveVCSURL(modulePath string) string {
 	switch {
 	case strings.HasPrefix(modulePath, "github.com/"):
 		return "https://" + vcsUrlMajorVersionSuffixRegex.ReplaceAllString(modulePath, "")
