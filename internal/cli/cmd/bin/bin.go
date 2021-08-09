@@ -56,6 +56,8 @@ Example:
 				return fmt.Errorf("no binary path provided")
 			}
 
+			cliutil.ConfigureLogger(options.LogOptions)
+
 			options.BinaryPath = args[0]
 			return execBinCmd(options)
 		},
@@ -67,8 +69,6 @@ func execBinCmd(binOptions BinOptions) error {
 	if err != nil {
 		return err
 	}
-
-	cliutil.ConfigureLogger(binOptions.LogOptions)
 
 	modules, hashes, err := gomod.GetModulesFromBinary(binOptions.BinaryPath)
 	if err != nil {

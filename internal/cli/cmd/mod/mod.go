@@ -60,18 +60,18 @@ Examples:
 				options.ModuleDir = args[0]
 			}
 
-			return execModCmd(options)
+			cliutil.ConfigureLogger(options.LogOptions)
+
+			return Exec(options)
 		},
 	}
 }
 
-func execModCmd(modOptions ModOptions) error {
+func Exec(modOptions ModOptions) error {
 	err := modOptions.Validate()
 	if err != nil {
 		return err
 	}
-
-	cliutil.ConfigureLogger(modOptions.LogOptions)
 
 	// Cheap trick to make Go download all required modules in the module graph
 	// without modifying go.sum (as `go mod download` would do).
