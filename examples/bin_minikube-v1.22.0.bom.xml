@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:5621bbec-7452-4138-91c5-1a61454f4a87" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:089c5697-ceb4-475a-a9ed-f5bb72f3d35b" version="1">
   <metadata>
-    <timestamp>2021-08-10T18:38:36+02:00</timestamp>
+    <timestamp>2021-08-10T19:18:43+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
-        <version>v0.0.0-20210810183816-08f9d35e884a</version>
+        <version>v0.0.0-20210810183900-b4c5841e118e</version>
         <hashes>
-          <hash alg="MD5">52f6cb288259c1d9a6ee983175bb903a</hash>
-          <hash alg="SHA-1">b2a7752d280cacdcd890f15a26fca9fb0fef85b4</hash>
-          <hash alg="SHA-256">f5cee14447a94f85febe74ef5026143193ee0db6df57a52b9f65785c9b05184f</hash>
-          <hash alg="SHA-384">0f9743ca255c4481ca7c6e7f21ea5ae1f8f878a46758a417f7da71260e409b5dbb7672ec326c79f285966fb6183be49f</hash>
-          <hash alg="SHA-512">bb117f10e5ea9d2ca61fdda572f10e7791a6a1ed07e48dee4c224617a40fb910bd0ef2b49a69ecf40abba02604260ac580ecec288ce1d86d8188cd3a81d37853</hash>
+          <hash alg="MD5">815e27f8967afcdf3ded0b7171bd8851</hash>
+          <hash alg="SHA-1">350e7f670a266d5c98271ce61981220b3194cace</hash>
+          <hash alg="SHA-256">1cf760fb8aab54762976c0a88eb6e4d7a586419a75cb0bf6916f751a2a81116d</hash>
+          <hash alg="SHA-384">409441dc31abd93ddaf2721ee83cf3bf8e217ab26c60f2105ecc085ea0e42d2672644dbe5397b51464f9d55047812294</hash>
+          <hash alg="SHA-512">c0b8586d03712ee613bdb45b85e90142a01627240308b7118de25029f3b9d0969ab225832a0fea0a5975b2d77e48497b0e5384252a2e1215557f663f4fa19e1f</hash>
         </hashes>
       </tool>
     </tools>
@@ -525,6 +525,13 @@
           <url>https://github.com/machine-drivers/machine</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Apache-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/fatih/color@v1.10.0" type="library">
       <name>github.com/fatih/color</name>
@@ -679,6 +686,13 @@
           <url>https://github.com/afbjorklund/go-containerregistry</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Apache-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/google/gofuzz@v1.1.0" type="library">
       <name>github.com/google/gofuzz</name>
@@ -1764,6 +1778,13 @@
           <url>https://github.com/sayboras/dockerclient</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Apache-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/github.com/shirou/gopsutil/v3@v3.21.6" type="library">
       <name>github.com/shirou/gopsutil/v3</name>
@@ -2479,6 +2500,13 @@
         <hash alg="SHA-256">197bc2c65eb5f40d1e761029ad7f14e60519e6540251fef18436bb4a45e7971d</hash>
       </hashes>
       <purl>pkg:golang/k8s.io/cluster-bootstrap@v0.21.2</purl>
+      <evidence>
+        <licenses>
+          <license>
+            <id>Apache-2.0</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
     <component bom-ref="pkg:golang/k8s.io/component-base@v0.21.2" type="library">
       <name>k8s.io/component-base</name>

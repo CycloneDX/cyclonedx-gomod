@@ -83,7 +83,16 @@ func Exec(binOptions BinOptions) error {
 	}
 
 	if binOptions.ResolveLicenses {
-		downloads, err := gomod.Download(modules)
+		modulesToDownload := make([]gomod.Module, len(modules))
+		for i, module := range modules {
+			if module.Replace != nil {
+				modulesToDownload[i] = *modules[i].Replace
+			} else {
+				modulesToDownload[i] = modules[i]
+			}
+		}
+
+		downloads, err := gomod.Download(modulesToDownload)
 		if err != nil {
 			return err
 		}
