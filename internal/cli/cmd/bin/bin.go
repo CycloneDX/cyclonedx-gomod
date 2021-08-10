@@ -45,6 +45,9 @@ func New() *ffcli.Command {
 		ShortUsage: "cyclonedx-gomod bin [FLAGS...] PATH",
 		LongHelp: `Generate SBOM for a binary.
 
+When license resolution is enabled, all modules (including the main module) 
+will be downloaded to the module cache using "go mod download".
+
 Please note that data embedded in binaries shouldn't be trusted,
 unless there's solid evidence that the binaries haven't been modified
 since they've been built.
