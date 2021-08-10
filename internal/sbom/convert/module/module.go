@@ -35,6 +35,14 @@ type Option func(gomod.Module, *cdx.Component) error
 // to the component's license evidence.
 func WithLicenses() Option {
 	return func(m gomod.Module, c *cdx.Component) error {
+		if m.Dir == "" {
+			log.Warn().
+				Str("module", m.Coordinates()).
+				Str("reason", "module not in module cache").
+				Msg("can't resolve module license")
+			return nil
+		}
+
 		log.Debug().Str("module", m.Coordinates()).Msg("resolving licenses")
 		resolvedLicenses, err := license.Resolve(m)
 

@@ -30,6 +30,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/rs/zerolog/log"
 )
 
 func New() *ffcli.Command {
@@ -81,6 +82,50 @@ func Exec(binOptions BinOptions) error {
 		modules[0].Version = binOptions.Version
 	}
 
+	if binOptions.ResolveLicenses {
+		downloads, err := gomod.Download(modules)
+		if err != nil {
+			return err
+		}
+
+		for i, download := range downloads {
+			if download.Error != "" {
+				log.Warn().
+					Str("module", download.Coordinates()).
+					Str("error", download.Error).
+					Msg("module download failed")
+				continue
+			}
+
+			module := findModule(modules, download.Coordinates())
+			if module == nil {
+				log.Warn().
+					Str("module", download.Coordinates()).
+					Msg("downloaded module not found")
+				continue
+			}
+
+			// Report hash mismatches
+			hash, ok := hashes[download.Coordinates()]
+			if ok {
+				if hash != download.Sum {
+					log.Warn().
+						Str("binaryHash", hash).
+						Str("downloadHash", download.Sum).
+						Str("module", download.Coordinates()).
+						Msg("module hash mismatch")
+					continue
+				}
+			}
+
+			log.Debug().
+				Str("module", download.Coordinates()).
+				Str("dir", download.Dir).
+				Msg("module downloaded")
+			module.Dir = downloads[i].Dir
+		}
+	}
+
 	sbom.NormalizeVersions(modules, binOptions.NoVersionPrefix)
 
 	// Make all modules a direct dependency of the main module
@@ -90,13 +135,17 @@ func Exec(binOptions BinOptions) error {
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentTypeApplication),
+		withLicenses(binOptions.ResolveLicenses),
 		modconv.WithScope(""), // Main component can't have a scope
 	)
 	if err != nil {
 		return err
 	}
 
-	components, err := modconv.ToComponents(modules[1:], withModuleHashes(hashes))
+	components, err := modconv.ToComponents(modules[1:],
+		withLicenses(binOptions.ResolveLicenses),
+		withModuleHashes(hashes),
+	)
 	if err != nil {
 		return err
 	}
@@ -194,4 +243,26 @@ func createCompositions(mainComponent cdx.Component, components []cdx.Component)
 	})
 
 	return &compositions
+}
+
+func findModule(modules []gomod.Module, coordinates string) *gomod.Module {
+	for i, module := range modules {
+		if module.Replace != nil && coordinates == module.Replace.Coordinates() {
+			return modules[i].Replace
+		}
+		if coordinates == module.Coordinates() {
+			return &modules[i]
+		}
+	}
+
+	return nil
+}
+
+func withLicenses(enabled bool) modconv.Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		if enabled {
+			return modconv.WithLicenses()(m, c)
+		}
+		return nil
+	}
 }

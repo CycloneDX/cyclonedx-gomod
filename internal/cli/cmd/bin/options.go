@@ -31,8 +31,9 @@ type BinOptions struct {
 	options.OutputOptions
 	options.SBOMOptions
 
-	BinaryPath string
-	Version    string
+	BinaryPath      string
+	ResolveLicenses bool
+	Version         string
 }
 
 func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
@@ -40,6 +41,7 @@ func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
 	b.OutputOptions.RegisterFlags(fs)
 	b.SBOMOptions.RegisterFlags(fs)
 
+	fs.BoolVar(&b.ResolveLicenses, "licenses", false, "Resolve module licenses")
 	fs.StringVar(&b.Version, "version", "", "Version of the main component")
 }
 

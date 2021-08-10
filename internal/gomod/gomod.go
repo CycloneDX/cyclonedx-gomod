@@ -534,3 +534,19 @@ func resolveLocalModule(localModulePath string, module *Module) error {
 
 	return nil
 }
+
+func chunkModules(modules []Module, chunkSize int) [][]Module {
+	var chunks [][]Module
+
+	for i := 0; i < len(modules); i += chunkSize {
+		j := i + chunkSize
+
+		if j > len(modules) {
+			j = len(modules)
+		}
+
+		chunks = append(chunks, modules[i:j])
+	}
+
+	return chunks
+}
