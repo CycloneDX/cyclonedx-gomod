@@ -37,7 +37,7 @@ func TestResolve(t *testing.T) {
 		assert.Equal(t, "Apache-2.0", licenses[0].ID)
 	})
 
-	t.Run("NoLicenseFound", func(t *testing.T) {
+	t.Run("No License Detected", func(t *testing.T) {
 		tmpDir, err := os.MkdirTemp("", strings.ReplaceAll(t.Name()+"_*", "/", "_"))
 		require.NoError(t, err)
 		defer os.RemoveAll(tmpDir)
@@ -46,6 +46,6 @@ func TestResolve(t *testing.T) {
 			Dir: tmpDir,
 		})
 		require.Error(t, err)
-		require.ErrorIs(t, err, ErrNoLicenseFound)
+		require.ErrorIs(t, err, ErrNoLicenseDetected)
 	})
 }

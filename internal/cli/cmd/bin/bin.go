@@ -261,7 +261,6 @@ func downloadModules(modules []gomod.Module, hashes map[string]string) error {
 
 		log.Debug().
 			Str("module", download.Coordinates()).
-			Str("dir", download.Dir).
 			Msg("module downloaded")
 
 		module.Dir = downloads[i].Dir

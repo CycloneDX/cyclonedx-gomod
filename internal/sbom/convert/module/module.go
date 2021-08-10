@@ -38,12 +38,11 @@ func WithLicenses() Option {
 		if m.Dir == "" {
 			log.Warn().
 				Str("module", m.Coordinates()).
-				Str("reason", "module not in module cache").
+				Str("reason", "module not in cache").
 				Msg("can't resolve module license")
 			return nil
 		}
 
-		log.Debug().Str("module", m.Coordinates()).Msg("resolving licenses")
 		resolvedLicenses, err := license.Resolve(m)
 
 		if err == nil {
@@ -56,8 +55,8 @@ func WithLicenses() Option {
 				Licenses: &componentLicenses,
 			}
 		} else {
-			if errors.Is(err, license.ErrNoLicenseFound) {
-				log.Warn().Str("module", m.Coordinates()).Msg("no license found")
+			if errors.Is(err, license.ErrNoLicenseDetected) {
+				log.Warn().Str("module", m.Coordinates()).Msg("no license detected")
 				return nil
 			}
 
