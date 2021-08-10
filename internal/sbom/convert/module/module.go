@@ -68,6 +68,18 @@ func WithLicenses() Option {
 	}
 }
 
+// WithLicensesMaybe is a conditional wrapper around WithLicenses.
+// Passing false to this Option will effectively make it a no-op.
+func WithLicensesMaybe(enabled bool) Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		if enabled {
+			return WithLicenses()(m, c)
+		}
+
+		return nil
+	}
+}
+
 // WithComponentType overrides the type of the component.
 func WithComponentType(ctype cdx.ComponentType) Option {
 	return func(_ gomod.Module, c *cdx.Component) error {
@@ -91,6 +103,7 @@ func WithTestScope(scope cdx.Scope) Option {
 		if m.TestOnly {
 			c.Scope = scope
 		}
+
 		return nil
 	}
 }

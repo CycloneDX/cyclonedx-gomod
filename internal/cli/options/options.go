@@ -68,6 +68,7 @@ type SBOMOptions struct {
 	NoSerialNumber  bool
 	NoVersionPrefix bool
 	Reproducible    bool
+	ResolveLicenses bool
 	SerialNumber    string
 }
 
@@ -76,6 +77,7 @@ func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
 	fs.BoolVar(&s.NoVersionPrefix, "novprefix", false, "Omit \"v\" prefix from versions")
 	fs.BoolVar(&s.Reproducible, "reproducible", false, "Make the SBOM reproducible by omitting dynamic content")
+	fs.BoolVar(&s.ResolveLicenses, "licenses", false, "Resolve module licenses")
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
 }
 

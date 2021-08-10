@@ -29,6 +29,13 @@
           <url>https://github.com/google/uuid</url>
         </reference>
       </externalReferences>
+      <evidence>
+        <licenses>
+          <license>
+            <id>BSD-3-Clause</id>
+          </license>
+        </licenses>
+      </evidence>
     </component>
   </components>
   <dependencies>

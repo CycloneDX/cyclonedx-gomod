@@ -83,55 +83,9 @@ func Exec(binOptions BinOptions) error {
 	}
 
 	if binOptions.ResolveLicenses {
-		modulesToDownload := make([]gomod.Module, len(modules))
-		for i, module := range modules {
-			if module.Replace != nil {
-				modulesToDownload[i] = *modules[i].Replace
-			} else {
-				modulesToDownload[i] = modules[i]
-			}
-		}
-
-		downloads, err := gomod.Download(modulesToDownload)
+		err = downloadModules(modules, hashes)
 		if err != nil {
 			return err
-		}
-
-		for i, download := range downloads {
-			if download.Error != "" {
-				log.Warn().
-					Str("module", download.Coordinates()).
-					Str("error", download.Error).
-					Msg("module download failed")
-				continue
-			}
-
-			module := findModule(modules, download.Coordinates())
-			if module == nil {
-				log.Warn().
-					Str("module", download.Coordinates()).
-					Msg("downloaded module not found")
-				continue
-			}
-
-			// Report hash mismatches
-			hash, ok := hashes[download.Coordinates()]
-			if ok {
-				if hash != download.Sum {
-					log.Warn().
-						Str("binaryHash", hash).
-						Str("downloadHash", download.Sum).
-						Str("module", download.Coordinates()).
-						Msg("module hash mismatch")
-					continue
-				}
-			}
-
-			log.Debug().
-				Str("module", download.Coordinates()).
-				Str("dir", download.Dir).
-				Msg("module downloaded")
-			module.Dir = downloads[i].Dir
 		}
 	}
 
@@ -144,7 +98,7 @@ func Exec(binOptions BinOptions) error {
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentTypeApplication),
-		withLicenses(binOptions.ResolveLicenses),
+		modconv.WithLicensesMaybe(binOptions.ResolveLicenses),
 		modconv.WithScope(""), // Main component can't have a scope
 	)
 	if err != nil {
@@ -152,7 +106,7 @@ func Exec(binOptions BinOptions) error {
 	}
 
 	components, err := modconv.ToComponents(modules[1:],
-		withLicenses(binOptions.ResolveLicenses),
+		modconv.WithLicensesMaybe(binOptions.ResolveLicenses),
 		withModuleHashes(hashes),
 	)
 	if err != nil {
@@ -254,7 +208,66 @@ func createCompositions(mainComponent cdx.Component, components []cdx.Component)
 	return &compositions
 }
 
-func findModule(modules []gomod.Module, coordinates string) *gomod.Module {
+func downloadModules(modules []gomod.Module, hashes map[string]string) error {
+	// When modules are replaced, only download the replacement.
+	modulesToDownload := make([]gomod.Module, len(modules))
+	for i, module := range modules {
+		if module.Replace != nil {
+			modulesToDownload[i] = *modules[i].Replace
+		} else {
+			modulesToDownload[i] = modules[i]
+		}
+	}
+
+	downloads, err := gomod.Download(modulesToDownload)
+	if err != nil {
+		return err
+	}
+
+	for i, download := range downloads {
+		if download.Error != "" {
+			log.Warn().
+				Str("module", download.Coordinates()).
+				Str("reason", download.Error).
+				Msg("module download failed")
+			continue
+		}
+
+		module := matchModule(modules, download.Coordinates())
+		if module == nil {
+			log.Warn().
+				Str("module", download.Coordinates()).
+				Msg("downloaded module not found")
+			continue
+		}
+
+		// Check that the hash of the downloaded module matches
+		// the one found in the binary. We want to report the version
+		// for the *exact* module version or nothing at all.
+		hash, ok := hashes[download.Coordinates()]
+		if ok {
+			if hash != download.Sum {
+				log.Warn().
+					Str("binaryHash", hash).
+					Str("downloadHash", download.Sum).
+					Str("module", download.Coordinates()).
+					Msg("module hash mismatch")
+				continue
+			}
+		}
+
+		log.Debug().
+			Str("module", download.Coordinates()).
+			Str("dir", download.Dir).
+			Msg("module downloaded")
+
+		module.Dir = downloads[i].Dir
+	}
+
+	return nil
+}
+
+func matchModule(modules []gomod.Module, coordinates string) *gomod.Module {
 	for i, module := range modules {
 		if module.Replace != nil && coordinates == module.Replace.Coordinates() {
 			return modules[i].Replace
@@ -265,13 +278,4 @@ func findModule(modules []gomod.Module, coordinates string) *gomod.Module {
 	}
 
 	return nil
-}
-
-func withLicenses(enabled bool) modconv.Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if enabled {
-			return modconv.WithLicenses()(m, c)
-		}
-		return nil
-	}
 }
