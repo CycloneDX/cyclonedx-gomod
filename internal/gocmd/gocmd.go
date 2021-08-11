@@ -121,16 +121,6 @@ func withDir(dir string) commandOption {
 	}
 }
 
-func withEnv(env []string) commandOption {
-	return func(c *exec.Cmd) {
-		if len(c.Env) == 0 {
-			c.Env = os.Environ()
-		}
-
-		c.Env = append(c.Env, env...)
-	}
-}
-
 func withStderr(writer io.Writer) commandOption {
 	return func(c *exec.Cmd) {
 		c.Stderr = writer
