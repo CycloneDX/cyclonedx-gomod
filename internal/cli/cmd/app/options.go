@@ -29,10 +29,9 @@ type Options struct {
 	options.OutputOptions
 	options.SBOMOptions
 
-	IncludeTest     bool
-	Main            string
-	ModuleDir       string
-	ResolveLicenses bool
+	IncludeTest bool
+	Main        string
+	ModuleDir   string
 }
 
 func (o *Options) RegisterFlags(fs *flag.FlagSet) {
@@ -42,7 +41,6 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 
 	fs.BoolVar(&o.IncludeTest, "test", false, "Include test dependencies")
 	fs.StringVar(&o.Main, "main", "", "Path to the application's main package")
-	fs.BoolVar(&o.ResolveLicenses, "licenses", false, "Resolve module licenses")
 }
 
 func (o Options) Validate() error {
