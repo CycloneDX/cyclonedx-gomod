@@ -35,12 +35,12 @@ func TestModCmdSimple(t *testing.T) {
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			Reproducible: true,
-			SerialNumber: zeroUUID.String(),
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
 		},
-		ComponentType:   string(cdx.ComponentTypeLibrary),
-		ModuleDir:       fixturePath,
-		ResolveLicenses: true,
+		ComponentType: string(cdx.ComponentTypeLibrary),
+		ModuleDir:     fixturePath,
 	}
 
 	runSnapshotIT(t, &modOptions.OutputOptions, func() error { return modcmd.Exec(modOptions) })
@@ -54,12 +54,12 @@ func TestModCmdLocal(t *testing.T) {
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			Reproducible: true,
-			SerialNumber: zeroUUID.String(),
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
 		},
-		ComponentType:   string(cdx.ComponentTypeLibrary),
-		ModuleDir:       filepath.Join(fixturePath, "local"),
-		ResolveLicenses: true,
+		ComponentType: string(cdx.ComponentTypeLibrary),
+		ModuleDir:     filepath.Join(fixturePath, "local"),
 	}
 
 	runSnapshotIT(t, &modOptions.OutputOptions, func() error { return modcmd.Exec(modOptions) })
@@ -72,12 +72,12 @@ func TestModCmdNoDependencies(t *testing.T) {
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			Reproducible: true,
-			SerialNumber: zeroUUID.String(),
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
 		},
-		ComponentType:   string(cdx.ComponentTypeLibrary),
-		ModuleDir:       fixturePath,
-		ResolveLicenses: true,
+		ComponentType: string(cdx.ComponentTypeLibrary),
+		ModuleDir:     fixturePath,
 	}
 
 	runSnapshotIT(t, &modOptions.OutputOptions, func() error { return modcmd.Exec(modOptions) })
@@ -91,12 +91,12 @@ func TestModCmdVendored(t *testing.T) {
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			Reproducible: true,
-			SerialNumber: zeroUUID.String(),
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
 		},
-		ComponentType:   string(cdx.ComponentTypeLibrary),
-		ModuleDir:       fixturePath,
-		ResolveLicenses: true,
+		ComponentType: string(cdx.ComponentTypeLibrary),
+		ModuleDir:     fixturePath,
 	}
 
 	runSnapshotIT(t, &modOptions.OutputOptions, func() error { return modcmd.Exec(modOptions) })
@@ -118,12 +118,12 @@ func TestModCmdNested(t *testing.T) {
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
-			Reproducible: true,
-			SerialNumber: zeroUUID.String(),
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
 		},
-		ComponentType:   string(cdx.ComponentTypeLibrary),
-		ModuleDir:       filepath.Join(fixturePath, "simple"),
-		ResolveLicenses: true,
+		ComponentType: string(cdx.ComponentTypeLibrary),
+		ModuleDir:     filepath.Join(fixturePath, "simple"),
 	}
 
 	runSnapshotIT(t, &modOptions.OutputOptions, func() error { return modcmd.Exec(modOptions) })

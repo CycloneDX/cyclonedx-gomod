@@ -30,6 +30,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/rs/zerolog/log"
 )
 
 func New() *ffcli.Command {
@@ -43,6 +44,9 @@ func New() *ffcli.Command {
 		ShortHelp:  "Generate SBOM for a binary",
 		ShortUsage: "cyclonedx-gomod bin [FLAGS...] PATH",
 		LongHelp: `Generate SBOM for a binary.
+
+When license resolution is enabled, all modules (including the main module) 
+will be downloaded to the module cache using "go mod download".
 
 Please note that data embedded in binaries shouldn't be trusted,
 unless there's solid evidence that the binaries haven't been modified
@@ -81,6 +85,13 @@ func Exec(binOptions BinOptions) error {
 		modules[0].Version = binOptions.Version
 	}
 
+	if binOptions.ResolveLicenses {
+		err = downloadModules(modules, hashes)
+		if err != nil {
+			return err
+		}
+	}
+
 	sbom.NormalizeVersions(modules, binOptions.NoVersionPrefix)
 
 	// Make all modules a direct dependency of the main module
@@ -90,13 +101,17 @@ func Exec(binOptions BinOptions) error {
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentTypeApplication),
+		modconv.WithLicensesMaybe(binOptions.ResolveLicenses),
 		modconv.WithScope(""), // Main component can't have a scope
 	)
 	if err != nil {
 		return err
 	}
 
-	components, err := modconv.ToComponents(modules[1:], withModuleHashes(hashes))
+	components, err := modconv.ToComponents(modules[1:],
+		modconv.WithLicensesMaybe(binOptions.ResolveLicenses),
+		withModuleHashes(hashes),
+	)
 	if err != nil {
 		return err
 	}
@@ -194,4 +209,75 @@ func createCompositions(mainComponent cdx.Component, components []cdx.Component)
 	})
 
 	return &compositions
+}
+
+func downloadModules(modules []gomod.Module, hashes map[string]string) error {
+	// When modules are replaced, only download the replacement.
+	modulesToDownload := make([]gomod.Module, len(modules))
+	for i, module := range modules {
+		if module.Replace != nil {
+			modulesToDownload[i] = *modules[i].Replace
+		} else {
+			modulesToDownload[i] = modules[i]
+		}
+	}
+
+	downloads, err := gomod.Download(modulesToDownload)
+	if err != nil {
+		return err
+	}
+
+	for i, download := range downloads {
+		if download.Error != "" {
+			log.Warn().
+				Str("module", download.Coordinates()).
+				Str("reason", download.Error).
+				Msg("module download failed")
+			continue
+		}
+
+		module := matchModule(modules, download.Coordinates())
+		if module == nil {
+			log.Warn().
+				Str("module", download.Coordinates()).
+				Msg("downloaded module not found")
+			continue
+		}
+
+		// Check that the hash of the downloaded module matches
+		// the one found in the binary. We want to report the version
+		// for the *exact* module version or nothing at all.
+		hash, ok := hashes[download.Coordinates()]
+		if ok {
+			if hash != download.Sum {
+				log.Warn().
+					Str("binaryHash", hash).
+					Str("downloadHash", download.Sum).
+					Str("module", download.Coordinates()).
+					Msg("module hash mismatch")
+				continue
+			}
+		}
+
+		log.Debug().
+			Str("module", download.Coordinates()).
+			Msg("module downloaded")
+
+		module.Dir = downloads[i].Dir
+	}
+
+	return nil
+}
+
+func matchModule(modules []gomod.Module, coordinates string) *gomod.Module {
+	for i, module := range modules {
+		if module.Replace != nil && coordinates == module.Replace.Coordinates() {
+			return modules[i].Replace
+		}
+		if coordinates == module.Coordinates() {
+			return &modules[i]
+		}
+	}
+
+	return nil
 }

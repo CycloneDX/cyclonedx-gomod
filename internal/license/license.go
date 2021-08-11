@@ -28,7 +28,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var ErrNoLicenseFound = errors.New("no license found")
+var ErrNoLicenseDetected = errors.New("no license detected")
 
 const minDetectionConfidence = 0.9
 
@@ -41,7 +41,7 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 	detectedLicenses, err := licensedb.Detect(licensesFiler)
 	if err != nil {
 		if errors.Is(err, licensedb.ErrNoLicenseFound) {
-			return nil, ErrNoLicenseFound
+			return nil, ErrNoLicenseDetected
 		}
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 	}
 
 	if detectedLicense == "" || detectedLicenseConfidence < minDetectionConfidence {
-		return nil, ErrNoLicenseFound
+		return nil, ErrNoLicenseDetected
 	}
 
 	log.Debug().

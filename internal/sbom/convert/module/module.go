@@ -35,7 +35,14 @@ type Option func(gomod.Module, *cdx.Component) error
 // to the component's license evidence.
 func WithLicenses() Option {
 	return func(m gomod.Module, c *cdx.Component) error {
-		log.Debug().Str("module", m.Coordinates()).Msg("resolving licenses")
+		if m.Dir == "" {
+			log.Warn().
+				Str("module", m.Coordinates()).
+				Str("reason", "module not in cache").
+				Msg("can't resolve module license")
+			return nil
+		}
+
 		resolvedLicenses, err := license.Resolve(m)
 
 		if err == nil {
@@ -48,12 +55,24 @@ func WithLicenses() Option {
 				Licenses: &componentLicenses,
 			}
 		} else {
-			if errors.Is(err, license.ErrNoLicenseFound) {
-				log.Warn().Str("module", m.Coordinates()).Msg("no license found")
+			if errors.Is(err, license.ErrNoLicenseDetected) {
+				log.Warn().Str("module", m.Coordinates()).Msg("no license detected")
 				return nil
 			}
 
 			return fmt.Errorf("failed to resolve license for %s: %v", m.Coordinates(), err)
+		}
+
+		return nil
+	}
+}
+
+// WithLicensesMaybe is a conditional wrapper around WithLicenses.
+// Passing false to this Option will effectively make it a no-op.
+func WithLicensesMaybe(enabled bool) Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		if enabled {
+			return WithLicenses()(m, c)
 		}
 
 		return nil
@@ -83,6 +102,7 @@ func WithTestScope(scope cdx.Scope) Option {
 		if m.TestOnly {
 			c.Scope = scope
 		}
+
 		return nil
 	}
 }

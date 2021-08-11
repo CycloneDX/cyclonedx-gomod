@@ -33,10 +33,9 @@ type ModOptions struct {
 	options.OutputOptions
 	options.SBOMOptions
 
-	ComponentType   string
-	ModuleDir       string
-	IncludeTest     bool
-	ResolveLicenses bool
+	ComponentType string
+	ModuleDir     string
+	IncludeTest   bool
 }
 
 func (m *ModOptions) RegisterFlags(fs *flag.FlagSet) {
@@ -46,7 +45,6 @@ func (m *ModOptions) RegisterFlags(fs *flag.FlagSet) {
 
 	fs.StringVar(&m.ComponentType, "type", "application", "Type of the main component")
 	fs.BoolVar(&m.IncludeTest, "test", false, "Include test dependencies")
-	fs.BoolVar(&m.ResolveLicenses, "licenses", false, "Resolve module licenses")
 }
 
 var allowedComponentTypes = []cdx.ComponentType{
