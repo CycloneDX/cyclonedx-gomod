@@ -27,8 +27,9 @@ import (
 func TestBinCmdSimple(t *testing.T) {
 	binOptions := bincmd.BinOptions{
 		SBOMOptions: options.SBOMOptions{
-			Reproducible: true,
-			SerialNumber: zeroUUID.String(),
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
 		},
 		BinaryPath: "./testdata/bincmd/simple",
 		Version:    "v1.0.0",

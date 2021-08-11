@@ -73,6 +73,9 @@ USAGE
 
 Generate SBOM for a binary.
 
+When license resolution is enabled, all modules (including the main module) 
+will be downloaded to the module cache using "go mod download".
+
 Please note that data embedded in binaries shouldn't be trusted,
 unless there's solid evidence that the binaries haven't been modified
 since they've been built.
@@ -82,6 +85,7 @@ Example:
 
 FLAGS
   -json=false          Output in JSON
+  -licenses=false      Resolve module licenses
   -noserial=false      Omit serial number
   -novprefix=false     Omit "v" prefix from versions
   -output -            Output file path (or - for STDOUT)

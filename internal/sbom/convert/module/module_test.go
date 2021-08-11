@@ -63,6 +63,30 @@ func TestWithLicenses(t *testing.T) {
 	})
 }
 
+func TestWithLicensesMaybe(t *testing.T) {
+	t.Run("Enabled", func(t *testing.T) {
+		module := gomod.Module{
+			Dir: "../../../",
+		}
+		component := cdx.Component{}
+
+		err := WithLicensesMaybe(true)(module, &component)
+		require.NoError(t, err)
+		require.NotNil(t, component.Evidence)
+	})
+
+	t.Run("Disabled", func(t *testing.T) {
+		module := gomod.Module{
+			Dir: "../../../",
+		}
+		component := cdx.Component{}
+
+		err := WithLicensesMaybe(false)(module, &component)
+		require.NoError(t, err)
+		require.Nil(t, component.Evidence)
+	})
+}
+
 func TestWithComponentType(t *testing.T) {
 	module := gomod.Module{}
 	component := cdx.Component{}

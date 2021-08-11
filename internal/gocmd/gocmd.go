@@ -91,6 +91,11 @@ func GetModulesFromBinary(binaryPath string, writer io.Writer) error {
 	return executeGoCommand([]string{"version", "-m", binaryPath}, "", writer, nil)
 }
 
+// DownloadModules executes `go mod download -json` and writes the output to the given writers.
+func DownloadModules(modules []string, stdout, stderr io.Writer) error {
+	return executeGoCommand(append([]string{"mod", "download", "-json"}, modules...), os.TempDir(), stdout, stderr)
+}
+
 func executeGoCommand(args []string, dir string, stdout, stderr io.Writer) error {
 	cmd := exec.Command("go", args...)
 	log.Debug().Str("cmd", cmd.String()).Msg("executing command")

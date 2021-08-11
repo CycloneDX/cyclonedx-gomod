@@ -406,30 +406,14 @@ func findModule(modules []Module, coordinates string, strict bool) *Module {
 //   - https://github.com/golang/go/issues/30720
 //   - https://github.com/golang/go/issues/26904
 func filterModules(mainModulePath string, modules []Module, includeTest bool) ([]Module, error) {
-	// Command length may be limited, with the actual limit depending on the OS we're running on.
-	// The approach of calling the command in batches to prevent hitting this limit is inspired by Helcaraxan/gomod.
-	// See: https://github.com/Helcaraxan/gomod/blob/a406aedccfc9737d3aef1049d81c6977f5601fb0/internal/depgraph/deps_pkg.go#L112-L143
-
-	const maxBatchSize = 20 // chosen more or less arbitrarily
-
 	buf := new(bytes.Buffer)
 	filtered := make([]Module, 0)
+	chunks := chunkModules(modules, 20)
 
-	modulesChecked := 0
-	for modulesChecked < len(modules) {
-		batchSize := 0
-		for {
-			if batchSize+1 > maxBatchSize || modulesChecked+batchSize+1 > len(modules) {
-				break
-			}
-			batchSize++
-		}
-
-		batch := modules[modulesChecked : modulesChecked+batchSize]
-
-		paths := make([]string, len(batch))
-		for i := range batch {
-			paths[i] = batch[i].Path
+	for _, chunk := range chunks {
+		paths := make([]string, len(chunk))
+		for i := range chunk {
+			paths[i] = chunk[i].Path
 		}
 
 		if err := gocmd.ModWhy(mainModulePath, paths, buf); err != nil {
@@ -455,16 +439,15 @@ func filterModules(mainModulePath string, modules []Module, includeTest bool) ([
 				continue
 			}
 
-			for i := range batch {
-				if batch[i].Path == modPath {
-					mod := batch[i]
+			for i := range chunk {
+				if chunk[i].Path == modPath {
+					mod := chunk[i]
 					mod.TestOnly = testOnly
 					filtered = append(filtered, mod)
 				}
 			}
 		}
 
-		modulesChecked += batchSize
 		buf.Reset()
 	}
 
@@ -536,4 +519,20 @@ func resolveLocalModule(localModulePath string, module *Module) error {
 	}
 
 	return nil
+}
+
+func chunkModules(modules []Module, chunkSize int) [][]Module {
+	var chunks [][]Module
+
+	for i := 0; i < len(modules); i += chunkSize {
+		j := i + chunkSize
+
+		if j > len(modules) {
+			j = len(modules)
+		}
+
+		chunks = append(chunks, modules[i:j])
+	}
+
+	return chunks
 }

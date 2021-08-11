@@ -94,7 +94,7 @@ func Exec(modOptions ModOptions) error {
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentType(modOptions.ComponentType)),
-		withLicenses(modOptions.ResolveLicenses),
+		modconv.WithLicensesMaybe(modOptions.ResolveLicenses),
 		modconv.WithScope(""), // Main component can't have a scope
 	)
 	if err != nil {
@@ -103,7 +103,7 @@ func Exec(modOptions ModOptions) error {
 
 	components, err := modconv.ToComponents(modules[1:],
 		withModuleHashes(),
-		withLicenses(modOptions.ResolveLicenses),
+		modconv.WithLicensesMaybe(modOptions.ResolveLicenses),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert modules: %w", err)
@@ -138,15 +138,6 @@ func Exec(modOptions ModOptions) error {
 	}
 
 	return cliutil.WriteBOM(bom, modOptions.OutputOptions)
-}
-
-func withLicenses(enabled bool) modconv.Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if enabled {
-			return modconv.WithLicenses()(m, c)
-		}
-		return nil
-	}
 }
 
 func withModuleHashes() modconv.Option {
