@@ -51,6 +51,28 @@ SUBCOMMANDS
 USAGE
   cyclonedx-gomod app [FLAGS...] PATH
 
+Generate SBOM for an application.
+
+In order to produce accurate results, build constraints must be configured
+via environment variables. These build constraints should mimic the ones passed
+to the "go build" command for the application.
+
+A few noteworthy environment variables are:
+  - GOARCH       The target architecture (386, amd64, etc.)
+  - GOOS         The target operating system (linux, windows, etc.)
+  - CGO_ENABLED  Whether or not CGO is enabled
+  - GOFLAGS      Pass build tags (see examples below)
+
+A complete overview of all environment variables can be found here:
+  https://pkg.go.dev/cmd/go#hdr-Environment_variables
+
+The -main flag can be used to specify the path to the application's main package.
+-main must point to a directory within PATH. If -main is not specified, 
+PATH is assumed to contain the main package.
+
+Examples:
+  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=tag1,tag2" cyclonedx-gomod app -output app_linux-arm64.bom.xml -main ./cmd/app
+
 FLAGS
   -json=false          Output in JSON
   -licenses=false      Resolve module licenses
@@ -61,7 +83,6 @@ FLAGS
   -reproducible=false  Make the SBOM reproducible by omitting dynamic content
   -serial ...          Serial number
   -std=false           Include Go standard library as component and dependency of the module
-  -test=false          Include test dependencies
   -verbose=false       Enable verbose output
 ```
 
