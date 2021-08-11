@@ -27,6 +27,7 @@ import (
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+	"github.com/rs/zerolog/log"
 )
 
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
@@ -53,10 +54,10 @@ type Package struct {
 	TestEmbedFiles []string // files matched by TestEmbedPatterns
 }
 
-func GetModulesFromPackages(moduleDir string) ([]Module, error) {
+func GetModulesFromPackages(moduleDir, mainPackage string) ([]Module, error) {
 	buf := new(bytes.Buffer)
 
-	err := gocmd.ListPackages(moduleDir, buf)
+	err := gocmd.ListPackages(moduleDir, mainPackage, buf)
 	if err != nil {
 		return nil, err
 	}
@@ -88,10 +89,20 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 			if errors.Is(err, io.EOF) {
 				break
 			}
+
 			return nil, err
 		}
 
-		if pkg.Standard || pkg.Module == nil {
+		if pkg.Standard {
+			log.Debug().
+				Str("package", pkg.ImportPath).
+				Msg("skipping standard library package")
+			continue
+		}
+		if pkg.Module == nil {
+			log.Debug().
+				Str("package", pkg.ImportPath).
+				Msg("skipping package without module")
 			continue
 		}
 

@@ -38,7 +38,28 @@ func New() *ffcli.Command {
 		Name:       "app",
 		ShortHelp:  "Generate SBOM for an application",
 		ShortUsage: "cyclonedx-gomod app [FLAGS...] PATH",
-		FlagSet:    fs,
+		LongHelp: `Generate SBOM for an application.
+
+In order to produce accurate results, build constraints must be configured
+via environment variables. These build constraints should mimic the ones passed
+to the "go build" command for the application.
+
+A few noteworthy environment variables are:
+  - GOARCH       The target architecture (386, amd64, etc.)
+  - GOOS         The target operating system (linux, windows, etc.)
+  - CGO_ENABLED  Whether or not CGO is enabled
+  - GOFLAGS      Pass build tags (see examples below)
+
+A complete overview of all environment variables can be found here:
+  https://pkg.go.dev/cmd/go#hdr-Environment_variables
+
+The -main flag can be used to specify the path to the application's main package.
+-main must point to a directory within PATH. If -main is not specified, 
+PATH is assumed to contain the main package.
+
+Examples:
+  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=tag1,tag2" cyclonedx-gomod app -output app_linux-arm64.bom.xml -main ./cmd/app`,
+		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) > 1 {
 				return flag.ErrHelp
@@ -62,7 +83,7 @@ func Exec(options Options) error {
 		return err
 	}
 
-	modules, err := gomod.GetModulesFromPackages(options.ModuleDir)
+	modules, err := gomod.GetModulesFromPackages(options.ModuleDir, options.Main)
 	if err != nil {
 		return err
 	}

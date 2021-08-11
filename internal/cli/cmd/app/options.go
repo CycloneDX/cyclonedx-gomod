@@ -29,9 +29,8 @@ type Options struct {
 	options.OutputOptions
 	options.SBOMOptions
 
-	IncludeTest bool
-	Main        string
-	ModuleDir   string
+	Main      string
+	ModuleDir string
 }
 
 func (o *Options) RegisterFlags(fs *flag.FlagSet) {
@@ -39,7 +38,6 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 	o.OutputOptions.RegisterFlags(fs)
 	o.SBOMOptions.RegisterFlags(fs)
 
-	fs.BoolVar(&o.IncludeTest, "test", false, "Include test dependencies")
 	fs.StringVar(&o.Main, "main", "", "Path to the application's main package")
 }
 

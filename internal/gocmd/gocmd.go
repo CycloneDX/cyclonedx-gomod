@@ -31,7 +31,8 @@ import (
 // GetVersion returns the version of Go in the environment.
 func GetVersion() (string, error) {
 	buf := new(bytes.Buffer)
-	if err := executeGoCommand([]string{"version"}, "", buf, nil); err != nil {
+	err := executeGoCommand([]string{"version"}, withStdout(buf))
+	if err != nil {
 		return "", err
 	}
 
@@ -51,65 +52,107 @@ func GetVersion() (string, error) {
 // GetModule executes `go list -json -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
 func GetModule(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m"}, moduleDir, writer, nil)
+	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m"}, withDir(moduleDir), withStdout(writer))
 }
 
 // ListModules executes `go list -json -m all` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
 func ListModules(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m", "all"}, moduleDir, writer, nil)
+	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m", "all"}, withDir(moduleDir), withStdout(writer))
 }
 
 // ListPackages executed `go list -deps -json` and writes the output to a given writer.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
-func ListPackages(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"list", "-deps", "-json", "./..."}, moduleDir, writer, os.Stderr)
+func ListPackages(moduleDir, mainPackage string, writer io.Writer) error {
+	if mainPackage == "" {
+		mainPackage = "./..."
+	}
+
+	return executeGoCommand([]string{"list", "-deps", "-json", mainPackage},
+		withDir(moduleDir),
+		withStdout(writer),
+		withStderr(os.Stderr),
+	)
 }
 
 // ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-vendor
 func ListVendoredModules(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"mod", "vendor", "-v", "-e"}, moduleDir, nil, writer)
+	return executeGoCommand([]string{"mod", "vendor", "-v", "-e"}, withDir(moduleDir), withStderr(writer))
 }
 
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-graph
 func GetModuleGraph(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"mod", "graph"}, moduleDir, writer, nil)
+	return executeGoCommand([]string{"mod", "graph"}, withDir(moduleDir), withStdout(writer))
 }
 
 // ModWhy executes `go mod why -m -vendor` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-why
 func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
-	args := []string{"mod", "why", "-m", "-vendor"}
-	args = append(args, modules...)
-	return executeGoCommand(args, moduleDir, writer, os.Stderr)
+	return executeGoCommand(
+		append([]string{"mod", "why", "-m", "-vendor"}, modules...),
+		withDir(moduleDir),
+		withStdout(writer),
+		withStderr(os.Stderr), // reports download status
+	)
 }
 
 // ModWhy executes `go version -m` and writes the output to a given writer.
 func GetModulesFromBinary(binaryPath string, writer io.Writer) error {
-	return executeGoCommand([]string{"version", "-m", binaryPath}, "", writer, nil)
+	return executeGoCommand([]string{"version", "-m", binaryPath}, withStdout(writer))
 }
 
 // DownloadModules executes `go mod download -json` and writes the output to the given writers.
 func DownloadModules(modules []string, stdout, stderr io.Writer) error {
-	return executeGoCommand(append([]string{"mod", "download", "-json"}, modules...), os.TempDir(), stdout, stderr)
+	return executeGoCommand(
+		append([]string{"mod", "download", "-json"}, modules...),
+		withDir(os.TempDir()), // `mod download` modifies go.sum when executed in moduleDir
+		withStdout(stdout),
+		withStderr(stderr),
+	)
 }
 
-func executeGoCommand(args []string, dir string, stdout, stderr io.Writer) error {
+type commandOption func(*exec.Cmd)
+
+func withDir(dir string) commandOption {
+	return func(c *exec.Cmd) {
+		c.Dir = dir
+	}
+}
+
+func withEnv(env []string) commandOption {
+	return func(c *exec.Cmd) {
+		if len(c.Env) == 0 {
+			c.Env = os.Environ()
+		}
+
+		c.Env = append(c.Env, env...)
+	}
+}
+
+func withStderr(writer io.Writer) commandOption {
+	return func(c *exec.Cmd) {
+		c.Stderr = writer
+	}
+}
+
+func withStdout(writer io.Writer) commandOption {
+	return func(c *exec.Cmd) {
+		c.Stdout = writer
+	}
+}
+
+func executeGoCommand(args []string, options ...commandOption) error {
 	cmd := exec.Command("go", args...)
-	log.Debug().Str("cmd", cmd.String()).Msg("executing command")
 
-	if dir != "" {
-		cmd.Dir = dir
+	for _, option := range options {
+		option(cmd)
 	}
 
-	if stdout != nil {
-		cmd.Stdout = stdout
-	}
-	if stderr != nil {
-		cmd.Stderr = stderr
-	}
+	log.Debug().
+		Str("cmd", cmd.String()).
+		Msg("executing command")
 
 	return cmd.Run()
 }
