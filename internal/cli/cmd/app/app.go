@@ -24,6 +24,7 @@ import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
@@ -88,10 +89,20 @@ func Exec(options Options) error {
 		return err
 	}
 
+	// Dependencies need to be applied prior to determining the main
+	// module's version, because `go mod graph` doesn't work with a
+	// version either.
+	err = gomod.ApplyDependencies(options.ModuleDir, modules)
+	if err != nil {
+		return err
+	}
+
 	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
 	if err != nil {
 		return err
 	}
+
+	dependencies := sbom.BuildDependencyGraph(modules)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithFiles(options.IncludeFiles),
@@ -115,6 +126,7 @@ func Exec(options Options) error {
 		Component: mainComponent,
 	}
 	bom.Components = &components
+	bom.Dependencies = &dependencies
 
 	return cliutil.WriteBOM(bom, options.OutputOptions)
 }

@@ -241,6 +241,18 @@ func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, er
 	return modules, nil
 }
 
+// TODO: Improve function name
+func ApplyDependencies(moduleDir string, modules []Module) error {
+	buf := new(bytes.Buffer)
+
+	err := gocmd.GetModuleGraph(moduleDir, buf)
+	if err != nil {
+		return err
+	}
+
+	return parseModuleGraph(buf, modules)
+}
+
 // parseModuleGraph parses the output of `go mod graph` and populates
 // the .Dependencies field of a given Module slice. Dependencies are
 // sorted by module path in ascending order.
