@@ -37,7 +37,7 @@ func New() *ffcli.Command {
 	return &ffcli.Command{
 		Name:       "app",
 		ShortHelp:  "Generate SBOM for an application",
-		ShortUsage: "cyclonedx-gomod app [FLAGS...] PATH",
+		ShortUsage: "cyclonedx-gomod app [FLAGS...] MODPATH",
 		LongHelp: `Generate SBOM for an application.
 
 In order to produce accurate results, build constraints must be configured
@@ -53,12 +53,12 @@ A few noteworthy environment variables are:
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-The -main flag can be used to specify the path to the application's main package.
--main must point to a directory within PATH. If -main is not specified, 
-PATH is assumed to contain the main package.
+The -main should be used to specify the path to the application's main file.
+-main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
 
 Examples:
-  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=tag1,tag2" cyclonedx-gomod app -output app_linux-arm64.bom.xml -main ./cmd/app`,
+  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
+  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module`,
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) > 1 {
@@ -88,12 +88,32 @@ func Exec(options Options) error {
 		return err
 	}
 
-	components, err := modconv.ToComponents(modules, modconv.WithFiles())
+	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
+	if err != nil {
+		return err
+	}
+
+	mainComponent, err := modconv.ToComponent(modules[0],
+		modconv.WithFiles(options.IncludeFiles),
+		modconv.WithLicenses(options.ResolveLicenses),
+	)
+	if err != nil {
+		return err
+	}
+
+	components, err := modconv.ToComponents(modules[1:],
+		modconv.WithFiles(options.IncludeFiles),
+		modconv.WithLicenses(options.ResolveLicenses),
+		modconv.WithModuleHashes(),
+	)
 	if err != nil {
 		return err
 	}
 
 	bom := cdx.NewBOM()
+	bom.Metadata = &cdx.Metadata{
+		Component: mainComponent,
+	}
 	bom.Components = &components
 
 	return cliutil.WriteBOM(bom, options.OutputOptions)

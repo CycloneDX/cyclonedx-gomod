@@ -63,12 +63,8 @@ func ListModules(moduleDir string, writer io.Writer) error {
 
 // ListPackages executed `go list -deps -json` and writes the output to a given writer.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
-func ListPackages(moduleDir, mainPackage string, writer io.Writer) error {
-	if mainPackage == "" {
-		mainPackage = "./..."
-	}
-
-	return executeGoCommand([]string{"list", "-deps", "-json", mainPackage},
+func ListPackages(moduleDir, packagePattern string, writer io.Writer) error {
+	return executeGoCommand([]string{"list", "-deps", "-json", packagePattern},
 		withDir(moduleDir),
 		withStdout(writer),
 		withStderr(os.Stderr),

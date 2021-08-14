@@ -18,6 +18,7 @@
 package module
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"path/filepath"
@@ -35,8 +36,12 @@ type Option func(gomod.Module, *cdx.Component) error
 
 // WithLicenses attempts to resolve licenses for the module and attach them
 // to the component's license evidence.
-func WithLicenses() Option {
+func WithLicenses(enabled bool) Option {
 	return func(m gomod.Module, c *cdx.Component) error {
+		if !enabled {
+			return nil
+		}
+
 		if m.Dir == "" {
 			log.Warn().
 				Str("module", m.Coordinates()).
@@ -69,18 +74,6 @@ func WithLicenses() Option {
 	}
 }
 
-// WithLicensesMaybe is a conditional wrapper around WithLicenses.
-// Passing false to this Option will effectively make it a no-op.
-func WithLicensesMaybe(enabled bool) Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if enabled {
-			return WithLicenses()(m, c)
-		}
-
-		return nil
-	}
-}
-
 // WithComponentType overrides the type of the component.
 func WithComponentType(ctype cdx.ComponentType) Option {
 	return func(_ gomod.Module, c *cdx.Component) error {
@@ -89,14 +82,24 @@ func WithComponentType(ctype cdx.ComponentType) Option {
 	}
 }
 
-func WithFiles() Option {
+func WithFiles(enabled bool) Option {
 	return func(m gomod.Module, c *cdx.Component) error {
+		if !enabled {
+			return nil
+		}
+
 		var fileComponents []cdx.Component
 
 		for _, filePath := range m.Files {
 			fileComponent, err := file.ToComponent(filepath.Join(m.Dir, filePath), filePath,
 				file.WithScope(cdx.ScopeRequired),
-				file.WithHashes(cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512),
+				file.WithHashes(
+					cdx.HashAlgoMD5,
+					cdx.HashAlgoSHA1,
+					cdx.HashAlgoSHA256,
+					cdx.HashAlgoSHA384,
+					cdx.HashAlgoSHA512,
+				),
 			)
 			if err != nil {
 				return err
@@ -110,6 +113,42 @@ func WithFiles() Option {
 		}
 
 		c.Components = &fileComponents
+
+		return nil
+	}
+}
+
+func WithModuleHashes() Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		if m.Main {
+			// We currently don't have an accurate way of hashing the main module, as it may contain
+			// files that are .gitignore'd and thus not part of the hashes in Go's sumdb.
+			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for main module")
+			return nil
+		}
+
+		if m.Vendored {
+			// Go's vendoring mechanism doesn't copy all files that make up a module to the vendor dir.
+			// Hashing vendored modules thus won't result in the expected hash, probably causing more
+			// confusion than anything else.
+			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for vendored module")
+			return nil
+		}
+
+		log.Debug().Str("module", m.Coordinates()).Msg("calculating module hash")
+		h1, err := m.Hash()
+		if err != nil {
+			return fmt.Errorf("failed to calculate module hash: %w", err)
+		}
+
+		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
+		if err != nil {
+			return fmt.Errorf("failed to base64 decode module hash: %w", err)
+		}
+
+		c.Hashes = &[]cdx.Hash{
+			{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
+		}
 
 		return nil
 	}
@@ -150,10 +189,12 @@ func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error)
 		PackageURL: module.PackageURL(),
 	}
 
-	if module.TestOnly {
-		component.Scope = cdx.ScopeOptional
-	} else {
-		component.Scope = cdx.ScopeRequired
+	if !module.Main { // Main component can't have a scope
+		if module.TestOnly {
+			component.Scope = cdx.ScopeOptional
+		} else {
+			component.Scope = cdx.ScopeRequired
+		}
 	}
 
 	vcsURL := resolveVCSURL(module.Path)

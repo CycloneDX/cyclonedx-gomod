@@ -19,7 +19,6 @@ package mod
 
 import (
 	"context"
-	"encoding/base64"
 	"flag"
 	"fmt"
 	"io"
@@ -94,16 +93,15 @@ func Exec(modOptions ModOptions) error {
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentType(modOptions.ComponentType)),
-		modconv.WithLicensesMaybe(modOptions.ResolveLicenses),
-		modconv.WithScope(""), // Main component can't have a scope
+		modconv.WithLicenses(modOptions.ResolveLicenses),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert main module: %w", err)
 	}
 
 	components, err := modconv.ToComponents(modules[1:],
-		withModuleHashes(),
-		modconv.WithLicensesMaybe(modOptions.ResolveLicenses),
+		modconv.WithLicenses(modOptions.ResolveLicenses),
+		modconv.WithModuleHashes(),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert modules: %w", err)
@@ -138,42 +136,6 @@ func Exec(modOptions ModOptions) error {
 	}
 
 	return cliutil.WriteBOM(bom, modOptions.OutputOptions)
-}
-
-func withModuleHashes() modconv.Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if m.Main {
-			// We currently don't have an accurate way of hashing the main module, as it may contain
-			// files that are .gitignore'd and thus not part of the hashes in Go's sumdb.
-			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for main module")
-			return nil
-		}
-
-		if m.Vendored {
-			// Go's vendoring mechanism doesn't copy all files that make up a module to the vendor dir.
-			// Hashing vendored modules thus won't result in the expected hash, probably causing more
-			// confusion than anything else.
-			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for vendored module")
-			return nil
-		}
-
-		log.Debug().Str("module", m.Coordinates()).Msg("calculating module hash")
-		h1, err := m.Hash()
-		if err != nil {
-			return fmt.Errorf("failed to calculate module hash: %w", err)
-		}
-
-		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
-		if err != nil {
-			return fmt.Errorf("failed to base64 decode module hash: %w", err)
-		}
-
-		c.Hashes = &[]cdx.Hash{
-			{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
-		}
-
-		return nil
-	}
 }
 
 func addStdComponent(bom *cdx.BOM) error {

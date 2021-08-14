@@ -49,7 +49,7 @@ SUBCOMMANDS
 
 ```
 USAGE
-  cyclonedx-gomod app [FLAGS...] PATH
+  cyclonedx-gomod app [FLAGS...] MODPATH
 
 Generate SBOM for an application.
 
@@ -66,17 +66,18 @@ A few noteworthy environment variables are:
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-The -main flag can be used to specify the path to the application's main package.
--main must point to a directory within PATH. If -main is not specified, 
-PATH is assumed to contain the main package.
+The -main should be used to specify the path to the application's main file.
+-main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
 
 Examples:
-  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=tag1,tag2" cyclonedx-gomod app -output app_linux-arm64.bom.xml -main ./cmd/app
+  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
+  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module
 
 FLAGS
+  -files=false         Include files
   -json=false          Output in JSON
   -licenses=false      Resolve module licenses
-  -main ...            Path to the application's main package
+  -main main.go        Path to the application's main file, relative to MODPATH
   -noserial=false      Omit serial number
   -novprefix=false     Omit "v" prefix from versions
   -output -            Output file path (or - for STDOUT)

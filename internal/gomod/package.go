@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
@@ -54,10 +55,10 @@ type Package struct {
 	TestEmbedFiles []string // files matched by TestEmbedPatterns
 }
 
-func GetModulesFromPackages(moduleDir, mainPackage string) ([]Module, error) {
+func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) {
 	buf := new(bytes.Buffer)
 
-	err := gocmd.ListPackages(moduleDir, mainPackage, buf)
+	err := gocmd.ListPackages(moduleDir, packagePattern, buf)
 	if err != nil {
 		return nil, err
 	}
@@ -167,6 +168,13 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 					return nil, err
 				}
 			}
+
+			sort.Slice(module.Files, func(i, j int) bool {
+				return module.Files[i] < module.Files[j]
+			})
+			sort.Slice(module.TestFiles, func(i, j int) bool {
+				return module.TestFiles[i] < module.TestFiles[j]
+			})
 		}
 
 		modules = append(modules, *module)

@@ -21,11 +21,31 @@ import (
 	"go/build"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func FileExists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+// IsSubPath checks (lexically) if subPath is a subpath of path.
+func IsSubPath(subPath, path string) (bool, error) {
+	dirAbs, err := filepath.Abs(path)
+	if err != nil {
+		return false, err
+	}
+
+	subDirAbs, err := filepath.Abs(subPath)
+	if err != nil {
+		return false, err
+	}
+
+	if !strings.HasPrefix(subDirAbs, dirAbs) {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 // IsGoModule determines whether the directory at the given path is a Go module.

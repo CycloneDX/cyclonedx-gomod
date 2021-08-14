@@ -18,10 +18,17 @@
 package app
 
 import (
+	"bufio"
 	"errors"
 	"flag"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 type Options struct {
@@ -29,8 +36,9 @@ type Options struct {
 	options.OutputOptions
 	options.SBOMOptions
 
-	Main      string
-	ModuleDir string
+	IncludeFiles bool
+	Main         string
+	ModuleDir    string
 }
 
 func (o *Options) RegisterFlags(fs *flag.FlagSet) {
@@ -38,7 +46,8 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 	o.OutputOptions.RegisterFlags(fs)
 	o.SBOMOptions.RegisterFlags(fs)
 
-	fs.StringVar(&o.Main, "main", "", "Path to the application's main package")
+	fs.BoolVar(&o.IncludeFiles, "files", false, "Include files")
+	fs.StringVar(&o.Main, "main", "main.go", "Path to the application's main file, relative to MODPATH")
 }
 
 func (o Options) Validate() error {
@@ -61,11 +70,76 @@ func (o Options) Validate() error {
 		}
 	}
 
-	// TODO: verify that .Main exists and is relative to .ModuleDir
+	if o.Main != "" {
+		err := o.validateMain(o.Main, &errs)
+		if err != nil {
+			return err
+		}
+	}
 
 	if len(errs) > 0 {
 		return &options.ValidationError{Errors: errs}
 	}
 
 	return nil
+}
+
+func (o Options) validateMain(mainFilePath string, errs *[]error) error {
+	mainFilePath = filepath.Join(o.ModuleDir, mainFilePath)
+
+	if filepath.Ext(mainFilePath) != ".go" {
+		*errs = append(*errs, fmt.Errorf("main: must be a go source file, but \"%s\" is not", mainFilePath))
+		return nil
+	}
+
+	isSubPath, err := util.IsSubPath(mainFilePath, o.ModuleDir)
+	if err != nil {
+		return err
+	}
+	if !isSubPath {
+		*errs = append(*errs, fmt.Errorf("main: must be a subpath of \"%s\"", o.ModuleDir))
+		return nil
+	}
+
+	fileInfo, err := os.Stat(mainFilePath)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			*errs = append(*errs, fmt.Errorf("main: \"%s\" does not exist", mainFilePath))
+			return nil
+		}
+		return err
+	}
+
+	if fileInfo.IsDir() {
+		*errs = append(*errs, fmt.Errorf("main: must be a go file, but \"%s\" is a directory", mainFilePath))
+		return nil
+	}
+
+	isMain, err := checkForMainPackage(mainFilePath)
+	if err != nil {
+		return err
+	}
+	if !isMain {
+		*errs = append(*errs, fmt.Errorf("main: \"%s\" is not a main file", mainFilePath))
+		return nil
+	}
+
+	return nil
+}
+
+func checkForMainPackage(filePath string) (bool, error) {
+	mainFile, err := os.Open(filePath)
+	if err != nil {
+		return false, err
+	}
+	defer mainFile.Close()
+
+	scanner := bufio.NewScanner(io.LimitReader(mainFile, 1024))
+	for scanner.Scan() {
+		if strings.HasPrefix(scanner.Text(), "package main") {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
