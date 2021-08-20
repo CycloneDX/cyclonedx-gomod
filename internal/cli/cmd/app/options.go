@@ -136,7 +136,8 @@ func checkForMainPackage(filePath string) (bool, error) {
 
 	scanner := bufio.NewScanner(io.LimitReader(mainFile, 1024))
 	for scanner.Scan() {
-		if strings.HasPrefix(scanner.Text(), "package main") {
+		fields := strings.Fields(scanner.Text())
+		if len(fields) >= 2 && fields[0] == "package" && fields[1] == "main" {
 			return true, nil
 		}
 	}
