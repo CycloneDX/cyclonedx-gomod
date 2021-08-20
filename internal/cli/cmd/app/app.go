@@ -54,7 +54,7 @@ A few noteworthy environment variables are:
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-The -main should be used to specify the path to the application's main file.
+The -main flag should be used to specify the path to the application's main file.
 -main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
 
 Examples:
