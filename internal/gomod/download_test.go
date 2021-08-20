@@ -60,8 +60,8 @@ func TestDownload(t *testing.T) {
 	t.Run("Error", func(t *testing.T) {
 		downloads, err := Download([]Module{
 			{
-				Path:    "github.com/CycloneDX/cyclonedx-go-doesnotexist@v0.0.0",
-				Version: "",
+				Path:    "doesnotexist",
+				Version: "v0.0.0",
 			},
 		})
 		require.NoError(t, err)
