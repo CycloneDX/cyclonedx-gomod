@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.3" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:708fdf97-ea4d-484a-b0c4-3ef71a8736cd" version="1">
   <metadata>
+    <timestamp>2021-08-20T22:51:05+02:00</timestamp>
+    <tools>
+      <tool>
+        <vendor>CycloneDX</vendor>
+        <name>cyclonedx-gomod</name>
+        <version>v0.0.0-20210820223703-66faa35f1bb1</version>
+        <hashes>
+          <hash alg="MD5">be67564971a6c8ab2b43ed3074b9142a</hash>
+          <hash alg="SHA-1">a2ad76fb9d511ef9dc34eca3baf8dd2333c95028</hash>
+          <hash alg="SHA-256">72a4cf206d12a8ac4bfa83fe3488e1c38afa27b3f7adf9a4fa604ab93be12544</hash>
+          <hash alg="SHA-384">07bacec2b38c5e366a2df2a379b9d973ad750716b379d3e5b15b92bd18c8ba5bb93574cd27064605c0e69f0b926e455b</hash>
+          <hash alg="SHA-512">7c6d4c37df516037a2d3a076fca41c0e63a7028e41fbf277048fa6d29d148ca71120a10c90123c1ddfa11d9eaba3b97c909bedeb69580469b3350bf752be7bbc</hash>
+        </hashes>
+      </tool>
+    </tools>
     <component bom-ref="pkg:golang/k8s.io/minikube@v0.0.0-20210707214318-a03fbcf166e6" type="library">
       <name>k8s.io/minikube</name>
       <version>v0.0.0-20210707214318-a03fbcf166e6</version>
@@ -390,14 +405,14 @@
         </licenses>
       </evidence>
     </component>
-    <component bom-ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible" type="library">
+    <component bom-ref="pkg:golang/github.com/docker/distribution@v2.7.1" type="library">
       <name>github.com/docker/distribution</name>
-      <version>v2.7.1+incompatible</version>
+      <version>v2.7.1</version>
       <scope>required</scope>
       <hashes>
-        <hash alg="SHA-256">6b99a5915ced87a5b90387ceb12dc3d843b90549ac269701f9c4652d4edc4ae8</hash>
+        <hash alg="SHA-256">ffef63f21ade851f293c050d7cac0e8338ad1fc0b139ab1fbc5c170515e878ab</hash>
       </hashes>
-      <purl>pkg:golang/github.com/docker/distribution@v2.7.1+incompatible</purl>
+      <purl>pkg:golang/github.com/docker/distribution@v2.7.1</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/docker/distribution</url>
@@ -411,14 +426,14 @@
         </licenses>
       </evidence>
     </component>
-    <component bom-ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible" type="library">
+    <component bom-ref="pkg:golang/github.com/docker/docker@v20.10.7" type="library">
       <name>github.com/docker/docker</name>
-      <version>v20.10.7+incompatible</version>
+      <version>v20.10.7</version>
       <scope>required</scope>
       <hashes>
-        <hash alg="SHA-256">67a3bd361b23bfe6b2504788d48a2329b61cb0676061236ac5ed6cd8c6335214</hash>
+        <hash alg="SHA-256">68c31c9fe3f2f4acb394eebf26bd80be0191700fd94fabcdbe104c2bd639f35b</hash>
       </hashes>
-      <purl>pkg:golang/github.com/docker/docker@v20.10.7+incompatible</purl>
+      <purl>pkg:golang/github.com/docker/docker@v20.10.7</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/docker/docker</url>
@@ -2611,7 +2626,7 @@
       <dependency ref="pkg:golang/github.com/cloudevents/sdk-go/v2@v2.3.1"></dependency>
       <dependency ref="pkg:golang/github.com/cloudfoundry-attic/jibber_jabber@v0.0.0-20151120183258-bcc4c8345a21"></dependency>
       <dependency ref="pkg:golang/github.com/docker/cli@v0.0.0-20200303162255-7d407207c304"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
       <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
       <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
       <dependency ref="pkg:golang/github.com/google/slowjam@v1.0.0"></dependency>
@@ -2717,9 +2732,9 @@
     <dependency ref="pkg:golang/github.com/bgentry/go-netrc@v0.0.0-20140422174119-9fd32a8b3d3d"></dependency>
     <dependency ref="pkg:golang/github.com/blang/semver/v4@v4.0.0"></dependency>
     <dependency ref="pkg:golang/github.com/alonyb/spinner@v1.12.7">
-      <dependency ref="pkg:golang/github.com/mattn/go-isatty@v0.0.13"></dependency>
-      <dependency ref="pkg:golang/github.com/mattn/go-colorable@v0.1.8"></dependency>
       <dependency ref="pkg:golang/github.com/fatih/color@v1.10.0"></dependency>
+      <dependency ref="pkg:golang/github.com/mattn/go-colorable@v0.1.8"></dependency>
+      <dependency ref="pkg:golang/github.com/mattn/go-isatty@v0.0.13"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/cenkalti/backoff/v4@v4.1.1"></dependency>
     <dependency ref="pkg:golang/github.com/cheggaaa/pb/v3@v3.0.8">
@@ -2784,8 +2799,8 @@
     </dependency>
     <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
     <dependency ref="pkg:golang/github.com/docker/cli@v0.0.0-20200303162255-7d407207c304"></dependency>
-    <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible"></dependency>
-    <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
+    <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1"></dependency>
+    <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
     <dependency ref="pkg:golang/github.com/docker/docker-credential-helpers@v0.6.3"></dependency>
     <dependency ref="pkg:golang/github.com/docker/go-connections@v0.4.0"></dependency>
     <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
@@ -2806,26 +2821,26 @@
     </dependency>
     <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
     <dependency ref="pkg:golang/github.com/afbjorklund/go-containerregistry@v0.4.1-0.20210321165649-761f6f9626b1">
-      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
-      <dependency ref="pkg:golang/gopkg.in/yaml.v2@v2.4.0"></dependency>
-      <dependency ref="pkg:golang/google.golang.org/genproto@v0.0.0-20210624195500-8bfb893ecb84"></dependency>
-      <dependency ref="pkg:golang/golang.org/x/time@v0.0.0-20210220033141-f8bda1e9f3ba"></dependency>
-      <dependency ref="pkg:golang/golang.org/x/text@v0.3.6"></dependency>
-      <dependency ref="pkg:golang/golang.org/x/sync@v0.0.0-20210220032951-036812b2e83c"></dependency>
-      <dependency ref="pkg:golang/golang.org/x/oauth2@v0.0.0-20210628180205-a41e5a781914"></dependency>
-      <dependency ref="pkg:golang/github.com/spf13/cobra@v1.2.1"></dependency>
-      <dependency ref="pkg:golang/github.com/sirupsen/logrus@v1.7.0"></dependency>
-      <dependency ref="pkg:golang/github.com/opencontainers/image-spec@v1.0.1"></dependency>
-      <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/go-connections@v0.4.0"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/docker-credential-helpers@v0.6.3"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/cli@v0.0.0-20200303162255-7d407207c304"></dependency>
-      <dependency ref="pkg:golang/github.com/containerd/stargz-snapshotter/estargz@v0.4.1"></dependency>
-      <dependency ref="pkg:golang/github.com/containerd/containerd@v1.5.1"></dependency>
       <dependency ref="pkg:golang/cloud.google.com/go@v0.84.0"></dependency>
+      <dependency ref="pkg:golang/github.com/containerd/containerd@v1.5.1"></dependency>
+      <dependency ref="pkg:golang/github.com/containerd/stargz-snapshotter/estargz@v0.4.1"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/cli@v0.0.0-20200303162255-7d407207c304"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/docker-credential-helpers@v0.6.3"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/go-connections@v0.4.0"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
+      <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
+      <dependency ref="pkg:golang/github.com/opencontainers/image-spec@v1.0.1"></dependency>
+      <dependency ref="pkg:golang/github.com/sirupsen/logrus@v1.7.0"></dependency>
+      <dependency ref="pkg:golang/github.com/spf13/cobra@v1.2.1"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/oauth2@v0.0.0-20210628180205-a41e5a781914"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/sync@v0.0.0-20210220032951-036812b2e83c"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/text@v0.3.6"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/time@v0.0.0-20210220033141-f8bda1e9f3ba"></dependency>
+      <dependency ref="pkg:golang/google.golang.org/genproto@v0.0.0-20210624195500-8bfb893ecb84"></dependency>
+      <dependency ref="pkg:golang/gopkg.in/yaml.v2@v2.4.0"></dependency>
+      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/google/gofuzz@v1.1.0"></dependency>
     <dependency ref="pkg:golang/github.com/google/slowjam@v1.0.0">
@@ -2893,7 +2908,7 @@
     <dependency ref="pkg:golang/github.com/klauspost/cpuid@v1.2.0"></dependency>
     <dependency ref="pkg:golang/github.com/lightstep/tracecontext.go@v0.0.0-20181129014701-1757c391b1ac"></dependency>
     <dependency ref="pkg:golang/github.com/machine-drivers/docker-machine-driver-vmware@v0.1.3">
-      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
       <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
       <dependency ref="pkg:golang/github.com/machine-drivers/machine@v0.7.1-0.20210306082426-fcb2ad5bcb17"></dependency>
       <dependency ref="pkg:golang/github.com/pkg/errors@v0.9.1"></dependency>
@@ -3151,24 +3166,24 @@
       <dependency ref="pkg:golang/sigs.k8s.io/yaml@v1.2.0"></dependency>
     </dependency>
     <dependency ref="pkg:golang/k8s.io/cluster-bootstrap@v0.21.2">
-      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
-      <dependency ref="pkg:golang/k8s.io/apimachinery@v0.21.2"></dependency>
-      <dependency ref="pkg:golang/k8s.io/api@v0.21.2"></dependency>
       <dependency ref="pkg:golang/golang.org/x/crypto@v0.0.0-20210322153248-0c34fe9e7dc2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/api@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/apimachinery@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
     </dependency>
     <dependency ref="pkg:golang/k8s.io/component-base@v0.21.2">
-      <dependency ref="pkg:golang/k8s.io/utils@v0.0.0-20201110183641-67b214c5f920"></dependency>
-      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
-      <dependency ref="pkg:golang/k8s.io/client-go@v0.21.2"></dependency>
-      <dependency ref="pkg:golang/k8s.io/apimachinery@v0.21.2"></dependency>
-      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210629170331-7dc0b73dc9fb"></dependency>
-      <dependency ref="pkg:golang/go.uber.org/zap@v1.17.0"></dependency>
-      <dependency ref="pkg:golang/go.uber.org/multierr@v1.6.0"></dependency>
-      <dependency ref="pkg:golang/go.uber.org/atomic@v1.7.0"></dependency>
-      <dependency ref="pkg:golang/github.com/spf13/pflag@v1.0.5"></dependency>
-      <dependency ref="pkg:golang/github.com/moby/term@v0.0.0-20201216013528-df9cb8a40635"></dependency>
-      <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
       <dependency ref="pkg:golang/github.com/go-logr/logr@v0.4.0"></dependency>
+      <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
+      <dependency ref="pkg:golang/github.com/moby/term@v0.0.0-20201216013528-df9cb8a40635"></dependency>
+      <dependency ref="pkg:golang/github.com/spf13/pflag@v1.0.5"></dependency>
+      <dependency ref="pkg:golang/go.uber.org/atomic@v1.7.0"></dependency>
+      <dependency ref="pkg:golang/go.uber.org/multierr@v1.6.0"></dependency>
+      <dependency ref="pkg:golang/go.uber.org/zap@v1.17.0"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210629170331-7dc0b73dc9fb"></dependency>
+      <dependency ref="pkg:golang/k8s.io/apimachinery@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/client-go@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
+      <dependency ref="pkg:golang/k8s.io/utils@v0.0.0-20201110183641-67b214c5f920"></dependency>
     </dependency>
     <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0">
       <dependency ref="pkg:golang/github.com/go-logr/logr@v0.4.0"></dependency>
@@ -3176,31 +3191,31 @@
     <dependency ref="pkg:golang/k8s.io/kubectl@v0.21.2">
       <dependency ref="pkg:golang/github.com/MakeNowJust/heredoc@v0.0.0-20170808103936-bb23615498cd"></dependency>
       <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1"></dependency>
       <dependency ref="pkg:golang/github.com/fsnotify/fsnotify@v1.4.9"></dependency>
       <dependency ref="pkg:golang/github.com/google/go-cmp@v0.5.6"></dependency>
       <dependency ref="pkg:golang/github.com/googleapis/gnostic@v0.4.1"></dependency>
-      <dependency ref="pkg:golang/sigs.k8s.io/yaml@v1.2.0"></dependency>
-      <dependency ref="pkg:golang/k8s.io/utils@v0.0.0-20201110183641-67b214c5f920"></dependency>
-      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
-      <dependency ref="pkg:golang/k8s.io/component-base@v0.21.2"></dependency>
-      <dependency ref="pkg:golang/k8s.io/client-go@v0.21.2"></dependency>
-      <dependency ref="pkg:golang/k8s.io/apimachinery@v0.21.2"></dependency>
-      <dependency ref="pkg:golang/k8s.io/api@v0.21.2"></dependency>
-      <dependency ref="pkg:golang/gopkg.in/yaml.v2@v2.4.0"></dependency>
-      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210629170331-7dc0b73dc9fb"></dependency>
-      <dependency ref="pkg:golang/github.com/spf13/pflag@v1.0.5"></dependency>
-      <dependency ref="pkg:golang/github.com/spf13/cobra@v1.2.1"></dependency>
-      <dependency ref="pkg:golang/github.com/russross/blackfriday@v1.5.3-0.20200218234912-41c5fccfd6f6"></dependency>
-      <dependency ref="pkg:golang/github.com/opencontainers/go-digest@v1.0.0"></dependency>
-      <dependency ref="pkg:golang/github.com/moby/term@v0.0.0-20201216013528-df9cb8a40635"></dependency>
       <dependency ref="pkg:golang/github.com/mitchellh/go-wordwrap@v1.0.0"></dependency>
+      <dependency ref="pkg:golang/github.com/moby/term@v0.0.0-20201216013528-df9cb8a40635"></dependency>
+      <dependency ref="pkg:golang/github.com/opencontainers/go-digest@v1.0.0"></dependency>
+      <dependency ref="pkg:golang/github.com/russross/blackfriday@v1.5.3-0.20200218234912-41c5fccfd6f6"></dependency>
+      <dependency ref="pkg:golang/github.com/spf13/cobra@v1.2.1"></dependency>
+      <dependency ref="pkg:golang/github.com/spf13/pflag@v1.0.5"></dependency>
+      <dependency ref="pkg:golang/golang.org/x/sys@v0.0.0-20210629170331-7dc0b73dc9fb"></dependency>
+      <dependency ref="pkg:golang/gopkg.in/yaml.v2@v2.4.0"></dependency>
+      <dependency ref="pkg:golang/k8s.io/api@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/apimachinery@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/client-go@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/component-base@v0.21.2"></dependency>
+      <dependency ref="pkg:golang/k8s.io/klog/v2@v2.9.0"></dependency>
+      <dependency ref="pkg:golang/k8s.io/utils@v0.0.0-20201110183641-67b214c5f920"></dependency>
+      <dependency ref="pkg:golang/sigs.k8s.io/yaml@v1.2.0"></dependency>
     </dependency>
     <dependency ref="pkg:golang/k8s.io/kubernetes@v1.21.2">
       <dependency ref="pkg:golang/github.com/aws/aws-sdk-go@v1.35.24"></dependency>
       <dependency ref="pkg:golang/github.com/davecgh/go-spew@v1.1.1"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1+incompatible"></dependency>
-      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7+incompatible"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/distribution@v2.7.1"></dependency>
+      <dependency ref="pkg:golang/github.com/docker/docker@v20.10.7"></dependency>
       <dependency ref="pkg:golang/github.com/docker/go-connections@v0.4.0"></dependency>
       <dependency ref="pkg:golang/github.com/docker/go-units@v0.4.0"></dependency>
       <dependency ref="pkg:golang/github.com/fsnotify/fsnotify@v1.4.9"></dependency>

@@ -102,7 +102,7 @@ func Exec(options Options) error {
 		return err
 	}
 
-	dependencies := sbom.BuildDependencyGraph(modules)
+	sbom.NormalizeVersions(modules, options.NoVersionPrefix)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithFiles(options.IncludeFiles),
@@ -121,10 +121,23 @@ func Exec(options Options) error {
 		return err
 	}
 
+	dependencies := sbom.BuildDependencyGraph(modules)
+
 	bom := cdx.NewBOM()
+
+	err = cliutil.SetSerialNumber(bom, options.SBOMOptions)
+	if err != nil {
+		return err
+	}
+
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
+	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
+	if err != nil {
+		return err
+	}
+
 	bom.Components = &components
 	bom.Dependencies = &dependencies
 
