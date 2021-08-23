@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:00000000-0000-0000-0000-000000000000" version="1">
   <metadata>
-    <component bom-ref="pkg:golang/testmod-local@v0.0.0-20210716205356-32d6b8adc872" type="library">
+    <component bom-ref="pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872" type="library">
       <name>testmod-local</name>
-      <version>v0.0.0-20210716205356-32d6b8adc872</version>
-      <purl>pkg:golang/testmod-local@v0.0.0-20210716205356-32d6b8adc872</purl>
+      <version>v0.0.0-20210716185356-32d6b8adc872</version>
+      <purl>pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872</purl>
     </component>
   </metadata>
   <components>
@@ -19,7 +19,7 @@
     </component>
   </components>
   <dependencies>
-    <dependency ref="pkg:golang/testmod-local@v0.0.0-20210716205356-32d6b8adc872">
+    <dependency ref="pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872">
       <dependency ref="pkg:golang/testmod-local-dependency"></dependency>
     </dependency>
     <dependency ref="pkg:golang/testmod-local-dependency"></dependency>
