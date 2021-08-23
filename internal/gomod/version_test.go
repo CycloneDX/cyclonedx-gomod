@@ -20,11 +20,22 @@ package gomod
 import (
 	"testing"
 
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetPseudoVersion(t *testing.T) {
-	version, err := GetPseudoVersion("../../")
+func TestGetLatestTag(t *testing.T) {
+	repo, err := git.PlainOpen("../../")
 	require.NoError(t, err)
-	require.Regexp(t, "^v0\\.0\\.0-[\\d]{14}-[\\da-z]{12}$", version)
+
+	headCommit, err := repo.CommitObject(plumbing.NewHash("a078e094ad2504c6b16d8d9eeccc86e519f5c1da"))
+	require.NoError(t, err)
+
+	tag, err := GetLatestTag(repo, headCommit)
+	require.NoError(t, err)
+	require.NotNil(t, tag)
+
+	require.Equal(t, "v0.9.0", tag.name)
+	require.Equal(t, "a078e094ad2504c6b16d8d9eeccc86e519f5c1da", tag.commit.Hash.String())
 }
