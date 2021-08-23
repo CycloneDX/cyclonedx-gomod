@@ -26,16 +26,18 @@ import (
 )
 
 func TestGetLatestTag(t *testing.T) {
-	repo, err := git.PlainOpen("../../")
+	repo, err := git.PlainClone(t.TempDir(), false, &git.CloneOptions{
+		URL: "https://github.com/CycloneDX/cyclonedx-go.git",
+	})
 	require.NoError(t, err)
 
-	headCommit, err := repo.CommitObject(plumbing.NewHash("a078e094ad2504c6b16d8d9eeccc86e519f5c1da"))
+	headCommit, err := repo.CommitObject(plumbing.NewHash("a20be9f00d406e7b792973ee1826e637e58a23d7"))
 	require.NoError(t, err)
 
 	tag, err := GetLatestTag(repo, headCommit)
 	require.NoError(t, err)
 	require.NotNil(t, tag)
 
-	require.Equal(t, "v0.9.0", tag.name)
-	require.Equal(t, "a078e094ad2504c6b16d8d9eeccc86e519f5c1da", tag.commit.Hash.String())
+	require.Equal(t, "v0.3.0", tag.name)
+	require.Equal(t, "a20be9f00d406e7b792973ee1826e637e58a23d7", tag.commit.Hash.String())
 }
