@@ -96,7 +96,7 @@ func Exec(options Options) error {
 	// Dependencies need to be applied prior to determining the main
 	// module's version, because `go mod graph` doesn't work with a
 	// version either.
-	err = gomod.ApplyDependencies(options.ModuleDir, modules)
+	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
 	if err != nil {
 		return err
 	}

@@ -19,6 +19,7 @@ package mod
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -66,22 +67,34 @@ Examples:
 	}
 }
 
-func Exec(modOptions ModOptions) error {
-	err := modOptions.Validate()
+func Exec(options ModOptions) error {
+	err := options.Validate()
 	if err != nil {
 		return err
 	}
 
 	// Cheap trick to make Go download all required modules in the module graph
 	// without modifying go.sum (as `go mod download` would do).
-	err = gocmd.ModWhy(modOptions.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
+	err = gocmd.ModWhy(options.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
 	if err != nil {
 		return fmt.Errorf("downloading modules failed: %w", err)
 	}
 
-	modules, err := gomod.GetModules(modOptions.ModuleDir, modOptions.IncludeTest)
+	modules, err := gomod.GetVendoredModules(options.ModuleDir)
 	if err != nil {
-		return fmt.Errorf("failed to enumerate modules: %w", err)
+		if errors.Is(err, gomod.ErrNotVendoring) {
+			modules, err = gomod.GetModules(options.ModuleDir, options.IncludeTest)
+			if err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+	}
+
+	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
+	if err != nil {
+		return fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
 	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
@@ -89,18 +102,18 @@ func Exec(modOptions ModOptions) error {
 		log.Warn().Err(err).Msg("failed to determine version of main module")
 	}
 
-	sbom.NormalizeVersions(modules, modOptions.NoVersionPrefix)
+	sbom.NormalizeVersions(modules, options.NoVersionPrefix)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentType(modOptions.ComponentType)),
-		modconv.WithLicenses(modOptions.ResolveLicenses),
+		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)),
+		modconv.WithLicenses(options.ResolveLicenses),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert main module: %w", err)
 	}
 
 	components, err := modconv.ToComponents(modules[1:],
-		modconv.WithLicenses(modOptions.ResolveLicenses),
+		modconv.WithLicenses(options.ResolveLicenses),
 		modconv.WithModuleHashes(),
 	)
 	if err != nil {
@@ -111,7 +124,7 @@ func Exec(modOptions ModOptions) error {
 
 	bom := cdx.NewBOM()
 
-	err = cliutil.SetSerialNumber(bom, modOptions.SBOMOptions)
+	err = cliutil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
 		return err
 	}
@@ -120,7 +133,7 @@ func Exec(modOptions ModOptions) error {
 		Component: mainComponent,
 	}
 
-	err = cliutil.AddCommonMetadata(bom, modOptions.SBOMOptions)
+	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
 		return err
 	}
@@ -128,14 +141,14 @@ func Exec(modOptions ModOptions) error {
 	bom.Components = &components
 	bom.Dependencies = &dependencyGraph
 
-	if modOptions.IncludeStd {
+	if options.IncludeStd {
 		err = addStdComponent(bom)
 		if err != nil {
 			return err
 		}
 	}
 
-	return cliutil.WriteBOM(bom, modOptions.OutputOptions)
+	return cliutil.WriteBOM(bom, options.OutputOptions)
 }
 
 func addStdComponent(bom *cdx.BOM) error {

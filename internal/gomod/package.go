@@ -73,7 +73,7 @@ func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) 
 		return nil, err
 	}
 
-	SortModules(modules)
+	sortModules(modules)
 
 	return modules, nil
 }
