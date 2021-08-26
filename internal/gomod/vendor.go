@@ -20,7 +20,6 @@ package gomod
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -38,7 +37,7 @@ func IsVendoring(moduleDir string) bool {
 
 var ErrNotVendoring = errors.New("the module is not vendoring its dependencies")
 
-func GetVendoredModules(moduleDir string) ([]Module, error) {
+func GetVendoredModules(moduleDir string, includeTest bool) ([]Module, error) {
 	if !IsModule(moduleDir) {
 		return nil, ErrNoModule
 	}
@@ -58,26 +57,23 @@ func GetVendoredModules(moduleDir string) ([]Module, error) {
 		return nil, fmt.Errorf("parsing vendored modules failed: %w", err)
 	}
 
-	// Main module is not included in vendored module list,
-	// so we have to get it separately
-	buf.Reset()
-	err = gocmd.GetModule(moduleDir, buf)
+	modules, err = FilterModules(moduleDir, modules, includeTest)
 	if err != nil {
-		return nil, fmt.Errorf("listing main module failed: %w", err)
+		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
 
-	var mainModule Module
-	err = json.NewDecoder(buf).Decode(&mainModule)
+	err = ResolveLocalReplacements(moduleDir, modules)
 	if err != nil {
-		return nil, fmt.Errorf("parsing main module failed: %w", err)
+		return nil, fmt.Errorf("resolving local modules failed: %w", err)
 	}
 
-	modules = append(modules, mainModule)
-
-	err = resolveLocalModules(moduleDir, modules)
+	// Main module is not included in vendored module list, so we have to get it separately
+	mainModule, err := GetModule(moduleDir)
 	if err != nil {
-		return nil, fmt.Errorf("failed to resolve local modules")
+		return nil, fmt.Errorf("failed to get main module: %w", err)
 	}
+
+	modules = append(modules, *mainModule)
 
 	sortModules(modules)
 
@@ -87,6 +83,7 @@ func GetVendoredModules(moduleDir string) ([]Module, error) {
 // parseVendoredModules parses the output of `go mod vendor -v` into a Module slice.
 func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, error) {
 	modules := make([]Module, 0)
+	modulesSeen := make(map[string]struct{})
 
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
@@ -101,17 +98,19 @@ func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, er
 		//   Path [Version] => Path [Version]
 		arrowIndex := util.StringSliceIndex(fields, "=>")
 
+		var module Module
+
 		if arrowIndex == -1 {
 			if len(fields) != 2 {
 				return nil, fmt.Errorf("expected two fields per line, but got %d: %s", len(fields), line)
 			}
 
-			modules = append(modules, Module{
+			module = Module{
 				Path:     fields[0],
 				Version:  fields[1],
 				Dir:      filepath.Join(mainModulePath, "vendor", fields[0]),
 				Vendored: true,
-			})
+			}
 		} else {
 			pathParent := fields[0]
 			versionParent := ""
@@ -125,16 +124,25 @@ func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, er
 				versionReplacement = fields[arrowIndex+2]
 			}
 
-			modules = append(modules, Module{
+			module = Module{
 				Path:    pathParent,
 				Version: versionParent,
 				Replace: &Module{
 					Path:     pathReplacement,
 					Version:  versionReplacement,
-					Dir:      filepath.Join(mainModulePath, "vendor", pathParent), // Replacements are copied to their parents dir
+					Dir:      filepath.Join(mainModulePath, "vendor", pathParent), // Replacements are copied to their parent's dir
 					Vendored: true,
 				},
-			})
+			}
+		}
+
+		// Go will append all replacement constraints again at the very
+		// bottom of `go mod vendor`'s output. This would cause duplicate
+		// modules for us, which we prevent using this cheap deduplication.
+		_, seen := modulesSeen[module.Path]
+		if !seen {
+			modules = append(modules, module)
+			modulesSeen[module.Path] = struct{}{}
 		}
 	}
 

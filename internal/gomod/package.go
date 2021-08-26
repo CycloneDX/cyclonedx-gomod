@@ -56,6 +56,10 @@ type Package struct {
 }
 
 func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) {
+	if !IsModule(moduleDir) {
+		return nil, ErrNoModule
+	}
+
 	buf := new(bytes.Buffer)
 
 	err := gocmd.ListPackages(moduleDir, packagePattern, buf)
@@ -68,7 +72,7 @@ func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) 
 		return nil, err
 	}
 
-	modules, err := convertPackages(pkgMap)
+	modules, err := convertPackages(moduleDir, pkgMap)
 	if err != nil {
 		return nil, err
 	}
@@ -118,8 +122,9 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 	return pkgsMap, nil
 }
 
-func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
+func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Module, error) {
 	modules := make([]Module, 0, len(pkgsMap))
+	vendoring := IsVendoring(mainModuleDir)
 
 	for _, pkgs := range pkgsMap {
 		var module *Module
@@ -132,6 +137,18 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 			}
 		} else {
 			continue
+		}
+
+		if !module.Main && vendoring {
+			module.Vendored = true
+			vendorPath := filepath.Join(mainModuleDir, "vendor", module.Path)
+
+			if module.Replace != nil {
+				module.Replace.Vendored = true
+				module.Replace.Dir = vendorPath
+			} else {
+				module.Dir = vendorPath
+			}
 		}
 
 		for i := range pkgs {
@@ -151,7 +168,11 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 
 			for _, file := range pkgFiles {
 				if filePath, err := makePackageFileRelativeToModule(module.Dir, pkgs[i].Dir, file); err == nil {
-					module.Files = append(module.Files, filePath)
+					if module.Replace != nil {
+						module.Replace.Files = append(module.Replace.Files, filePath)
+					} else {
+						module.Files = append(module.Files, filePath)
+					}
 				} else {
 					return nil, err
 				}
@@ -163,7 +184,11 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 
 			for _, testFile := range pkgTestFiles {
 				if testFilePath, err := makePackageFileRelativeToModule(module.Dir, pkgs[i].Dir, testFile); err == nil {
-					module.TestFiles = append(module.TestFiles, testFilePath)
+					if module.Replace != nil {
+						module.Replace.TestFiles = append(module.Replace.TestFiles, testFilePath)
+					} else {
+						module.TestFiles = append(module.TestFiles, testFilePath)
+					}
 				} else {
 					return nil, err
 				}
@@ -184,9 +209,15 @@ func convertPackages(pkgsMap map[string][]Package) ([]Module, error) {
 }
 
 func makePackageFileRelativeToModule(moduleDir, pkgDir, file string) (string, error) {
-	fp, err := filepath.Rel(moduleDir, filepath.Join(pkgDir, file))
+	moduleDirAbs, err := filepath.Abs(moduleDir)
 	if err != nil {
 		return "", err
 	}
+
+	fp, err := filepath.Rel(moduleDirAbs, filepath.Join(pkgDir, file))
+	if err != nil {
+		return "", err
+	}
+
 	return strings.ReplaceAll(fp, "\\", "/"), nil
 }

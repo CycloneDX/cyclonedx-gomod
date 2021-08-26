@@ -38,11 +38,16 @@ func ApplyModuleGraph(moduleDir string, modules []Module) error {
 		return err
 	}
 
+	err = parseModuleGraph(buf, modules)
+	if err != nil {
+		return err
+	}
+
 	for i := range modules {
 		sortDependencies(modules[i].Dependencies)
 	}
 
-	return parseModuleGraph(buf, modules)
+	return nil
 }
 
 // parseModuleGraph parses the output of `go mod graph` and populates

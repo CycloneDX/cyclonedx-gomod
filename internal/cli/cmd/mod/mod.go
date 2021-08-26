@@ -80,7 +80,7 @@ func Exec(options ModOptions) error {
 		return fmt.Errorf("downloading modules failed: %w", err)
 	}
 
-	modules, err := gomod.GetVendoredModules(options.ModuleDir)
+	modules, err := gomod.GetVendoredModules(options.ModuleDir, options.IncludeTest)
 	if err != nil {
 		if errors.Is(err, gomod.ErrNotVendoring) {
 			modules, err = gomod.GetModules(options.ModuleDir, options.IncludeTest)

@@ -80,6 +80,23 @@ func IsModule(dir string) bool {
 // ErrNoModule indicates that a given path is not a valid Go module
 var ErrNoModule = errors.New("not a go module")
 
+func GetModule(moduleDir string) (*Module, error) {
+	buf := new(bytes.Buffer)
+
+	err := gocmd.GetModule(moduleDir, buf)
+	if err != nil {
+		return nil, err
+	}
+
+	var module Module
+	err = json.NewDecoder(buf).Decode(&module)
+	if err != nil {
+		return nil, err
+	}
+
+	return &module, nil
+}
+
 func GetModules(moduleDir string, includeTest bool) ([]Module, error) {
 	if !util.IsGoModule(moduleDir) {
 		return nil, ErrNoModule
@@ -102,7 +119,7 @@ func GetModules(moduleDir string, includeTest bool) ([]Module, error) {
 		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
 
-	err = resolveLocalModules(moduleDir, modules)
+	err = ResolveLocalReplacements(moduleDir, modules)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve local modules")
 	}
@@ -150,12 +167,17 @@ func sortModules(modules []Module) {
 	})
 }
 
-// Replacements may point to local directories, in which case their .Path is
-// not the actual module's name, but the filepath as used in go.mod.
-func resolveLocalModules(mainModuleDir string, modules []Module) error {
+// ResolveLocalReplacements tries to resolve paths and versions for local replacement modules.
+func ResolveLocalReplacements(mainModuleDir string, modules []Module) error {
 	for i, module := range modules {
 		if module.Replace == nil {
 			// Only replacements can be local
+			continue
+		}
+
+		if !strings.HasPrefix(module.Replace.Path, "./") &&
+			!strings.HasPrefix(module.Replace.Path, "../") {
+			// According to the specification, local paths must start with either one of these prefixes.
 			continue
 		}
 
@@ -168,12 +190,12 @@ func resolveLocalModules(mainModuleDir string, modules []Module) error {
 
 		if !IsModule(localModuleDir) {
 			log.Warn().
-				Str("dir", localModuleDir).
-				Msg("local replacement is not a module")
+				Str("moduleDir", localModuleDir).
+				Msg("local replacement does not exist or is not a module")
 			continue
 		}
 
-		err := resolveLocalModule(localModuleDir, modules[i].Replace)
+		err := resolveLocalReplacement(localModuleDir, modules[i].Replace)
 		if err != nil {
 			return fmt.Errorf("resolving local module %s failed: %w", module.Replace.Coordinates(), err)
 		}
@@ -182,20 +204,9 @@ func resolveLocalModules(mainModuleDir string, modules []Module) error {
 	return nil
 }
 
-func resolveLocalModule(localModuleDir string, module *Module) error {
-	if util.IsGoModule(module.Dir) && strings.HasPrefix(module.Dir, util.GetModuleCacheDir()) {
-		// Module is in module cache
-		return nil
-	} else if !util.IsGoModule(localModuleDir) {
-		return ErrNoModule
-	}
-
-	buf := new(bytes.Buffer)
-	if err := gocmd.GetModule(localModuleDir, buf); err != nil {
-		return err
-	}
-	localModule := new(Module)
-	if err := json.NewDecoder(buf).Decode(localModule); err != nil {
+func resolveLocalReplacement(localModuleDir string, module *Module) error {
+	localModule, err := GetModule(localModuleDir)
+	if err != nil {
 		return err
 	}
 
@@ -214,7 +225,7 @@ func resolveLocalModule(localModuleDir string, module *Module) error {
 			log.Warn().
 				Err(err).
 				Str("module", module.Path).
-				Str("dir", localModuleDir).
+				Str("moduleDir", localModuleDir).
 				Msg("failed to resolve version of local module")
 		}
 	}
