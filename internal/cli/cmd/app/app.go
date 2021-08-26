@@ -109,6 +109,7 @@ func Exec(options Options) error {
 	sbom.NormalizeVersions(modules, options.NoVersionPrefix)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
+		modconv.WithComponentType(cdx.ComponentTypeApplication),
 		modconv.WithFiles(options.IncludeFiles),
 		modconv.WithLicenses(options.ResolveLicenses),
 	)
