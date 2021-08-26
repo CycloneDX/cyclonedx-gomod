@@ -39,20 +39,18 @@ type Package struct {
 	Standard   bool    // is this package part of the standard Go library?
 	Module     *Module // info about package's containing module, if any (can be nil)
 
-	GoFiles        []string // .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)
-	CgoFiles       []string // .go source files that import "C"
-	CFiles         []string // .c source files
-	CXXFiles       []string // .cc, .cxx and .cpp source files
-	MFiles         []string // .m source files
-	HFiles         []string // .h, .hh, .hpp and .hxx source files
-	FFiles         []string // .f, .F, .for and .f90 Fortran source files
-	SFiles         []string // .s source files
-	SwigFiles      []string // .swig files
-	SwigCXXFiles   []string // .swigcxx files
-	SysoFiles      []string // .syso object files to add to archive
-	TestGoFiles    []string // _test.go files in package
-	EmbedFiles     []string // files matched by EmbedPatterns
-	TestEmbedFiles []string // files matched by TestEmbedPatterns
+	GoFiles      []string // .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)
+	CgoFiles     []string // .go source files that import "C"
+	CFiles       []string // .c source files
+	CXXFiles     []string // .cc, .cxx and .cpp source files
+	MFiles       []string // .m source files
+	HFiles       []string // .h, .hh, .hpp and .hxx source files
+	FFiles       []string // .f, .F, .for and .f90 Fortran source files
+	SFiles       []string // .s source files
+	SwigFiles    []string // .swig files
+	SwigCXXFiles []string // .swigcxx files
+	SysoFiles    []string // .syso object files to add to archive
+	EmbedFiles   []string // files matched by EmbedPatterns
 }
 
 func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) {
@@ -151,6 +149,15 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 			}
 		}
 
+		// In case of replacement, the replaced module
+		// doesn't have a dir, but the replacement does.
+		// We need the module dir to be able to construct
+		// filepaths relative to the module.
+		moduleDir := module.Dir
+		if moduleDir == "" && module.Replace != nil {
+			moduleDir = module.Replace.Dir
+		}
+
 		for i := range pkgs {
 			var pkgFiles []string
 			pkgFiles = append(pkgFiles, pkgs[i].GoFiles...)
@@ -167,7 +174,8 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 			pkgFiles = append(pkgFiles, pkgs[i].EmbedFiles...)
 
 			for _, file := range pkgFiles {
-				if filePath, err := makePackageFileRelativeToModule(module.Dir, pkgs[i].Dir, file); err == nil {
+				filePath, err := makePackageFileRelativeToModule(moduleDir, pkgs[i].Dir, file)
+				if err == nil {
 					if module.Replace != nil {
 						module.Replace.Files = append(module.Replace.Files, filePath)
 					} else {
@@ -178,27 +186,8 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 				}
 			}
 
-			var pkgTestFiles []string
-			pkgTestFiles = append(pkgTestFiles, pkgs[i].TestGoFiles...)
-			pkgTestFiles = append(pkgTestFiles, pkgs[i].TestEmbedFiles...)
-
-			for _, testFile := range pkgTestFiles {
-				if testFilePath, err := makePackageFileRelativeToModule(module.Dir, pkgs[i].Dir, testFile); err == nil {
-					if module.Replace != nil {
-						module.Replace.TestFiles = append(module.Replace.TestFiles, testFilePath)
-					} else {
-						module.TestFiles = append(module.TestFiles, testFilePath)
-					}
-				} else {
-					return nil, err
-				}
-			}
-
 			sort.Slice(module.Files, func(i, j int) bool {
 				return module.Files[i] < module.Files[j]
-			})
-			sort.Slice(module.TestFiles, func(i, j int) bool {
-				return module.TestFiles[i] < module.TestFiles[j]
 			})
 		}
 
