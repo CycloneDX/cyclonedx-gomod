@@ -48,17 +48,6 @@ func IsSubPath(subPath, path string) (bool, error) {
 	return true, nil
 }
 
-// IsGoModule determines whether the directory at the given path is a Go module.
-func IsGoModule(path string) bool {
-	return FileExists(filepath.Join(path, "go.mod"))
-}
-
-// IsVendoring determines whether of not the module at the given path is vendoring its dependencies.
-// Should be used in conjunction with IsGoModule.
-func IsVendoring(path string) bool {
-	return FileExists(filepath.Join(path, "vendor", "modules.txt"))
-}
-
 // GetGoPath determines the GOPATH location.
 func GetGoPath() string {
 	gopath := os.Getenv("GOPATH")

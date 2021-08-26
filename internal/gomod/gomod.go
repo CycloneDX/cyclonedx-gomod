@@ -97,7 +97,7 @@ func GetModule(moduleDir string) (*Module, error) {
 }
 
 func GetModules(moduleDir string, includeTest bool) ([]Module, error) {
-	if !util.IsGoModule(moduleDir) {
+	if !IsModule(moduleDir) {
 		return nil, ErrNoModule
 	}
 

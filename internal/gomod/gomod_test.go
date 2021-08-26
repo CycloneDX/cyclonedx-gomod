@@ -18,7 +18,6 @@
 package gomod
 
 import (
-	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -43,7 +42,7 @@ func TestModule_Coordinates(t *testing.T) {
 func TestModule_Hash(t *testing.T) {
 	// Download a specific version of a module
 	cmd := exec.Command("go", "get", "github.com/google/uuid@v1.2.0")
-	cmd.Dir = os.TempDir() // Just has to be outside of this module's directory to prevent modification of go.mod
+	cmd.Dir = t.TempDir() // Just has to be outside of this module's directory to prevent modification of go.mod
 	require.NoError(t, cmd.Run())
 
 	// Locate the module on the file system
@@ -72,6 +71,16 @@ func TestModule_PackageURL(t *testing.T) {
 	}
 
 	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0", module.PackageURL())
+}
+
+func TestIsModule(t *testing.T) {
+	t.Run("Positive", func(t *testing.T) {
+		require.True(t, IsModule("../../"))
+	})
+
+	t.Run("Negative", func(t *testing.T) {
+		require.False(t, IsModule(t.TempDir()))
+	})
 }
 
 func TestParseModules(t *testing.T) {

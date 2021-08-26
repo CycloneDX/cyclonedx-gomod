@@ -142,38 +142,11 @@ func Exec(options ModOptions) error {
 	bom.Dependencies = &dependencyGraph
 
 	if options.IncludeStd {
-		err = addStdComponent(bom)
+		err = cliutil.AddStdComponent(bom)
 		if err != nil {
 			return err
 		}
 	}
 
 	return cliutil.WriteBOM(bom, options.OutputOptions)
-}
-
-func addStdComponent(bom *cdx.BOM) error {
-	stdComponent, err := sbom.BuildStdComponent()
-	if err != nil {
-		return fmt.Errorf("failed to build std component: %w", err)
-	}
-
-	*bom.Components = append(*bom.Components, *stdComponent)
-
-	// Add std to dependency graph
-	stdDependency := cdx.Dependency{Ref: stdComponent.BOMRef}
-	*bom.Dependencies = append(*bom.Dependencies, stdDependency)
-
-	// Add std as dependency of main module
-	for i, dependency := range *bom.Dependencies {
-		if dependency.Ref == bom.Metadata.Component.BOMRef {
-			if dependency.Dependencies == nil {
-				(*bom.Dependencies)[i].Dependencies = &[]cdx.Dependency{stdDependency}
-			} else {
-				*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
-			}
-			break
-		}
-	}
-
-	return nil
 }

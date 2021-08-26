@@ -94,8 +94,7 @@ func Exec(options Options) error {
 	}
 
 	// Dependencies need to be applied prior to determining the main
-	// module's version, because `go mod graph` doesn't work with a
-	// version either.
+	// module's version, because `go mod graph` omits that version.
 	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
 	if err != nil {
 		return err
@@ -145,6 +144,13 @@ func Exec(options Options) error {
 
 	bom.Components = &components
 	bom.Dependencies = &dependencies
+
+	if options.IncludeStd {
+		err = cliutil.AddStdComponent(bom)
+		if err != nil {
+			return err
+		}
+	}
 
 	return cliutil.WriteBOM(bom, options.OutputOptions)
 }

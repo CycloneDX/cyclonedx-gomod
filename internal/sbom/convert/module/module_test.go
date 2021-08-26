@@ -18,7 +18,6 @@
 package module
 
 import (
-	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -81,7 +80,7 @@ func TestWithLicenses(t *testing.T) {
 func TestWithModuleHashes(t *testing.T) {
 	// Download a specific version of a module
 	cmd := exec.Command("go", "get", "github.com/google/uuid@v1.2.0")
-	cmd.Dir = os.TempDir() // Just has to be outside of this module's directory to prevent modification of go.mod
+	cmd.Dir = t.TempDir() // Just has to be outside of this module's directory to prevent modification of go.mod
 	require.NoError(t, cmd.Run())
 
 	// Locate the module on the file system

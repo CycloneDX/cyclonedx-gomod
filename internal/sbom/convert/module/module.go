@@ -28,7 +28,7 @@ import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/file"
+	fileconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/file"
 	"github.com/rs/zerolog/log"
 )
 
@@ -91,9 +91,9 @@ func WithFiles(enabled bool) Option {
 		var fileComponents []cdx.Component
 
 		for _, filePath := range m.Files {
-			fileComponent, err := file.ToComponent(filepath.Join(m.Dir, filePath), filePath,
-				file.WithScope(cdx.ScopeRequired),
-				file.WithHashes(
+			fileComponent, err := fileconv.ToComponent(filepath.Join(m.Dir, filePath), filePath,
+				fileconv.WithScope(cdx.ScopeRequired),
+				fileconv.WithHashes(
 					cdx.HashAlgoMD5,
 					cdx.HashAlgoSHA1,
 					cdx.HashAlgoSHA256,
