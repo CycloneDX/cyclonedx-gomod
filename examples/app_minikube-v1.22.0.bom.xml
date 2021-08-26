@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:708fdf97-ea4d-484a-b0c4-3ef71a8736cd" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:63ffb415-acfb-48aa-bccb-11c000c5507d" version="1">
   <metadata>
-    <timestamp>2021-08-20T22:51:05+02:00</timestamp>
+    <timestamp>2021-08-26T21:35:35+02:00</timestamp>
     <tools>
       <tool>
         <vendor>CycloneDX</vendor>
         <name>cyclonedx-gomod</name>
-        <version>v0.0.0-20210820223703-66faa35f1bb1</version>
+        <version>v0.0.0-20210826212938-a556444addbd</version>
         <hashes>
-          <hash alg="MD5">be67564971a6c8ab2b43ed3074b9142a</hash>
-          <hash alg="SHA-1">a2ad76fb9d511ef9dc34eca3baf8dd2333c95028</hash>
-          <hash alg="SHA-256">72a4cf206d12a8ac4bfa83fe3488e1c38afa27b3f7adf9a4fa604ab93be12544</hash>
-          <hash alg="SHA-384">07bacec2b38c5e366a2df2a379b9d973ad750716b379d3e5b15b92bd18c8ba5bb93574cd27064605c0e69f0b926e455b</hash>
-          <hash alg="SHA-512">7c6d4c37df516037a2d3a076fca41c0e63a7028e41fbf277048fa6d29d148ca71120a10c90123c1ddfa11d9eaba3b97c909bedeb69580469b3350bf752be7bbc</hash>
+          <hash alg="MD5">523b80e9aa876f66869d70eaf7440b41</hash>
+          <hash alg="SHA-1">5f9c9817c60710b7deb1d8db3f9a99f38c604eb4</hash>
+          <hash alg="SHA-256">c68f6dd2f5f71b576cee851887b9a693d76acd60bc58af363be78abcea7cfa7d</hash>
+          <hash alg="SHA-384">64708807d70984d7602e39cc96ed94d83918fa9786430456945577498797904357b3fa085e4f991ab8a56913c509c641</hash>
+          <hash alg="SHA-512">8d512a7c4c6531fb7a4f1d4896cc0198ee58f5fd8121a03747f70b6755e482b8021b01c697f00300b15215c0fcd851275ccdb149879450482f85fbf02b078ba1</hash>
         </hashes>
       </tool>
     </tools>
-    <component bom-ref="pkg:golang/k8s.io/minikube@v0.0.0-20210707214318-a03fbcf166e6" type="library">
+    <component bom-ref="pkg:golang/k8s.io/minikube@v1.22.0" type="application">
       <name>k8s.io/minikube</name>
-      <version>v0.0.0-20210707214318-a03fbcf166e6</version>
-      <purl>pkg:golang/k8s.io/minikube@v0.0.0-20210707214318-a03fbcf166e6</purl>
+      <version>v1.22.0</version>
+      <purl>pkg:golang/k8s.io/minikube@v1.22.0</purl>
       <evidence>
         <licenses>
           <license>
@@ -2613,7 +2613,7 @@
     </component>
   </components>
   <dependencies>
-    <dependency ref="pkg:golang/k8s.io/minikube@v0.0.0-20210707214318-a03fbcf166e6">
+    <dependency ref="pkg:golang/k8s.io/minikube@v1.22.0">
       <dependency ref="pkg:golang/cloud.google.com/go/storage@v1.15.0"></dependency>
       <dependency ref="pkg:golang/github.com/Delta456/box-cli-maker/v2@v2.2.1"></dependency>
       <dependency ref="pkg:golang/github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace@v0.16.0"></dependency>
