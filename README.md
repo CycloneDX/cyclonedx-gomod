@@ -37,12 +37,59 @@ USAGE
   cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]
 
 SUBCOMMANDS
+  app      Generate SBOM for an application
   bin      Generate SBOM for a binary
   mod      Generate SBOM for a module
   version  Show version information
 ```
 
 ### Subcommands
+
+#### `app`
+
+```
+USAGE
+  cyclonedx-gomod app [FLAGS...] MODPATH
+
+Generate SBOM for an application.
+
+In order to produce accurate results, build constraints must be configured
+via environment variables. These build constraints should mimic the ones passed
+to the "go build" command for the application.
+
+A few noteworthy environment variables are:
+  - GOARCH       The target architecture (386, amd64, etc.)
+  - GOOS         The target operating system (linux, windows, etc.)
+  - CGO_ENABLED  Whether or not CGO is enabled
+  - GOFLAGS      Pass build tags (see examples below)
+
+A complete overview of all environment variables can be found here:
+  https://pkg.go.dev/cmd/go#hdr-Environment_variables
+
+The -main flag should be used to specify the path to the application's main file.
+-main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
+
+By passing -files, all files that would be compiled into the binary will be included
+as subcomponents of their respective module. Files versions follow the v0.0.0-SHORTHASH pattern, 
+where SHORTHASH is the first 12 characters of the file's SHA1 hash.
+
+Examples:
+  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
+  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module
+
+FLAGS
+  -files=false         Include files
+  -json=false          Output in JSON
+  -licenses=false      Resolve module licenses
+  -main main.go        Path to the application's main file, relative to MODPATH
+  -noserial=false      Omit serial number
+  -novprefix=false     Omit "v" prefix from versions
+  -output -            Output file path (or - for STDOUT)
+  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
+  -serial ...          Serial number
+  -std=false           Include Go standard library as component and dependency of the module
+  -verbose=false       Enable verbose output
+```
 
 #### `bin`
 

@@ -101,15 +101,14 @@ func Exec(binOptions BinOptions) error {
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentTypeApplication),
-		modconv.WithLicensesMaybe(binOptions.ResolveLicenses),
-		modconv.WithScope(""), // Main component can't have a scope
+		modconv.WithLicenses(binOptions.ResolveLicenses),
 	)
 	if err != nil {
 		return err
 	}
 
 	components, err := modconv.ToComponents(modules[1:],
-		modconv.WithLicensesMaybe(binOptions.ResolveLicenses),
+		modconv.WithLicenses(binOptions.ResolveLicenses),
 		withModuleHashes(hashes),
 	)
 	if err != nil {

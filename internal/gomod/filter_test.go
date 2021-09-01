@@ -15,30 +15,34 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package bin
+package gomod
 
 import (
+	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestBinOptions_Validate(t *testing.T) {
-	t.Run("BinaryPath Not Exists", func(t *testing.T) {
-		var binOptions BinOptions
-		binOptions.BinaryPath = "./doesNotExist"
+func TestParseModWhy(t *testing.T) {
+	modWhyOutput := `
+# github.com/stretchr/testify
+github.com/CycloneDX/cyclonedx-gomod
+github.com/CycloneDX/cyclonedx-gomod.test
+github.com/stretchr/testify/assert
 
-		err := binOptions.Validate()
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "does not exist")
-	})
+# github.com/CycloneDX/cyclonedx-go
+(main module does not need module github.com/CycloneDX/cyclonedx-go)
 
-	t.Run("BinaryPath Is Dir", func(t *testing.T) {
-		var binOptions BinOptions
-		binOptions.BinaryPath = "./"
+# bazil.org/fuse
+(main module does not need to vendor module bazil.org/fuse)
+`
 
-		err := binOptions.Validate()
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "is a directory")
-	})
+	modulePkgs := parseModWhy(strings.NewReader(modWhyOutput))
+	require.Len(t, modulePkgs, 3)
+
+	assert.Len(t, modulePkgs["github.com/stretchr/testify"], 3)
+	assert.Len(t, modulePkgs["github.com/CycloneDX/cyclonedx-go"], 0)
+	assert.Len(t, modulePkgs["bazil.org/fuse"], 0)
 }

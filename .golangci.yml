@@ -10,3 +10,7 @@ linters:
     - unconvert
     - unparam
     - wastedassign
+
+linters-settings:
+  goconst:
+    ignore-tests: true

@@ -73,7 +73,7 @@ func TestModWhy(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, `# github.com/CycloneDX/cyclonedx-go
-github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/bin
+github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/app
 github.com/CycloneDX/cyclonedx-go
 `, buf.String())
 }

@@ -18,8 +18,6 @@
 package license
 
 import (
-	"os"
-	"strings"
 	"testing"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
@@ -38,11 +36,9 @@ func TestResolve(t *testing.T) {
 	})
 
 	t.Run("No License Detected", func(t *testing.T) {
-		tmpDir, err := os.MkdirTemp("", strings.ReplaceAll(t.Name()+"_*", "/", "_"))
-		require.NoError(t, err)
-		defer os.RemoveAll(tmpDir)
+		tmpDir := t.TempDir()
 
-		_, err = Resolve(gomod.Module{
+		_, err := Resolve(gomod.Module{
 			Dir: tmpDir,
 		})
 		require.Error(t, err)

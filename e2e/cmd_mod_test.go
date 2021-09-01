@@ -18,7 +18,6 @@
 package e2e
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -31,7 +30,6 @@ import (
 // no replacements and no vendoring.
 func TestModCmdSimple(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
-	defer os.RemoveAll(fixturePath)
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
@@ -50,7 +48,6 @@ func TestModCmdSimple(t *testing.T) {
 // The local dependency is not a Git repository and thus won't have a version.
 func TestModCmdLocal(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/local.tar.gz")
-	defer os.RemoveAll(fixturePath)
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
@@ -68,7 +65,6 @@ func TestModCmdLocal(t *testing.T) {
 // Integration test with a module that doesn't have any dependencies.
 func TestModCmdNoDependencies(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/no-dependencies.tar.gz")
-	defer os.RemoveAll(fixturePath)
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
@@ -87,7 +83,6 @@ func TestModCmdNoDependencies(t *testing.T) {
 // no replacements, but vendoring.
 func TestModCmdVendored(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
-	defer os.RemoveAll(fixturePath)
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{
@@ -114,7 +109,6 @@ func TestModCmdVendored(t *testing.T) {
 //   |-+ main.go
 func TestModCmdNested(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/nested.tar.gz")
-	defer os.RemoveAll(fixturePath)
 
 	modOptions := modcmd.ModOptions{
 		SBOMOptions: options.SBOMOptions{

@@ -15,42 +15,57 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package mod
+package app
 
 import (
 	"context"
-	"errors"
 	"flag"
-	"fmt"
-	"io"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
-	"github.com/rs/zerolog/log"
 )
 
 func New() *ffcli.Command {
-	fs := flag.NewFlagSet("cyclonedx-gomod mod", flag.ExitOnError)
+	fs := flag.NewFlagSet("cyclonedx-gomod app", flag.ExitOnError)
 
-	var options ModOptions
+	var options Options
 	options.RegisterFlags(fs)
 
 	return &ffcli.Command{
-		Name:       "mod",
-		ShortHelp:  "Generate SBOM for a module",
-		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [PATH]",
-		LongHelp: `Generate SBOM for a module.
+		Name:       "app",
+		ShortHelp:  "Generate SBOM for an application",
+		ShortUsage: "cyclonedx-gomod app [FLAGS...] MODPATH",
+		LongHelp: `Generate SBOM for an application.
+
+In order to produce accurate results, build constraints must be configured
+via environment variables. These build constraints should mimic the ones passed
+to the "go build" command for the application.
+
+A few noteworthy environment variables are:
+  - GOARCH       The target architecture (386, amd64, etc.)
+  - GOOS         The target operating system (linux, windows, etc.)
+  - CGO_ENABLED  Whether or not CGO is enabled
+  - GOFLAGS      Pass build tags (see examples below)
+
+A complete overview of all environment variables can be found here:
+  https://pkg.go.dev/cmd/go#hdr-Environment_variables
+
+The -main flag should be used to specify the path to the application's main file.
+-main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
+
+By passing -files, all files that would be compiled into the binary will be included
+as subcomponents of their respective module. Files versions follow the v0.0.0-SHORTHASH pattern, 
+where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 
 Examples:
-  $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
-  $ cyclonedx-gomod mod -reproducible -test -output bom.xml ./cyclonedx-go`,
+  $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
+  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module`,
 		FlagSet: fs,
-		Exec: func(ctx context.Context, args []string) error {
+		Exec: func(_ context.Context, args []string) error {
 			if len(args) > 1 {
 				return flag.ErrHelp
 			}
@@ -67,60 +82,50 @@ Examples:
 	}
 }
 
-func Exec(options ModOptions) error {
+func Exec(options Options) error {
 	err := options.Validate()
 	if err != nil {
 		return err
 	}
 
-	// Cheap trick to make Go download all required modules in the module graph
-	// without modifying go.sum (as `go mod download` would do).
-	err = gocmd.ModWhy(options.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
+	modules, err := gomod.GetModulesFromPackages(options.ModuleDir, options.Main)
 	if err != nil {
-		return fmt.Errorf("downloading modules failed: %w", err)
+		return err
 	}
 
-	modules, err := gomod.GetVendoredModules(options.ModuleDir, options.IncludeTest)
-	if err != nil {
-		if errors.Is(err, gomod.ErrNotVendoring) {
-			modules, err = gomod.GetModules(options.ModuleDir, options.IncludeTest)
-			if err != nil {
-				return err
-			}
-		} else {
-			return err
-		}
-	}
-
+	// Dependencies need to be applied prior to determining the main
+	// module's version, because `go mod graph` omits that version.
 	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
 	if err != nil {
-		return fmt.Errorf("failed to apply module graph: %w", err)
+		return err
 	}
 
 	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
 	if err != nil {
-		log.Warn().Err(err).Msg("failed to determine version of main module")
+		return err
 	}
 
 	sbom.NormalizeVersions(modules, options.NoVersionPrefix)
 
 	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)),
+		modconv.WithComponentType(cdx.ComponentTypeApplication),
+		modconv.WithFiles(options.IncludeFiles),
 		modconv.WithLicenses(options.ResolveLicenses),
 	)
 	if err != nil {
-		return fmt.Errorf("failed to convert main module: %w", err)
+		return err
 	}
 
 	components, err := modconv.ToComponents(modules[1:],
+		modconv.WithFiles(options.IncludeFiles),
 		modconv.WithLicenses(options.ResolveLicenses),
 		modconv.WithModuleHashes(),
 	)
 	if err != nil {
-		return fmt.Errorf("failed to convert modules: %w", err)
+		return err
 	}
 
-	dependencyGraph := sbom.BuildDependencyGraph(modules)
+	dependencies := sbom.BuildDependencyGraph(modules)
 
 	bom := cdx.NewBOM()
 
@@ -132,14 +137,13 @@ func Exec(options ModOptions) error {
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
-
 	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
 		return err
 	}
 
 	bom.Components = &components
-	bom.Dependencies = &dependencyGraph
+	bom.Dependencies = &dependencies
 
 	if options.IncludeStd {
 		err = cliutil.AddStdComponent(bom)
