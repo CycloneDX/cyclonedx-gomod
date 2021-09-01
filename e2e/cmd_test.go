@@ -91,8 +91,7 @@ func assertValidSBOM(t *testing.T, bomFilePath string) {
 }
 
 func extractFixture(t *testing.T, archivePath string) string {
-	tmpDir, err := os.MkdirTemp("", tmpPrefix+t.Name()+"_*")
-	require.NoError(t, err)
+	tmpDir := t.TempDir()
 
 	cmd := exec.Command("tar", "xzf", archivePath, "-C", tmpDir)
 	out, err := cmd.CombinedOutput()
