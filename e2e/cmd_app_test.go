@@ -86,3 +86,34 @@ func TestAppCmdSimpleMultiCommandPURL(t *testing.T) {
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
 }
+
+func TestAppCmdVendored(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
+
+	appOptions := appcmd.Options{
+		SBOMOptions: options.SBOMOptions{
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
+		},
+		ModuleDir: fixturePath,
+	}
+
+	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
+}
+
+func TestAppCmdVendoredWithFiles(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
+
+	appOptions := appcmd.Options{
+		SBOMOptions: options.SBOMOptions{
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
+		},
+		ModuleDir:    fixturePath,
+		IncludeFiles: true,
+	}
+
+	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
+}
