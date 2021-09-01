@@ -66,8 +66,12 @@ A few noteworthy environment variables are:
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-The -main should be used to specify the path to the application's main file.
+The -main flag should be used to specify the path to the application's main file.
 -main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
+
+By passing -files, all files that would be compiled into the binary will be included
+as subcomponents of their respective module. Files versions follow the v0.0.0-SHORTHASH pattern, 
+where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 
 Examples:
   $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
