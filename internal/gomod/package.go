@@ -75,6 +75,11 @@ func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) 
 		return nil, err
 	}
 
+	err = ResolveLocalReplacements(moduleDir, modules)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve local modules")
+	}
+
 	sortModules(modules)
 
 	return modules, nil
