@@ -57,14 +57,17 @@ In order to produce accurate results, build constraints must be configured
 via environment variables. These build constraints should mimic the ones passed
 to the "go build" command for the application.
 
-A few noteworthy environment variables are:
+Noteworthy environment variables that act as build constraints are:
   - GOARCH       The target architecture (386, amd64, etc.)
   - GOOS         The target operating system (linux, windows, etc.)
   - CGO_ENABLED  Whether or not CGO is enabled
-  - GOFLAGS      Pass build tags (see examples below)
+  - GOFLAGS      Pass build tags
 
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
+
+Unless the -reproducible flag is provided, build constraints will be 
+included as properties of the main component.
 
 The -main flag should be used to specify the path to the application's main file.
 -main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
