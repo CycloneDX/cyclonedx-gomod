@@ -164,9 +164,9 @@ You can find it on the GitHub marketplace: [*gh-gomod-generate-sbom*](https://gi
 
 ```shell
 $ docker run -it --rm \
-    -v "/path/to/mymodule:/mymodule" \
+    -v "/path/to/mymodule:/usr/src/mymodule" \
     -v "$(pwd):/out" \
-    cyclonedx/cyclonedx-gomod -module /mymodule -output /out/bom.xml -licenses
+    cyclonedx/cyclonedx-gomod:v1 -json -output /out/bom.json -main cmd/my-app/main.go /usr/src/mymodule
 ```
 
 ## Important Notes
@@ -180,6 +180,7 @@ Limitations are as follows:
   and test the main module. Because [module checksums](#hashes) consider almost all files in a module's directory though, 
   calculating accurate hashes from the `vendor` directory is not possible. As a consequence, BOMs for modules that use
   vendoring do not include component hashes.
+* **License detection may fail.** Go doesn't always copy license files when vendoring modules, which may cause license detection to fail.
 
 ### Licenses
 
@@ -255,6 +256,19 @@ SapHtgdNCeF00Cx8kqztePV24kgzNg++Xovae42HAMw=
 
 Line 2 of the response tells us that the checksum in our BOM matches that known to the checksum database.
 
+### Version Detection
+
+For the main module and local [replacement modules](https://golang.org/ref/mod#go-mod-file-replace), *cyclonedx-gomod* will perform version detection using Git:
+
+* If the `HEAD` commit is tagged and the tag is a valid [semantic version](https://golang.org/ref/mod#versions), that tag is used.
+* If `HEAD` is not tagged, a [pseudo version](https://golang.org/ref/mod#pseudo-versions) is generated.
+
+> Please note that pseudo versions take the previous version into consideration.
+> If your repository has been cloned with limited depth, *cyclonedx-gomod* may not be able to see any previous versions.
+> For example, [actions/checkout@v2](https://github.com/actions/checkout/tree/v2.3.4#checkout-v2) clones repositories with `fetch-depth: 1` per default.
+
+At the moment, no VCS other than Git is supported. If you need support for another VCS, please open an issue or submit a PR.
+
 ## Copyright & License
 
 CycloneDX GoMod is Copyright (c) OWASP Foundation. All Rights Reserved.
@@ -275,5 +289,3 @@ supported Go versions for every pull request.
 Some tests make use of the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli), e.g. to validate BOMs.  
 Make sure to download the CLI binary and make it available as `cyclonedx` in your `$PATH`.  
 See also *Setup CycloneDX CLI* in the [workflow](https://github.com/CycloneDX/cyclonedx-gomod/blob/master/.github/workflows/ci.yml).
-
-[Integration tests](./main_integration_test.go) additionally make use of the `tar` command, which may not be available in Windows environments.
