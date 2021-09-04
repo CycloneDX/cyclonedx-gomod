@@ -120,7 +120,7 @@ func GetModules(moduleDir string, includeTest bool) ([]Module, error) {
 
 	err = ResolveLocalReplacements(moduleDir, modules)
 	if err != nil {
-		return nil, fmt.Errorf("failed to resolve local modules")
+		return nil, fmt.Errorf("failed to resolve local replacements: %w", err)
 	}
 
 	sortModules(modules)
