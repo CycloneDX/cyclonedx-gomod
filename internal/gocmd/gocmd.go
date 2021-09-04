@@ -19,6 +19,7 @@ package gocmd
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -47,6 +48,23 @@ func GetVersion() (string, error) {
 	}
 
 	return fields[2], nil
+}
+
+// GetEnv executes `go env -json` and returns the result as a map.
+func GetEnv() (map[string]string, error) {
+	buf := new(bytes.Buffer)
+	err := executeGoCommand([]string{"env", "-json"}, withStdout(buf))
+	if err != nil {
+		return nil, err
+	}
+
+	var env map[string]string
+	err = json.NewDecoder(buf).Decode(&env)
+	if err != nil {
+		return nil, err
+	}
+
+	return env, nil
 }
 
 // GetModule executes `go list -json -m` and writes the output to a given writer.
