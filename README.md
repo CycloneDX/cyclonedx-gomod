@@ -57,7 +57,7 @@ In order to produce accurate results, build constraints must be configured
 via environment variables. These build constraints should mimic the ones passed
 to the "go build" command for the application.
 
-Noteworthy environment variables that influence the build are:
+Noteworthy environment variables that act as build constraints are:
   - GOARCH       The target architecture (386, amd64, etc.)
   - GOOS         The target operating system (linux, windows, etc.)
   - CGO_ENABLED  Whether or not CGO is enabled
