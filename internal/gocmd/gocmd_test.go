@@ -34,6 +34,17 @@ func TestGetVersion(t *testing.T) {
 	require.Equal(t, runtime.Version(), version)
 }
 
+func TestGetEnv(t *testing.T) {
+	env, err := GetEnv()
+	require.NoError(t, err)
+
+	require.Contains(t, env, "CGO_ENABLED")
+	require.Contains(t, env, "GOARCH")
+	require.Contains(t, env, "GOFLAGS")
+	require.Contains(t, env, "GOOS")
+	require.Contains(t, env, "GOVERSION")
+}
+
 func TestGetModuleName(t *testing.T) {
 	buf := new(bytes.Buffer)
 	err := GetModule("../../", buf)
