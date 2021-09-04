@@ -52,6 +52,7 @@ snapshot:
 release:
   extra_files:
     - glob: ./bom.json
+  prerelease: auto
 milestones:
   - name_template: "{{ .Tag }}"
     close: true
