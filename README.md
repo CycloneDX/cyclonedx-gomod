@@ -166,7 +166,7 @@ You can find it on the GitHub marketplace: [*gh-gomod-generate-sbom*](https://gi
 $ docker run -it --rm \
     -v "/path/to/mymodule:/usr/src/mymodule" \
     -v "$(pwd):/out" \
-    cyclonedx/cyclonedx-gomod:v1 -json -output /out/bom.json -main cmd/my-app/main.go /usr/src/mymodule
+    cyclonedx/cyclonedx-gomod:v1 mod -json -output /out/bom.json /usr/src/mymodule
 ```
 
 ## Important Notes
