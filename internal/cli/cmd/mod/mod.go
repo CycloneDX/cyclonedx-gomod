@@ -102,8 +102,6 @@ func Exec(options ModOptions) error {
 		log.Warn().Err(err).Msg("failed to determine version of main module")
 	}
 
-	sbom.NormalizeVersions(modules, options.NoVersionPrefix)
-
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)),
 		modconv.WithLicenses(options.ResolveLicenses),
