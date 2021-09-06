@@ -34,6 +34,7 @@ func TestAppCmdSimple(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir: fixturePath,
+		Main:      "main.go",
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
@@ -49,6 +50,7 @@ func TestAppCmdSimpleWithFiles(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir:    fixturePath,
+		Main:         "main.go",
 		IncludeFiles: true,
 	}
 
@@ -97,6 +99,7 @@ func TestAppCmdVendored(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir: fixturePath,
+		Main:      "main.go",
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
@@ -112,6 +115,7 @@ func TestAppCmdVendoredWithFiles(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir:    fixturePath,
+		Main:         "main.go",
 		IncludeFiles: true,
 	}
 

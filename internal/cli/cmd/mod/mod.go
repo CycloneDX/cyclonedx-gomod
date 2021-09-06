@@ -37,7 +37,7 @@ import (
 func New() *ffcli.Command {
 	fs := flag.NewFlagSet("cyclonedx-gomod mod", flag.ExitOnError)
 
-	var options ModOptions
+	var options Options
 	options.RegisterFlags(fs)
 
 	return &ffcli.Command{
@@ -67,7 +67,7 @@ Examples:
 	}
 }
 
-func Exec(options ModOptions) error {
+func Exec(options Options) error {
 	err := options.Validate()
 	if err != nil {
 		return err

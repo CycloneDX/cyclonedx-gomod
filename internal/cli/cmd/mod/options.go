@@ -27,8 +27,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 )
 
-// ModOptions provides options for the `mod` command.
-type ModOptions struct {
+type Options struct {
 	options.LogOptions
 	options.OutputOptions
 	options.SBOMOptions
@@ -38,7 +37,7 @@ type ModOptions struct {
 	IncludeTest   bool
 }
 
-func (m *ModOptions) RegisterFlags(fs *flag.FlagSet) {
+func (m *Options) RegisterFlags(fs *flag.FlagSet) {
 	m.LogOptions.RegisterFlags(fs)
 	m.OutputOptions.RegisterFlags(fs)
 	m.SBOMOptions.RegisterFlags(fs)
@@ -54,7 +53,7 @@ var allowedComponentTypes = []cdx.ComponentType{
 	cdx.ComponentTypeLibrary,
 }
 
-func (m ModOptions) Validate() error {
+func (m Options) Validate() error {
 	errs := make([]error, 0)
 
 	if err := m.OutputOptions.Validate(); err != nil {

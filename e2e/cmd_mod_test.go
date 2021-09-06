@@ -31,7 +31,7 @@ import (
 func TestModCmdSimple(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
 
-	modOptions := modcmd.ModOptions{
+	modOptions := modcmd.Options{
 		SBOMOptions: options.SBOMOptions{
 			Reproducible:    true,
 			ResolveLicenses: true,
@@ -49,7 +49,7 @@ func TestModCmdSimple(t *testing.T) {
 func TestModCmdLocal(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/local.tar.gz")
 
-	modOptions := modcmd.ModOptions{
+	modOptions := modcmd.Options{
 		SBOMOptions: options.SBOMOptions{
 			Reproducible:    true,
 			ResolveLicenses: true,
@@ -66,7 +66,7 @@ func TestModCmdLocal(t *testing.T) {
 func TestModCmdNoDependencies(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/no-dependencies.tar.gz")
 
-	modOptions := modcmd.ModOptions{
+	modOptions := modcmd.Options{
 		SBOMOptions: options.SBOMOptions{
 			Reproducible:    true,
 			ResolveLicenses: true,
@@ -84,7 +84,7 @@ func TestModCmdNoDependencies(t *testing.T) {
 func TestModCmdVendored(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
 
-	modOptions := modcmd.ModOptions{
+	modOptions := modcmd.Options{
 		SBOMOptions: options.SBOMOptions{
 			Reproducible:    true,
 			ResolveLicenses: true,
@@ -110,7 +110,7 @@ func TestModCmdVendored(t *testing.T) {
 func TestModCmdNested(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/nested.tar.gz")
 
-	modOptions := modcmd.ModOptions{
+	modOptions := modcmd.Options{
 		SBOMOptions: options.SBOMOptions{
 			Reproducible:    true,
 			ResolveLicenses: true,

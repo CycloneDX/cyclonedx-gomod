@@ -112,7 +112,7 @@ func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 	)
 }
 
-// ModWhy executes `go version -m` and writes the output to a given writer.
+// GetModulesFromBinary executes `go version -m` and writes the output to a given writer.
 func GetModulesFromBinary(binaryPath string, writer io.Writer) error {
 	return executeGoCommand([]string{"version", "-m", binaryPath}, withStdout(writer))
 }

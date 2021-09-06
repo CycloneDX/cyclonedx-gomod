@@ -25,7 +25,7 @@ import (
 )
 
 func TestBinCmdSimple(t *testing.T) {
-	binOptions := bincmd.BinOptions{
+	binOptions := bincmd.Options{
 		SBOMOptions: options.SBOMOptions{
 			Reproducible:    true,
 			ResolveLicenses: true,

@@ -70,11 +70,9 @@ func (o Options) Validate() error {
 		}
 	}
 
-	if o.Main != "" {
-		err := o.validateMain(o.Main, &errs)
-		if err != nil {
-			return err
-		}
+	err := o.validateMain(o.Main, &errs)
+	if err != nil {
+		return err
 	}
 
 	if len(errs) > 0 {

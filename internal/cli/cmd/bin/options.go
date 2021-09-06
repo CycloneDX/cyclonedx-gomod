@@ -26,7 +26,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 )
 
-type BinOptions struct {
+type Options struct {
 	options.LogOptions
 	options.OutputOptions
 	options.SBOMOptions
@@ -35,7 +35,7 @@ type BinOptions struct {
 	Version    string
 }
 
-func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
+func (b *Options) RegisterFlags(fs *flag.FlagSet) {
 	b.LogOptions.RegisterFlags(fs)
 	b.OutputOptions.RegisterFlags(fs)
 	b.SBOMOptions.RegisterFlags(fs)
@@ -43,7 +43,7 @@ func (b *BinOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.StringVar(&b.Version, "version", "", "Version of the main component")
 }
 
-func (b BinOptions) Validate() error {
+func (b Options) Validate() error {
 	errs := make([]error, 0)
 
 	if err := b.OutputOptions.Validate(); err != nil {

@@ -26,7 +26,7 @@ import (
 
 func TestModOptions_Validate(t *testing.T) {
 	t.Run("InvalidComponentType", func(t *testing.T) {
-		var modOptions ModOptions
+		var modOptions Options
 		modOptions.ComponentType = "foobar"
 
 		err := modOptions.Validate()

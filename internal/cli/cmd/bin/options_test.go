@@ -25,7 +25,7 @@ import (
 
 func TestBinOptions_Validate(t *testing.T) {
 	t.Run("BinaryPath Not Exists", func(t *testing.T) {
-		var binOptions BinOptions
+		var binOptions Options
 		binOptions.BinaryPath = "./doesNotExist"
 
 		err := binOptions.Validate()
@@ -34,7 +34,7 @@ func TestBinOptions_Validate(t *testing.T) {
 	})
 
 	t.Run("BinaryPath Is Dir", func(t *testing.T) {
-		var binOptions BinOptions
+		var binOptions Options
 		binOptions.BinaryPath = "./"
 
 		err := binOptions.Validate()

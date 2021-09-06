@@ -36,7 +36,7 @@ import (
 func New() *ffcli.Command {
 	fs := flag.NewFlagSet("cyclonedx-gomod bin", flag.ExitOnError)
 
-	var options BinOptions
+	var options Options
 	options.RegisterFlags(fs)
 
 	return &ffcli.Command{
@@ -70,24 +70,24 @@ Example:
 	}
 }
 
-func Exec(binOptions BinOptions) error {
-	err := binOptions.Validate()
+func Exec(options Options) error {
+	err := options.Validate()
 	if err != nil {
 		return err
 	}
 
-	modules, hashes, err := gomod.GetModulesFromBinary(binOptions.BinaryPath)
+	modules, hashes, err := gomod.GetModulesFromBinary(options.BinaryPath)
 	if err != nil {
 		return fmt.Errorf("failed to extract modules: %w", err)
 	} else if len(modules) == 0 {
-		return fmt.Errorf("couldn't parse any modules from %s", binOptions.BinaryPath)
+		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
 	}
 
-	if binOptions.Version != "" {
-		modules[0].Version = binOptions.Version
+	if options.Version != "" {
+		modules[0].Version = options.Version
 	}
 
-	if binOptions.ResolveLicenses {
+	if options.ResolveLicenses {
 		err = downloadModules(modules, hashes)
 		if err != nil {
 			return err
@@ -101,14 +101,14 @@ func Exec(binOptions BinOptions) error {
 
 	mainComponent, err := modconv.ToComponent(modules[0],
 		modconv.WithComponentType(cdx.ComponentTypeApplication),
-		modconv.WithLicenses(binOptions.ResolveLicenses),
+		modconv.WithLicenses(options.ResolveLicenses),
 	)
 	if err != nil {
 		return err
 	}
 
 	components, err := modconv.ToComponents(modules[1:],
-		modconv.WithLicenses(binOptions.ResolveLicenses),
+		modconv.WithLicenses(options.ResolveLicenses),
 		withModuleHashes(hashes),
 	)
 	if err != nil {
@@ -117,14 +117,14 @@ func Exec(binOptions BinOptions) error {
 
 	dependencyGraph := sbom.BuildDependencyGraph(modules)
 
-	binaryProperties, err := createBinaryProperties(binOptions.BinaryPath)
+	binaryProperties, err := createBinaryProperties(options.BinaryPath)
 	if err != nil {
 		return err
 	}
 
 	bom := cdx.NewBOM()
 
-	err = cliutil.SetSerialNumber(bom, binOptions.SBOMOptions)
+	err = cliutil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
 		return err
 	}
@@ -133,7 +133,7 @@ func Exec(binOptions BinOptions) error {
 		Component:  mainComponent,
 		Properties: &binaryProperties,
 	}
-	err = cliutil.AddCommonMetadata(bom, binOptions.SBOMOptions)
+	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
 		return err
 	}
@@ -142,7 +142,7 @@ func Exec(binOptions BinOptions) error {
 	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
 
-	return cliutil.WriteBOM(bom, binOptions.OutputOptions)
+	return cliutil.WriteBOM(bom, options.OutputOptions)
 }
 
 func withModuleHashes(hashes map[string]string) modconv.Option {
