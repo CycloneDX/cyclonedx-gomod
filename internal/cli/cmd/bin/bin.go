@@ -47,6 +47,8 @@ func New() *ffcli.Command {
 
 When license resolution is enabled, all modules (including the main module) 
 will be downloaded to the module cache using "go mod download".
+For the download of the main module to work, its version has to be provided
+via the -version flag.
 
 Please note that data embedded in binaries shouldn't be trusted,
 unless there's solid evidence that the binaries haven't been modified
@@ -91,8 +93,6 @@ func Exec(binOptions BinOptions) error {
 			return err
 		}
 	}
-
-	sbom.NormalizeVersions(modules, binOptions.NoVersionPrefix)
 
 	// Make all modules a direct dependency of the main module
 	for i := 1; i < len(modules); i++ {

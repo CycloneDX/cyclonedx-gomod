@@ -188,21 +188,3 @@ func NewProperty(name, value string) cdx.Property {
 		Value: value,
 	}
 }
-
-func NormalizeVersions(modules []gomod.Module, trimPrefix bool) {
-	for i, module := range modules {
-		NormalizeVersion(&modules[i], trimPrefix)
-
-		if module.Replace != nil {
-			NormalizeVersion(modules[i].Replace, trimPrefix)
-		}
-	}
-}
-
-func NormalizeVersion(module *gomod.Module, trimPrefix bool) {
-	module.Version = strings.TrimSuffix(module.Version, "+incompatible")
-
-	if trimPrefix {
-		module.Version = strings.TrimPrefix(module.Version, "v")
-	}
-}

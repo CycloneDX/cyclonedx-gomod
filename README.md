@@ -86,7 +86,6 @@ FLAGS
   -licenses=false      Resolve module licenses
   -main main.go        Path to the application's main file, relative to MODPATH
   -noserial=false      Omit serial number
-  -novprefix=false     Omit "v" prefix from versions
   -output -            Output file path (or - for STDOUT)
   -reproducible=false  Make the SBOM reproducible by omitting dynamic content
   -serial ...          Serial number
@@ -116,7 +115,6 @@ FLAGS
   -json=false          Output in JSON
   -licenses=false      Resolve module licenses
   -noserial=false      Omit serial number
-  -novprefix=false     Omit "v" prefix from versions
   -output -            Output file path (or - for STDOUT)
   -reproducible=false  Make the SBOM reproducible by omitting dynamic content
   -serial ...          Serial number
@@ -141,7 +139,6 @@ FLAGS
   -json=false          Output in JSON
   -licenses=false      Resolve module licenses
   -noserial=false      Omit serial number
-  -novprefix=false     Omit "v" prefix from versions
   -output -            Output file path (or - for STDOUT)
   -reproducible=false  Make the SBOM reproducible by omitting dynamic content
   -serial ...          Serial number

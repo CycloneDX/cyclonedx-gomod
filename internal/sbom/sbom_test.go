@@ -21,7 +21,6 @@ import (
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/stretchr/testify/require"
 )
 
@@ -77,24 +76,4 @@ func TestNewProperty(t *testing.T) {
 	property := NewProperty("name", "value")
 	require.Equal(t, "cdx:gomod:name", property.Name)
 	require.Equal(t, "value", property.Value)
-}
-
-func TestNormalizeVersion(t *testing.T) {
-	t.Run("With trimPrefix", func(t *testing.T) {
-		module := gomod.Module{
-			Version: "v1.0.0+incompatible",
-		}
-
-		NormalizeVersion(&module, true)
-		require.Equal(t, "1.0.0", module.Version)
-	})
-
-	t.Run("Without trimPrefix", func(t *testing.T) {
-		module := gomod.Module{
-			Version: "v1.0.0+incompatible",
-		}
-
-		NormalizeVersion(&module, false)
-		require.Equal(t, "v1.0.0", module.Version)
-	})
 }
