@@ -1,3 +1,12 @@
+project_name: cyclonedx-gomod
+
+before:
+  hooks:
+    # https://goreleaser.com/customization/build/#go-modules
+    - go mod tidy
+    # Prebuild a binary that'll be used to generate SBOMs later
+    - sh -c "VERSION={{ .Version }} make build"
+
 builds:
   - env:
       - CGO_ENABLED=0
@@ -14,16 +23,23 @@ builds:
       -s
       -w
       -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{ .Tag }}
-    mod_timestamp: '{{ .CommitTimestamp }}'
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    hooks:
+      post:
+        - cmd: ./bin/cyclonedx-gomod app -licenses -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+          env:
+            - GOARCH={{ .Arch }}
+            - GOOS={{ .Os }}
+
 dockers:
   - goos: linux
     goarch: amd64
+    dockerfile: Dockerfile.goreleaser
     image_templates:
       - "cyclonedx/cyclonedx-gomod:latest"
       - "cyclonedx/cyclonedx-gomod:{{ .Tag }}"
       - "cyclonedx/cyclonedx-gomod:v{{ .Major }}"
       - "cyclonedx/cyclonedx-gomod:v{{ .Major }}.{{ .Minor }}"
-    dockerfile: Dockerfile.goreleaser
     build_flag_templates:
       - "--label=org.opencontainers.image.title={{ .ProjectName }}"
       - "--label=org.opencontainers.image.version={{ .Tag }}"
@@ -32,22 +48,21 @@ dockers:
       - "--label=org.opencontainers.image.vendor=CycloneDX"
       - "--label=org.opencontainers.image.url=https://cyclonedx.org"
       - "--label=org.opencontainers.image.source=https://github.com/CycloneDX/cyclonedx-gomod"
-    skip_push: false
+
 archives:
   - format_overrides:
       - goos: windows
         format: zip
-checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ .Tag }}-snapshot"
+
 release:
-  extra_files:
-    - glob: ./bom.json
   prerelease: auto
+  extra_files:
+    - glob: ./*.bom.json
+
 milestones:
   - name_template: "{{ .Tag }}"
     close: true
+
 changelog:
   sort: asc
   filters:

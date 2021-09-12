@@ -17,14 +17,6 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
-      - name: Generate SBOM
-        uses: CycloneDX/gh-gomod-generate-sbom@v0.3.0
-        with:
-          include-stdlib: true
-          json: true
-          output: bom.json
-          resolve-licenses: true
-          version: "^v0"
       - name: Docker login
         uses: docker/login-action@v1
         with:
