@@ -1,12 +1,16 @@
-LDFLAGS="-s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version=v0.0.0-$(shell git show -s --date=format:'%Y%m%d%H%M%S' --format=%cd HEAD)-$(shell git rev-parse HEAD | head -c 12)"
+ifeq ($(VERSION),)
+	VERSION=v0.0.0-$(shell git show -s --date=format:'%Y%m%d%H%M%S' --format=%cd HEAD)-$(shell git rev-parse HEAD | head -c 12)
+endif
+
+LDFLAGS="-s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version=${VERSION}"
 
 build:
 	mkdir -p ./bin
-	go build -v -ldflags=${LDFLAGS} -o ./bin/cyclonedx-gomod
+	CGO_ENABLED=0 go build -v -ldflags=${LDFLAGS} -o ./bin/cyclonedx-gomod
 .PHONY: build
 
 install:
-	go install -v -ldflags=${LDFLAGS}
+	CGO_ENABLED=0 go install -v -ldflags=${LDFLAGS}
 .PHONY: install
 
 generate:
@@ -28,11 +32,6 @@ clean:
 docker:
 	docker build -t cyclonedx/cyclonedx-gomod -f Dockerfile .
 .PHONY: docker
-
-bom: build
-	./bin/cyclonedx-gomod mod -licenses -std -json -output bom.json
-	cyclonedx validate --input-file bom.json --fail-on-errors
-.PHONY: bom
 
 goreleaser-dryrun:
 	goreleaser release --skip-publish --snapshot

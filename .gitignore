@@ -24,4 +24,6 @@ dist/
 
 # SBOMs generated during CI
 /bom.json
+/*.bom.json
 /bom.xml
+/*.bom.xml
