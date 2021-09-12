@@ -38,11 +38,7 @@ dockers:
       - "--label=org.opencontainers.image.source=https://github.com/CycloneDX/cyclonedx-gomod"
     skip_push: false
 archives:
-  - replacements:
-      darwin: macos
-      386: x86
-      amd64: x64
-    format_overrides:
+  - format_overrides:
       - goos: windows
         format: zip
 checksum:
