@@ -157,6 +157,51 @@ Checkout the [`examples`](./examples) directory for examples of SBOMs generated 
 We made a GitHub Action to help integrate *cyclonedx-gomod* into existing CI/CD workflows!  
 You can find it on the GitHub marketplace: [*gh-gomod-generate-sbom*](https://github.com/marketplace/actions/cyclonedx-gomod-generate-sbom)
 
+### GoReleaser 🚀
+
+The recommended way of integrating with [GoReleaser](https://goreleaser.com/) is via `post` [build hook](https://goreleaser.com/customization/build/#build-hooks):
+
+```yaml
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    tags:
+      - foo
+      - bar
+    hooks:
+      post:
+        # Generate an SBOM for every build in the build matrix
+        - cmd: cyclonedx-gomod app -licenses -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+          # Target architecture and OS, as well as build tags have to be provided
+          # via environment variables. Architecture and OS are available as template
+          # variables, but tags have to be hardcoded.
+          # CGO_ENABLED is inherited from the env node above in this example.
+          env:
+            - GOARCH={{ .Arch }}
+            - GOOS={{ .Os }}
+            - GOFLAGS="-tags=foo,bar"
+
+release:
+  # Attach SBOMs to GitHub release
+  extra_files:
+    - glob: ./*.bom.json
+```
+
+When generating SBOMs during a GoReleaser execution, it's important to `gitignore` these files.
+Otherwise, GoReleaser will complain about the state of the repo being dirty.
+Given the naming scheme above, the following `.gitignore` line does the job:
+
+```
+*.bom.json
+```
+
 ### Docker 🐳
 
 ```shell
