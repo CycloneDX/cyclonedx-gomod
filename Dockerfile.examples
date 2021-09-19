@@ -1,0 +1,42 @@
+# This Dockerfile is meant for generating example SBOMs in a way
+# that is reproducible for everyone.
+#
+# To use, simply run:
+#   make examples-image
+#   make examples
+# The resulting files will be written to ./examples/*.bom.json
+#
+# Note that this currently only works when cyclonedx-gomod was built
+# for linux/amd64. If you're on a different platform, you'll have to run
+#   GOOS=linux GOARCH=amd64 make examples-image
+# instead.
+FROM golang:1.17
+
+VOLUME /examples
+
+# Create non-root user
+RUN useradd -m --uid 1000 cdx
+
+# Create generation script
+RUN echo "#!/bin/bash\n\n\
+cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1.bom.json -licenses -main cmd/minikube/main.go /home/cdx/minikube \n\
+cyclonedx-gomod mod -json -output /examples/mod_minikube-v1.23.1.bom.json -licenses /home/cdx/minikube \n\
+cyclonedx-gomod bin -json -output /examples/bin_minikube-v1.23.1.bom.json -licenses -version v1.23.1 /home/cdx/minikube-linux-amd64 \n\
+" > /home/cdx/generate-examples.sh
+
+# Install cyclonedx-gomod
+COPY ./cyclonedx-gomod /usr/local/bin/
+
+# Change to non-root user
+USER cdx
+WORKDIR /home/cdx
+
+# Clone minikube repo and download binary
+RUN git config --global advice.detachedHead false && \
+    git clone --branch v1.23.1 --single-branch https://github.com/kubernetes/minikube.git && \
+    wget -q https://github.com/kubernetes/minikube/releases/download/v1.23.1/minikube-linux-amd64 && \
+    echo "fc23f94e870b18c2fc015af18fe2dee00452059100e42a5483b9440da1a5fba2 minikube-linux-amd64" | sha256sum -c && \
+    chmod +x minikube-linux-amd64
+
+ENTRYPOINT ["/bin/bash"]
+CMD ["/home/cdx/generate-examples.sh"]

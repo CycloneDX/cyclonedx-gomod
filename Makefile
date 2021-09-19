@@ -13,10 +13,6 @@ install:
 	CGO_ENABLED=0 go install -v -ldflags=${LDFLAGS}
 .PHONY: install
 
-generate:
-	go generate -v ./...
-.PHONY: generate
-
 unit-test:
 	go test -v -short -cover ./...
 .PHONY: unit-test
@@ -36,6 +32,14 @@ docker:
 goreleaser-dryrun:
 	goreleaser release --skip-publish --snapshot
 .PHONY: goreleaser-dryrun
+
+examples-image: build
+	docker build -t cyclonedx-gomod-examples -f Dockerfile.examples ./bin
+.PHONY: examples-image
+
+examples:
+	docker run -i --rm -v "$(shell pwd)/examples:/examples" cyclonedx-gomod-examples
+.PHONY: examples
 
 all: clean build test
 .PHONY: all
