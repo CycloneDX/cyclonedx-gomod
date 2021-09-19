@@ -22,6 +22,7 @@
 
 ### Breaking Changes
 
+* The CLI now consists of multiple subcommands, thus being incompatible with the CLI in cyclonedx-gomod `v0.x`.
 * Detected licenses (when using the `-licenses` flag) will now use the `components/evidence/licenses` node instead of `components/licenses`. Tools that consume SBOMs and don't support CycloneDX v1.3 yet may not recognize those licenses. 
 * Version normalization has been removed ([#60](https://github.com/CycloneDX/cyclonedx-gomod/pull/60)). As a consequence, `+incompatible` suffixes and `v` prefixes (`-noprefix` flag in cyclonedx-gomod v0.x) are not trimmed anymore.
 
