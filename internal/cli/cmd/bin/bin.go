@@ -41,9 +41,12 @@ func New() *ffcli.Command {
 
 	return &ffcli.Command{
 		Name:       "bin",
-		ShortHelp:  "Generate SBOM for a binary",
-		ShortUsage: "cyclonedx-gomod bin [FLAGS...] PATH",
-		LongHelp: `Generate SBOM for a binary.
+		ShortHelp:  "Generate SBOMs for binaries",
+		ShortUsage: "cyclonedx-gomod bin [FLAGS...] BINPATH",
+		LongHelp: `Generate SBOMs for binaries.
+
+Although the binary is never executed, it must be executable.
+This is a requirement by the Go command that is used to provide this functionality.
 
 When license resolution is enabled, all modules (including the main module) 
 will be downloaded to the module cache using "go mod download".
@@ -80,7 +83,7 @@ func Exec(options Options) error {
 	if err != nil {
 		return fmt.Errorf("failed to extract modules: %w", err)
 	} else if len(modules) == 0 {
-		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
+		return fmt.Errorf("failed to parse modules from %s", options.BinaryPath)
 	}
 
 	if options.Version != "" {
@@ -118,18 +121,16 @@ func Exec(options Options) error {
 		return fmt.Errorf("failed to convert modules: %w", err)
 	}
 
-	dependencyGraph := sbom.BuildDependencyGraph(modules)
-
 	binaryProperties, err := createBinaryProperties(options.BinaryPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create binary properties")
 	}
 
 	bom := cdx.NewBOM()
 
 	err = cliUtil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set serial number: %w", err)
 	}
 
 	bom.Metadata = &cdx.Metadata{
@@ -138,10 +139,11 @@ func Exec(options Options) error {
 	}
 	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to add common metadata")
 	}
 
 	bom.Components = &components
+	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
 

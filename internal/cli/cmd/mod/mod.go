@@ -42,9 +42,9 @@ func New() *ffcli.Command {
 
 	return &ffcli.Command{
 		Name:       "mod",
-		ShortHelp:  "Generate SBOM for a module",
+		ShortHelp:  "Generate SBOMs for modules",
 		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [PATH]",
-		LongHelp: `Generate SBOM for a module.
+		LongHelp: `Generate SBOMs for modules.
 
 Examples:
   $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
@@ -77,7 +77,7 @@ func Exec(options Options) error {
 	// without modifying go.sum (as `go mod download` would do).
 	err = gocmd.ModWhy(options.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
 	if err != nil {
-		return fmt.Errorf("downloading modules failed: %w", err)
+		return fmt.Errorf("failed to download modules: %w", err)
 	}
 
 	// Try to collect modules from vendor/ directory first and if that fails, use `go list`.

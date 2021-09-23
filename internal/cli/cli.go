@@ -32,6 +32,7 @@ func NewRootCmd() *ffcli.Command {
 	return &ffcli.Command{
 		Name:       "cyclonedx-gomod",
 		ShortUsage: "cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]",
+		LongHelp:   `cyclonedx-gomod creates CycloneDX Software Bill of Materials (SBOM) from Go modules.`,
 		Subcommands: []*ffcli.Command{
 			appcmd.New(),
 			bincmd.New(),

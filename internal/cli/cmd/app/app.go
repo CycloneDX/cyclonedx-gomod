@@ -41,9 +41,9 @@ func New() *ffcli.Command {
 
 	return &ffcli.Command{
 		Name:       "app",
-		ShortHelp:  "Generate SBOM for an application",
+		ShortHelp:  "Generate SBOMs for applications",
 		ShortUsage: "cyclonedx-gomod app [FLAGS...] MODPATH",
-		LongHelp: `Generate SBOM for an application.
+		LongHelp: `Generate SBOMs for applications.
 
 In order to produce accurate results, build constraints must be configured
 via environment variables. These build constraints should mimic the ones passed
@@ -53,7 +53,7 @@ Noteworthy environment variables that act as build constraints are:
   - GOARCH       The target architecture (386, amd64, etc.)
   - GOOS         The target operating system (linux, windows, etc.)
   - CGO_ENABLED  Whether or not CGO is enabled
-  - GOFLAGS      Pass build tags
+  - GOFLAGS      Flags that are passed to the Go command (e.g. build tags)
 
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables

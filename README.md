@@ -36,10 +36,12 @@ BOM formats or specification versions.
 USAGE
   cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]
 
+cyclonedx-gomod creates CycloneDX Software Bill of Materials (SBOM) from Go modules.
+
 SUBCOMMANDS
-  app      Generate SBOM for an application
-  bin      Generate SBOM for a binary
-  mod      Generate SBOM for a module
+  app      Generate SBOMs for applications
+  bin      Generate SBOMs for binaries
+  mod      Generate SBOMs for modules
   version  Show version information
 ```
 
@@ -51,7 +53,7 @@ SUBCOMMANDS
 USAGE
   cyclonedx-gomod app [FLAGS...] MODPATH
 
-Generate SBOM for an application.
+Generate SBOMs for applications.
 
 In order to produce accurate results, build constraints must be configured
 via environment variables. These build constraints should mimic the ones passed
@@ -61,7 +63,7 @@ Noteworthy environment variables that act as build constraints are:
   - GOARCH       The target architecture (386, amd64, etc.)
   - GOOS         The target operating system (linux, windows, etc.)
   - CGO_ENABLED  Whether or not CGO is enabled
-  - GOFLAGS      Pass build tags
+  - GOFLAGS      Flags that are passed to the Go command (e.g. build tags)
 
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
@@ -95,9 +97,12 @@ FLAGS
 
 ```
 USAGE
-  cyclonedx-gomod bin [FLAGS...] PATH
+  cyclonedx-gomod bin [FLAGS...] BINPATH
 
-Generate SBOM for a binary.
+Generate SBOMs for binaries.
+
+Although the binary is never executed, it must be executable.
+This is a requirement by the Go command that is used to provide this functionality.
 
 When license resolution is enabled, all modules (including the main module) 
 will be downloaded to the module cache using "go mod download".
@@ -128,7 +133,7 @@ FLAGS
 USAGE
   cyclonedx-gomod mod [FLAGS...] [PATH]
 
-Generate SBOM for a module.
+Generate SBOMs for modules.
 
 Examples:
   $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
