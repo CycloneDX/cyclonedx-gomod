@@ -79,7 +79,10 @@ func AddStdComponent(bom *cdx.BOM) error {
 }
 
 func ConfigureLogger(logOptions options.LogOptions) {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Logger = log.Output(zerolog.ConsoleWriter{
+		Out:     os.Stderr,
+		NoColor: os.Getenv("CI") != "",
+	})
 
 	if logOptions.Verbose {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
