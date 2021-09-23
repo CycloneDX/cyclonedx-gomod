@@ -66,14 +66,13 @@ Noteworthy environment variables that act as build constraints are:
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-Unless the -reproducible flag is provided, build constraints will be 
-included as properties of the main component.
+Applicable build constraints will be included as properties of the main component.
 
 The -main flag should be used to specify the path to the application's main file.
 -main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
 
-By passing -files, all files that would be compiled into the binary will be included
-as subcomponents of their respective module. Files versions follow the v0.0.0-SHORTHASH pattern, 
+By passing -files, all files that would be included in a binary will be attached
+as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 
 Examples:
@@ -81,16 +80,15 @@ Examples:
   $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module
 
 FLAGS
-  -files=false         Include files
-  -json=false          Output in JSON
-  -licenses=false      Resolve module licenses
-  -main main.go        Path to the application's main file, relative to MODPATH
-  -noserial=false      Omit serial number
-  -output -            Output file path (or - for STDOUT)
-  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
-  -serial ...          Serial number
-  -std=false           Include Go standard library as component and dependency of the module
-  -verbose=false       Enable verbose output
+  -files=false     Include files
+  -json=false      Output in JSON
+  -licenses=false  Resolve module licenses
+  -main main.go    Path to the application's main file, relative to MODPATH
+  -noserial=false  Omit serial number
+  -output -        Output file path (or - for STDOUT)
+  -serial ...      Serial number
+  -std=false       Include Go standard library as component and dependency of the module
+  -verbose=false   Enable verbose output
 ```
 
 #### `bin`
@@ -103,24 +101,25 @@ Generate SBOM for a binary.
 
 When license resolution is enabled, all modules (including the main module) 
 will be downloaded to the module cache using "go mod download".
+For the download of the main module to work, its version has to be provided
+via the -version flag.
 
 Please note that data embedded in binaries shouldn't be trusted,
 unless there's solid evidence that the binaries haven't been modified
 since they've been built.
 
 Example:
-  $ cyclonedx-gomod bin -json -output minikube-v1.22.0.bom.json -version v1.22.0 ./minikube
+  $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app
 
 FLAGS
-  -json=false          Output in JSON
-  -licenses=false      Resolve module licenses
-  -noserial=false      Omit serial number
-  -output -            Output file path (or - for STDOUT)
-  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
-  -serial ...          Serial number
-  -std=false           Include Go standard library as component and dependency of the module
-  -verbose=false       Enable verbose output
-  -version ...         Version of the main component
+  -json=false      Output in JSON
+  -licenses=false  Resolve module licenses
+  -noserial=false  Omit serial number
+  -output -        Output file path (or - for STDOUT)
+  -serial ...      Serial number
+  -std=false       Include Go standard library as component and dependency of the module
+  -verbose=false   Enable verbose output
+  -version ...     Version of the main component
 ```
 
 #### `mod`
@@ -136,16 +135,15 @@ Examples:
   $ cyclonedx-gomod mod -reproducible -test -output bom.xml ./cyclonedx-go
 
 FLAGS
-  -json=false          Output in JSON
-  -licenses=false      Resolve module licenses
-  -noserial=false      Omit serial number
-  -output -            Output file path (or - for STDOUT)
-  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
-  -serial ...          Serial number
-  -std=false           Include Go standard library as component and dependency of the module
-  -test=false          Include test dependencies
-  -type application    Type of the main component
-  -verbose=false       Enable verbose output
+  -json=false        Output in JSON
+  -licenses=false    Resolve module licenses
+  -noserial=false    Omit serial number
+  -output -          Output file path (or - for STDOUT)
+  -serial ...        Serial number
+  -std=false         Include Go standard library as component and dependency of the module
+  -test=false        Include test dependencies
+  -type application  Type of the main component
+  -verbose=false     Enable verbose output
 ```
 
 ### Examples

@@ -25,10 +25,10 @@ import (
 	"path/filepath"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
+	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
+	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"github.com/rs/zerolog/log"
 )
@@ -55,16 +55,16 @@ unless there's solid evidence that the binaries haven't been modified
 since they've been built.
 
 Example:
-  $ cyclonedx-gomod bin -json -output minikube-v1.22.0.bom.json -version v1.22.0 ./minikube`,
+  $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app`,
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) != 1 {
 				return fmt.Errorf("no binary path provided")
 			}
-
-			cliutil.ConfigureLogger(options.LogOptions)
-
 			options.BinaryPath = args[0]
+
+			cliUtil.ConfigureLogger(options.LogOptions)
+
 			return Exec(options)
 		},
 	}
@@ -87,10 +87,11 @@ func Exec(options Options) error {
 		modules[0].Version = options.Version
 	}
 
+	// If we want to resolve licenses, we have to download the modules first
 	if options.ResolveLicenses {
 		err = downloadModules(modules, hashes)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to download modules: %w", err)
 		}
 	}
 
@@ -99,20 +100,22 @@ func Exec(options Options) error {
 		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
 	}
 
-	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentTypeApplication),
-		modconv.WithLicenses(options.ResolveLicenses),
+	// Convert main module
+	mainComponent, err := modConv.ToComponent(modules[0],
+		modConv.WithComponentType(cdx.ComponentTypeApplication),
+		modConv.WithLicenses(options.ResolveLicenses),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to convert main module: %w", err)
 	}
 
-	components, err := modconv.ToComponents(modules[1:],
-		modconv.WithLicenses(options.ResolveLicenses),
+	// Convert the other modules
+	components, err := modConv.ToComponents(modules[1:],
+		modConv.WithLicenses(options.ResolveLicenses),
 		withModuleHashes(hashes),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to convert modules: %w", err)
 	}
 
 	dependencyGraph := sbom.BuildDependencyGraph(modules)
@@ -124,7 +127,7 @@ func Exec(options Options) error {
 
 	bom := cdx.NewBOM()
 
-	err = cliutil.SetSerialNumber(bom, options.SBOMOptions)
+	err = cliUtil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
 		return err
 	}
@@ -133,7 +136,7 @@ func Exec(options Options) error {
 		Component:  mainComponent,
 		Properties: &binaryProperties,
 	}
-	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
 		return err
 	}
@@ -142,10 +145,10 @@ func Exec(options Options) error {
 	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
 
-	return cliutil.WriteBOM(bom, options.OutputOptions)
+	return cliUtil.WriteBOM(bom, options.OutputOptions)
 }
 
-func withModuleHashes(hashes map[string]string) modconv.Option {
+func withModuleHashes(hashes map[string]string) modConv.Option {
 	return func(m gomod.Module, c *cdx.Component) error {
 		h1, ok := hashes[m.Coordinates()]
 		if !ok {

@@ -22,12 +22,17 @@
 
 ### Breaking Changes
 
-* The CLI now consists of multiple subcommands, thus being incompatible with the CLI in cyclonedx-gomod `v0.x`.
-* Detected licenses (when using the `-licenses` flag) will now use the `components/evidence/licenses` node instead of `components/licenses`. Tools that consume SBOMs and don't support CycloneDX v1.3 yet may not recognize those licenses. 
-* Version normalization has been removed ([#60](https://github.com/CycloneDX/cyclonedx-gomod/pull/60)). As a consequence, `+incompatible` suffixes and `v` prefixes (`-noprefix` flag in cyclonedx-gomod v0.x) are not trimmed anymore.
+* The CLI now consists of multiple subcommands, thus being incompatible with the CLI in cyclonedx-gomod `v0.x`
+* Detected licenses (when using the `-licenses` flag) will now use the `components/evidence/licenses` node instead of `components/licenses`. Tools that consume SBOMs and don't support CycloneDX v1.3 yet may not recognize those licenses
+* Version normalization has been removed ([#60](https://github.com/CycloneDX/cyclonedx-gomod/pull/60)). As a consequence, `+incompatible` suffixes and `v` prefixes (`-novprefix` flag in `v0.x`) are not trimmed anymore
+* The `-reproducible` flag has been removed
 
 ### Dependency Updates
 
 * Update `github.com/CycloneDX/cyclonedx-go` from `v0.3.0` to `v0.4.0` (via [`5bab19b`](https://github.com/CycloneDX/cyclonedx-gomod/commit/5bab19bbed9c6de22112ebeb2f71691c4b4163f5))
 * Update `golang.org/x/mod` from `v0.4.2` to `v0.5.0` (via [#57](https://github.com/CycloneDX/cyclonedx-gomod/pull/57))
 * Update `golang.org/x/crypto` from `v0.0.0-20210711020723-a769d52b0f97` to `v0.0.0-20210817164053-32db794688a5` (via [`75ae52a`](https://github.com/CycloneDX/cyclonedx-gomod/commit/75ae52ac039d9d702a1861c9625d0a14116097ce))
+
+### Known Issues
+
+* When used with Go 1.17 or newer, with modules that have `go 1.17` in their `go.mod`, the dependency graph may contain too many edges ([#64](https://github.com/CycloneDX/cyclonedx-gomod/issues/64))

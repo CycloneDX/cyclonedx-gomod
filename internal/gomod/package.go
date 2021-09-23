@@ -59,20 +59,19 @@ func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) 
 	}
 
 	buf := new(bytes.Buffer)
-
 	err := gocmd.ListPackages(moduleDir, packagePattern, buf)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to list packages for pattern \"%s\": %w", packagePattern, err)
 	}
 
 	pkgMap, err := parsePackages(buf)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse `go list` output: %w", err)
 	}
 
 	modules, err := convertPackages(moduleDir, pkgMap)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert packages to modules: %w", err)
 	}
 
 	err = ResolveLocalReplacements(moduleDir, modules)
@@ -85,7 +84,7 @@ func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) 
 	return modules, nil
 }
 
-// parsePackageInfo parses the output of `go list -json`.
+// parsePackages parses the output of `go list -json`.
 // The keys of the returned map are module coordinates (path@version).
 func parsePackages(reader io.Reader) (map[string][]Package, error) {
 	pkgsMap := make(map[string][]Package)
