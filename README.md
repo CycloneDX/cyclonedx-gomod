@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/CycloneDX/cyclonedx-gomod/actions/workflows/ci.yml/badge.svg)](https://github.com/CycloneDX/cyclonedx-gomod/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/CycloneDX/cyclonedx-gomod)](https://goreportcard.com/report/github.com/CycloneDX/cyclonedx-gomod)
 [![Latest GitHub release](https://img.shields.io/github/v/release/CycloneDX/cyclonedx-gomod?sort=semver)](https://github.com/CycloneDX/cyclonedx-gomod/releases/latest)
-[![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](LICENSE)  
 [![Website](https://img.shields.io/badge/https://-cyclonedx.org-blue.svg)](https://cyclonedx.org/)
 [![Slack Invite](https://img.shields.io/badge/Slack-Join-blue?logo=slack&labelColor=393939)](https://cyclonedx.org/slack/invite)
 [![Group Discussion](https://img.shields.io/badge/discussion-groups.io-blue.svg)](https://groups.io/g/CycloneDX)
@@ -18,17 +18,15 @@ Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/c
 ### From Source
 
 ```shell
-go install github.com/CycloneDX/cyclonedx-gomod@v1.0.0
+go install github.com/CycloneDX/cyclonedx-gomod@v1.0.0-alpha.4
 ```
 
 Building from source requires Go 1.17 or newer.
 
 ## Compatibility
 
-*cyclonedx-gomod* will produce BOMs for the latest version of the CycloneDX specification 
-[supported by cyclonedx-go](https://github.com/CycloneDX/cyclonedx-go#compatibility), which currently is [1.3](https://cyclonedx.org/docs/1.3/). 
-You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple 
-BOM formats or specification versions. 
+*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, which currently is [1.3](https://cyclonedx.org/docs/1.3/). 
+You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple BOM formats or specification versions. 
 
 ## Usage
 
@@ -151,9 +149,17 @@ FLAGS
   -verbose=false     Enable verbose output
 ```
 
-### Examples
+### Examples 📃
 
-Checkout the [`examples`](./examples) directory for examples of SBOMs generated with *cyclonedx-gomod*.
+In order to demonstrate what generated SBOMs look like, as well as to give you an idea about the differences between
+the commands `app`, `mod` and `bin`, we provide example SBOMs for each command in the [`examples`](./examples) directory.
+
+The whole process of generating these examples is encapsulated in [`Dockerfile.examples`](./Dockerfile.examples).  
+To run it yourself, simply execute the following command:
+
+```shell
+$ make examples-image examples
+```
 
 ### GitHub Actions 🤖
 
@@ -213,6 +219,9 @@ $ docker run -it --rm \
     -v "$(pwd):/out" \
     cyclonedx/cyclonedx-gomod:v1 mod -json -output /out/bom.json /usr/src/mymodule
 ```
+
+> The image is based on `golang:1.17-alpine`. Please keep in mind that the Go version may influence module selection. 
+> We generally recommend using a [precompiled binary](https://github.com/CycloneDX/cyclonedx-gomod/releases) instead.
 
 ## Important Notes
 
