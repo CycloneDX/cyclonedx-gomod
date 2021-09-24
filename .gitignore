@@ -1,4 +1,5 @@
 # Binaries for programs and plugins
+bin/
 *.exe
 *.exe~
 *.dll
@@ -23,4 +24,6 @@ dist/
 
 # SBOMs generated during CI
 /bom.json
+/*.bom.json
 /bom.xml
+/*.bom.xml

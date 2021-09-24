@@ -26,12 +26,22 @@ import (
 )
 
 func TestResolve(t *testing.T) {
-	// Success with single license
-	licenses, err := Resolve(gomod.Module{
-		Dir: "../../",
+	t.Run("Success", func(t *testing.T) {
+		licenses, err := Resolve(gomod.Module{
+			Dir: "../../",
+		})
+		require.NoError(t, err)
+		require.Len(t, licenses, 1)
+		assert.Equal(t, "Apache-2.0", licenses[0].ID)
 	})
-	require.NoError(t, err)
-	require.Len(t, licenses, 1)
-	assert.Equal(t, "Apache-2.0", licenses[0].ID)
-	assert.NotEmpty(t, licenses[0].URL)
+
+	t.Run("No License Detected", func(t *testing.T) {
+		tmpDir := t.TempDir()
+
+		_, err := Resolve(gomod.Module{
+			Dir: tmpDir,
+		})
+		require.Error(t, err)
+		require.ErrorIs(t, err, ErrNoLicenseDetected)
+	})
 }

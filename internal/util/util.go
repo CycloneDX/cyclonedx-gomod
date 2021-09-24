@@ -21,6 +21,7 @@ import (
 	"go/build"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func FileExists(path string) bool {
@@ -28,15 +29,23 @@ func FileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-// IsGoModule determines whether the directory at the given path is a Go module.
-func IsGoModule(path string) bool {
-	return FileExists(filepath.Join(path, "go.mod"))
-}
+// IsSubPath checks (lexically) if subPath is a subpath of path.
+func IsSubPath(subPath, path string) (bool, error) {
+	dirAbs, err := filepath.Abs(path)
+	if err != nil {
+		return false, err
+	}
 
-// IsVendoring determines whether of not the module at the given path is vendoring its dependencies.
-// Should be used in conjunction with IsGoModule.
-func IsVendoring(path string) bool {
-	return FileExists(filepath.Join(path, "vendor", "modules.txt"))
+	subDirAbs, err := filepath.Abs(subPath)
+	if err != nil {
+		return false, err
+	}
+
+	if !strings.HasPrefix(subDirAbs, dirAbs) {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 // GetGoPath determines the GOPATH location.

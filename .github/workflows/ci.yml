@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
       - main
+      - develop-v1.0.0
     paths-ignore:
       - examples/**
   schedule:
@@ -31,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ "^1.16" ]
+        go: [ "^1.17" ]
     steps:
       - name: Setup Go
         uses: actions/setup-go@v2
@@ -41,7 +42,7 @@ jobs:
         run: |
           mkdir -p "$HOME/.local/bin"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.15.2/cyclonedx-linux-x64
+          wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.17.2/cyclonedx-linux-x64
           chmod +x "$HOME/.local/bin/cyclonedx"
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -49,10 +50,3 @@ jobs:
         run: make build
       - name: Test
         run: make test
-      - name: Generate SBOM
-        uses: CycloneDX/gh-gomod-generate-sbom@v0.3.0
-        with:
-          include-stdlib: true
-          json: true
-          resolve-licenses: true
-          version: "^v0"

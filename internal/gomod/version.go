@@ -25,7 +25,10 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/storer"
+	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/mod/module"
+	"golang.org/x/mod/semver"
 )
 
 // GetModuleVersion attempts to detect a given module's version by first
@@ -53,23 +56,15 @@ func GetModuleVersion(moduleDir string) (string, error) {
 				}
 				repoDir = filepath.Dir(repoDir) // Move to the parent dir
 				continue
-			} else if errors.Is(err, plumbing.ErrObjectNotFound) {
-				// It's a Git repo, but there's no tag pointing at HEAD.
-				// Construct a pseudo version instead.
-				pseudoVersion, err := GetPseudoVersion(repoDir)
-				if err != nil {
-					return "", fmt.Errorf("constructing pseudo version failed: %w", err)
-				}
-				return pseudoVersion, nil
 			}
+
 			return "", err
 		}
 	}
 }
 
-// GetPseudoVersion constructs a pseudo version for a Go module at a given path.
-// See https://golang.org/ref/mod#pseudo-versions
-func GetPseudoVersion(moduleDir string) (string, error) {
+// GetVersionFromTag checks if the current commit is annotated with a tag and if it is, returns that tag's name.
+func GetVersionFromTag(moduleDir string) (string, error) {
 	repo, err := git.PlainOpen(moduleDir)
 	if err != nil {
 		return "", err
@@ -85,44 +80,79 @@ func GetPseudoVersion(moduleDir string) (string, error) {
 		return "", err
 	}
 
-	commitHash := headCommit.Hash.String()[:12]
-	commitDate := headCommit.Author.When.Format("20060102150405")
+	latestTag, err := GetLatestTag(repo, headCommit)
+	if err != nil {
+		if errors.Is(err, plumbing.ErrObjectNotFound) {
+			return module.PseudoVersion("v0", "", headCommit.Author.When, headCommit.Hash.String()[:12]), nil
+		}
 
-	return fmt.Sprintf("v0.0.0-%s-%s", commitDate, commitHash), nil
+		return "", err
+	}
+
+	if latestTag.commit.Hash.String() == headCommit.Hash.String() {
+		return latestTag.name, nil
+	}
+
+	return module.PseudoVersion(
+		semver.Major(latestTag.name),
+		latestTag.name,
+		latestTag.commit.Author.When,
+		latestTag.commit.Hash.String()[:12],
+	), nil
 }
 
-// GetVersionFromTag checks if the current commit is annotated with a tag and if it is, returns that tag's name.
-func GetVersionFromTag(moduleDir string) (string, error) {
-	repo, err := git.PlainOpen(moduleDir)
+type tag struct {
+	name   string
+	commit *object.Commit
+}
+
+// GetLatestTag determines the latest tag relative to HEAD.
+// Only tags with valid semver are considered.
+func GetLatestTag(repo *git.Repository, headCommit *object.Commit) (*tag, error) {
+	tagRefs, err := repo.Tags()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	headRef, err := repo.Head()
-	if err != nil {
-		return "", err
-	}
+	var latestTag tag
 
-	tags, err := repo.Tags()
-	if err != nil {
-		return "", err
-	}
+	err = tagRefs.ForEach(func(ref *plumbing.Reference) error {
+		if semver.IsValid(ref.Name().Short()) {
+			rev := plumbing.Revision(ref.Name().String())
 
-	var tagName string
-	err = tags.ForEach(func(reference *plumbing.Reference) error {
-		if reference.Hash() == headRef.Hash() && strings.HasPrefix(reference.Name().String(), "refs/tags/v") {
-			tagName = strings.TrimPrefix(reference.Name().String(), "refs/tags/")
-			return storer.ErrStop // break
+			commitHash, err := repo.ResolveRevision(rev)
+			if err != nil {
+				return err
+			}
+
+			commit, err := repo.CommitObject(*commitHash)
+			if err != nil {
+				return err
+			}
+
+			isBeforeOrAtHead := commit.Committer.When.Before(headCommit.Author.When) ||
+				commit.Committer.When.Equal(headCommit.Committer.When)
+
+			if isBeforeOrAtHead && (latestTag.commit == nil || commit.Committer.When.After(latestTag.commit.Committer.When)) {
+				latestTag.name = ref.Name().Short()
+				latestTag.commit = commit
+			}
+		} else {
+			log.Debug().
+				Str("tag", ref.Name().Short()).
+				Str("hash", ref.Hash().String()).
+				Msg("tag is not a valid semver")
 		}
+
 		return nil
 	})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	if tagName == "" {
-		return "", plumbing.ErrObjectNotFound
+	if latestTag.commit == nil {
+		return nil, plumbing.ErrObjectNotFound
 	}
 
-	return tagName, nil
+	return &latestTag, nil
 }

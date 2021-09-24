@@ -34,15 +34,6 @@ func TestFileExists(t *testing.T) {
 	require.True(t, FileExists(tmpFile.Name()))
 }
 
-func TestIsGoModule(t *testing.T) {
-	assert.True(t, IsGoModule("../../"))
-
-	tmpDir, err := os.MkdirTemp("", "TestIsGoModule_*")
-	require.NoError(t, err)
-	defer os.Remove(tmpDir)
-	require.False(t, IsGoModule(tmpDir))
-}
-
 func TestStringSliceIndex(t *testing.T) {
 	assert.Equal(t, 0, StringSliceIndex([]string{"foo", "bar"}, "foo"))
 	assert.Equal(t, 1, StringSliceIndex([]string{"foo", "bar"}, "bar"))

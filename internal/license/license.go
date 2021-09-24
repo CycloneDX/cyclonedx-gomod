@@ -23,12 +23,12 @@ import (
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/license/spdx"
 	"github.com/go-enry/go-license-detector/v4/licensedb"
 	"github.com/go-enry/go-license-detector/v4/licensedb/filer"
+	"github.com/rs/zerolog/log"
 )
 
-var ErrLicenseNotFound = errors.New("no license found")
+var ErrNoLicenseDetected = errors.New("no license detected")
 
 const minDetectionConfidence = 0.9
 
@@ -40,6 +40,9 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 
 	detectedLicenses, err := licensedb.Detect(licensesFiler)
 	if err != nil {
+		if errors.Is(err, licensedb.ErrNoLicenseFound) {
+			return nil, ErrNoLicenseDetected
+		}
 		return nil, err
 	}
 
@@ -66,16 +69,18 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 	}
 
 	if detectedLicense == "" || detectedLicenseConfidence < minDetectionConfidence {
-		return nil, ErrLicenseNotFound
+		return nil, ErrNoLicenseDetected
 	}
 
-	// go-license-detector returns SPDX license IDs
-	license := cdx.License{ID: detectedLicense}
+	log.Debug().
+		Str("module", module.Coordinates()).
+		Str("license", detectedLicense).
+		Float32("confidence", detectedLicenseConfidence).
+		Msg("license detected")
 
-	// Enrich license with URL (mainly for backwards-compatibility)
-	if spdxLicense := spdx.GetLicenseByID(detectedLicense); spdxLicense != nil {
-		license.URL = spdxLicense.Reference
-	}
-
-	return []cdx.License{license}, nil
+	return []cdx.License{
+		{
+			ID: detectedLicense,
+		},
+	}, nil
 }
