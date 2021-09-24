@@ -6,7 +6,7 @@
 
 * Introduce multi-command CLI ([#42](https://github.com/CycloneDX/cyclonedx-gomod/issues/42) via [#45](https://github.com/CycloneDX/cyclonedx-gomod/pull/45))
 * Output SBOMs in v1.3 of the CycloneDX specification ([#43](https://github.com/CycloneDX/cyclonedx-gomod/issues/43) via [`5bab19b`](https://github.com/CycloneDX/cyclonedx-gomod/commit/5bab19bbed9c6de22112ebeb2f71691c4b4163f5))
-* Add support for application SBOMs ([#44](https://github.com/CycloneDX/cyclonedx-gomod/issues/44) via [#50](https://github.com/CycloneDX/cyclonedx-gomod/pull/50))
+* Add support for application SBOMs ([#44](https://github.com/CycloneDX/cyclonedx-gomod/issues/44) via [#50](https://github.com/CycloneDX/cyclonedx-gomod/pull/50), also addresses [#20](https://github.com/CycloneDX/cyclonedx-gomod/issues/20))
 * Add support for binary SBOMs ([#21](https://github.com/CycloneDX/cyclonedx-gomod/issues/21) via [#46](https://github.com/CycloneDX/cyclonedx-gomod/pull/46))
 * Include applicable build constraints in application SBOMs ([#29](https://github.com/CycloneDX/cyclonedx-gomod/issues/29) via [#59](https://github.com/CycloneDX/cyclonedx-gomod/pull/59))
 * Add license detection support for binary SBOMs ([#51](https://github.com/CycloneDX/cyclonedx-gomod/issues/51) via [#52](https://github.com/CycloneDX/cyclonedx-gomod/pull/52))
