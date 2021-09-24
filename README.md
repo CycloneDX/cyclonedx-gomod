@@ -158,7 +158,7 @@ The whole process of generating these examples is encapsulated in [`Dockerfile.e
 To run it yourself, simply execute the following command:
 
 ```shell
-$ make examples-image examples
+$ GOOS=linux GOARCH=amd64 make examples-image examples
 ```
 
 ### GitHub Actions 🤖
