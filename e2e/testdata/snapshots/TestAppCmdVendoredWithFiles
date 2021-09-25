@@ -5,6 +5,9 @@
       <name>testmod-vendored</name>
       <version>v0.0.0-20210716185931-5c9f3d791930</version>
       <purl>pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930</purl>
+      <properties>
+        <property name="cdx:gomod:application:name">001</property>
+      </properties>
       <components>
         <component type="file">
           <name>main.go</name>

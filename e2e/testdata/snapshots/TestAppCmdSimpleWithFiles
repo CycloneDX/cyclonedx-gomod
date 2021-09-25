@@ -5,6 +5,9 @@
       <name>testmod-simple</name>
       <version>v0.0.0-20210716183230-c7ea7c975ab8</version>
       <purl>pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8</purl>
+      <properties>
+        <property name="cdx:gomod:application:name">001</property>
+      </properties>
       <components>
         <component type="file">
           <name>main.go</name>
