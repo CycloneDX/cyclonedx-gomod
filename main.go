@@ -26,8 +26,9 @@ import (
 )
 
 func main() {
-	if err := cli.NewRootCmd().ParseAndRun(context.Background(), os.Args[1:]); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	err := cli.New().ParseAndRun(context.Background(), os.Args[1:])
+	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }

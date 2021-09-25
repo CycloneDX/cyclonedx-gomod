@@ -43,7 +43,7 @@ func New() *ffcli.Command {
 	return &ffcli.Command{
 		Name:       "mod",
 		ShortHelp:  "Generate SBOMs for modules",
-		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [PATH]",
+		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [MODULE_PATH]",
 		LongHelp: `Generate SBOMs for modules.
 
 Examples:
@@ -52,7 +52,7 @@ Examples:
 		FlagSet: fs,
 		Exec: func(ctx context.Context, args []string) error {
 			if len(args) > 1 {
-				return flag.ErrHelp
+				return fmt.Errorf("too many arguments (expected 1, got %d)", len(args))
 			}
 			if len(args) == 0 {
 				options.ModuleDir = "."

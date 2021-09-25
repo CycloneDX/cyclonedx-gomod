@@ -42,14 +42,14 @@ func New() *ffcli.Command {
 	return &ffcli.Command{
 		Name:       "app",
 		ShortHelp:  "Generate SBOMs for applications",
-		ShortUsage: "cyclonedx-gomod app [FLAGS...] MODPATH",
+		ShortUsage: "cyclonedx-gomod app [FLAGS...] [MODULE_PATH]",
 		LongHelp: `Generate SBOMs for applications.
 
-In order to produce accurate results, build constraints must be configured
+In order to produce accurate SBOMs, build constraints must be configured
 via environment variables. These build constraints should mimic the ones passed
 to the "go build" command for the application.
 
-Noteworthy environment variables that act as build constraints are:
+Environment variables that act as build constraints are:
   - GOARCH       The target architecture (386, amd64, etc.)
   - GOOS         The target operating system (linux, windows, etc.)
   - CGO_ENABLED  Whether or not CGO is enabled
@@ -58,10 +58,13 @@ Noteworthy environment variables that act as build constraints are:
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-Applicable build constraints will be included as properties of the main component.
+Applicable build constraints are included as properties of the main component.
+
+Because build constraints influence Go's module selection, an SBOM should be generated
+for each target in the build matrix.
 
 The -main flag should be used to specify the path to the application's main file.
--main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
+It must point to a go file within MODULE_PATH. The go file must have a "package main" declaration.
 
 By passing -files, all files that would be included in a binary will be attached
 as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
@@ -73,7 +76,7 @@ Examples:
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) > 1 {
-				return flag.ErrHelp
+				return fmt.Errorf("too many arguments (expected 1, got %d)", len(args))
 			}
 			if len(args) == 0 {
 				options.ModuleDir = "."

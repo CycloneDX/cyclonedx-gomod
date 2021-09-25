@@ -42,7 +42,7 @@ func New() *ffcli.Command {
 	return &ffcli.Command{
 		Name:       "bin",
 		ShortHelp:  "Generate SBOMs for binaries",
-		ShortUsage: "cyclonedx-gomod bin [FLAGS...] BINPATH",
+		ShortUsage: "cyclonedx-gomod bin [FLAGS...] BINARY_PATH",
 		LongHelp: `Generate SBOMs for binaries.
 
 Although the binary is never executed, it must be executable.
@@ -61,10 +61,12 @@ Example:
   $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app`,
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
-			if len(args) != 1 {
-				return fmt.Errorf("no binary path provided")
+			if len(args) > 1 {
+				return fmt.Errorf("too many arguments (expected 1, got %d)", len(args))
 			}
-			options.BinaryPath = args[0]
+			if len(args) == 1 {
+				options.BinaryPath = args[0]
+			}
 
 			cliUtil.ConfigureLogger(options.LogOptions)
 
