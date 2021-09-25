@@ -60,7 +60,7 @@ func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
 				Main:    true,
 			})
 			moduleIndex += 1
-		case "dep": // Depdendency module
+		case "dep": // Dependency module
 			module := Module{
 				Path:    fields[1],
 				Version: fields[2],

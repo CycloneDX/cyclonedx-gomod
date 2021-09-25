@@ -47,7 +47,7 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 	o.SBOMOptions.RegisterFlags(fs)
 
 	fs.BoolVar(&o.IncludeFiles, "files", false, "Include files")
-	fs.StringVar(&o.Main, "main", "main.go", "Path to the application's main file, relative to MODPATH")
+	fs.StringVar(&o.Main, "main", "main.go", "Path to the application's main file, relative to MODULE_PATH")
 }
 
 func (o Options) Validate() error {

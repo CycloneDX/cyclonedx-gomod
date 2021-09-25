@@ -63,16 +63,20 @@ func (b Options) Validate() error {
 		}
 	}
 
-	fileInfo, err := os.Stat(b.BinaryPath)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			errs = append(errs, fmt.Errorf("binary at %s does not exist", b.BinaryPath))
-		} else {
-			return err
+	if b.BinaryPath == "" {
+		errs = append(errs, fmt.Errorf("no binary path provided"))
+	} else {
+		fileInfo, err := os.Stat(b.BinaryPath)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				errs = append(errs, fmt.Errorf("binary at %s does not exist", b.BinaryPath))
+			} else {
+				return err
+			}
 		}
-	}
-	if fileInfo != nil && fileInfo.IsDir() {
-		errs = append(errs, fmt.Errorf("%s is a directory", b.BinaryPath))
+		if fileInfo != nil && fileInfo.IsDir() {
+			errs = append(errs, fmt.Errorf("%s is a directory", b.BinaryPath))
+		}
 	}
 
 	if len(errs) > 0 {

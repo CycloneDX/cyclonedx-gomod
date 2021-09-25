@@ -31,8 +31,7 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-// GetModuleVersion attempts to detect a given module's version by first
-// calling GetVersionFromTag and if that fails, GetPseudoVersion on it.
+// GetModuleVersion attempts to detect a given module's version.
 //
 // If no Git repository is found in moduleDir, directories will be traversed
 // upwards until the root directory is reached. This is done to accommodate
@@ -63,7 +62,8 @@ func GetModuleVersion(moduleDir string) (string, error) {
 	}
 }
 
-// GetVersionFromTag checks if the current commit is annotated with a tag and if it is, returns that tag's name.
+// GetVersionFromTag checks if the HEAD commit is annotated with a tag and if it is, returns that tag's name.
+// If the HEAD commit is not tagged, a pseudo version will be generated and returned instead.
 func GetVersionFromTag(moduleDir string) (string, error) {
 	repo, err := git.PlainOpen(moduleDir)
 	if err != nil {

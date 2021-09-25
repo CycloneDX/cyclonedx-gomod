@@ -66,7 +66,7 @@ func (o OutputOptions) Validate() error {
 type SBOMOptions struct {
 	IncludeStd      bool
 	NoSerialNumber  bool
-	Reproducible    bool
+	Reproducible    bool // Make the SBOM reproducible by omitting dynamic content
 	ResolveLicenses bool
 	SerialNumber    string
 }
@@ -74,7 +74,7 @@ type SBOMOptions struct {
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
-	fs.BoolVar(&s.Reproducible, "reproducible", false, "Make the SBOM reproducible by omitting dynamic content")
+	// .Reproducible is used for testing only and intentionally omitted here
 	fs.BoolVar(&s.ResolveLicenses, "licenses", false, "Resolve module licenses")
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
 }
