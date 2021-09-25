@@ -9,7 +9,6 @@ on:
   pull_request:
     branches:
       - main
-      - develop-v1.0.0
     paths-ignore:
       - examples/**
   schedule:
@@ -46,7 +45,5 @@ jobs:
           chmod +x "$HOME/.local/bin/cyclonedx"
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Build
-        run: make build
       - name: Test
         run: make test

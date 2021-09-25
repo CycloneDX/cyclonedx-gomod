@@ -21,6 +21,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -168,6 +169,8 @@ func Exec(options Options) error {
 	dependencies := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencies
 
+	enrichWithApplicationDetails(bom, options.ModuleDir, options.Main)
+
 	if options.IncludeStd {
 		err = cliUtil.AddStdComponent(bom)
 		if err != nil {
@@ -200,11 +203,9 @@ func createBuildProperties() (properties []cdx.Property, err error) {
 			continue
 		}
 
-		if buildEnvVal == "" {
-			continue
+		if buildEnvVal != "" {
+			properties = append(properties, sbom.NewProperty("build:env:"+buildEnvKey, buildEnvVal))
 		}
-
-		properties = append(properties, sbom.NewProperty("build:env:"+buildEnvKey, buildEnvVal))
 	}
 
 	goflags, ok := env["GOFLAGS"]
@@ -231,4 +232,75 @@ func parseTagsFromGoFlags(goflags string) (tags []string) {
 	}
 
 	return
+}
+
+// enrichWithApplicationDetails determines the application name as well as
+// the path to the application (path to mainFile's parent dir) relative to moduleDir.
+// If the application path is not equal to moduleDir, it is added to the main component's
+// package URL as sub path. For example:
+//
+// + moduleDir <- application name
+// |-+ main.go
+//
+// + moduleDir
+// |-+ cmd
+//   |-+ app   <- application name
+//     |-+ main.go
+//
+// The package URLs for the above examples would look like this:
+//   1. pkg:golang/../module@version         (untouched)
+//   2. pkg:golang/../module@version#cmd/app (with sub path)
+//
+// If the package URL is updated, the BOM reference is as well.
+// All places within the BOM that reference the main component will be updated accordingly.
+func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainFile string) {
+	// Resolve absolute paths to moduleDir and mainFile.
+	// Both may contain traversals or similar elements we don't care about.
+	// This procedure is done during options validation already,
+	// which is why we don't check for errors here.
+	moduleDirAbs, _ := filepath.Abs(moduleDir)
+	mainFileAbs, _ := filepath.Abs(filepath.Join(moduleDirAbs, mainFile))
+
+	// Construct path to mainFile relative to moduleDir
+	mainFileRel := strings.TrimPrefix(mainFileAbs, moduleDirAbs)
+	mainFileRel = strings.TrimPrefix(mainFileRel, "/")
+
+	// The application name is the name of the directory that contains
+	// the main file. There may be cases where this is not true.
+	// We could add a -name flag to override this in the future.
+	var applicationName string
+
+	if mainDir, _ := filepath.Split(mainFileRel); mainDir != "" {
+		mainDir = strings.TrimSuffix(mainDir, "/")
+		applicationName = filepath.Base(mainDir)
+
+		oldPURL := bom.Metadata.Component.PackageURL
+		newPURL := oldPURL + "#" + mainDir
+
+		log.Debug().
+			Str("old", oldPURL).
+			Str("new", newPURL).
+			Msg("updating purl of main component")
+
+		// Update PURL of main component
+		bom.Metadata.Component.BOMRef = newPURL
+		bom.Metadata.Component.PackageURL = newPURL
+
+		// Update PURL in dependency graph
+		for i, dep := range *bom.Dependencies {
+			if dep.Ref == oldPURL {
+				(*bom.Dependencies)[i].Ref = newPURL
+				break
+			}
+		}
+	} else {
+		applicationName = filepath.Base(moduleDirAbs)
+	}
+
+	applicationNameProperty := sbom.NewProperty("application:name", applicationName)
+	if bom.Metadata.Component.Properties == nil {
+		bom.Metadata.Component.Properties = &[]cdx.Property{applicationNameProperty}
+	} else {
+		*bom.Metadata.Component.Properties = append([]cdx.Property{applicationNameProperty}, *bom.Metadata.Component.Properties...)
+	}
 }

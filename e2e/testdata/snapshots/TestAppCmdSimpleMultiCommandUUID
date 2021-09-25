@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:00000000-0000-0000-0000-000000000000" version="1">
   <metadata>
-    <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d" type="application">
+    <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d#cmd/uuid" type="application">
       <name>testmod-simple</name>
       <version>v0.0.0-20210901192510-dc2d14d2351d</version>
-      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d</purl>
+      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d#cmd/uuid</purl>
+      <properties>
+        <property name="cdx:gomod:application:name">uuid</property>
+      </properties>
     </component>
   </metadata>
   <components>
@@ -31,7 +34,7 @@
     </component>
   </components>
   <dependencies>
-    <dependency ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d">
+    <dependency ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d#cmd/uuid">
       <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0"></dependency>
