@@ -41,7 +41,3 @@
 * Builds for `windows/386` and `linux/386` have been dropped (via [#62](https://github.com/CycloneDX/cyclonedx-gomod/pull/62))
 * Use standard Go notation for architectures in release artifact names (via [#62](https://github.com/CycloneDX/cyclonedx-gomod/pull/62))
   * e.g. `cyclonedx-gomod_1.0.0_windows_x64.zip` is now `cyclonedx-gomod_1.0.0_windows_amd64.zip`
-
-### Known Issues
-
-* When used with Go 1.17 or newer, with modules that have `go 1.17` in their `go.mod`, the dependency graph may contain too many edges ([#64](https://github.com/CycloneDX/cyclonedx-gomod/issues/64))
