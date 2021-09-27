@@ -258,14 +258,8 @@ func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainFile string) {
 	mainFileRel := strings.TrimPrefix(mainFileAbs, moduleDirAbs)
 	mainFileRel = strings.TrimPrefix(mainFileRel, "/")
 
-	// The application name is the name of the directory that contains
-	// the main file. There may be cases where this is not true.
-	// We could add a -name flag to override this in the future.
-	var applicationName string
-
 	if mainDir, _ := filepath.Split(mainFileRel); mainDir != "" {
 		mainDir = strings.TrimSuffix(mainDir, "/")
-		applicationName = filepath.Base(mainDir)
 
 		oldPURL := bom.Metadata.Component.PackageURL
 		newPURL := oldPURL + "#" + mainDir
@@ -286,14 +280,5 @@ func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainFile string) {
 				break
 			}
 		}
-	} else {
-		applicationName = filepath.Base(moduleDirAbs)
-	}
-
-	applicationNameProperty := sbom.NewProperty("application:name", applicationName)
-	if bom.Metadata.Component.Properties == nil {
-		bom.Metadata.Component.Properties = &[]cdx.Property{applicationNameProperty}
-	} else {
-		*bom.Metadata.Component.Properties = append([]cdx.Property{applicationNameProperty}, *bom.Metadata.Component.Properties...)
 	}
 }
