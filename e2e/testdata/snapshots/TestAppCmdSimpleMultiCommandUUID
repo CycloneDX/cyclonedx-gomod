@@ -5,9 +5,6 @@
       <name>testmod-simple</name>
       <version>v0.0.0-20210901192510-dc2d14d2351d</version>
       <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d#cmd/uuid</purl>
-      <properties>
-        <property name="cdx:gomod:application:name">uuid</property>
-      </properties>
     </component>
   </metadata>
   <components>
