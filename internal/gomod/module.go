@@ -36,11 +36,12 @@ import (
 
 // See https://golang.org/ref/mod#go-list-m
 type Module struct {
-	Path    string  // module path
-	Version string  // module version
-	Replace *Module // replaced by this module
-	Main    bool    // is this the main module?
-	Dir     string  // directory holding files for this module, if any
+	Path     string  // module path
+	Version  string  // module version
+	Replace  *Module // replaced by this module
+	Main     bool    // is this the main module?
+	Indirect bool    // is this module only an indirect dependency of main module?
+	Dir      string  // directory holding files for this module, if any
 
 	Dependencies []*Module `json:"-"` // modules this module depends on
 	Local        bool      `json:"-"` // is this a local module?
