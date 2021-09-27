@@ -32,7 +32,7 @@
 ### Dependency Updates
 
 * Update `github.com/CycloneDX/cyclonedx-go` from `v0.3.0` to `v0.4.0` (via [`5bab19b`](https://github.com/CycloneDX/cyclonedx-gomod/commit/5bab19bbed9c6de22112ebeb2f71691c4b4163f5))
-* Update `golang.org/x/mod` from `v0.4.2` to `v0.5.0` (via [#57](https://github.com/CycloneDX/cyclonedx-gomod/pull/57))
+* Update `golang.org/x/mod` from `v0.4.2` to `v0.5.1` (via [#57](https://github.com/CycloneDX/cyclonedx-gomod/pull/57) and [`088f0e3`](https://github.com/CycloneDX/cyclonedx-gomod/commit/088f0e30e6aa80a37f767651877cf943563960a4))
 * Update `golang.org/x/crypto` from `v0.0.0-20210711020723-a769d52b0f97` to `v0.0.0-20210817164053-32db794688a5` (via [`75ae52a`](https://github.com/CycloneDX/cyclonedx-gomod/commit/75ae52ac039d9d702a1861c9625d0a14116097ce))
 
 ### Building and Packaging
