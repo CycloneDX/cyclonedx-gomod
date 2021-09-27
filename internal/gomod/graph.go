@@ -87,6 +87,14 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 			continue
 		}
 
+		if dependant.Main && dependency.Indirect {
+			log.Debug().
+				Str("dependant", dependant.Coordinates()).
+				Str("dependency", dependency.Coordinates()).
+				Msg("pruning graph edge to indirect dependency")
+			continue
+		}
+
 		if dependant.Dependencies == nil {
 			dependant.Dependencies = []*Module{dependency}
 		} else {
