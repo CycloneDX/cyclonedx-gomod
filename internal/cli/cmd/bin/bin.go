@@ -46,9 +46,9 @@ func New() *ffcli.Command {
 		LongHelp: `Generate SBOMs for binaries.
 
 Although the binary is never executed, it must be executable.
-This is a requirement by the Go command that is used to provide this functionality.
+This is a requirement by the "go version -m" command that is used to provide this functionality.
 
-When license resolution is enabled, all modules (including the main module) 
+When license detection is enabled, all modules (including the main module) 
 will be downloaded to the module cache using "go mod download".
 For the download of the main module to work, its version has to be provided
 via the -version flag.
