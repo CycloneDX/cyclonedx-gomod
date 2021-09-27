@@ -25,10 +25,10 @@ import (
 	"path/filepath"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
+	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
+	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"github.com/rs/zerolog/log"
 )
@@ -41,11 +41,14 @@ func New() *ffcli.Command {
 
 	return &ffcli.Command{
 		Name:       "bin",
-		ShortHelp:  "Generate SBOM for a binary",
-		ShortUsage: "cyclonedx-gomod bin [FLAGS...] PATH",
-		LongHelp: `Generate SBOM for a binary.
+		ShortHelp:  "Generate SBOMs for binaries",
+		ShortUsage: "cyclonedx-gomod bin [FLAGS...] BINARY_PATH",
+		LongHelp: `Generate SBOMs for binaries.
 
-When license resolution is enabled, all modules (including the main module) 
+Although the binary is never executed, it must be executable.
+This is a requirement by the "go version -m" command that is used to provide this functionality.
+
+When license detection is enabled, all modules (including the main module) 
 will be downloaded to the module cache using "go mod download".
 For the download of the main module to work, its version has to be provided
 via the -version flag.
@@ -55,16 +58,18 @@ unless there's solid evidence that the binaries haven't been modified
 since they've been built.
 
 Example:
-  $ cyclonedx-gomod bin -json -output minikube-v1.22.0.bom.json -version v1.22.0 ./minikube`,
+  $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app`,
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
-			if len(args) != 1 {
-				return fmt.Errorf("no binary path provided")
+			if len(args) > 1 {
+				return fmt.Errorf("too many arguments (expected 1, got %d)", len(args))
+			}
+			if len(args) == 1 {
+				options.BinaryPath = args[0]
 			}
 
-			cliutil.ConfigureLogger(options.LogOptions)
+			cliUtil.ConfigureLogger(options.LogOptions)
 
-			options.BinaryPath = args[0]
 			return Exec(options)
 		},
 	}
@@ -80,17 +85,18 @@ func Exec(options Options) error {
 	if err != nil {
 		return fmt.Errorf("failed to extract modules: %w", err)
 	} else if len(modules) == 0 {
-		return fmt.Errorf("couldn't parse any modules from %s", options.BinaryPath)
+		return fmt.Errorf("failed to parse modules from %s", options.BinaryPath)
 	}
 
 	if options.Version != "" {
 		modules[0].Version = options.Version
 	}
 
+	// If we want to resolve licenses, we have to download the modules first
 	if options.ResolveLicenses {
 		err = downloadModules(modules, hashes)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to download modules: %w", err)
 		}
 	}
 
@@ -99,53 +105,54 @@ func Exec(options Options) error {
 		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
 	}
 
-	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentTypeApplication),
-		modconv.WithLicenses(options.ResolveLicenses),
+	// Convert main module
+	mainComponent, err := modConv.ToComponent(modules[0],
+		modConv.WithComponentType(cdx.ComponentTypeApplication),
+		modConv.WithLicenses(options.ResolveLicenses),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to convert main module: %w", err)
 	}
 
-	components, err := modconv.ToComponents(modules[1:],
-		modconv.WithLicenses(options.ResolveLicenses),
+	// Convert the other modules
+	components, err := modConv.ToComponents(modules[1:],
+		modConv.WithLicenses(options.ResolveLicenses),
 		withModuleHashes(hashes),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to convert modules: %w", err)
 	}
-
-	dependencyGraph := sbom.BuildDependencyGraph(modules)
 
 	binaryProperties, err := createBinaryProperties(options.BinaryPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create binary properties")
 	}
 
 	bom := cdx.NewBOM()
 
-	err = cliutil.SetSerialNumber(bom, options.SBOMOptions)
+	err = cliUtil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set serial number: %w", err)
 	}
 
 	bom.Metadata = &cdx.Metadata{
 		Component:  mainComponent,
 		Properties: &binaryProperties,
 	}
-	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to add common metadata")
 	}
 
 	bom.Components = &components
+	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
 
-	return cliutil.WriteBOM(bom, options.OutputOptions)
+	return cliUtil.WriteBOM(bom, options.OutputOptions)
 }
 
-func withModuleHashes(hashes map[string]string) modconv.Option {
+func withModuleHashes(hashes map[string]string) modConv.Option {
 	return func(m gomod.Module, c *cdx.Component) error {
 		h1, ok := hashes[m.Coordinates()]
 		if !ok {

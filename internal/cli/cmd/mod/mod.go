@@ -25,11 +25,11 @@ import (
 	"io"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
+	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
+	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"github.com/rs/zerolog/log"
 )
@@ -42,9 +42,9 @@ func New() *ffcli.Command {
 
 	return &ffcli.Command{
 		Name:       "mod",
-		ShortHelp:  "Generate SBOM for a module",
-		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [PATH]",
-		LongHelp: `Generate SBOM for a module.
+		ShortHelp:  "Generate SBOMs for modules",
+		ShortUsage: "cyclonedx-gomod mod [FLAGS...] [MODULE_PATH]",
+		LongHelp: `Generate SBOMs for modules.
 
 Examples:
   $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
@@ -52,7 +52,7 @@ Examples:
 		FlagSet: fs,
 		Exec: func(ctx context.Context, args []string) error {
 			if len(args) > 1 {
-				return flag.ErrHelp
+				return fmt.Errorf("too many arguments (expected 1, got %d)", len(args))
 			}
 			if len(args) == 0 {
 				options.ModuleDir = "."
@@ -60,7 +60,7 @@ Examples:
 				options.ModuleDir = args[0]
 			}
 
-			cliutil.ConfigureLogger(options.LogOptions)
+			cliUtil.ConfigureLogger(options.LogOptions)
 
 			return Exec(options)
 		},
@@ -77,18 +77,19 @@ func Exec(options Options) error {
 	// without modifying go.sum (as `go mod download` would do).
 	err = gocmd.ModWhy(options.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
 	if err != nil {
-		return fmt.Errorf("downloading modules failed: %w", err)
+		return fmt.Errorf("failed to download modules: %w", err)
 	}
 
+	// Try to collect modules from vendor/ directory first and if that fails, use `go list`.
 	modules, err := gomod.GetVendoredModules(options.ModuleDir, options.IncludeTest)
 	if err != nil {
 		if errors.Is(err, gomod.ErrNotVendoring) {
 			modules, err = gomod.GetModules(options.ModuleDir, options.IncludeTest)
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to collect modules: %w", err)
 			}
 		} else {
-			return err
+			return fmt.Errorf("failed to collect vendored modules: %w", err)
 		}
 	}
 
@@ -97,54 +98,55 @@ func Exec(options Options) error {
 		return fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
+	// Determine version of main module
 	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
 	if err != nil {
 		log.Warn().Err(err).Msg("failed to determine version of main module")
 	}
 
-	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentType(options.ComponentType)),
-		modconv.WithLicenses(options.ResolveLicenses),
+	// Convert main module
+	mainComponent, err := modConv.ToComponent(modules[0],
+		modConv.WithComponentType(cdx.ComponentType(options.ComponentType)),
+		modConv.WithLicenses(options.ResolveLicenses),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert main module: %w", err)
 	}
 
-	components, err := modconv.ToComponents(modules[1:],
-		modconv.WithLicenses(options.ResolveLicenses),
-		modconv.WithModuleHashes(),
+	// Convert the other modules
+	components, err := modConv.ToComponents(modules[1:],
+		modConv.WithLicenses(options.ResolveLicenses),
+		modConv.WithModuleHashes(),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert modules: %w", err)
 	}
 
-	dependencyGraph := sbom.BuildDependencyGraph(modules)
-
 	bom := cdx.NewBOM()
-
-	err = cliutil.SetSerialNumber(bom, options.SBOMOptions)
+	err = cliUtil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set serial number: %w", err)
 	}
 
+	// Assemble metadata
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
-
-	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to add common metadata: %w", err)
 	}
 
 	bom.Components = &components
+	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
 
 	if options.IncludeStd {
-		err = cliutil.AddStdComponent(bom)
+		err = cliUtil.AddStdComponent(bom)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to add stdlib component: %w", err)
 		}
 	}
 
-	return cliutil.WriteBOM(bom, options.OutputOptions)
+	return cliUtil.WriteBOM(bom, options.OutputOptions)
 }

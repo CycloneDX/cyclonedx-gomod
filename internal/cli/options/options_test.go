@@ -23,6 +23,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestLogOptions_Validate(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		var options LogOptions
+		require.NoError(t, options.Validate())
+	})
+}
+
 func TestOutputOptions_Validate(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		var options OutputOptions
@@ -49,6 +56,6 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		require.ErrorAs(t, err, &validationError)
 
 		require.Len(t, validationError.Errors, 1)
-		require.Contains(t, validationError.Errors[0].Error(), "invalid serial number")
+		require.Contains(t, validationError.Errors[0].Error(), "serial number")
 	})
 }

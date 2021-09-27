@@ -85,13 +85,13 @@ func GetModule(moduleDir string) (*Module, error) {
 
 	err := gocmd.GetModule(moduleDir, buf)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("listing module failed: %w", err)
 	}
 
 	var module Module
 	err = json.NewDecoder(buf).Decode(&module)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("decoding module info failed: %w", err)
 	}
 
 	return &module, nil
@@ -148,7 +148,7 @@ func parseModules(reader io.Reader) ([]Module, error) {
 	return modules, nil
 }
 
-// sortModules sorts a given Module slice ascendingly by path.
+// sortModules sorts a given Module slice ascending by path.
 // Main modules take precedence, so that they will represent the first elements of the sorted slice.
 // If the path of two modules are equal, they'll be compared by their semantic version instead.
 func sortModules(modules []Module) {

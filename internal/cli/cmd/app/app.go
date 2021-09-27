@@ -20,15 +20,16 @@ package app
 import (
 	"context"
 	"flag"
+	"fmt"
 	"path/filepath"
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	cliutil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
+	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	modconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
+	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"github.com/rs/zerolog/log"
 )
@@ -41,31 +42,33 @@ func New() *ffcli.Command {
 
 	return &ffcli.Command{
 		Name:       "app",
-		ShortHelp:  "Generate SBOM for an application",
-		ShortUsage: "cyclonedx-gomod app [FLAGS...] MODPATH",
-		LongHelp: `Generate SBOM for an application.
+		ShortHelp:  "Generate SBOMs for applications",
+		ShortUsage: "cyclonedx-gomod app [FLAGS...] [MODULE_PATH]",
+		LongHelp: `Generate SBOMs for applications.
 
-In order to produce accurate results, build constraints must be configured
+In order to produce accurate SBOMs, build constraints must be configured
 via environment variables. These build constraints should mimic the ones passed
 to the "go build" command for the application.
 
-Noteworthy environment variables that act as build constraints are:
+Environment variables that act as build constraints are:
   - GOARCH       The target architecture (386, amd64, etc.)
   - GOOS         The target operating system (linux, windows, etc.)
   - CGO_ENABLED  Whether or not CGO is enabled
-  - GOFLAGS      Pass build tags
+  - GOFLAGS      Flags that are passed to the Go command (e.g. build tags)
 
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-Unless the -reproducible flag is provided, build constraints will be 
-included as properties of the main component.
+Applicable build constraints are included as properties of the main component.
+
+Because build constraints influence Go's module selection, an SBOM should be generated
+for each target in the build matrix.
 
 The -main flag should be used to specify the path to the application's main file.
--main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
+It must point to a go file within MODULE_PATH. The go file must have a "package main" declaration.
 
-By passing -files, all files that would be compiled into the binary will be included
-as subcomponents of their respective module. Files versions follow the v0.0.0-SHORTHASH pattern, 
+By passing -files, all files that would be included in a binary will be attached
+as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 
 Examples:
@@ -74,7 +77,7 @@ Examples:
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) > 1 {
-				return flag.ErrHelp
+				return fmt.Errorf("too many arguments (expected 1, got %d)", len(args))
 			}
 			if len(args) == 0 {
 				options.ModuleDir = "."
@@ -82,7 +85,7 @@ Examples:
 				options.ModuleDir = args[0]
 			}
 
-			cliutil.ConfigureLogger(options.LogOptions)
+			cliUtil.ConfigureLogger(options.LogOptions)
 
 			return Exec(options)
 		},
@@ -97,30 +100,34 @@ func Exec(options Options) error {
 
 	modules, err := gomod.GetModulesFromPackages(options.ModuleDir, options.Main)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to collect modules: %w", err)
 	}
 
 	// Dependencies need to be applied prior to determining the main
 	// module's version, because `go mod graph` omits that version.
 	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
+	// Determine version of main module
 	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to determine version of main module: %w", err)
 	}
 
-	mainComponent, err := modconv.ToComponent(modules[0],
-		modconv.WithComponentType(cdx.ComponentTypeApplication),
-		modconv.WithFiles(options.IncludeFiles),
-		modconv.WithLicenses(options.ResolveLicenses),
+	// Convert main module
+	mainComponent, err := modConv.ToComponent(modules[0],
+		modConv.WithComponentType(cdx.ComponentTypeApplication),
+		modConv.WithFiles(options.IncludeFiles),
+		modConv.WithLicenses(options.ResolveLicenses),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to convert main module: %w", err)
 	}
 
+	// Build properties (e.g. the Go version) depend on the environment
+	// and are thus only included when the SBOM doesn't have to be reproducible.
 	if !options.SBOMOptions.Reproducible {
 		buildProperties, err := createBuildProperties()
 		if err != nil {
@@ -133,45 +140,45 @@ func Exec(options Options) error {
 		}
 	}
 
-	components, err := modconv.ToComponents(modules[1:],
-		modconv.WithFiles(options.IncludeFiles),
-		modconv.WithLicenses(options.ResolveLicenses),
-		modconv.WithModuleHashes(),
+	// Convert the other modules
+	components, err := modConv.ToComponents(modules[1:],
+		modConv.WithFiles(options.IncludeFiles),
+		modConv.WithLicenses(options.ResolveLicenses),
+		modConv.WithModuleHashes(),
 	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to convert modules: %w", err)
 	}
-
-	dependencies := sbom.BuildDependencyGraph(modules)
 
 	bom := cdx.NewBOM()
-
-	err = cliutil.SetSerialNumber(bom, options.SBOMOptions)
+	err = cliUtil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set serial number: %w", err)
 	}
 
+	// Assemble metadata
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
-	err = cliutil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to add common metadata: %w", err)
 	}
 
 	bom.Components = &components
+	dependencies := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencies
 
 	enrichWithApplicationDetails(bom, options.ModuleDir, options.Main)
 
 	if options.IncludeStd {
-		err = cliutil.AddStdComponent(bom)
+		err = cliUtil.AddStdComponent(bom)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to add stdlib component: %w", err)
 		}
 	}
 
-	return cliutil.WriteBOM(bom, options.OutputOptions)
+	return cliUtil.WriteBOM(bom, options.OutputOptions)
 }
 
 var buildEnv = []string{

@@ -156,6 +156,7 @@ func executeGoCommand(args []string, options ...commandOption) error {
 
 	log.Debug().
 		Str("cmd", cmd.String()).
+		Str("dir", cmd.Dir).
 		Msg("executing command")
 
 	return cmd.Run()

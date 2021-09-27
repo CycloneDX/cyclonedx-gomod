@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/CycloneDX/cyclonedx-gomod/actions/workflows/ci.yml/badge.svg)](https://github.com/CycloneDX/cyclonedx-gomod/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/CycloneDX/cyclonedx-gomod)](https://goreportcard.com/report/github.com/CycloneDX/cyclonedx-gomod)
 [![Latest GitHub release](https://img.shields.io/github/v/release/CycloneDX/cyclonedx-gomod?sort=semver)](https://github.com/CycloneDX/cyclonedx-gomod/releases/latest)
-[![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](LICENSE)  
 [![Website](https://img.shields.io/badge/https://-cyclonedx.org-blue.svg)](https://cyclonedx.org/)
 [![Slack Invite](https://img.shields.io/badge/Slack-Join-blue?logo=slack&labelColor=393939)](https://cyclonedx.org/slack/invite)
 [![Group Discussion](https://img.shields.io/badge/discussion-groups.io-blue.svg)](https://groups.io/g/CycloneDX)
@@ -25,10 +25,8 @@ Building from source requires Go 1.17 or newer.
 
 ## Compatibility
 
-*cyclonedx-gomod* will produce BOMs for the latest version of the CycloneDX specification 
-[supported by cyclonedx-go](https://github.com/CycloneDX/cyclonedx-go#compatibility), which currently is [1.3](https://cyclonedx.org/docs/1.3/). 
-You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple 
-BOM formats or specification versions. 
+*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, which currently is [1.3](https://cyclonedx.org/docs/1.3/). 
+You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple BOM formats or specification versions. 
 
 ## Usage
 
@@ -36,10 +34,40 @@ BOM formats or specification versions.
 USAGE
   cyclonedx-gomod <SUBCOMMAND> [FLAGS...] [<ARG>...]
 
+cyclonedx-gomod creates CycloneDX Software Bill of Materials (SBOM) from Go modules.
+
+Multiple subcommands are offered, each targeting different use cases:
+
+- SBOMs generated with "app" include only those modules that the target application
+  actually depends on. Modules required by tests or packages that are not imported
+  by the application are not included. Build constraints are evaluated, which enables
+  a very detailed view of what's really compiled into an application's binary.
+  
+- SBOMs generated with "mod" include the aggregate of modules required by all 
+  packages in the target module. This optionally includes modules required by
+  tests and test packages. Build constraints are NOT evaluated, allowing for 
+  a "whole picture" view on the target module's dependencies.
+
+- "bin" offers support of generating rudimentary SBOMs from binaries built with Go modules.
+
+Distributors of applications will typically use "app" and provide the resulting SBOMs
+alongside their application's binaries. This enables users to only consume SBOMs for
+artifacts that they actually use. For example, a Go module may include "server" and
+"client" applications, of which only the "client" is distributed to users. 
+Additionally, modules included in "client" may differ, depending on which platform 
+it was compiled for.
+
+Vendors or maintainers may choose to use "mod" for internal use, where it's too
+cumbersome to deal with many SBOMs for the same product. Possible use cases are: 
+- Tracking of component inventory
+- Tracking of third party component licenses
+- Continuous monitoring for vulnerabilities
+"mod" may also be used to generate SBOMs for libraries.
+
 SUBCOMMANDS
-  app      Generate SBOM for an application
-  bin      Generate SBOM for a binary
-  mod      Generate SBOM for a module
+  app      Generate SBOMs for applications
+  bin      Generate SBOMs for binaries
+  mod      Generate SBOMs for modules
   version  Show version information
 ```
 
@@ -49,31 +77,33 @@ SUBCOMMANDS
 
 ```
 USAGE
-  cyclonedx-gomod app [FLAGS...] MODPATH
+  cyclonedx-gomod app [FLAGS...] [MODULE_PATH]
 
-Generate SBOM for an application.
+Generate SBOMs for applications.
 
-In order to produce accurate results, build constraints must be configured
+In order to produce accurate SBOMs, build constraints must be configured
 via environment variables. These build constraints should mimic the ones passed
 to the "go build" command for the application.
 
-Noteworthy environment variables that act as build constraints are:
+Environment variables that act as build constraints are:
   - GOARCH       The target architecture (386, amd64, etc.)
   - GOOS         The target operating system (linux, windows, etc.)
   - CGO_ENABLED  Whether or not CGO is enabled
-  - GOFLAGS      Pass build tags
+  - GOFLAGS      Flags that are passed to the Go command (e.g. build tags)
 
 A complete overview of all environment variables can be found here:
   https://pkg.go.dev/cmd/go#hdr-Environment_variables
 
-Unless the -reproducible flag is provided, build constraints will be 
-included as properties of the main component.
+Applicable build constraints are included as properties of the main component.
+
+Because build constraints influence Go's module selection, an SBOM should be generated
+for each target in the build matrix.
 
 The -main flag should be used to specify the path to the application's main file.
--main must point to a go file within MODPATH. If -main is not specified, "main.go" is assumed.
+It must point to a go file within MODULE_PATH. The go file must have a "package main" declaration.
 
-By passing -files, all files that would be compiled into the binary will be included
-as subcomponents of their respective module. Files versions follow the v0.0.0-SHORTHASH pattern, 
+By passing -files, all files that would be included in a binary will be attached
+as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 
 Examples:
@@ -81,81 +111,139 @@ Examples:
   $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module
 
 FLAGS
-  -files=false         Include files
-  -json=false          Output in JSON
-  -licenses=false      Resolve module licenses
-  -main main.go        Path to the application's main file, relative to MODPATH
-  -noserial=false      Omit serial number
-  -output -            Output file path (or - for STDOUT)
-  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
-  -serial ...          Serial number
-  -std=false           Include Go standard library as component and dependency of the module
-  -verbose=false       Enable verbose output
+  -files=false     Include files
+  -json=false      Output in JSON
+  -licenses=false  Perform license detection
+  -main main.go    Path to the application's main file, relative to MODULE_PATH
+  -noserial=false  Omit serial number
+  -output -        Output file path (or - for STDOUT)
+  -serial ...      Serial number
+  -std=false       Include Go standard library as component and dependency of the module
 ```
 
 #### `bin`
 
 ```
 USAGE
-  cyclonedx-gomod bin [FLAGS...] PATH
+  cyclonedx-gomod bin [FLAGS...] BINARY_PATH
 
-Generate SBOM for a binary.
+Generate SBOMs for binaries.
 
-When license resolution is enabled, all modules (including the main module) 
+Although the binary is never executed, it must be executable.
+This is a requirement by the "go version -m" command that is used to provide this functionality.
+
+When license detection is enabled, all modules (including the main module) 
 will be downloaded to the module cache using "go mod download".
+For the download of the main module to work, its version has to be provided
+via the -version flag.
 
 Please note that data embedded in binaries shouldn't be trusted,
 unless there's solid evidence that the binaries haven't been modified
 since they've been built.
 
 Example:
-  $ cyclonedx-gomod bin -json -output minikube-v1.22.0.bom.json -version v1.22.0 ./minikube
+  $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app
 
 FLAGS
-  -json=false          Output in JSON
-  -licenses=false      Resolve module licenses
-  -noserial=false      Omit serial number
-  -output -            Output file path (or - for STDOUT)
-  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
-  -serial ...          Serial number
-  -std=false           Include Go standard library as component and dependency of the module
-  -verbose=false       Enable verbose output
-  -version ...         Version of the main component
+  -json=false      Output in JSON
+  -licenses=false  Perform license detection
+  -noserial=false  Omit serial number
+  -output -        Output file path (or - for STDOUT)
+  -serial ...      Serial number
+  -std=false       Include Go standard library as component and dependency of the module
+  -verbose=false   Enable verbose output
+  -version ...     Version of the main component
 ```
 
 #### `mod`
 
 ```
 USAGE
-  cyclonedx-gomod mod [FLAGS...] [PATH]
+  cyclonedx-gomod mod [FLAGS...] [MODULE_PATH]
 
-Generate SBOM for a module.
+Generate SBOMs for modules.
 
 Examples:
   $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
   $ cyclonedx-gomod mod -reproducible -test -output bom.xml ./cyclonedx-go
 
 FLAGS
-  -json=false          Output in JSON
-  -licenses=false      Resolve module licenses
-  -noserial=false      Omit serial number
-  -output -            Output file path (or - for STDOUT)
-  -reproducible=false  Make the SBOM reproducible by omitting dynamic content
-  -serial ...          Serial number
-  -std=false           Include Go standard library as component and dependency of the module
-  -test=false          Include test dependencies
-  -type application    Type of the main component
-  -verbose=false       Enable verbose output
+  -json=false        Output in JSON
+  -licenses=false    Perform license detection
+  -noserial=false    Omit serial number
+  -output -          Output file path (or - for STDOUT)
+  -serial ...        Serial number
+  -std=false         Include Go standard library as component and dependency of the module
+  -test=false        Include test dependencies
+  -type application  Type of the main component
+  -verbose=false     Enable verbose output
 ```
 
-### Examples
+### Examples 📃
 
-Checkout the [`examples`](./examples) directory for examples of SBOMs generated with *cyclonedx-gomod*.
+In order to demonstrate what SBOMs generated with *cyclonedx-gomod* look like, 
+as well as to give you an idea about the differences between the commands `app`, 
+`mod` and `bin`, we provide example SBOMs for each command in the [`examples`](./examples) directory.
+
+The whole process of generating these examples is encapsulated in [`Dockerfile.examples`](./Dockerfile.examples).  
+To generate them yourself, simply execute the following command:
+
+```shell
+$ GOOS=linux GOARCH=amd64 make examples-image examples
+```
+
+### GoReleaser 🚀
+
+The recommended way of integrating with [GoReleaser](https://goreleaser.com/) is via `post` [build hook](https://goreleaser.com/customization/build/#build-hooks):
+
+```yaml
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    tags:
+      - foo
+      - bar
+    hooks:
+      post:
+        # Generate an SBOM for every build in the build matrix
+        - cmd: cyclonedx-gomod app -licenses -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+          # Target architecture and OS, as well as build tags have to be provided
+          # via environment variables. Architecture and OS are available as template
+          # variables, but tags have to be hardcoded.
+          # CGO_ENABLED is inherited from the env node above in this example.
+          env:
+            - GOARCH={{ .Arch }}
+            - GOOS={{ .Os }}
+            - GOFLAGS="-tags=foo,bar"
+
+release:
+  # Attach SBOMs to GitHub release
+  extra_files:
+    - glob: ./*.bom.json
+```
+
+When generating SBOMs during a GoReleaser execution, it's important to `gitignore` these files.
+Otherwise, GoReleaser will complain about the state of the repo being dirty.
+Given the naming scheme above, the following `.gitignore` line does the job:
+
+```
+*.bom.json
+```
 
 ### GitHub Actions 🤖
 
 We made a GitHub Action to help integrate *cyclonedx-gomod* into existing CI/CD workflows!  
 You can find it on the GitHub marketplace: [*gh-gomod-generate-sbom*](https://github.com/marketplace/actions/cyclonedx-gomod-generate-sbom)
+
+> The GitHub action hasn't yet been updated to work with *cyclonedx-gomod* `v1`.  
+> Please refer to [*cyclonedx-gomod* `v0`](https://github.com/CycloneDX/cyclonedx-gomod/tree/release-v0.10.x) for the time being.
 
 ### Docker 🐳
 
@@ -166,6 +254,10 @@ $ docker run -it --rm \
     cyclonedx/cyclonedx-gomod:v1 mod -json -output /out/bom.json /usr/src/mymodule
 ```
 
+> The image is based on `golang:1.17-alpine`.  
+> Please keep in mind that the Go version may influence module selection.  
+> We generally recommend using a [precompiled binary](https://github.com/CycloneDX/cyclonedx-gomod/releases) instead.
+
 ## Important Notes
 
 ### Vendoring
@@ -175,7 +267,7 @@ Limitations are as follows:
 
 * **No hashes.** Go doesn't copy all module files to `vendor`, only those that are required to build
   and test the main module. Because [module checksums](#hashes) consider almost all files in a module's directory though, 
-  calculating accurate hashes from the `vendor` directory is not possible. As a consequence, BOMs for modules that use
+  calculating accurate hashes from the `vendor` directory is not possible. As a consequence, SBOMs for modules that use
   vendoring do not include component hashes.
 * **License detection may fail.** Go doesn't always copy license files when vendoring modules, which may cause license detection to fail.
 
@@ -185,73 +277,17 @@ There is currently no standard way for developers to declare their module's lice
 Detecting licenses based on files in a repository is a non-trivial task, which is why *cyclonedx-gomod*  
 uses [`go-license-detector`](https://github.com/go-enry/go-license-detector) to resolve module licenses.
 
-While `go-license-detector`'s license matching *may* be accurate most of the time, BOMs should state facts.  
-This is why license resolution is an opt-in feature (using the `-licenses` flag). If you are a vendor and legally
-required to provide 100% accurate BOMs, **do not** use this feature.
+While `go-license-detector`'s license matching *may* be accurate most of the time, SBOMs should state facts.  
+This is why detected licenses are included as [evidences](https://cyclonedx.org/news/cyclonedx-v1.3-released/#copyright-and-license-evidence), 
+rather than the `licenses` field directly.
 
 ### Hashes
 
 *cyclonedx-gomod* uses the same hashing algorithm Go uses for its [module authentication](https://go.googlesource.com/proposal/+/master/design/25530-sumdb.md#module-authentication-with).  
 [`vikyd/go-checksum`](https://github.com/vikyd/go-checksum#calc-checksum-of-module-directory) does a great job of
-explaining what exactly that entails. In essence, the hash you see in a BOM should be the same as in your `go.sum` file,
+explaining what exactly that entails. In essence, the hash you see in an SBOM should be the same as in your `go.sum` file,
 just in a different format. This is because the CycloneDX specification enforces hashes to be provided in hex encoding,
 while Go uses base64 encoded values.
-
-To verify a hash found in a BOM, do the following:
-
-1. Hex decode the value
-2. Base64 encode the value
-3. Prefix the value with `h1:`
-4. Compare with the expected module checksum
-
-#### Example
-
-Given the following `component` element in a BOM:
-
-```xml
-<component bom-ref="pkg:golang/github.com/google/uuid@v1.2.0" type="library">
-  <name>github.com/google/uuid</name>
-  <version>v1.2.0</version>
-  <scope>required</scope>
-  <hashes>
-    <hash alg="SHA-256">
-      a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b
-    </hash>
-  </hashes>
-  <licenses>
-    <license>
-      <id>BSD-3-Clause</id>
-      <url>https://spdx.org/licenses/BSD-3-Clause.html</url>
-    </license>
-  </licenses>
-  <purl>pkg:golang/github.com/google/uuid@v1.2.0</purl>
-  <externalReferences>
-    <reference type="vcs">
-      <url>https://github.com/google/uuid</url>
-    </reference>
-  </externalReferences>
-</component>
-```
-
-We take the hash, hex decode it, base64 encode the resulting bytes and prefix that with `h1:` (demonstrated [here](https://gchq.github.io/CyberChef/#recipe=From_Hex('Auto')To_Base64('A-Za-z0-9%2B/%3D')Pad_lines('Start',3,'h1:')&input=YTg5NjJkNWU3MjUxNWE2YTVlZWU2ZmY3NWU1Y2ExYWVjMmViMTE0NDZhMWQxMzM2OTMxY2U4YzU3YWIyNTAzYg) in a CyberChef recipe).
-
-In this case, we end up with `h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=`.  
-In order to verify that this matches what we expect, we can query Go's [checksum database](https://go.googlesource.com/proposal/+/master/design/25530-sumdb.md#checksum-database) for the component we're inspecting:
-
-```
-$ curl https://sum.golang.org/lookup/github.com/google/uuid@v1.2.0
-2580307
-github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
-github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-
-go.sum database tree
-3935567
-SapHtgdNCeF00Cx8kqztePV24kgzNg++Xovae42HAMw=
-
-— sum.golang.org Az3grsm7Wm4CVNR1RHq9BFnu9jzcRlU2uw7lr0gfUWgO6+rqPNjT+fUTl9gH0NRTgdwW9nItuQSMbhSaLCsk8YeYSAs=
-```
-
-Line 2 of the response tells us that the checksum in our BOM matches that known to the checksum database.
 
 ### Version Detection
 
@@ -283,6 +319,6 @@ supported Go versions for every pull request.
 
 ### Running Tests
 
-Some tests make use of the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli), e.g. to validate BOMs.  
+Some tests make use of the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli), e.g. to validate SBOMs.  
 Make sure to download the CLI binary and make it available as `cyclonedx` in your `$PATH`.  
 See also *Setup CycloneDX CLI* in the [workflow](https://github.com/CycloneDX/cyclonedx-gomod/blob/master/.github/workflows/ci.yml).
