@@ -56,6 +56,6 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		require.ErrorAs(t, err, &validationError)
 
 		require.Len(t, validationError.Errors, 1)
-		require.Contains(t, validationError.Errors[0].Error(), "invalid serial number")
+		require.Contains(t, validationError.Errors[0].Error(), "serial number")
 	})
 }
