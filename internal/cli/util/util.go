@@ -52,6 +52,9 @@ func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 }
 
 func AddStdComponent(bom *cdx.BOM) error {
+	log.Debug().
+		Msg("adding std component")
+
 	stdComponent, err := sbom.BuildStdComponent()
 	if err != nil {
 		return fmt.Errorf("failed to build std component: %w", err)
@@ -113,6 +116,11 @@ func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 
 // WriteBOM writes the given bom according to the provided OutputOptions.
 func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
+	log.Debug().
+		Str("output", outputOptions.OutputFilePath).
+		Bool("json", outputOptions.UseJSON).
+		Msg("writing sbom")
+
 	var outputFormat cdx.BOMFileFormat
 	if outputOptions.UseJSON {
 		outputFormat = cdx.BOMFileFormatJSON

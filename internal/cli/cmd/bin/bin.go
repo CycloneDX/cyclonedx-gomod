@@ -81,7 +81,7 @@ func Exec(options Options) error {
 		return err
 	}
 
-	modules, hashes, err := gomod.GetModulesFromBinary(options.BinaryPath)
+	modules, hashes, err := gomod.LoadModulesFromBinary(options.BinaryPath)
 	if err != nil {
 		return fmt.Errorf("failed to extract modules: %w", err)
 	} else if len(modules) == 0 {

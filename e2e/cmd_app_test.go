@@ -34,7 +34,7 @@ func TestAppCmdSimple(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir: fixturePath,
-		Main:      "main.go",
+		Main:      "",
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
@@ -50,7 +50,7 @@ func TestAppCmdSimpleWithFiles(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir:    fixturePath,
-		Main:         "main.go",
+		Main:         "",
 		IncludeFiles: true,
 	}
 
@@ -67,7 +67,7 @@ func TestAppCmdSimpleMultiCommandUUID(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir: fixturePath,
-		Main:      "cmd/uuid/main.go",
+		Main:      "cmd/uuid",
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
@@ -83,7 +83,7 @@ func TestAppCmdSimpleMultiCommandPURL(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir: fixturePath,
-		Main:      "cmd/purl/main.go",
+		Main:      "cmd/purl",
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
@@ -99,7 +99,7 @@ func TestAppCmdVendored(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir: fixturePath,
-		Main:      "main.go",
+		Main:      "",
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
@@ -115,7 +115,7 @@ func TestAppCmdVendoredWithFiles(t *testing.T) {
 			SerialNumber:    zeroUUID.String(),
 		},
 		ModuleDir:    fixturePath,
-		Main:         "main.go",
+		Main:         "",
 		IncludeFiles: true,
 	}
 

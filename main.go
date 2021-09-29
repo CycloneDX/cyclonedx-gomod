@@ -20,6 +20,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/rs/zerolog/log"
 	"os"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli"
@@ -28,7 +30,11 @@ import (
 func main() {
 	err := cli.New().ParseAndRun(context.Background(), os.Args[1:])
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		if _, ok := err.(*options.ValidationError); ok {
+			_, _ = fmt.Fprintln(os.Stderr, err)
+		} else {
+			log.Err(err).Msg("")
+		}
 		os.Exit(1)
 	}
 }

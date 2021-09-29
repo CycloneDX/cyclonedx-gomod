@@ -26,9 +26,9 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
-func GetModulesFromBinary(binaryPath string) ([]Module, map[string]string, error) {
+func LoadModulesFromBinary(binaryPath string) ([]Module, map[string]string, error) {
 	buf := new(bytes.Buffer)
-	if err := gocmd.GetModulesFromBinary(binaryPath, buf); err != nil {
+	if err := gocmd.LoadModulesFromBinary(binaryPath, buf); err != nil {
 		return nil, nil, err
 	}
 

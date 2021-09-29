@@ -45,7 +45,13 @@ import (
 // See:
 //   - https://github.com/golang/go/issues/30720
 //   - https://github.com/golang/go/issues/26904
-func FilterModules(mainModulePath string, modules []Module, includeTest bool) ([]Module, error) {
+func FilterModules(moduleDir string, modules []Module, includeTest bool) ([]Module, error) {
+	log.Debug().
+		Str("moduleDir", moduleDir).
+		Int("moduleCount", len(modules)).
+		Bool("includeTest", includeTest).
+		Msg("filtering modules")
+
 	buf := new(bytes.Buffer)
 	filtered := make([]Module, 0)
 	chunks := chunkModules(modules, 20)
@@ -56,13 +62,16 @@ func FilterModules(mainModulePath string, modules []Module, includeTest bool) ([
 			paths[i] = chunk[i].Path
 		}
 
-		if err := gocmd.ModWhy(mainModulePath, paths, buf); err != nil {
+		if err := gocmd.ModWhy(moduleDir, paths, buf); err != nil {
 			return nil, err
 		}
 
 		for modPath, modPkgs := range parseModWhy(buf) {
 			if len(modPkgs) == 0 {
-				log.Debug().Str("module", modPath).Msg("filtering unneeded module")
+				log.Debug().
+					Str("module", modPath).
+					Str("reason", "not needed").
+					Msg("filtering module")
 				continue
 			}
 
@@ -75,7 +84,10 @@ func FilterModules(mainModulePath string, modules []Module, includeTest bool) ([
 				}
 			}
 			if !includeTest && testOnly {
-				log.Debug().Str("module", modPath).Msg("filtering test-only module")
+				log.Debug().
+					Str("module", modPath).
+					Str("reason", "test only").
+					Msg("filtering module")
 				continue
 			}
 

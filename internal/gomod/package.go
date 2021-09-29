@@ -51,15 +51,54 @@ type Package struct {
 	SwigCXXFiles []string // .swigcxx files
 	SysoFiles    []string // .syso object files to add to archive
 	EmbedFiles   []string // files matched by EmbedPatterns
+
+	Error *PackageError // error loading package
 }
 
-func GetModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) {
+type PackageError struct {
+	Err string
+}
+
+func (pe PackageError) Error() string {
+	return pe.Err
+}
+
+func LoadPackage(moduleDir, packagePattern string) (*Package, error) {
+	log.Debug().
+		Str("moduleDir", moduleDir).
+		Str("packagePattern", packagePattern).
+		Msg("loading package")
+
+	buf := new(bytes.Buffer)
+	err := gocmd.ListPackage(moduleDir, toRelativePackagePath(packagePattern), buf)
+	if err != nil {
+		return nil, err
+	}
+
+	var pkg Package
+	err = json.NewDecoder(buf).Decode(&pkg)
+	if err != nil {
+		return nil, err
+	}
+
+	if pkg.Error != nil {
+		return nil, pkg.Error
+	}
+
+	return &pkg, nil
+}
+
+func LoadModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) {
+	log.Debug().
+		Str("moduleDir", moduleDir).
+		Msg("loading modules")
+
 	if !IsModule(moduleDir) {
 		return nil, ErrNoModule
 	}
 
 	buf := new(bytes.Buffer)
-	err := gocmd.ListPackages(moduleDir, packagePattern, buf)
+	err := gocmd.ListPackages(moduleDir, toRelativePackagePath(packagePattern), buf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list packages for pattern \"%s\": %w", packagePattern, err)
 	}
@@ -103,13 +142,15 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 		if pkg.Standard {
 			log.Debug().
 				Str("package", pkg.ImportPath).
-				Msg("skipping standard library package")
+				Str("reason", "part of standard library").
+				Msg("skipping package")
 			continue
 		}
 		if pkg.Module == nil {
 			log.Debug().
 				Str("package", pkg.ImportPath).
-				Msg("skipping package without module")
+				Str("reason", "no associated module").
+				Msg("skipping package")
 			continue
 		}
 
@@ -213,4 +254,15 @@ func makePackageFileRelativeToModule(moduleDir, pkgDir, file string) (string, er
 	}
 
 	return strings.ReplaceAll(fp, "\\", "/"), nil
+}
+
+// toRelativePackagePath ensures that Go will interpret the given packagePattern
+// as relative package path. This is done by prefixing it with "./" if it isn't already.
+// See also: `go help packages`
+func toRelativePackagePath(packagePattern string) string {
+	packagePattern = filepath.ToSlash(packagePattern)
+	if !strings.HasPrefix(packagePattern, "./") {
+		packagePattern = "./" + packagePattern
+	}
+	return packagePattern
 }

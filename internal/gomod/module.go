@@ -80,9 +80,8 @@ func IsModule(dir string) bool {
 // ErrNoModule indicates that a given path is not a valid Go module
 var ErrNoModule = errors.New("not a go module")
 
-func GetModule(moduleDir string) (*Module, error) {
+func LoadModule(moduleDir string) (*Module, error) {
 	buf := new(bytes.Buffer)
-
 	err := gocmd.GetModule(moduleDir, buf)
 	if err != nil {
 		return nil, fmt.Errorf("listing module failed: %w", err)
@@ -97,13 +96,17 @@ func GetModule(moduleDir string) (*Module, error) {
 	return &module, nil
 }
 
-func GetModules(moduleDir string, includeTest bool) ([]Module, error) {
+func LoadModules(moduleDir string, includeTest bool) ([]Module, error) {
+	log.Debug().
+		Str("mainModuleDir", moduleDir).
+		Bool("includeTest", includeTest).
+		Msg("loading modules")
+
 	if !IsModule(moduleDir) {
 		return nil, ErrNoModule
 	}
 
 	buf := new(bytes.Buffer)
-
 	err := gocmd.ListModules(moduleDir, buf)
 	if err != nil {
 		return nil, fmt.Errorf("listing modules failed: %w", err)
@@ -205,7 +208,11 @@ func ResolveLocalReplacements(mainModuleDir string, modules []Module) error {
 }
 
 func resolveLocalReplacement(localModuleDir string, module *Module) error {
-	localModule, err := GetModule(localModuleDir)
+	log.Debug().
+		Str("moduleDir", localModuleDir).
+		Msg("resolving local replacement module")
+
+	localModule, err := LoadModule(localModuleDir)
 	if err != nil {
 		return err
 	}

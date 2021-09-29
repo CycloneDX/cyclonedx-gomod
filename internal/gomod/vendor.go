@@ -68,7 +68,7 @@ func GetVendoredModules(moduleDir string, includeTest bool) ([]Module, error) {
 	}
 
 	// Main module is not included in vendored module list, so we have to get it separately
-	mainModule, err := GetModule(moduleDir)
+	mainModule, err := LoadModule(moduleDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get main module: %w", err)
 	}

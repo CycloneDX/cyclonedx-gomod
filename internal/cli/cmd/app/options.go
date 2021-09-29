@@ -18,17 +18,14 @@
 package app
 
 import (
-	"bufio"
 	"errors"
 	"flag"
 	"fmt"
-	"io"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"os"
 	"path/filepath"
-	"strings"
-
-	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 type Options struct {
@@ -47,7 +44,7 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 	o.SBOMOptions.RegisterFlags(fs)
 
 	fs.BoolVar(&o.IncludeFiles, "files", false, "Include files")
-	fs.StringVar(&o.Main, "main", "main.go", "Path to the application's main file, relative to MODULE_PATH")
+	fs.StringVar(&o.Main, "main", "", "Path to the application's main package, relative to MODULE_PATH")
 }
 
 func (o Options) Validate() error {
@@ -82,15 +79,14 @@ func (o Options) Validate() error {
 	return nil
 }
 
-func (o Options) validateMain(mainFilePath string, errs *[]error) error {
-	mainFilePath = filepath.Join(o.ModuleDir, mainFilePath)
-
-	if filepath.Ext(mainFilePath) != ".go" {
-		*errs = append(*errs, fmt.Errorf("main: must be a go source file, but \"%s\" is not", mainFilePath))
+func (o Options) validateMain(mainPkgDir string, errs *[]error) error {
+	if filepath.IsAbs(mainPkgDir) {
+		*errs = append(*errs, fmt.Errorf("main: must be a relative path"))
 		return nil
 	}
 
-	isSubPath, err := util.IsSubPath(mainFilePath, o.ModuleDir)
+	mainPkgDir = filepath.Join(o.ModuleDir, mainPkgDir)
+	isSubPath, err := util.IsSubPath(mainPkgDir, o.ModuleDir)
 	if err != nil {
 		return err
 	}
@@ -99,46 +95,27 @@ func (o Options) validateMain(mainFilePath string, errs *[]error) error {
 		return nil
 	}
 
-	fileInfo, err := os.Stat(mainFilePath)
+	fileInfo, err := os.Stat(mainPkgDir)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			*errs = append(*errs, fmt.Errorf("main: \"%s\" does not exist", mainFilePath))
+			*errs = append(*errs, fmt.Errorf("main: \"%s\" does not exist", mainPkgDir))
 			return nil
 		}
 		return err
 	}
-
-	if fileInfo.IsDir() {
-		*errs = append(*errs, fmt.Errorf("main: must be a go file, but \"%s\" is a directory", mainFilePath))
+	if !fileInfo.IsDir() {
+		*errs = append(*errs, fmt.Errorf("main: must be a directory, but \"%s\" is a file", mainPkgDir))
 		return nil
 	}
 
-	isMain, err := checkForMainPackage(mainFilePath)
+	pkg, err := gomod.LoadPackage(o.ModuleDir, o.Main)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load package: %w", err)
 	}
-	if !isMain {
-		*errs = append(*errs, fmt.Errorf("main: \"%s\" is not a main file", mainFilePath))
+	if pkg.Name != "main" {
+		*errs = append(*errs, fmt.Errorf("main: must be main package, but is \"%s\"", pkg.Name))
 		return nil
 	}
 
 	return nil
-}
-
-func checkForMainPackage(filePath string) (bool, error) {
-	mainFile, err := os.Open(filePath)
-	if err != nil {
-		return false, err
-	}
-	defer mainFile.Close()
-
-	scanner := bufio.NewScanner(io.LimitReader(mainFile, 1024))
-	for scanner.Scan() {
-		fields := strings.Fields(scanner.Text())
-		if len(fields) >= 2 && fields[0] == "package" && fields[1] == "main" {
-			return true, nil
-		}
-	}
-
-	return false, nil
 }

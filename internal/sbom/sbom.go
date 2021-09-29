@@ -86,6 +86,9 @@ func BuildToolMetadata() (*cdx.Tool, error) {
 }
 
 func BuildStdComponent() (*cdx.Component, error) {
+	log.Debug().
+		Msg("building std component")
+
 	goVersion, err := gocmd.GetVersion()
 	if err != nil {
 		return nil, fmt.Errorf("failed to determine Go version: %w", err)
