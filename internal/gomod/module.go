@@ -81,6 +81,10 @@ func IsModule(dir string) bool {
 var ErrNoModule = errors.New("not a go module")
 
 func LoadModule(moduleDir string) (*Module, error) {
+	log.Debug().
+		Str("moduleDir", moduleDir).
+		Msg("loading module")
+
 	buf := new(bytes.Buffer)
 	err := gocmd.GetModule(moduleDir, buf)
 	if err != nil {
@@ -98,7 +102,7 @@ func LoadModule(moduleDir string) (*Module, error) {
 
 func LoadModules(moduleDir string, includeTest bool) ([]Module, error) {
 	log.Debug().
-		Str("mainModuleDir", moduleDir).
+		Str("moduleDir", moduleDir).
 		Bool("includeTest", includeTest).
 		Msg("loading modules")
 

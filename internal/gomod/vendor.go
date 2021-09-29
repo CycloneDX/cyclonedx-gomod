@@ -22,6 +22,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"io"
 	"path/filepath"
 	"strings"
@@ -45,8 +46,12 @@ func GetVendoredModules(moduleDir string, includeTest bool) ([]Module, error) {
 		return nil, ErrNotVendoring
 	}
 
-	buf := new(bytes.Buffer)
+	log.Debug().
+		Str("moduleDir", moduleDir).
+		Bool("includeTest", includeTest).
+		Msg("loading vendored modules")
 
+	buf := new(bytes.Buffer)
 	err := gocmd.ListVendoredModules(moduleDir, buf)
 	if err != nil {
 		return nil, fmt.Errorf("listing vendored modules failed: %w", err)
