@@ -84,7 +84,7 @@ func Exec(options Options) error {
 	modules, err := gomod.GetVendoredModules(options.ModuleDir, options.IncludeTest)
 	if err != nil {
 		if errors.Is(err, gomod.ErrNotVendoring) {
-			modules, err = gomod.GetModules(options.ModuleDir, options.IncludeTest)
+			modules, err = gomod.LoadModules(options.ModuleDir, options.IncludeTest)
 			if err != nil {
 				return fmt.Errorf("failed to collect modules: %w", err)
 			}

@@ -19,6 +19,7 @@ package file
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
@@ -46,6 +47,10 @@ func WithScope(scope cdx.Scope) Option {
 }
 
 func ToComponent(absoluteFilePath, relativeFilePath string, options ...Option) (*cdx.Component, error) {
+	log.Debug().
+		Str("file", absoluteFilePath).
+		Msg("converting file to component")
+
 	component := cdx.Component{
 		Type: cdx.ComponentTypeFile,
 		Name: relativeFilePath,

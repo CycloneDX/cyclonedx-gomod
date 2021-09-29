@@ -181,6 +181,10 @@ func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error)
 		return ToComponent(*module.Replace, options...)
 	}
 
+	log.Debug().
+		Str("module", module.Coordinates()).
+		Msg("converting module to component")
+
 	component := cdx.Component{
 		BOMRef:     module.PackageURL(),
 		Type:       cdx.ComponentTypeLibrary,

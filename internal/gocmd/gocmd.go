@@ -79,7 +79,15 @@ func ListModules(moduleDir string, writer io.Writer) error {
 	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m", "all"}, withDir(moduleDir), withStdout(writer))
 }
 
-// ListPackages executed `go list -deps -json` and writes the output to a given writer.
+// ListPackage executes `go list -json -e <PATTERN>` and writes the output to a given writer.
+func ListPackage(moduleDir, packagePattern string, writer io.Writer) error {
+	return executeGoCommand([]string{"list", "-json", "-e", packagePattern},
+		withDir(moduleDir),
+		withStdout(writer),
+		withStderr(os.Stderr))
+}
+
+// ListPackages executes `go list -deps -json <PATTERN>` and writes the output to a given writer.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
 func ListPackages(moduleDir, packagePattern string, writer io.Writer) error {
 	return executeGoCommand([]string{"list", "-deps", "-json", packagePattern},
@@ -112,8 +120,8 @@ func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 	)
 }
 
-// GetModulesFromBinary executes `go version -m` and writes the output to a given writer.
-func GetModulesFromBinary(binaryPath string, writer io.Writer) error {
+// LoadModulesFromBinary executes `go version -m` and writes the output to a given writer.
+func LoadModulesFromBinary(binaryPath string, writer io.Writer) error {
 	return executeGoCommand([]string{"version", "-m", binaryPath}, withStdout(writer))
 }
 

@@ -21,6 +21,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -64,8 +65,8 @@ Applicable build constraints are included as properties of the main component.
 Because build constraints influence Go's module selection, an SBOM should be generated
 for each target in the build matrix.
 
-The -main flag should be used to specify the path to the application's main file.
-It must point to a go file within MODULE_PATH. The go file must have a "package main" declaration.
+The -main flag should be used to specify the path to the application's main package.
+It must point to a directory within MODULE_PATH. If not set, MODULE_PATH is assumed.
 
 By passing -files, all files that would be included in a binary will be attached
 as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
@@ -73,7 +74,7 @@ where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 
 Examples:
   $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
-  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module`,
+  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app /usr/src/acme-module`,
 		FlagSet: fs,
 		Exec: func(_ context.Context, args []string) error {
 			if len(args) > 1 {
@@ -98,9 +99,9 @@ func Exec(options Options) error {
 		return err
 	}
 
-	modules, err := gomod.GetModulesFromPackages(options.ModuleDir, options.Main)
+	modules, err := gomod.LoadModulesFromPackages(options.ModuleDir, options.Main)
 	if err != nil {
-		return fmt.Errorf("failed to collect modules: %w", err)
+		return fmt.Errorf("failed to load modules: %w", err)
 	}
 
 	// Dependencies need to be applied prior to determining the main
@@ -253,23 +254,23 @@ func parseTagsFromGoFlags(goflags string) (tags []string) {
 //
 // If the package URL is updated, the BOM reference is as well.
 // All places within the BOM that reference the main component will be updated accordingly.
-func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainFile string) {
-	// Resolve absolute paths to moduleDir and mainFile.
+func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainPkgDir string) {
+	// Resolve absolute paths to moduleDir and mainPkgDir.
 	// Both may contain traversals or similar elements we don't care about.
 	// This procedure is done during options validation already,
 	// which is why we don't check for errors here.
 	moduleDirAbs, _ := filepath.Abs(moduleDir)
-	mainFileAbs, _ := filepath.Abs(filepath.Join(moduleDirAbs, mainFile))
+	mainPkgDirAbs, _ := filepath.Abs(filepath.Join(moduleDirAbs, mainPkgDir))
 
-	// Construct path to mainFile relative to moduleDir
-	mainFileRel := strings.TrimPrefix(mainFileAbs, moduleDirAbs)
-	mainFileRel = strings.TrimPrefix(mainFileRel, "/")
+	// Construct path to mainPkgDir relative to moduleDir
+	mainPkgDirRel := strings.TrimPrefix(mainPkgDirAbs, moduleDirAbs)
+	mainPkgDirRel = strings.TrimPrefix(mainPkgDirRel, string(os.PathSeparator))
 
-	if mainDir, _ := filepath.Split(mainFileRel); mainDir != "" {
-		mainDir = strings.TrimSuffix(mainDir, "/")
+	if mainPkgDirRel != "" {
+		mainPkgDirRel = strings.TrimSuffix(mainPkgDirRel, string(os.PathSeparator))
 
 		oldPURL := bom.Metadata.Component.PackageURL
-		newPURL := oldPURL + "#" + mainDir
+		newPURL := oldPURL + "#" + mainPkgDirRel
 
 		log.Debug().
 			Str("old", oldPURL).

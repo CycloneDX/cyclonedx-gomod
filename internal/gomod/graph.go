@@ -31,8 +31,12 @@ import (
 )
 
 func ApplyModuleGraph(moduleDir string, modules []Module) error {
-	buf := new(bytes.Buffer)
+	log.Debug().
+		Str("moduleDir", moduleDir).
+		Int("moduleCount", len(modules)).
+		Msg("applying module graph")
 
+	buf := new(bytes.Buffer)
 	err := gocmd.GetModuleGraph(moduleDir, buf)
 	if err != nil {
 		return err
@@ -51,7 +55,7 @@ func ApplyModuleGraph(moduleDir string, modules []Module) error {
 }
 
 // parseModuleGraph parses the output of `go mod graph` and populates
-// the .Dependencies field of a given Module slice.
+// the Dependencies field of a given Module slice.
 //
 // The Module slice is expected to contain only "effective" modules,
 // with only a single version per module, as provided by `go list -m` or `go list -deps`.
@@ -83,7 +87,8 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 			log.Debug().
 				Str("dependant", dependant.Coordinates()).
 				Str("dependency", fields[1]).
-				Msg("dependency not found")
+				Str("reason", "dependency not in list of selected modules").
+				Msg("skipping graph edge")
 			continue
 		}
 
@@ -91,7 +96,8 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 			log.Debug().
 				Str("dependant", dependant.Coordinates()).
 				Str("dependency", dependency.Coordinates()).
-				Msg("pruning graph edge to indirect dependency")
+				Str("reason", "indirect dependency").
+				Msg("skipping graph edge")
 			continue
 		}
 

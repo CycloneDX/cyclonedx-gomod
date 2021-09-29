@@ -99,8 +99,8 @@ Applicable build constraints are included as properties of the main component.
 Because build constraints influence Go's module selection, an SBOM should be generated
 for each target in the build matrix.
 
-The -main flag should be used to specify the path to the application's main file.
-It must point to a go file within MODULE_PATH. The go file must have a "package main" declaration.
+The -main flag should be used to specify the path to the application's main package.
+It must point to a directory within MODULE_PATH. If not set, MODULE_PATH is assumed.
 
 By passing -files, all files that would be included in a binary will be attached
 as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
@@ -108,13 +108,13 @@ where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 
 Examples:
   $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
-  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app/main.go /usr/src/acme-module
+  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app /usr/src/acme-module
 
 FLAGS
   -files=false     Include files
   -json=false      Output in JSON
   -licenses=false  Perform license detection
-  -main main.go    Path to the application's main file, relative to MODULE_PATH
+  -main ...        Path to the application's main package, relative to MODULE_PATH
   -noserial=false  Omit serial number
   -output -        Output file path (or - for STDOUT)
   -serial ...      Serial number
@@ -255,7 +255,7 @@ $ docker run -it --rm \
 ```
 
 > The image is based on `golang:1.17-alpine`.  
-> Please keep in mind that the Go version may influence module selection.  
+> When using the `app` command, please keep in mind that the Go version may influence module selection.  
 > We generally recommend using a [precompiled binary](https://github.com/CycloneDX/cyclonedx-gomod/releases) instead.
 
 ## Important Notes
