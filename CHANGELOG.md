@@ -21,6 +21,8 @@
 
 * Fix annotated tags not being recognized as versions ([#56](https://github.com/CycloneDX/cyclonedx-gomod/issues/56) via [#57](https://github.com/CycloneDX/cyclonedx-gomod/pull/57))
 * Fix normalized versions interfering with hash calculation ([#58](https://github.com/CycloneDX/cyclonedx-gomod/issues/58) via [#60](https://github.com/CycloneDX/cyclonedx-gomod/pull/60))
+* Fix `app` command missing dependencies when `main` package is spread across multiple files ([#75](https://github.com/CycloneDX/cyclonedx-gomod/issues/75) via [#78](https://github.com/CycloneDX/cyclonedx-gomod/pull/78))
+  * Also addresses [#76](https://github.com/CycloneDX/cyclonedx-gomod/issues/76) (thanks [TheDiveO](https://github.com/TheDiveO) for reporting!) 
 
 ### Breaking Changes
 
