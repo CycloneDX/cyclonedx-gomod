@@ -86,7 +86,7 @@ func LoadModule(moduleDir string) (*Module, error) {
 		Msg("loading module")
 
 	buf := new(bytes.Buffer)
-	err := gocmd.GetModule(moduleDir, buf)
+	err := gocmd.ListModule(moduleDir, buf)
 	if err != nil {
 		return nil, fmt.Errorf("listing module failed: %w", err)
 	}

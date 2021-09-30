@@ -45,9 +45,9 @@ func TestGetEnv(t *testing.T) {
 	require.Contains(t, env, "GOVERSION")
 }
 
-func TestGetModuleName(t *testing.T) {
+func TestListModule(t *testing.T) {
 	buf := new(bytes.Buffer)
-	err := GetModule("../../", buf)
+	err := ListModule("../../", buf)
 	require.NoError(t, err)
 
 	mod := make(map[string]interface{})
@@ -57,7 +57,7 @@ func TestGetModuleName(t *testing.T) {
 	assert.Equal(t, true, mod["Main"])
 }
 
-func TestGetModuleList(t *testing.T) {
+func TestListModules(t *testing.T) {
 	buf := new(bytes.Buffer)
 	err := ListModules("../../", buf)
 	require.NoError(t, err)

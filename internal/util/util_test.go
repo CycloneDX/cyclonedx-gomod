@@ -34,8 +34,8 @@ func TestFileExists(t *testing.T) {
 	require.True(t, FileExists(tmpFile.Name()))
 }
 
-func TestStringSliceIndex(t *testing.T) {
-	assert.Equal(t, 0, StringSliceIndex([]string{"foo", "bar"}, "foo"))
-	assert.Equal(t, 1, StringSliceIndex([]string{"foo", "bar"}, "bar"))
-	assert.Equal(t, -1, StringSliceIndex([]string{"foo", "bar"}, "baz"))
+func TestStringsIndexOf(t *testing.T) {
+	assert.Equal(t, 0, StringsIndexOf([]string{"foo", "bar"}, "foo"))
+	assert.Equal(t, 1, StringsIndexOf([]string{"foo", "bar"}, "bar"))
+	assert.Equal(t, -1, StringsIndexOf([]string{"foo", "bar"}, "baz"))
 }

@@ -45,7 +45,7 @@ func New() *ffcli.Command {
 		ShortUsage: "cyclonedx-gomod bin [FLAGS...] BINARY_PATH",
 		LongHelp: `Generate SBOMs for binaries.
 
-Although the binary is never executed, it must be executable.
+Although the binary is never executed by cyclonedx-gomod, it must be executable.
 This is a requirement by the "go version -m" command that is used to provide this functionality.
 
 When license detection is enabled, all modules (including the main module) 
@@ -68,7 +68,7 @@ Example:
 				options.BinaryPath = args[0]
 			}
 
-			cliUtil.ConfigureLogger(options.LogOptions)
+			options.LogOptions.ConfigureLogger()
 
 			return Exec(options)
 		},
@@ -81,7 +81,7 @@ func Exec(options Options) error {
 		return err
 	}
 
-	modules, hashes, err := gomod.LoadModulesFromBinary(options.BinaryPath)
+	goVersion, modules, hashes, err := gomod.LoadModulesFromBinary(options.BinaryPath)
 	if err != nil {
 		return fmt.Errorf("failed to extract modules: %w", err)
 	} else if len(modules) == 0 {
@@ -148,6 +148,13 @@ func Exec(options Options) error {
 	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
+
+	if options.IncludeStd {
+		err = cliUtil.AddStdComponent(bom, goVersion)
+		if err != nil {
+			return fmt.Errorf("failed to add stdlib component: %w", err)
+		}
+	}
 
 	return cliUtil.WriteBOM(bom, options.OutputOptions)
 }

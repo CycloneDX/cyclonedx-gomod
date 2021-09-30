@@ -36,6 +36,6 @@ func TestModOptions_Validate(t *testing.T) {
 		require.ErrorAs(t, err, &validationError)
 
 		require.Len(t, validationError.Errors, 1)
-		require.Contains(t, validationError.Errors[0].Error(), "invalid component type")
+		require.Contains(t, validationError.Errors[0].Error(), "component type: \"foobar\" is invalid")
 	})
 }

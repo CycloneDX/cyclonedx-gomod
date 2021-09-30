@@ -26,21 +26,22 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
-func LoadModulesFromBinary(binaryPath string) ([]Module, map[string]string, error) {
+func LoadModulesFromBinary(binaryPath string) (string, []Module, map[string]string, error) {
 	buf := new(bytes.Buffer)
 	if err := gocmd.LoadModulesFromBinary(binaryPath, buf); err != nil {
-		return nil, nil, err
+		return "", nil, nil, err
 	}
 
-	modules, hashes := parseModulesFromBinary(buf)
+	goVersion, modules, hashes := parseModulesFromBinary(binaryPath, buf)
 
 	sortModules(modules)
 
-	return modules, hashes, nil
+	return goVersion, modules, hashes, nil
 }
 
-func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
-	modules := make([]Module, 0)
+func parseModulesFromBinary(binaryPath string, reader io.Reader) (string, []Module, map[string]string) {
+	var goVersion string
+	var modules []Module
 	hashes := make(map[string]string)
 
 	moduleIndex := 0
@@ -53,6 +54,10 @@ func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
 
 		fields := strings.Fields(line)
 		switch fields[0] {
+		case binaryPath + ":":
+			if len(fields) == 2 && strings.HasPrefix(fields[1], "go") {
+				goVersion = strings.TrimPrefix(fields[1], "go")
+			}
 		case "mod": // Main module
 			modules = append(modules, Module{
 				Path:    fields[1],
@@ -77,9 +82,11 @@ func parseModulesFromBinary(reader io.Reader) ([]Module, map[string]string) {
 				Version: fields[2],
 			}
 			modules[moduleIndex-1].Replace = &module
-			hashes[module.Coordinates()] = fields[3]
+			if len(fields) == 4 {
+				hashes[module.Coordinates()] = fields[3]
+			}
 		}
 	}
 
-	return modules, hashes
+	return goVersion, modules, hashes
 }

@@ -101,7 +101,7 @@ func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, er
 
 		// Replacements may be specified as
 		//   Path [Version] => Path [Version]
-		arrowIndex := util.StringSliceIndex(fields, "=>")
+		arrowIndex := util.StringsIndexOf(fields, "=>")
 
 		var module Module
 
