@@ -165,7 +165,7 @@ Generate SBOMs for modules.
 
 Examples:
   $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
-  $ cyclonedx-gomod mod -reproducible -test -output bom.xml ./cyclonedx-go
+  $ cyclonedx-gomod mod -test -output bom.xml ./cyclonedx-go
 
 FLAGS
   -json=false        Output in JSON
