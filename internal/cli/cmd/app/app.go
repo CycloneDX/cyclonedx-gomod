@@ -270,7 +270,7 @@ func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainPkgDir string) {
 		mainPkgDirRel = strings.TrimSuffix(mainPkgDirRel, string(os.PathSeparator))
 
 		oldPURL := bom.Metadata.Component.PackageURL
-		newPURL := oldPURL + "#" + mainPkgDirRel
+		newPURL := oldPURL + "#" + filepath.ToSlash(mainPkgDirRel)
 
 		log.Debug().
 			Str("old", oldPURL).
