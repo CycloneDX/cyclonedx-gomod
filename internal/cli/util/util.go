@@ -27,7 +27,6 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	"github.com/google/uuid"
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -51,15 +50,16 @@ func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	return nil
 }
 
-func AddStdComponent(bom *cdx.BOM) error {
+func AddStdComponent(bom *cdx.BOM, goVersion string) error {
 	log.Debug().
 		Msg("adding std component")
 
-	stdComponent, err := sbom.BuildStdComponent()
+	stdComponent, err := sbom.BuildStdComponent(goVersion)
 	if err != nil {
 		return fmt.Errorf("failed to build std component: %w", err)
 	}
 
+	// Append std to components
 	*bom.Components = append(*bom.Components, *stdComponent)
 
 	// Add std to dependency graph
@@ -81,21 +81,7 @@ func AddStdComponent(bom *cdx.BOM) error {
 	return nil
 }
 
-func ConfigureLogger(logOptions options.LogOptions) {
-	log.Logger = log.Output(zerolog.ConsoleWriter{
-		Out:     os.Stderr,
-		NoColor: os.Getenv("CI") != "",
-	})
-
-	if logOptions.Verbose {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	} else {
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	}
-}
-
-// SetSerialNumber sets the serial number of a given BOM according to the
-// provided SBOMOptions.
+// SetSerialNumber sets the serial number of a given BOM according to the provided SBOMOptions.
 func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	if sbomOptions.NoSerialNumber {
 		return nil

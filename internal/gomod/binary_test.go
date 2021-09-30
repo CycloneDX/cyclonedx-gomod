@@ -33,7 +33,8 @@ dep     github.com/briandowns/spinner   v1.11.1
 =>      github.com/alonyb/spinner       v1.12.7 h1:FflTMA9I2xRd8OQ5swyZY6Q1DFeaicA/bWo6/oM82a8=
 `
 
-	modules, hashes := parseModulesFromBinary(strings.NewReader(cmdOutput))
+	goVersion, modules, hashes := parseModulesFromBinary("minikube", strings.NewReader(cmdOutput))
+	require.Equal(t, "1.16.4", goVersion)
 	require.Len(t, modules, 3)
 	require.Len(t, hashes, 2)
 

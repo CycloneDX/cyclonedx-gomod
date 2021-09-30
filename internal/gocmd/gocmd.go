@@ -51,6 +51,7 @@ func GetVersion() (string, error) {
 }
 
 // GetEnv executes `go env -json` and returns the result as a map.
+// See https://pkg.go.dev/cmd/go#hdr-Print_Go_environment_information.
 func GetEnv() (map[string]string, error) {
 	buf := new(bytes.Buffer)
 	err := executeGoCommand([]string{"env", "-json"}, withStdout(buf))
@@ -67,9 +68,9 @@ func GetEnv() (map[string]string, error) {
 	return env, nil
 }
 
-// GetModule executes `go list -json -m` and writes the output to a given writer.
+// ListModule executes `go list -json -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
-func GetModule(moduleDir string, writer io.Writer) error {
+func ListModule(moduleDir string, writer io.Writer) error {
 	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m"}, withDir(moduleDir), withStdout(writer))
 }
 
@@ -80,6 +81,7 @@ func ListModules(moduleDir string, writer io.Writer) error {
 }
 
 // ListPackage executes `go list -json -e <PATTERN>` and writes the output to a given writer.
+// See // See https://golang.org/cmd/go/#hdr-List_packages_or_modules.
 func ListPackage(moduleDir, packagePattern string, writer io.Writer) error {
 	return executeGoCommand([]string{"list", "-json", "-e", packagePattern},
 		withDir(moduleDir),
@@ -88,7 +90,7 @@ func ListPackage(moduleDir, packagePattern string, writer io.Writer) error {
 }
 
 // ListPackages executes `go list -deps -json <PATTERN>` and writes the output to a given writer.
-// See https://golang.org/cmd/go/#hdr-List_packages_or_modules
+// See https://golang.org/cmd/go/#hdr-List_packages_or_modules.
 func ListPackages(moduleDir, packagePattern string, writer io.Writer) error {
 	return executeGoCommand([]string{"list", "-deps", "-json", packagePattern},
 		withDir(moduleDir),
@@ -98,19 +100,19 @@ func ListPackages(moduleDir, packagePattern string, writer io.Writer) error {
 }
 
 // ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
-// See https://golang.org/ref/mod#go-mod-vendor
+// See https://golang.org/ref/mod#go-mod-vendor.
 func ListVendoredModules(moduleDir string, writer io.Writer) error {
 	return executeGoCommand([]string{"mod", "vendor", "-v", "-e"}, withDir(moduleDir), withStderr(writer))
 }
 
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.
-// See https://golang.org/ref/mod#go-mod-graph
+// See https://golang.org/ref/mod#go-mod-graph.
 func GetModuleGraph(moduleDir string, writer io.Writer) error {
 	return executeGoCommand([]string{"mod", "graph"}, withDir(moduleDir), withStdout(writer))
 }
 
 // ModWhy executes `go mod why -m -vendor` and writes the output to a given writer.
-// See https://golang.org/ref/mod#go-mod-why
+// See https://golang.org/ref/mod#go-mod-why.
 func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 	return executeGoCommand(
 		append([]string{"mod", "why", "-m", "-vendor"}, modules...),
@@ -121,11 +123,13 @@ func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 }
 
 // LoadModulesFromBinary executes `go version -m` and writes the output to a given writer.
+// See https://golang.org/ref/mod#go-version-m.
 func LoadModulesFromBinary(binaryPath string, writer io.Writer) error {
 	return executeGoCommand([]string{"version", "-m", binaryPath}, withStdout(writer))
 }
 
 // DownloadModules executes `go mod download -json` and writes the output to the given writers.
+// See https://golang.org/ref/mod#go-mod-download.
 func DownloadModules(modules []string, stdout, stderr io.Writer) error {
 	return executeGoCommand(
 		append([]string{"mod", "download", "-json"}, modules...),
@@ -167,5 +171,10 @@ func executeGoCommand(args []string, options ...commandOption) error {
 		Str("dir", cmd.Dir).
 		Msg("executing command")
 
-	return cmd.Run()
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("command `%s` failed: %w", cmd.String(), err)
+	}
+
+	return nil
 }

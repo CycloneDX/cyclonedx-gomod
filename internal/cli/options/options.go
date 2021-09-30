@@ -20,6 +20,9 @@ package options
 import (
 	"flag"
 	"fmt"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"os"
 
 	"github.com/google/uuid"
 )
@@ -42,6 +45,20 @@ func (e ValidationError) Error() string {
 // LogOptions provides options for log customization.
 type LogOptions struct {
 	Verbose bool
+}
+
+// ConfigureLogger configures the global logger according to LogOptions.
+func (l LogOptions) ConfigureLogger() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{
+		Out:     os.Stderr,
+		NoColor: os.Getenv("CI") != "",
+	})
+
+	if l.Verbose {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	} else {
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	}
 }
 
 func (l *LogOptions) RegisterFlags(fs *flag.FlagSet) {
@@ -71,15 +88,18 @@ func (o OutputOptions) Validate() error {
 type SBOMOptions struct {
 	IncludeStd      bool
 	NoSerialNumber  bool
-	Reproducible    bool // Make the SBOM reproducible by omitting dynamic content
 	ResolveLicenses bool
 	SerialNumber    string
+
+	// Make SBOM reproducible by omitting dynamic content.
+	// Only used internally for testing.
+	Reproducible bool
 }
 
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
-	// .Reproducible is used for testing only and intentionally omitted here
+	// Reproducible is used for testing only and intentionally omitted here
 	fs.BoolVar(&s.ResolveLicenses, "licenses", false, "Perform license detection")
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
 }

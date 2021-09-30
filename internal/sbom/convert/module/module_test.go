@@ -18,13 +18,13 @@
 package module
 
 import (
+	"bytes"
 	"os/exec"
 	"path/filepath"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -84,7 +84,9 @@ func TestWithModuleHashes(t *testing.T) {
 	require.NoError(t, cmd.Run())
 
 	// Locate the module on the file system
-	modDir := filepath.Join(util.GetModuleCacheDir(), "github.com", "google", "uuid@v1.2.0")
+	modCacheDir, err := exec.Command("go", "env", "GOMODCACHE").Output()
+	require.NoError(t, err)
+	modDir := filepath.Join(string(bytes.TrimSpace(modCacheDir)), "github.com", "google", "uuid@v1.2.0")
 
 	// Construct module instance
 	module := gomod.Module{
@@ -97,7 +99,7 @@ func TestWithModuleHashes(t *testing.T) {
 	component := new(cdx.Component)
 
 	// Calculate hashes
-	err := WithModuleHashes()(module, component)
+	err = WithModuleHashes()(module, component)
 	require.NoError(t, err)
 	require.NotNil(t, component.Hashes)
 

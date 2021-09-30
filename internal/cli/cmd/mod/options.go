@@ -85,8 +85,7 @@ func (m Options) Validate() error {
 		for i := range allowedComponentTypes {
 			allowed[i] = string(allowedComponentTypes[i])
 		}
-
-		errs = append(errs, fmt.Errorf("invalid component type: \"%s\" (allowed: %s)", m.ComponentType, strings.Join(allowed, ",")))
+		errs = append(errs, fmt.Errorf("component type: \"%s\" is invalid (allowed: %s)", m.ComponentType, strings.Join(allowed, ",")))
 	}
 
 	if len(errs) > 0 {

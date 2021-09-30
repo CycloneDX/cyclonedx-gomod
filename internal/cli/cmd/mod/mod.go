@@ -60,7 +60,7 @@ Examples:
 				options.ModuleDir = args[0]
 			}
 
-			cliUtil.ConfigureLogger(options.LogOptions)
+			options.LogOptions.ConfigureLogger()
 
 			return Exec(options)
 		},
@@ -142,7 +142,7 @@ func Exec(options Options) error {
 	bom.Dependencies = &dependencyGraph
 
 	if options.IncludeStd {
-		err = cliUtil.AddStdComponent(bom)
+		err = cliUtil.AddStdComponent(bom, "")
 		if err != nil {
 			return fmt.Errorf("failed to add stdlib component: %w", err)
 		}

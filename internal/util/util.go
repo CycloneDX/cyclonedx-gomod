@@ -18,7 +18,7 @@
 package util
 
 import (
-	"go/build"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,45 +29,27 @@ func FileExists(path string) bool {
 	return !os.IsNotExist(err)
 }
 
-// IsSubPath checks (lexically) if subPath is a subpath of path.
-func IsSubPath(subPath, path string) (bool, error) {
-	dirAbs, err := filepath.Abs(path)
+// IsSubPath checks (lexically) if subject is a subpath of path.
+func IsSubPath(subject, path string) (bool, error) {
+	pathAbs, err := filepath.Abs(path)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to make %s absolute: %w", path, err)
 	}
 
-	subDirAbs, err := filepath.Abs(subPath)
+	subjectAbs, err := filepath.Abs(subject)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to make %s absolute: %w", subject, err)
 	}
 
-	if !strings.HasPrefix(subDirAbs, dirAbs) {
+	if !strings.HasPrefix(subjectAbs, pathAbs) {
 		return false, nil
 	}
 
 	return true, nil
 }
 
-// GetGoPath determines the GOPATH location.
-func GetGoPath() string {
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		gopath = build.Default.GOPATH
-	}
-	return gopath
-}
-
-// GetModuleCacheDir determines the location of Go's module cache.
-func GetModuleCacheDir() string {
-	modCacheDir := os.Getenv("GOMODCACHE")
-	if modCacheDir == "" {
-		modCacheDir = filepath.Join(GetGoPath(), "pkg", "mod")
-	}
-	return modCacheDir
-}
-
-// StringSliceIndex determines the index of a given string in a given string slice.
-func StringSliceIndex(haystack []string, needle string) int {
+// StringsIndexOf determines the index of a string in a string slice.
+func StringsIndexOf(haystack []string, needle string) int {
 	for i := range haystack {
 		if haystack[i] == needle {
 			return i

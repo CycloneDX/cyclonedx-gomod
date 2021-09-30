@@ -85,15 +85,18 @@ func BuildToolMetadata() (*cdx.Tool, error) {
 	}, nil
 }
 
-func BuildStdComponent() (*cdx.Component, error) {
+func BuildStdComponent(goVersion string) (*cdx.Component, error) {
 	log.Debug().
 		Msg("building std component")
 
-	goVersion, err := gocmd.GetVersion()
-	if err != nil {
-		return nil, fmt.Errorf("failed to determine Go version: %w", err)
+	var err error
+	if goVersion == "" {
+		goVersion, err = gocmd.GetVersion()
+		if err != nil {
+			return nil, fmt.Errorf("failed to determine Go version: %w", err)
+		}
+		goVersion = strings.TrimPrefix(goVersion, "go")
 	}
-	goVersion = strings.TrimPrefix(goVersion, "go")
 	stdPURL := "pkg:golang/std@" + goVersion
 
 	return &cdx.Component{
