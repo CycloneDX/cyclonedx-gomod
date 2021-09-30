@@ -30,7 +30,7 @@ import (
 
 var ErrNoLicenseDetected = errors.New("no license detected")
 
-const minDetectionConfidence = 0.9
+const minDetectionConfidence = 0.85
 
 func Resolve(module gomod.Module) ([]cdx.License, error) {
 	licensesFiler, err := filer.FromDirectory(module.Dir)
@@ -68,7 +68,16 @@ func Resolve(module gomod.Module) ([]cdx.License, error) {
 		}
 	}
 
-	if detectedLicense == "" || detectedLicenseConfidence < minDetectionConfidence {
+	if detectedLicense == "" {
+		return nil, ErrNoLicenseDetected
+	}
+	if detectedLicenseConfidence < minDetectionConfidence {
+		log.Debug().
+			Str("module", module.Coordinates()).
+			Str("license", detectedLicense).
+			Float32("confidence", detectedLicenseConfidence).
+			Float32("minConfidence", minDetectionConfidence).
+			Msg("detection confidence for license is too low")
 		return nil, ErrNoLicenseDetected
 	}
 
