@@ -15,7 +15,9 @@
 * Use [license evidence](https://cyclonedx.org/news/cyclonedx-v1.3-released/#copyright-and-license-evidence) for detected licenses ([#40](https://github.com/CycloneDX/cyclonedx-gomod/issues/40) via [#49](https://github.com/CycloneDX/cyclonedx-gomod/pull/49))
 * Build with and test against Go 1.17 (via [#54](https://github.com/CycloneDX/cyclonedx-gomod/pull/54))
 * Introduce improved logging (via [#46](https://github.com/CycloneDX/cyclonedx-gomod/pull/46))
-* Add indication for which application the SBOM was generated for ([#67](https://github.com/CycloneDX/cyclonedx-gomod/pull/67) via [#71](https://github.com/CycloneDX/cyclonedx-gomod/pull/71))
+* Add indication for which application the SBOM was generated for ([#67](https://github.com/CycloneDX/cyclonedx-gomod/issues/67) via [#71](https://github.com/CycloneDX/cyclonedx-gomod/pull/71))
+* Slightly reduce threshold for license detection confidence, and log a debug message if this threshold isn't met ([#79](https://github.com/CycloneDX/cyclonedx-gomod/issues/79) via [#80](https://github.com/CycloneDX/cyclonedx-gomod/pull/80))
+  * Thanks [TheDiveO](https://github.com/TheDiveO) for reporting!
 
 ### Fixes
 
