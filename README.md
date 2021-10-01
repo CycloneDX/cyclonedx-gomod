@@ -192,6 +192,11 @@ To generate them yourself, simply execute the following command:
 $ GOOS=linux GOARCH=amd64 make examples-image examples
 ```
 
+### GitHub Actions 🤖
+
+We made a GitHub Action to help integrate *cyclonedx-gomod* into existing CI/CD workflows!  
+You can find it on the GitHub marketplace: [*gh-gomod-generate-sbom*](https://github.com/marketplace/actions/cyclonedx-gomod-generate-sbom)
+
 ### GoReleaser 🚀
 
 The recommended way of integrating with [GoReleaser](https://goreleaser.com/) is via `post` [build hook](https://goreleaser.com/customization/build/#build-hooks):
@@ -237,14 +242,6 @@ Given the naming scheme above, the following `.gitignore` line does the job:
 *.bom.json
 ```
 
-### GitHub Actions 🤖
-
-We made a GitHub Action to help integrate *cyclonedx-gomod* into existing CI/CD workflows!  
-You can find it on the GitHub marketplace: [*gh-gomod-generate-sbom*](https://github.com/marketplace/actions/cyclonedx-gomod-generate-sbom)
-
-> The GitHub action hasn't yet been updated to work with *cyclonedx-gomod* `v1`.  
-> Please refer to [*cyclonedx-gomod* `v0`](https://github.com/CycloneDX/cyclonedx-gomod/tree/release-v0.10.x) for the time being.
-
 ### Docker 🐳
 
 ```shell
@@ -256,7 +253,8 @@ $ docker run -it --rm \
 
 > The image is based on `golang:1.17-alpine`.  
 > When using the `app` command, please keep in mind that the Go version may influence module selection.  
-> We generally recommend using a [precompiled binary](https://github.com/CycloneDX/cyclonedx-gomod/releases) instead.
+> We generally recommend using a [precompiled binary](https://github.com/CycloneDX/cyclonedx-gomod/releases) 
+> and running it in the same environment in which you're building your application in.
 
 ## Important Notes
 
