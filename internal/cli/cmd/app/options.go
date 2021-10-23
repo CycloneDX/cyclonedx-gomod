@@ -21,11 +21,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"os"
+	"path/filepath"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
-	"os"
-	"path/filepath"
 )
 
 type Options struct {
@@ -33,9 +34,10 @@ type Options struct {
 	options.OutputOptions
 	options.SBOMOptions
 
-	IncludeFiles bool
-	Main         string
-	ModuleDir    string
+	IncludeFiles    bool
+	IncludePackages bool
+	Main            string
+	ModuleDir       string
 }
 
 func (o *Options) RegisterFlags(fs *flag.FlagSet) {
@@ -44,6 +46,7 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 	o.SBOMOptions.RegisterFlags(fs)
 
 	fs.BoolVar(&o.IncludeFiles, "files", false, "Include files")
+	fs.BoolVar(&o.IncludePackages, "packages", false, "Include packages")
 	fs.StringVar(&o.Main, "main", "", "Path to the application's main package, relative to MODULE_PATH")
 }
 
@@ -65,6 +68,10 @@ func (o Options) Validate() error {
 		} else {
 			return err
 		}
+	}
+
+	if o.IncludeFiles && !o.IncludePackages {
+		errs = append(errs, fmt.Errorf("including files without including packages is not supported"))
 	}
 
 	err := o.validateMain(o.Main, &errs)

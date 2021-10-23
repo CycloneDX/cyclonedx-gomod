@@ -26,6 +26,16 @@ import (
 )
 
 func TestOptions_Validate(t *testing.T) {
+	t.Run("Files without Packages", func(t *testing.T) {
+		var options Options
+		options.IncludeFiles = true
+		options.IncludePackages = false
+
+		err := options.Validate()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "not supported")
+	})
+
 	t.Run("Main Isnt Subpath Of MODULE_PATH", func(t *testing.T) {
 		var options Options
 		options.ModuleDir = "/path/to/module"

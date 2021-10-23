@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
@@ -169,17 +168,18 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 	modules := make([]Module, 0, len(pkgsMap))
 	vendoring := IsVendoring(mainModuleDir)
 
+	// Collect modules
 	for _, pkgs := range pkgsMap {
 		var module *Module
-		if len(pkgs) > 0 {
-			module = pkgs[0].Module
-			if module == nil {
-				// Shouldn't ever happen, because packages without module are not collected to pkgsMap.
-				// We do the nil check anyway to make linters happy. :)
-				return nil, fmt.Errorf("no module is associated with package %s", pkgs[0].ImportPath)
-			}
-		} else {
+		if len(pkgs) == 0 {
 			continue
+		}
+
+		module = pkgs[0].Module
+		if module == nil {
+			// Shouldn't ever happen, because packages without module are not collected to pkgsMap.
+			// We do the nil check anyway to make linters happy. :)
+			return nil, fmt.Errorf("no module is associated with package %s", pkgs[0].ImportPath)
 		}
 
 		if !module.Main && vendoring {
@@ -194,66 +194,19 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 			}
 		}
 
-		// In case of replacement, the replaced module
-		// doesn't have a dir, but the replacement does.
-		// We need the module dir to be able to construct
-		// filepaths relative to the module.
-		moduleDir := module.Dir
-		if moduleDir == "" && module.Replace != nil {
-			moduleDir = module.Replace.Dir
-		}
-
-		for i := range pkgs {
-			var pkgFiles []string
-			pkgFiles = append(pkgFiles, pkgs[i].GoFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].CgoFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].CFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].CXXFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].MFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].HFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].FFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].SFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].SwigFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].SwigCXXFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].SysoFiles...)
-			pkgFiles = append(pkgFiles, pkgs[i].EmbedFiles...)
-
-			for _, file := range pkgFiles {
-				filePath, err := makePackageFileRelativeToModule(moduleDir, pkgs[i].Dir, file)
-				if err == nil {
-					if module.Replace != nil {
-						module.Replace.Files = append(module.Replace.Files, filePath)
-					} else {
-						module.Files = append(module.Files, filePath)
-					}
-				} else {
-					return nil, err
-				}
-			}
-
-			sort.Slice(module.Files, func(i, j int) bool {
-				return module.Files[i] < module.Files[j]
-			})
-		}
-
 		modules = append(modules, *module)
 	}
 
+	// Assign packages to modules
+	for i := range modules {
+		pkgs := pkgsMap[modules[i].Coordinates()]
+		for j := range pkgs {
+			pkgs[j].Module = nil // prevent cyclic references
+			modules[i].Packages = append(modules[i].Packages, pkgs[j])
+		}
+	}
+
 	return modules, nil
-}
-
-func makePackageFileRelativeToModule(moduleDir, pkgDir, file string) (string, error) {
-	moduleDirAbs, err := filepath.Abs(moduleDir)
-	if err != nil {
-		return "", err
-	}
-
-	fp, err := filepath.Rel(moduleDirAbs, filepath.Join(pkgDir, file))
-	if err != nil {
-		return "", err
-	}
-
-	return strings.ReplaceAll(fp, "\\", "/"), nil
 }
 
 // toRelativePackagePath ensures that Go will interpret the given packagePattern

@@ -27,9 +27,13 @@ RUN apt update && \
 # Create generation script
 RUN echo "#!/bin/bash\n\n\
 cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1.bom.json -licenses -main cmd/minikube /home/cdx/minikube \n\
+cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-packages.bom.json -licenses -packages -main cmd/minikube /home/cdx/minikube \n\
+cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-files.bom.json -licenses -packages -files -main cmd/minikube /home/cdx/minikube \n\
 cyclonedx-gomod mod -json -output /examples/mod_minikube-v1.23.1.bom.json -licenses /home/cdx/minikube \n\
 cyclonedx-gomod bin -json -output /examples/bin_minikube-v1.23.1.bom.json -licenses -version v1.23.1 /home/cdx/minikube-linux-amd64 \n\
 cyclonedx validate --input-file /examples/app_minikube-v1.23.1.bom.json --input-format json_v1_3 --fail-on-errors \n\
+cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-packages.bom.json --input-format json_v1_3 --fail-on-errors \n\
+cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-files.bom.json --input-format json_v1_3 --fail-on-errors \n\
 cyclonedx validate --input-file /examples/mod_minikube-v1.23.1.bom.json --input-format json_v1_3 --fail-on-errors \n\
 cyclonedx validate --input-file /examples/bin_minikube-v1.23.1.bom.json --input-format json_v1_3 --fail-on-errors \n\
 " > /home/cdx/generate-examples.sh

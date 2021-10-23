@@ -48,7 +48,7 @@ type Module struct {
 	TestOnly     bool      `json:"-"` // is this module only required for tests?
 	Vendored     bool      `json:"-"` // is this a vendored module?
 
-	Files []string `json:"-"` // files in this module
+	Packages []Package `json:"-"` // packages in this module
 }
 
 func (m Module) Coordinates() string {

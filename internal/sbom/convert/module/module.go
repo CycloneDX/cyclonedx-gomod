@@ -21,14 +21,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"path/filepath"
 	"regexp"
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
-	fileconv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/file"
+	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
 	"github.com/rs/zerolog/log"
 )
 
@@ -82,42 +81,6 @@ func WithComponentType(ctype cdx.ComponentType) Option {
 	}
 }
 
-func WithFiles(enabled bool) Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if !enabled {
-			return nil
-		}
-
-		var fileComponents []cdx.Component
-
-		for _, filePath := range m.Files {
-			fileComponent, err := fileconv.ToComponent(filepath.Join(m.Dir, filePath), filePath,
-				fileconv.WithScope(cdx.ScopeRequired),
-				fileconv.WithHashes(
-					cdx.HashAlgoMD5,
-					cdx.HashAlgoSHA1,
-					cdx.HashAlgoSHA256,
-					cdx.HashAlgoSHA384,
-					cdx.HashAlgoSHA512,
-				),
-			)
-			if err != nil {
-				return err
-			}
-
-			fileComponents = append(fileComponents, *fileComponent)
-		}
-
-		if len(fileComponents) == 0 {
-			return nil
-		}
-
-		c.Components = &fileComponents
-
-		return nil
-	}
-}
-
 func WithModuleHashes() Option {
 	return func(m gomod.Module, c *cdx.Component) error {
 		if m.Main {
@@ -148,6 +111,29 @@ func WithModuleHashes() Option {
 
 		c.Hashes = &[]cdx.Hash{
 			{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
+		}
+
+		return nil
+	}
+}
+
+func WithPackages(enabled bool, options ...pkgConv.Option) Option {
+	return func(m gomod.Module, c *cdx.Component) error {
+		if !enabled {
+			return nil
+		}
+
+		var pkgComponents []cdx.Component
+		for i := range m.Packages {
+			component, err := pkgConv.ToComponent(m.Packages[i], m, options...)
+			if err != nil {
+				return fmt.Errorf("failed to convert package: %w", err)
+			}
+			pkgComponents = append(pkgComponents, *component)
+		}
+
+		if len(pkgComponents) > 0 {
+			c.Components = &pkgComponents
 		}
 
 		return nil

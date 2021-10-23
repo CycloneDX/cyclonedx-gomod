@@ -31,6 +31,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
+	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"github.com/rs/zerolog/log"
 )
@@ -120,8 +121,9 @@ func Exec(options Options) error {
 	// Convert main module
 	mainComponent, err := modConv.ToComponent(modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
-		modConv.WithFiles(options.IncludeFiles),
 		modConv.WithLicenses(options.ResolveLicenses),
+		modConv.WithPackages(options.IncludePackages,
+			pkgConv.WithFiles(options.IncludeFiles)),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert main module: %w", err)
@@ -143,9 +145,10 @@ func Exec(options Options) error {
 
 	// Convert the other modules
 	components, err := modConv.ToComponents(modules[1:],
-		modConv.WithFiles(options.IncludeFiles),
 		modConv.WithLicenses(options.ResolveLicenses),
 		modConv.WithModuleHashes(),
+		modConv.WithPackages(options.IncludePackages,
+			pkgConv.WithFiles(options.IncludeFiles)),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert modules: %w", err)
