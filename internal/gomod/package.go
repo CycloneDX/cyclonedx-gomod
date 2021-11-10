@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
@@ -138,6 +139,9 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 			return nil, err
 		}
 
+		if pkg.Error != nil {
+			return nil, fmt.Errorf("failed to load package: %w", pkg.Error)
+		}
 		if pkg.Standard {
 			log.Debug().
 				Str("package", pkg.ImportPath).
@@ -166,9 +170,8 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 
 func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Module, error) {
 	modules := make([]Module, 0, len(pkgsMap))
-	vendoring := IsVendoring(mainModuleDir)
+	isVendoring := IsVendoring(mainModuleDir)
 
-	// Collect modules
 	for _, pkgs := range pkgsMap {
 		if len(pkgs) == 0 {
 			continue
@@ -181,7 +184,7 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 			return nil, fmt.Errorf("no module is associated with package %s", pkgs[0].ImportPath)
 		}
 
-		if !module.Main && vendoring {
+		if !module.Main && isVendoring {
 			module.Vendored = true
 			vendorPath := filepath.Join(mainModuleDir, "vendor", module.Path)
 
@@ -196,16 +199,24 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 		modules = append(modules, *module)
 	}
 
-	// Assign packages to modules
 	for i := range modules {
 		pkgs := pkgsMap[modules[i].Coordinates()]
 		for j := range pkgs {
-			pkgs[j].Module = nil // prevent cyclic references
+			pkgs[j].Module = nil // we don't need this anymore
 			modules[i].Packages = append(modules[i].Packages, pkgs[j])
 		}
+
+		sortPackages(modules[i].Packages)
 	}
 
 	return modules, nil
+}
+
+// sortPackages sorts a given Package slice ascending by import path.
+func sortPackages(pkgs []Package) {
+	sort.Slice(pkgs, func(i, j int) bool {
+		return pkgs[i].ImportPath < pkgs[j].ImportPath
+	})
 }
 
 // toRelativePackagePath ensures that Go will interpret the given packagePattern
