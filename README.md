@@ -111,14 +111,15 @@ Examples:
   $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app /usr/src/acme-module
 
 FLAGS
-  -files=false     Include files
-  -json=false      Output in JSON
-  -licenses=false  Perform license detection
-  -main ...        Path to the application's main package, relative to MODULE_PATH
-  -noserial=false  Omit serial number
-  -output -        Output file path (or - for STDOUT)
-  -serial ...      Serial number
-  -std=false       Include Go standard library as component and dependency of the module
+  -assert-licenses=false  Assert detected licenses
+  -files=false            Include files
+  -json=false             Output in JSON
+  -licenses=false         Perform license detection
+  -main ...               Path to the application's main package, relative to MODULE_PATH
+  -noserial=false         Omit serial number
+  -output -               Output file path (or - for STDOUT)
+  -serial ...             Serial number
+  -std=false              Include Go standard library as component and dependency of the module
 ```
 
 #### `bin`
@@ -145,14 +146,15 @@ Example:
   $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app
 
 FLAGS
-  -json=false      Output in JSON
-  -licenses=false  Perform license detection
-  -noserial=false  Omit serial number
-  -output -        Output file path (or - for STDOUT)
-  -serial ...      Serial number
-  -std=false       Include Go standard library as component and dependency of the module
-  -verbose=false   Enable verbose output
-  -version ...     Version of the main component
+  -assert-licenses=false  Assert detected licenses
+  -json=false             Output in JSON
+  -licenses=false         Perform license detection
+  -noserial=false         Omit serial number
+  -output -               Output file path (or - for STDOUT)
+  -serial ...             Serial number
+  -std=false              Include Go standard library as component and dependency of the module
+  -verbose=false          Enable verbose output
+  -version ...            Version of the main component
 ```
 
 #### `mod`
@@ -168,15 +170,16 @@ Examples:
   $ cyclonedx-gomod mod -test -output bom.xml ./cyclonedx-go
 
 FLAGS
-  -json=false        Output in JSON
-  -licenses=false    Perform license detection
-  -noserial=false    Omit serial number
-  -output -          Output file path (or - for STDOUT)
-  -serial ...        Serial number
-  -std=false         Include Go standard library as component and dependency of the module
-  -test=false        Include test dependencies
-  -type application  Type of the main component
-  -verbose=false     Enable verbose output
+  -assert-licenses=false  Assert detected licenses
+  -json=false             Output in JSON
+  -licenses=false         Perform license detection
+  -noserial=false         Omit serial number
+  -output -               Output file path (or - for STDOUT)
+  -serial ...             Serial number
+  -std=false              Include Go standard library as component and dependency of the module
+  -test=false             Include test dependencies
+  -type application       Type of the main component
+  -verbose=false          Enable verbose output
 ```
 
 ### Examples 📃

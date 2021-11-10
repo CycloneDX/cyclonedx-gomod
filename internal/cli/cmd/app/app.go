@@ -179,6 +179,10 @@ func Exec(options Options) error {
 		}
 	}
 
+	if options.AssertLicenses {
+		sbom.AssertLicenses(bom)
+	}
+
 	return cliUtil.WriteBOM(bom, options.OutputOptions)
 }
 

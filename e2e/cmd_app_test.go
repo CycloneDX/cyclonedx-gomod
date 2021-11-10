@@ -40,6 +40,23 @@ func TestAppCmdSimple(t *testing.T) {
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
 }
 
+func TestAppCmdSimpleAssertLicenses(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
+
+	appOptions := appcmd.Options{
+		SBOMOptions: options.SBOMOptions{
+			AssertLicenses:  true,
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
+		},
+		ModuleDir: fixturePath,
+		Main:      "",
+	}
+
+	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
+}
+
 func TestAppCmdSimpleWithFiles(t *testing.T) {
 	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
 

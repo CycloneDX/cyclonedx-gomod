@@ -44,6 +44,23 @@ func TestModCmdSimple(t *testing.T) {
 	runSnapshotIT(t, &modOptions.OutputOptions, func() error { return modcmd.Exec(modOptions) })
 }
 
+func TestModCmdSimpleAssertLicenses(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
+
+	modOptions := modcmd.Options{
+		SBOMOptions: options.SBOMOptions{
+			AssertLicenses:  true,
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
+		},
+		ComponentType: string(cdx.ComponentTypeLibrary),
+		ModuleDir:     fixturePath,
+	}
+
+	runSnapshotIT(t, &modOptions.OutputOptions, func() error { return modcmd.Exec(modOptions) })
+}
+
 // Integration test with a module that uses replacement with a local module.
 // The local dependency is not a Git repository and thus won't have a version.
 func TestModCmdLocal(t *testing.T) {
