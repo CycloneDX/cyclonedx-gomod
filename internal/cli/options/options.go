@@ -20,9 +20,10 @@ package options
 import (
 	"flag"
 	"fmt"
+	"os"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"os"
 
 	"github.com/google/uuid"
 )
@@ -86,6 +87,7 @@ func (o OutputOptions) Validate() error {
 
 // SBOMOptions provides options for customizing the SBOM.
 type SBOMOptions struct {
+	AssertLicenses  bool
 	IncludeStd      bool
 	NoSerialNumber  bool
 	ResolveLicenses bool
@@ -97,6 +99,7 @@ type SBOMOptions struct {
 }
 
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
+	fs.BoolVar(&s.AssertLicenses, "assert-licenses", false, "Assert detected licenses")
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
 	// Reproducible is used for testing only and intentionally omitted here
@@ -106,6 +109,10 @@ func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 
 func (s SBOMOptions) Validate() error {
 	errs := make([]error, 0)
+
+	if s.AssertLicenses && !s.ResolveLicenses {
+		errs = append(errs, fmt.Errorf("assertion of licenses has no effect without licenses detection"))
+	}
 
 	// Serial numbers must be valid UUIDs
 	if !s.NoSerialNumber && s.SerialNumber != "" {

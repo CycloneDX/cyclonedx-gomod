@@ -45,6 +45,21 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		require.NoError(t, err)
 	})
 
+	t.Run("AssertLicensesWithoutLicenseResolution", func(t *testing.T) {
+		var options SBOMOptions
+		options.AssertLicenses = true
+		options.ResolveLicenses = false
+
+		err := options.Validate()
+		require.Error(t, err)
+
+		var validationError *ValidationError
+		require.ErrorAs(t, err, &validationError)
+
+		require.Len(t, validationError.Errors, 1)
+		require.Contains(t, validationError.Errors[0].Error(), "has no effect")
+	})
+
 	t.Run("InvalidSerialNumber", func(t *testing.T) {
 		var options SBOMOptions
 		options.SerialNumber = "foobar"

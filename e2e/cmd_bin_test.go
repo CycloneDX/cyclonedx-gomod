@@ -37,3 +37,18 @@ func TestBinCmdSimple(t *testing.T) {
 
 	runSnapshotIT(t, &binOptions.OutputOptions, func() error { return bincmd.Exec(binOptions) })
 }
+
+func TestBinCmdSimpleAssertLicenses(t *testing.T) {
+	binOptions := bincmd.Options{
+		SBOMOptions: options.SBOMOptions{
+			AssertLicenses:  true,
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
+		},
+		BinaryPath: "./testdata/bincmd/simple",
+		Version:    "v1.0.0",
+	}
+
+	runSnapshotIT(t, &binOptions.OutputOptions, func() error { return bincmd.Exec(binOptions) })
+}

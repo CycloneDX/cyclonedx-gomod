@@ -37,6 +37,44 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+func AssertLicenses(bom *cdx.BOM) {
+	if bom == nil {
+		return
+	}
+
+	if bom.Metadata != nil {
+		assertComponentLicenses(bom.Metadata.Component)
+	}
+
+	if bom.Components != nil {
+		for i := range *bom.Components {
+			assertComponentLicenses(&(*bom.Components)[i])
+		}
+	}
+}
+
+func assertComponentLicenses(c *cdx.Component) {
+	if c == nil {
+		return
+	}
+
+	if c.Evidence != nil && c.Evidence.Licenses != nil {
+		c.Licenses = c.Evidence.Licenses
+
+		if c.Evidence.Copyright != nil {
+			c.Evidence.Licenses = nil
+		} else {
+			c.Evidence = nil
+		}
+	}
+
+	if c.Components != nil {
+		for i := range *c.Components {
+			assertComponentLicenses(&(*c.Components)[i])
+		}
+	}
+}
+
 func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	depGraph := make([]cdx.Dependency, 0)
 
