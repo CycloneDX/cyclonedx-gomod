@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.1.0 (unreleased)
+
+### Enhancements
+
+* Add `-packages` option to include packages in application SBOM ([#85](https://github.com/CycloneDX/cyclonedx-gomod/issues/85) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
+
+### Dependency Updates
+
+* Update `github.com/rs/zerolog` from `v1.25.0` to `v1.26.0`
+
+### Building and Packaging
+
+* Bump `golang` container base images from `1.17.2` to `1.17.3` (via [#95](https://github.com/CycloneDX/cyclonedx-gomod/pull/95))
+* Reference container base images by their SHA digest ([#89](https://github.com/CycloneDX/cyclonedx-gomod/issues/89) via [#90](https://github.com/CycloneDX/cyclonedx-gomod/pull/90))
+* Introduce multi-platform container image builds ([#87](https://github.com/CycloneDX/cyclonedx-gomod/issues/87) via [#90](https://github.com/CycloneDX/cyclonedx-gomod/pull/90))
+
 ## v1.0.0
 
 ### Enhancements
