@@ -170,12 +170,11 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 
 	// Collect modules
 	for _, pkgs := range pkgsMap {
-		var module *Module
 		if len(pkgs) == 0 {
 			continue
 		}
 
-		module = pkgs[0].Module
+		module := pkgs[0].Module
 		if module == nil {
 			// Shouldn't ever happen, because packages without module are not collected to pkgsMap.
 			// We do the nil check anyway to make linters happy. :)

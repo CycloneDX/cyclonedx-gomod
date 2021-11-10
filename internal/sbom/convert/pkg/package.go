@@ -51,9 +51,10 @@ func WithFiles(enabled bool) Option {
 
 		var fileComponents []cdx.Component
 
-		for _, filePath := range files {
-			fileComponent, err := fileConv.ToComponent(filepath.Join(p.Dir, filePath), filePath,
-				fileConv.WithScope(cdx.ScopeRequired),
+		for _, f := range files {
+			fileComponent, err := fileConv.ToComponent(
+				filepath.Join(p.Dir, f),
+				f,
 				fileConv.WithHashes(
 					cdx.HashAlgoMD5,
 					cdx.HashAlgoSHA1,
@@ -77,28 +78,28 @@ func WithFiles(enabled bool) Option {
 	}
 }
 
-func ToComponent(pkg gomod.Package, module gomod.Module, options ...Option) (*cdx.Component, error) {
+func ToComponent(p gomod.Package, m gomod.Module, options ...Option) (*cdx.Component, error) {
 	log.Debug().
-		Str("package", pkg.ImportPath).
+		Str("package", p.ImportPath).
 		Msg("converting package to component")
 
-	purl := module.PackageURL()
+	purl := m.PackageURL()
 	purl += "?type=package"
-	if pkg.ImportPath != module.Path {
-		pkgPath := strings.TrimPrefix(pkg.ImportPath, module.Path)
+	if p.ImportPath != m.Path {
+		pkgPath := strings.TrimPrefix(p.ImportPath, m.Path)
 		pkgPath = strings.TrimPrefix(pkgPath, "/")
 		purl = purl + "#" + pkgPath
 	}
 
 	component := cdx.Component{
 		Type:       cdx.ComponentTypeLibrary,
-		Name:       pkg.Name,
-		Version:    module.Version,
+		Name:       p.ImportPath,
+		Version:    m.Version,
 		PackageURL: purl,
 	}
 
 	for _, option := range options {
-		if err := option(pkg, module, &component); err != nil {
+		if err := option(p, m, &component); err != nil {
 			return nil, err
 		}
 	}

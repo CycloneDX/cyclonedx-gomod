@@ -7,7 +7,7 @@
       <purl>pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930</purl>
       <components>
         <component type="library">
-          <name>main</name>
+          <name>testmod-vendored</name>
           <version>v0.0.0-20210716185931-5c9f3d791930</version>
           <purl>pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=package</purl>
           <components>
@@ -41,7 +41,7 @@
       </externalReferences>
       <components>
         <component type="library">
-          <name>uuid</name>
+          <name>github.com/google/uuid</name>
           <version>v1.2.0</version>
           <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=package</purl>
           <components>
