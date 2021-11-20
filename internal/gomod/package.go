@@ -108,7 +108,7 @@ func LoadModulesFromPackages(moduleDir, packagePattern string) ([]Module, error)
 		return nil, fmt.Errorf("failed to parse `go list` output: %w", err)
 	}
 
-	modules, err := convertPackages(moduleDir, pkgMap)
+	modules, err := convertPackagesToModules(moduleDir, pkgMap)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert packages to modules: %w", err)
 	}
@@ -142,42 +142,54 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 		if pkg.Error != nil {
 			return nil, fmt.Errorf("failed to load package: %w", pkg.Error)
 		}
+
+		var coordinates string
 		if pkg.Standard {
-			log.Debug().
-				Str("package", pkg.ImportPath).
-				Str("reason", "part of standard library").
-				Msg("skipping package")
-			continue
-		}
-		if pkg.Module == nil {
+			coordinates = StdlibModulePath
+		} else if pkg.Module == nil {
 			log.Debug().
 				Str("package", pkg.ImportPath).
 				Str("reason", "no associated module").
 				Msg("skipping package")
 			continue
+		} else {
+			coordinates = pkg.Module.Coordinates()
 		}
 
-		pkgs, ok := pkgsMap[pkg.Module.Coordinates()]
+		pkgs, ok := pkgsMap[coordinates]
 		if !ok {
-			pkgsMap[pkg.Module.Coordinates()] = []Package{pkg}
+			pkgsMap[coordinates] = []Package{pkg}
 		} else {
-			pkgsMap[pkg.Module.Coordinates()] = append(pkgs, pkg)
+			pkgsMap[coordinates] = append(pkgs, pkg)
 		}
 	}
 
 	return pkgsMap, nil
 }
 
-func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Module, error) {
+func convertPackagesToModules(mainModuleDir string, pkgsMap map[string][]Package) ([]Module, error) {
 	modules := make([]Module, 0, len(pkgsMap))
 	isVendoring := IsVendoring(mainModuleDir)
 
-	for _, pkgs := range pkgsMap {
+	for coordinates, pkgs := range pkgsMap {
 		if len(pkgs) == 0 {
 			continue
 		}
 
-		module := pkgs[0].Module
+		var (
+			module *Module
+			err    error
+		)
+
+		if coordinates == StdlibModulePath {
+			module, err = LoadStdlibModule()
+			if err != nil {
+				return nil, fmt.Errorf("failed to load stdlib module: %w", err)
+			}
+		} else {
+			module = pkgs[0].Module
+		}
+
 		if module == nil {
 			// Shouldn't ever happen, because packages without module are not collected to pkgsMap.
 			// We do the nil check anyway to make linters happy. :)
@@ -200,7 +212,13 @@ func convertPackages(mainModuleDir string, pkgsMap map[string][]Package) ([]Modu
 	}
 
 	for i := range modules {
-		pkgs := pkgsMap[modules[i].Coordinates()]
+		var pkgs []Package
+		if modules[i].Path == StdlibModulePath {
+			pkgs = pkgsMap[StdlibModulePath]
+		} else {
+			pkgs = pkgsMap[modules[i].Coordinates()]
+		}
+
 		for j := range pkgs {
 			pkgs[j].Module = nil // we don't need this anymore
 			modules[i].Packages = append(modules[i].Packages, pkgs[j])

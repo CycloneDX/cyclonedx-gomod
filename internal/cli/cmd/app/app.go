@@ -105,6 +105,18 @@ func Exec(options Options) error {
 		return fmt.Errorf("failed to load modules: %w", err)
 	}
 
+	for i, module := range modules {
+		if module.Path == gomod.StdlibModulePath {
+			if options.IncludeStd {
+				modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
+				break
+			} else {
+				modules = append(modules[:i], modules[i+1:]...)
+				break
+			}
+		}
+	}
+
 	// Dependencies need to be applied prior to determining the main
 	// module's version, because `go mod graph` omits that version.
 	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
@@ -174,13 +186,6 @@ func Exec(options Options) error {
 	bom.Dependencies = &dependencies
 
 	enrichWithApplicationDetails(bom, options.ModuleDir, options.Main)
-
-	if options.IncludeStd {
-		err = cliUtil.AddStdComponent(bom, "")
-		if err != nil {
-			return fmt.Errorf("failed to add stdlib component: %w", err)
-		}
-	}
 
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)

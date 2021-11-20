@@ -50,37 +50,6 @@ func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	return nil
 }
 
-func AddStdComponent(bom *cdx.BOM, goVersion string) error {
-	log.Debug().
-		Msg("adding std component")
-
-	stdComponent, err := sbom.BuildStdComponent(goVersion)
-	if err != nil {
-		return fmt.Errorf("failed to build std component: %w", err)
-	}
-
-	// Append std to components
-	*bom.Components = append(*bom.Components, *stdComponent)
-
-	// Add std to dependency graph
-	stdDependency := cdx.Dependency{Ref: stdComponent.BOMRef}
-	*bom.Dependencies = append(*bom.Dependencies, stdDependency)
-
-	// Add std as dependency of main module
-	for i, dependency := range *bom.Dependencies {
-		if dependency.Ref == bom.Metadata.Component.BOMRef {
-			if dependency.Dependencies == nil {
-				(*bom.Dependencies)[i].Dependencies = &[]cdx.Dependency{stdDependency}
-			} else {
-				*dependency.Dependencies = append(*dependency.Dependencies, stdDependency)
-			}
-			break
-		}
-	}
-
-	return nil
-}
-
 // SetSerialNumber sets the serial number of a given BOM according to the provided SBOMOptions.
 func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	if sbomOptions.NoSerialNumber {

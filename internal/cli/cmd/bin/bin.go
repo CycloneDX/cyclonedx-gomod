@@ -88,6 +88,20 @@ func Exec(options Options) error {
 		return fmt.Errorf("failed to parse modules from %s", options.BinaryPath)
 	}
 
+	if options.IncludeStd {
+		stdlibModule, err := gomod.LoadStdlibModule()
+		if err != nil {
+			return fmt.Errorf("failed to load stdlib module: %w", err)
+		}
+
+		// We want to represent the stdlib embedded in the binary,
+		// not the one present on the system we're running on.
+		stdlibModule.Version = goVersion
+		stdlibModule.Dir = ""
+
+		modules = append(modules, *stdlibModule)
+	}
+
 	if options.Version != "" {
 		modules[0].Version = options.Version
 	}
@@ -148,13 +162,6 @@ func Exec(options Options) error {
 	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
-
-	if options.IncludeStd {
-		err = cliUtil.AddStdComponent(bom, goVersion)
-		if err != nil {
-			return fmt.Errorf("failed to add stdlib component: %w", err)
-		}
-	}
 
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)

@@ -98,6 +98,12 @@ func WithModuleHashes() Option {
 			return nil
 		}
 
+		if m.Path == gomod.StdlibModulePath {
+			// There are no module hashes published for the standard library.
+			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for stdlib module")
+			return nil
+		}
+
 		log.Debug().Str("module", m.Coordinates()).Msg("calculating module hash")
 		h1, err := m.Hash()
 		if err != nil {
