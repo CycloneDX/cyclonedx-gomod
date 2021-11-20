@@ -20,7 +20,6 @@ package gomod
 import (
 	"fmt"
 	"path/filepath"
-	"runtime"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
@@ -30,7 +29,17 @@ const StdlibModulePath = "std"
 
 // LoadStdlibModule loads the standard library module.
 func LoadStdlibModule() (*Module, error) {
-	module, err := LoadModule(filepath.Join(runtime.GOROOT(), "src"))
+	env, err := gocmd.GetEnv()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get go env: %w", err)
+	}
+
+	goroot, ok := env["GOROOT"]
+	if !ok {
+		return nil, fmt.Errorf("failed to determine GOROOT")
+	}
+
+	module, err := LoadModule(filepath.Join(goroot, "src"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to load stdlib module: %w", err)
 	}
