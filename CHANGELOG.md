@@ -4,7 +4,12 @@
 
 ### Enhancements
 
-* Add `-packages` option to include packages in application SBOM ([#85](https://github.com/CycloneDX/cyclonedx-gomod/issues/85) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
+* `app`: Add `-packages` option to include packages in application SBOM ([#85](https://github.com/CycloneDX/cyclonedx-gomod/issues/85) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
+* `app`: The `-packages` and `-files` options are now also applied to the standard library component (when `-std` is used) ([#84](https://github.com/CycloneDX/cyclonedx-gomod/issues/84) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
+
+### Breaking Changes
+
+* `app`: `-files` can now only be used in conjunction with `-packages`
 
 ### Dependency Updates
 
