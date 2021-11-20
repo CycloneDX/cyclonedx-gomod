@@ -4,8 +4,11 @@
 
 ### Enhancements
 
-* `app`: Add `-packages` option to include packages in application SBOM ([#85](https://github.com/CycloneDX/cyclonedx-gomod/issues/85) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
+* Add option to assert detected licenses ([#96](https://github.com/CycloneDX/cyclonedx-gomod/pull/97) via [#97](https://github.com/CycloneDX/cyclonedx-gomod/pull/97))
+  * This will move licenses from `evidence/licenses` to `licenses`
+* `app`: Add option to include packages in application SBOM ([#85](https://github.com/CycloneDX/cyclonedx-gomod/issues/85) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
 * `app`: The `-packages` and `-files` options are now also applied to the standard library component (when `-std` is used) ([#84](https://github.com/CycloneDX/cyclonedx-gomod/issues/84) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
+  * Thanks [TheDiveO](https://github.com/TheDiveO) for reporting!
 
 ### Breaking Changes
 
