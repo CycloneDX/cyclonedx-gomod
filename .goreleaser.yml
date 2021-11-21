@@ -28,7 +28,7 @@ builds:
     mod_timestamp: "{{ .CommitTimestamp }}"
     hooks:
       post:
-        - cmd: ./bin/cyclonedx-gomod app -licenses -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+        - cmd: ./bin/cyclonedx-gomod app -licenses -packages -std -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
           env:
             - GOARCH={{ .Arch }}
             - GOOS={{ .Os }}
