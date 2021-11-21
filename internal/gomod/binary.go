@@ -56,7 +56,7 @@ func parseModulesFromBinary(binaryPath string, reader io.Reader) (string, []Modu
 		switch fields[0] {
 		case binaryPath + ":":
 			if len(fields) == 2 && strings.HasPrefix(fields[1], "go") {
-				goVersion = strings.TrimPrefix(fields[1], "go")
+				goVersion = fields[1]
 			}
 		case "mod": // Main module
 			modules = append(modules, Module{
