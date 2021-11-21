@@ -18,8 +18,8 @@
 package pkg
 
 import (
+	"fmt"
 	"path/filepath"
-	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
@@ -83,19 +83,11 @@ func ToComponent(p gomod.Package, m gomod.Module, options ...Option) (*cdx.Compo
 		Str("package", p.ImportPath).
 		Msg("converting package to component")
 
-	purl := m.PackageURL()
-	purl += "?type=package"
-	if p.ImportPath != m.Path {
-		pkgPath := strings.TrimPrefix(p.ImportPath, m.Path)
-		pkgPath = strings.TrimPrefix(pkgPath, "/")
-		purl = purl + "#" + pkgPath
-	}
-
 	component := cdx.Component{
 		Type:       cdx.ComponentTypeLibrary,
 		Name:       p.ImportPath,
 		Version:    m.Version,
-		PackageURL: purl,
+		PackageURL: fmt.Sprintf("pkg:golang/%s@%s?type=package", p.ImportPath, m.Version),
 	}
 
 	for _, option := range options {
