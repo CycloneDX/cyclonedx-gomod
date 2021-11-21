@@ -31,6 +31,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
+	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"github.com/rs/zerolog/log"
 )
@@ -68,9 +69,13 @@ for each target in the build matrix.
 The -main flag should be used to specify the path to the application's main package.
 It must point to a directory within MODULE_PATH. If not set, MODULE_PATH is assumed.
 
+In order to not only include modules, but also the packages within them,
+the -packages flag can be used. Packages are represented as subcomponents of modules.
+
 By passing -files, all files that would be included in a binary will be attached
-as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
+as subcomponents of their respective package. File versions follow the v0.0.0-SHORTHASH pattern, 
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
+Because files are subcomponents of packages, -files can only be used in conjunction with -packages.
 
 Examples:
   $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
@@ -104,6 +109,18 @@ func Exec(options Options) error {
 		return fmt.Errorf("failed to load modules: %w", err)
 	}
 
+	for i, module := range modules {
+		if module.Path == gomod.StdlibModulePath {
+			if options.IncludeStd {
+				modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
+				break
+			} else {
+				modules = append(modules[:i], modules[i+1:]...)
+				break
+			}
+		}
+	}
+
 	// Dependencies need to be applied prior to determining the main
 	// module's version, because `go mod graph` omits that version.
 	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
@@ -120,8 +137,9 @@ func Exec(options Options) error {
 	// Convert main module
 	mainComponent, err := modConv.ToComponent(modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
-		modConv.WithFiles(options.IncludeFiles),
 		modConv.WithLicenses(options.ResolveLicenses),
+		modConv.WithPackages(options.IncludePackages,
+			pkgConv.WithFiles(options.IncludeFiles)),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert main module: %w", err)
@@ -143,9 +161,10 @@ func Exec(options Options) error {
 
 	// Convert the other modules
 	components, err := modConv.ToComponents(modules[1:],
-		modConv.WithFiles(options.IncludeFiles),
 		modConv.WithLicenses(options.ResolveLicenses),
 		modConv.WithModuleHashes(),
+		modConv.WithPackages(options.IncludePackages,
+			pkgConv.WithFiles(options.IncludeFiles)),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert modules: %w", err)
@@ -171,13 +190,6 @@ func Exec(options Options) error {
 	bom.Dependencies = &dependencies
 
 	enrichWithApplicationDetails(bom, options.ModuleDir, options.Main)
-
-	if options.IncludeStd {
-		err = cliUtil.AddStdComponent(bom, "")
-		if err != nil {
-			return fmt.Errorf("failed to add stdlib component: %w", err)
-		}
-	}
 
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)

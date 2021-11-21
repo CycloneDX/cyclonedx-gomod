@@ -34,7 +34,7 @@ dep     github.com/briandowns/spinner   v1.11.1
 `
 
 	goVersion, modules, hashes := parseModulesFromBinary("minikube", strings.NewReader(cmdOutput))
-	require.Equal(t, "1.16.4", goVersion)
+	require.Equal(t, "go1.16.4", goVersion)
 	require.Len(t, modules, 3)
 	require.Len(t, hashes, 2)
 

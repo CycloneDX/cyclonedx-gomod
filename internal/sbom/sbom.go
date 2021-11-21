@@ -26,12 +26,10 @@ import (
 	"hash"
 	"io"
 	"os"
-	"strings"
 
 	"golang.org/x/crypto/sha3"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/rs/zerolog/log"
@@ -120,45 +118,6 @@ func BuildToolMetadata() (*cdx.Tool, error) {
 		Name:    version.Name,
 		Version: version.Version,
 		Hashes:  &toolHashes,
-	}, nil
-}
-
-func BuildStdComponent(goVersion string) (*cdx.Component, error) {
-	log.Debug().
-		Msg("building std component")
-
-	var err error
-	if goVersion == "" {
-		goVersion, err = gocmd.GetVersion()
-		if err != nil {
-			return nil, fmt.Errorf("failed to determine Go version: %w", err)
-		}
-		goVersion = strings.TrimPrefix(goVersion, "go")
-	}
-	stdPURL := "pkg:golang/std@" + goVersion
-
-	return &cdx.Component{
-		BOMRef:      stdPURL,
-		Type:        cdx.ComponentTypeLibrary,
-		Name:        "std",
-		Version:     goVersion,
-		Description: "The Go standard library",
-		Scope:       cdx.ScopeRequired,
-		PackageURL:  stdPURL,
-		ExternalReferences: &[]cdx.ExternalReference{
-			{
-				Type: cdx.ERTypeDocumentation,
-				URL:  "https://golang.org/pkg/",
-			},
-			{
-				Type: cdx.ERTypeVCS,
-				URL:  "https://go.googlesource.com/go",
-			},
-			{
-				Type: cdx.ERTypeWebsite,
-				URL:  "https://golang.org/",
-			},
-		},
 	}, nil
 }
 

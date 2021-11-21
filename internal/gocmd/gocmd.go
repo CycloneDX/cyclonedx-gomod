@@ -81,7 +81,7 @@ func ListModules(moduleDir string, writer io.Writer) error {
 }
 
 // ListPackage executes `go list -json -e <PATTERN>` and writes the output to a given writer.
-// See // See https://golang.org/cmd/go/#hdr-List_packages_or_modules.
+// See https://golang.org/cmd/go/#hdr-List_packages_or_modules.
 func ListPackage(moduleDir, packagePattern string, writer io.Writer) error {
 	return executeGoCommand([]string{"list", "-json", "-e", packagePattern},
 		withDir(moduleDir),

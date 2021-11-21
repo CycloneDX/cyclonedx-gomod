@@ -72,7 +72,7 @@ func TestModule_PackageURL(t *testing.T) {
 		Version: "v0.1.0",
 	}
 
-	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0", module.PackageURL())
+	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module", module.PackageURL())
 }
 
 func TestIsModule(t *testing.T) {

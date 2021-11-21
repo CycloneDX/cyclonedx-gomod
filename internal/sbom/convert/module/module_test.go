@@ -163,11 +163,11 @@ func TestToComponent(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, component)
 
-		require.Equal(t, "pkg:golang/path@version", component.BOMRef)
+		require.Equal(t, "pkg:golang/path@version?type=module", component.BOMRef)
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "path", component.Name)
 		require.Equal(t, "version", component.Version)
-		require.Equal(t, "pkg:golang/path@version", component.PackageURL)
+		require.Equal(t, "pkg:golang/path@version?type=module", component.PackageURL)
 		require.Equal(t, cdx.ScopeRequired, component.Scope)
 	})
 
@@ -182,11 +182,11 @@ func TestToComponent(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, component)
 
-		require.Equal(t, "pkg:golang/path@version", component.BOMRef)
+		require.Equal(t, "pkg:golang/path@version?type=module", component.BOMRef)
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "path", component.Name)
 		require.Equal(t, "version", component.Version)
-		require.Equal(t, "pkg:golang/path@version", component.PackageURL)
+		require.Equal(t, "pkg:golang/path@version?type=module", component.PackageURL)
 		require.Equal(t, cdx.ScopeOptional, component.Scope)
 	})
 
@@ -204,11 +204,11 @@ func TestToComponent(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, component)
 
-		require.Equal(t, "pkg:golang/pathReplace@versionReplace", component.BOMRef)
+		require.Equal(t, "pkg:golang/pathReplace@versionReplace?type=module", component.BOMRef)
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "pathReplace", component.Name)
 		require.Equal(t, "versionReplace", component.Version)
-		require.Equal(t, "pkg:golang/pathReplace@versionReplace", component.PackageURL)
+		require.Equal(t, "pkg:golang/pathReplace@versionReplace?type=module", component.PackageURL)
 		require.Equal(t, cdx.ScopeRequired, component.Scope)
 	})
 }

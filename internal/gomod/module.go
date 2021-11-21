@@ -48,7 +48,7 @@ type Module struct {
 	TestOnly     bool      `json:"-"` // is this module only required for tests?
 	Vendored     bool      `json:"-"` // is this a vendored module?
 
-	Files []string `json:"-"` // files in this module
+	Packages []Package `json:"-"` // packages in this module
 }
 
 func (m Module) Coordinates() string {
@@ -69,7 +69,7 @@ func (m Module) Hash() (string, error) {
 }
 
 func (m Module) PackageURL() string {
-	return "pkg:golang/" + m.Coordinates()
+	return fmt.Sprintf("pkg:golang/%s?type=module", m.Coordinates())
 }
 
 // IsModule determines whether dir is a Go module.

@@ -88,6 +88,13 @@ func Exec(options Options) error {
 		return fmt.Errorf("failed to parse modules from %s", options.BinaryPath)
 	}
 
+	if options.IncludeStd {
+		modules = append(modules, gomod.Module{
+			Path:    gomod.StdlibModulePath,
+			Version: goVersion,
+		})
+	}
+
 	if options.Version != "" {
 		modules[0].Version = options.Version
 	}
@@ -148,13 +155,6 @@ func Exec(options Options) error {
 	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
 	bom.Compositions = createCompositions(*mainComponent, components)
-
-	if options.IncludeStd {
-		err = cliUtil.AddStdComponent(bom, goVersion)
-		if err != nil {
-			return fmt.Errorf("failed to add stdlib component: %w", err)
-		}
-	}
 
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)
@@ -229,13 +229,17 @@ func createCompositions(mainComponent cdx.Component, components []cdx.Component)
 }
 
 func downloadModules(modules []gomod.Module, hashes map[string]string) error {
-	// When modules are replaced, only download the replacement.
-	modulesToDownload := make([]gomod.Module, len(modules))
+	modulesToDownload := make([]gomod.Module, 0)
 	for i, module := range modules {
+		if module.Path == gomod.StdlibModulePath {
+			continue // We can't download the stdlib
+		}
+
+		// When modules are replaced, only download the replacement.
 		if module.Replace != nil {
-			modulesToDownload[i] = *modules[i].Replace
+			modulesToDownload = append(modulesToDownload, *modules[i].Replace)
 		} else {
-			modulesToDownload[i] = modules[i]
+			modulesToDownload = append(modulesToDownload, modules[i])
 		}
 	}
 

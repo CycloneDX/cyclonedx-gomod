@@ -93,6 +93,16 @@ func Exec(options Options) error {
 		}
 	}
 
+	if options.IncludeStd {
+		stdlibModule, err := gomod.LoadStdlibModule()
+		if err != nil {
+			return fmt.Errorf("failed to load stdlib module: %w", err)
+		}
+
+		modules[0].Dependencies = append(modules[0].Dependencies, stdlibModule)
+		modules = append(modules, *stdlibModule)
+	}
+
 	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
 	if err != nil {
 		return fmt.Errorf("failed to apply module graph: %w", err)
@@ -140,13 +150,6 @@ func Exec(options Options) error {
 	bom.Components = &components
 	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
-
-	if options.IncludeStd {
-		err = cliUtil.AddStdComponent(bom, "")
-		if err != nil {
-			return fmt.Errorf("failed to add stdlib component: %w", err)
-		}
-	}
 
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)

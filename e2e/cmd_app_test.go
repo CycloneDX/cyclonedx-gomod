@@ -66,9 +66,27 @@ func TestAppCmdSimpleWithFiles(t *testing.T) {
 			ResolveLicenses: true,
 			SerialNumber:    zeroUUID.String(),
 		},
-		ModuleDir:    fixturePath,
-		Main:         "",
-		IncludeFiles: true,
+		ModuleDir:       fixturePath,
+		Main:            "",
+		IncludeFiles:    true,
+		IncludePackages: true,
+	}
+
+	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
+}
+
+func TestAppCmdSimpleWithPackages(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
+
+	appOptions := appcmd.Options{
+		SBOMOptions: options.SBOMOptions{
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
+		Main:            "",
+		IncludePackages: true,
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
@@ -131,9 +149,27 @@ func TestAppCmdVendoredWithFiles(t *testing.T) {
 			ResolveLicenses: true,
 			SerialNumber:    zeroUUID.String(),
 		},
-		ModuleDir:    fixturePath,
-		Main:         "",
-		IncludeFiles: true,
+		ModuleDir:       fixturePath,
+		Main:            "",
+		IncludeFiles:    true,
+		IncludePackages: true,
+	}
+
+	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
+}
+
+func TestAppCmdVendoredWithPackages(t *testing.T) {
+	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
+
+	appOptions := appcmd.Options{
+		SBOMOptions: options.SBOMOptions{
+			Reproducible:    true,
+			ResolveLicenses: true,
+			SerialNumber:    zeroUUID.String(),
+		},
+		ModuleDir:       fixturePath,
+		Main:            "",
+		IncludePackages: true,
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
