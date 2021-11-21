@@ -5,7 +5,7 @@
 ### Enhancements
 
 * Add option to assert detected licenses ([#96](https://github.com/CycloneDX/cyclonedx-gomod/pull/97) via [#97](https://github.com/CycloneDX/cyclonedx-gomod/pull/97))
-  * This will move licenses from `evidence/licenses` to `licenses`
+  * This will move licenses from `evidence/licenses` to `licenses`, which helps with SBOM ingestion in some cases
 * `app`: Add option to include packages in application SBOM ([#85](https://github.com/CycloneDX/cyclonedx-gomod/issues/85) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
 * `app`: The `-packages` and `-files` options are now also applied to the standard library component (when `-std` is used) ([#84](https://github.com/CycloneDX/cyclonedx-gomod/issues/84) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
   * Thanks [TheDiveO](https://github.com/TheDiveO) for reporting!
@@ -15,6 +15,11 @@
 
 * `app`: `-files` can now only be used in conjunction with `-packages`
 * `app`: Files are now represented as subcomponents of packages
+
+### Miscellaneous
+
+* The `go` prefix is no longer stripped from Go versions
+  * e.g. the standard library module will now appear as `pkg:golang/std@go1.17.3` instead of `pkg:golang/std@1.17.3`
 
 ### Dependency Updates
 
