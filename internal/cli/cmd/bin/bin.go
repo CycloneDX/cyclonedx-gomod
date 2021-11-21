@@ -89,17 +89,10 @@ func Exec(options Options) error {
 	}
 
 	if options.IncludeStd {
-		stdlibModule, err := gomod.LoadStdlibModule()
-		if err != nil {
-			return fmt.Errorf("failed to load stdlib module: %w", err)
-		}
-
-		// We want to represent the stdlib embedded in the binary,
-		// not the one present on the system we're running on.
-		stdlibModule.Version = goVersion
-		stdlibModule.Dir = ""
-
-		modules = append(modules, *stdlibModule)
+		modules = append(modules, gomod.Module{
+			Path:    gomod.StdlibModulePath,
+			Version: goVersion,
+		})
 	}
 
 	if options.Version != "" {
@@ -236,13 +229,17 @@ func createCompositions(mainComponent cdx.Component, components []cdx.Component)
 }
 
 func downloadModules(modules []gomod.Module, hashes map[string]string) error {
-	// When modules are replaced, only download the replacement.
-	modulesToDownload := make([]gomod.Module, len(modules))
+	modulesToDownload := make([]gomod.Module, 0)
 	for i, module := range modules {
+		if module.Path == gomod.StdlibModulePath {
+			continue // We can't download the stdlib
+		}
+
+		// When modules are replaced, only download the replacement.
 		if module.Replace != nil {
-			modulesToDownload[i] = *modules[i].Replace
+			modulesToDownload = append(modulesToDownload, *modules[i].Replace)
 		} else {
-			modulesToDownload[i] = modules[i]
+			modulesToDownload = append(modulesToDownload, modules[i])
 		}
 	}
 
