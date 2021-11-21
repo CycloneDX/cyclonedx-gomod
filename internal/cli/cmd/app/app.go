@@ -69,9 +69,13 @@ for each target in the build matrix.
 The -main flag should be used to specify the path to the application's main package.
 It must point to a directory within MODULE_PATH. If not set, MODULE_PATH is assumed.
 
+In order to not only include modules, but also the packages within them,
+the -packages flag can be used. Packages are represented as subcomponents of modules.
+
 By passing -files, all files that would be included in a binary will be attached
-as subcomponents of their respective module. File versions follow the v0.0.0-SHORTHASH pattern, 
+as subcomponents of their respective package. File versions follow the v0.0.0-SHORTHASH pattern, 
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
+Because files are subcomponents of packages, -files can only be used in conjunction with -packages.
 
 Examples:
   $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
