@@ -31,6 +31,7 @@
 * Bump `golang` container base images from `1.17.2` to `1.17.3` (via [#95](https://github.com/CycloneDX/cyclonedx-gomod/pull/95))
 * Reference container base images by their SHA digest ([#89](https://github.com/CycloneDX/cyclonedx-gomod/issues/89) via [#90](https://github.com/CycloneDX/cyclonedx-gomod/pull/90))
 * Introduce multi-platform container image builds ([#87](https://github.com/CycloneDX/cyclonedx-gomod/issues/87) via [#90](https://github.com/CycloneDX/cyclonedx-gomod/pull/90))
+* Bump alpine-based `golang` container base images from `alpine3.14` to `alpine3.15` (via [`47cee81`](https://github.com/CycloneDX/cyclonedx-gomod/commit/47cee81da4713561ff30a7450b13688d691da976))
 
 ## v1.0.0
 
