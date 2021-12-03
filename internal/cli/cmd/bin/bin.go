@@ -19,7 +19,6 @@ package bin
 
 import (
 	"context"
-	"encoding/base64"
 	"flag"
 	"fmt"
 	"path/filepath"
@@ -81,17 +80,19 @@ func Exec(options Options) error {
 		return err
 	}
 
-	goVersion, modules, hashes, err := gomod.LoadModulesFromBinary(options.BinaryPath)
+	bi, err := gomod.LoadBuildInfo(options.BinaryPath)
 	if err != nil {
-		return fmt.Errorf("failed to extract modules: %w", err)
-	} else if len(modules) == 0 {
-		return fmt.Errorf("failed to parse modules from %s", options.BinaryPath)
+		return fmt.Errorf("failed to load build info: %w", err)
+	} else if bi.Main == nil {
+		return fmt.Errorf("failed to parse any modules from %s", options.BinaryPath)
 	}
+
+	modules := append([]gomod.Module{*bi.Main}, bi.Deps...)
 
 	if options.IncludeStd {
 		modules = append(modules, gomod.Module{
 			Path:    gomod.StdlibModulePath,
-			Version: goVersion,
+			Version: bi.GoVersion,
 		})
 	}
 
@@ -101,7 +102,7 @@ func Exec(options Options) error {
 
 	// If we want to resolve licenses, we have to download the modules first
 	if options.ResolveLicenses {
-		err = downloadModules(modules, hashes)
+		err = downloadModules(modules)
 		if err != nil {
 			return fmt.Errorf("failed to download modules: %w", err)
 		}
@@ -124,7 +125,6 @@ func Exec(options Options) error {
 	// Convert the other modules
 	components, err := modConv.ToComponents(modules[1:],
 		modConv.WithLicenses(options.ResolveLicenses),
-		withModuleHashes(hashes),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert modules: %w", err)
@@ -161,29 +161,6 @@ func Exec(options Options) error {
 	}
 
 	return cliUtil.WriteBOM(bom, options.OutputOptions)
-}
-
-func withModuleHashes(hashes map[string]string) modConv.Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		h1, ok := hashes[m.Coordinates()]
-		if !ok {
-			return nil
-		}
-
-		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
-		if err != nil {
-			return fmt.Errorf("failed to base64 decode h1 hash: %w", err)
-		}
-
-		c.Hashes = &[]cdx.Hash{
-			{
-				Algorithm: cdx.HashAlgoSHA256,
-				Value:     fmt.Sprintf("%x", h1Bytes),
-			},
-		}
-
-		return nil
-	}
 }
 
 func createBinaryProperties(binaryPath string) ([]cdx.Property, error) {
@@ -228,7 +205,7 @@ func createCompositions(mainComponent cdx.Component, components []cdx.Component)
 	return &compositions
 }
 
-func downloadModules(modules []gomod.Module, hashes map[string]string) error {
+func downloadModules(modules []gomod.Module) error {
 	modulesToDownload := make([]gomod.Module, 0)
 	for i, module := range modules {
 		if module.Path == gomod.StdlibModulePath {
@@ -268,16 +245,13 @@ func downloadModules(modules []gomod.Module, hashes map[string]string) error {
 		// Check that the hash of the downloaded module matches
 		// the one found in the binary. We want to report the version
 		// for the *exact* module version or nothing at all.
-		hash, ok := hashes[download.Coordinates()]
-		if ok {
-			if hash != download.Sum {
-				log.Warn().
-					Str("binaryHash", hash).
-					Str("downloadHash", download.Sum).
-					Str("module", download.Coordinates()).
-					Msg("module hash mismatch")
-				continue
-			}
+		if module.Sum != download.Sum {
+			log.Warn().
+				Str("binaryHash", module.Sum).
+				Str("downloadHash", download.Sum).
+				Str("module", download.Coordinates()).
+				Msg("module hash mismatch")
+			continue
 		}
 
 		log.Debug().

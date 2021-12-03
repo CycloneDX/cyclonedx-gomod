@@ -193,6 +193,20 @@ func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error)
 		}
 	}
 
+	if module.Sum != "" && strings.HasPrefix(module.Sum, "h1:") {
+		h1Bytes, err := base64.StdEncoding.DecodeString(module.Sum[3:])
+		if err != nil {
+			return nil, err
+		}
+
+		component.Hashes = &[]cdx.Hash{
+			{
+				Algorithm: cdx.HashAlgoSHA256,
+				Value:     fmt.Sprintf("%x", h1Bytes),
+			},
+		}
+	}
+
 	vcsURL := resolveVCSURL(module.Path)
 	if vcsURL != "" {
 		component.ExternalReferences = &[]cdx.ExternalReference{

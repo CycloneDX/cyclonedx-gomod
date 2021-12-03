@@ -34,6 +34,26 @@ func TestGetVersion(t *testing.T) {
 	require.Equal(t, runtime.Version(), version)
 }
 
+func TestParseVersion(t *testing.T) {
+	t.Run("Release", func(t *testing.T) {
+		v, err := ParseVersion("foobar: go1.16.10")
+		require.NoError(t, err)
+		require.Equal(t, "go1.16.10", v)
+	})
+
+	t.Run("Devel", func(t *testing.T) {
+		v, err := ParseVersion("foobar: devel go1.18-36be0be Thu Dec 2 16:48:07 2021 +0000")
+		require.NoError(t, err)
+		require.Equal(t, "go1.18-36be0be", v)
+	})
+
+	t.Run("Failure", func(t *testing.T) {
+		v, err := ParseVersion("foobar: notgo1.16.10")
+		require.Error(t, err)
+		require.Equal(t, "", v)
+	})
+}
+
 func TestGetEnv(t *testing.T) {
 	env, err := GetEnv()
 	require.NoError(t, err)

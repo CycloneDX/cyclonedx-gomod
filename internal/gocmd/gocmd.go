@@ -21,12 +21,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"io"
 	"os"
 	"os/exec"
-	"strings"
-
-	"github.com/rs/zerolog/log"
+	"regexp"
 )
 
 // GetVersion returns the version of Go in the environment.
@@ -37,17 +36,21 @@ func GetVersion() (string, error) {
 		return "", err
 	}
 
-	output := buf.String()
-	fields := strings.Fields(output)
-	if len(fields) != 4 {
-		return "", fmt.Errorf("expected four fields in output, but got %d: %s", len(fields), output)
+	return ParseVersion(buf.String())
+}
+
+var versionRegex = regexp.MustCompile(`^.*(?P<version>\bgo[^\s$]+)`)
+
+// ParseVersion attempts to locate a Go version in a given string.
+// Output of `go version` is not easily parseable in all cases.
+// See https://github.com/golang/go/issues/21207
+func ParseVersion(s string) (string, error) {
+	matches := versionRegex.FindStringSubmatch(s)
+	if len(matches) != 2 {
+		return "", fmt.Errorf("regex did not match")
 	}
 
-	if fields[0] != "go" || fields[1] != "version" {
-		return "", fmt.Errorf("unexpected output format: %s", output)
-	}
-
-	return fields[2], nil
+	return matches[1], nil
 }
 
 // GetEnv executes `go env -json` and returns the result as a map.
@@ -122,9 +125,9 @@ func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 	)
 }
 
-// LoadModulesFromBinary executes `go version -m` and writes the output to a given writer.
+// LoadBuildInfo executes `go version -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-version-m.
-func LoadModulesFromBinary(binaryPath string, writer io.Writer) error {
+func LoadBuildInfo(binaryPath string, writer io.Writer) error {
 	return executeGoCommand([]string{"version", "-m", binaryPath}, withStdout(writer))
 }
 

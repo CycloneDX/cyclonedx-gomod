@@ -26,24 +26,32 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
-func LoadModulesFromBinary(binaryPath string) (string, []Module, map[string]string, error) {
-	buf := new(bytes.Buffer)
-	if err := gocmd.LoadModulesFromBinary(binaryPath, buf); err != nil {
-		return "", nil, nil, err
-	}
-
-	goVersion, modules, hashes := parseModulesFromBinary(binaryPath, buf)
-
-	sortModules(modules)
-
-	return goVersion, modules, hashes, nil
+// BuildInfo represents the build information read from a Go binary.
+// Adapted from https://github.com/golang/go/blob/931d80ec17374e52dbc5f9f63120f8deb80b355d/src/runtime/debug/mod.go#L41
+type BuildInfo struct {
+	GoVersion string            // Version of Go that produced this binary.
+	Path      string            // The main package path
+	Main      *Module           // The module containing the main package
+	Deps      []Module          // Module dependencies
+	Settings  map[string]string // Other information about the build.
 }
 
-func parseModulesFromBinary(binaryPath string, reader io.Reader) (string, []Module, map[string]string) {
-	var goVersion string
-	var modules []Module
-	hashes := make(map[string]string)
+func LoadBuildInfo(binaryPath string) (*BuildInfo, error) {
+	buf := new(bytes.Buffer)
+	err := gocmd.LoadBuildInfo(binaryPath, buf)
+	if err != nil {
+		return nil, err
+	}
 
+	buildInfo, err := parseBuildInfo(binaryPath, buf)
+	if err != nil {
+		return nil, err
+	}
+
+	return &buildInfo, nil
+}
+
+func parseBuildInfo(binaryPath string, reader io.Reader) (bi BuildInfo, err error) {
 	moduleIndex := 0
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
@@ -55,38 +63,51 @@ func parseModulesFromBinary(binaryPath string, reader io.Reader) (string, []Modu
 		fields := strings.Fields(line)
 		switch fields[0] {
 		case binaryPath + ":":
-			if len(fields) == 2 && strings.HasPrefix(fields[1], "go") {
-				goVersion = fields[1]
+			var gv string
+			gv, err = gocmd.ParseVersion(line)
+			if err != nil {
+				return
+			} else {
+				bi.GoVersion = gv
 			}
+		case "path": // Path of main package of main module
+			bi.Path = fields[1]
 		case "mod": // Main module
-			modules = append(modules, Module{
+			bi.Main = &Module{
 				Path:    fields[1],
 				Version: fields[2],
 				Main:    true,
-			})
-			moduleIndex += 1
+			}
 		case "dep": // Dependency module
 			module := Module{
 				Path:    fields[1],
 				Version: fields[2],
 			}
-			modules = append(modules, module)
 			if len(fields) == 4 {
 				// Hash won't be available when the module is replaced
-				hashes[module.Coordinates()] = fields[3]
+				module.Sum = fields[3]
 			}
+			bi.Deps = append(bi.Deps, module)
 			moduleIndex += 1
 		case "=>": // Replacement
 			module := Module{
 				Path:    fields[1],
 				Version: fields[2],
 			}
-			modules[moduleIndex-1].Replace = &module
 			if len(fields) == 4 {
-				hashes[module.Coordinates()] = fields[3]
+				module.Sum = fields[3]
+			}
+			bi.Deps[moduleIndex-1].Replace = &module
+		case "build": // Build settings (Go 1.18+)
+			kv := strings.SplitN(fields[1], "=", 2)
+			if len(kv) == 2 {
+				if bi.Settings == nil {
+					bi.Settings = make(map[string]string)
+				}
+				bi.Settings[kv[0]] = kv[1]
 			}
 		}
 	}
 
-	return goVersion, modules, hashes
+	return
 }

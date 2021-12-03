@@ -45,10 +45,10 @@ type Module struct {
 
 	Dependencies []*Module `json:"-"` // modules this module depends on
 	Local        bool      `json:"-"` // is this a local module?
+	Packages     []Package `json:"-"` // packages in this module
+	Sum          string    `json:"-"` // checksum for path, version (as in go.sum)
 	TestOnly     bool      `json:"-"` // is this module only required for tests?
 	Vendored     bool      `json:"-"` // is this a vendored module?
-
-	Packages []Package `json:"-"` // packages in this module
 }
 
 func (m Module) Coordinates() string {
