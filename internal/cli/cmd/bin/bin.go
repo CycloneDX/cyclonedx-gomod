@@ -239,6 +239,9 @@ func buildBinaryProperties(binaryPath string, bi *gomod.BuildInfo) ([]cdx.Proper
 		if goos, ok := bi.Settings["GOOS"]; ok {
 			properties = append(properties, sbom.NewProperty("build:env:GOOS", goos))
 		}
+		if compiler, ok := bi.Settings["-compiler"]; ok {
+			properties = append(properties, sbom.NewProperty("build:compiler", compiler))
+		}
 		if tags, ok := bi.Settings["-tags"]; ok {
 			for _, tag := range strings.Split(tags, ",") {
 				properties = append(properties, sbom.NewProperty("build:tag", tag))
@@ -337,7 +340,7 @@ func downloadModules(modules []gomod.Module) error {
 		// Check that the hash of the downloaded module matches
 		// the one found in the binary. We want to report the version
 		// for the *exact* module version or nothing at all.
-		if mm.Sum != download.Sum {
+		if mm.Sum != "" && mm.Sum != download.Sum {
 			log.Warn().
 				Str("binaryHash", mm.Sum).
 				Str("downloadHash", download.Sum).
