@@ -40,6 +40,7 @@ dep     github.com/briandowns/spinner   v1.11.1
 		require.Equal(t, "k8s.io/minikube/cmd/minikube", bi.Path)
 		require.NotNil(t, bi.Main)
 		require.Len(t, bi.Deps, 2)
+		require.Nil(t, bi.Settings)
 
 		// Main module
 		require.Equal(t, "k8s.io/minikube", bi.Main.Path)
@@ -83,6 +84,7 @@ build   vcs.modified=false
 		require.Equal(t, "k8s.io/minikube/cmd/minikube", bi.Path)
 		require.NotNil(t, bi.Main)
 		require.Empty(t, bi.Deps)
+		require.NotNil(t, bi.Settings)
 
 		// Main module
 		require.Equal(t, "k8s.io/minikube", bi.Main.Path)

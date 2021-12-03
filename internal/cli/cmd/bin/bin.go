@@ -169,12 +169,12 @@ func Exec(options Options) error {
 		subpath := strings.TrimPrefix(bi.Path, bi.Main.Path)
 		subpath = strings.TrimPrefix(subpath, "/")
 
-		oldPURL := mainComponent.PackageURL
-		newPURL := mainComponent.PackageURL + "#" + subpath
+		oldPURL := bom.Metadata.Component.PackageURL
+		newPURL := oldPURL + "#" + subpath
 
 		// Update PURL of main component
-		mainComponent.BOMRef = newPURL
-		mainComponent.PackageURL = newPURL
+		bom.Metadata.Component.BOMRef = newPURL
+		bom.Metadata.Component.PackageURL = newPURL
 
 		// Update PURL in dependency graph
 		for i, dep := range *bom.Dependencies {
