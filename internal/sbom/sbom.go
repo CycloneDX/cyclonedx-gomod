@@ -26,6 +26,7 @@ import (
 	"hash"
 	"io"
 	"os"
+	"sort"
 
 	"golang.org/x/crypto/sha3"
 
@@ -190,4 +191,14 @@ func NewProperty(name, value string) cdx.Property {
 		Name:  fmt.Sprintf("%s:%s", PropertyPrefix, name),
 		Value: value,
 	}
+}
+
+func SortProperties(ps []cdx.Property) {
+	sort.Slice(ps, func(i, j int) bool {
+		if ps[i].Name == ps[j].Name {
+			return ps[i].Value < ps[j].Value
+		}
+
+		return ps[i].Name < ps[j].Name
+	})
 }
