@@ -211,6 +211,22 @@ func TestToComponent(t *testing.T) {
 		require.Equal(t, "pkg:golang/pathReplace@versionReplace?type=module", component.PackageURL)
 		require.Equal(t, cdx.ScopeRequired, component.Scope)
 	})
+
+	t.Run("WithSum", func(t *testing.T) {
+		module := gomod.Module{
+			Path:    "path",
+			Version: "version",
+			Sum:     "h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=",
+		}
+
+		component, err := ToComponent(module)
+		require.NoError(t, err)
+		require.NotNil(t, component)
+
+		require.NotNil(t, component.Hashes)
+		require.Equal(t, cdx.HashAlgoSHA256, (*component.Hashes)[0].Algorithm)
+		require.Equal(t, "a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b", (*component.Hashes)[0].Value)
+	})
 }
 
 func TestResolveVCSURL(t *testing.T) {

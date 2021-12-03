@@ -9,6 +9,7 @@
 * `app`: Add option to include packages in application SBOM ([#85](https://github.com/CycloneDX/cyclonedx-gomod/issues/85) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
 * `app`: The `-packages` and `-files` options are now also applied to the standard library component (when `-std` is used) ([#84](https://github.com/CycloneDX/cyclonedx-gomod/issues/84) via [#92](https://github.com/CycloneDX/cyclonedx-gomod/pull/92))
   * Thanks [TheDiveO](https://github.com/TheDiveO) for reporting!
+* `bin`: Add support for build info in binaries built with Go 1.18+ ([#86](https://github.com/CycloneDX/cyclonedx-gomod/issues/86) via [#101](https://github.com/CycloneDX/cyclonedx-gomod/pull/101))
 * Package URLs now include a `type` qualifier to better differentiate between modules and packages (via [`1c4b136`](https://github.com/CycloneDX/cyclonedx-gomod/pull/92/commits/1c4b1366ac23e6a4387f1e6d4b35b67930184aed))
 
 ### Breaking Changes

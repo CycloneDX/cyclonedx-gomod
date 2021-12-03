@@ -19,10 +19,13 @@ package bin
 
 import (
 	"context"
-	"encoding/base64"
 	"flag"
 	"fmt"
 	"path/filepath"
+	"strings"
+	"time"
+
+	"golang.org/x/mod/module"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
@@ -81,27 +84,35 @@ func Exec(options Options) error {
 		return err
 	}
 
-	goVersion, modules, hashes, err := gomod.LoadModulesFromBinary(options.BinaryPath)
+	bi, err := gomod.LoadBuildInfo(options.BinaryPath)
 	if err != nil {
-		return fmt.Errorf("failed to extract modules: %w", err)
-	} else if len(modules) == 0 {
-		return fmt.Errorf("failed to parse modules from %s", options.BinaryPath)
+		return fmt.Errorf("failed to load build info: %w", err)
+	} else if bi.Main == nil {
+		return fmt.Errorf("failed to parse any modules from %s", options.BinaryPath)
 	}
+
+	modules := append([]gomod.Module{*bi.Main}, bi.Deps...)
 
 	if options.IncludeStd {
 		modules = append(modules, gomod.Module{
 			Path:    gomod.StdlibModulePath,
-			Version: goVersion,
+			Version: bi.GoVersion,
 		})
 	}
 
 	if options.Version != "" {
 		modules[0].Version = options.Version
+	} else if modules[0].Version == "(devel)" && len(bi.Settings) > 0 {
+		log.Debug().Msg("building pseudo version from buildinfo")
+		modules[0].Version, err = buildPseudoVersion(bi)
+		if err != nil {
+			log.Warn().Err(err).Msg("failed to build pseudo version from buildinfo")
+		}
 	}
 
 	// If we want to resolve licenses, we have to download the modules first
 	if options.ResolveLicenses {
-		err = downloadModules(modules, hashes)
+		err = downloadModules(modules)
 		if err != nil {
 			return fmt.Errorf("failed to download modules: %w", err)
 		}
@@ -124,13 +135,12 @@ func Exec(options Options) error {
 	// Convert the other modules
 	components, err := modConv.ToComponents(modules[1:],
 		modConv.WithLicenses(options.ResolveLicenses),
-		withModuleHashes(hashes),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to convert modules: %w", err)
 	}
 
-	binaryProperties, err := createBinaryProperties(options.BinaryPath)
+	binaryProperties, err := buildBinaryProperties(options.BinaryPath, bi)
 	if err != nil {
 		return fmt.Errorf("failed to create binary properties")
 	}
@@ -154,7 +164,31 @@ func Exec(options Options) error {
 	bom.Components = &components
 	dependencyGraph := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencyGraph
-	bom.Compositions = createCompositions(*mainComponent, components)
+
+	if bi.Path != bi.Main.Path && strings.HasPrefix(bi.Path, bi.Main.Path) {
+		subpath := strings.TrimPrefix(bi.Path, bi.Main.Path)
+		subpath = strings.TrimPrefix(subpath, "/")
+
+		oldPURL := bom.Metadata.Component.PackageURL
+		newPURL := oldPURL + "#" + subpath
+
+		// Update PURL of main component
+		bom.Metadata.Component.BOMRef = newPURL
+		bom.Metadata.Component.PackageURL = newPURL
+
+		// Update PURL in dependency graph
+		for i, dep := range *bom.Dependencies {
+			if dep.Ref == oldPURL {
+				(*bom.Dependencies)[i].Ref = newPURL
+				break
+			}
+		}
+
+		// Because buildCompositions works on components and not modules,
+		// the updated PURL will be reflected in there without further ado.
+	}
+
+	bom.Compositions = buildCompositions(*mainComponent, components)
 
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)
@@ -163,47 +197,85 @@ func Exec(options Options) error {
 	return cliUtil.WriteBOM(bom, options.OutputOptions)
 }
 
-func withModuleHashes(hashes map[string]string) modConv.Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		h1, ok := hashes[m.Coordinates()]
-		if !ok {
-			return nil
-		}
-
-		h1Bytes, err := base64.StdEncoding.DecodeString(h1[3:])
-		if err != nil {
-			return fmt.Errorf("failed to base64 decode h1 hash: %w", err)
-		}
-
-		c.Hashes = &[]cdx.Hash{
-			{
-				Algorithm: cdx.HashAlgoSHA256,
-				Value:     fmt.Sprintf("%x", h1Bytes),
-			},
-		}
-
-		return nil
+// buildPseudoVersion builds a pseudo version for the main module.
+// Requires that the binary was built with Go 1.18+ and the build
+// settings include VCS information.
+//
+// Because major version and previous version are not known,
+// this operation will always produce a v0.0.0-TIME-REF version.
+func buildPseudoVersion(bi *gomod.BuildInfo) (string, error) {
+	vcsRev, ok := bi.Settings["vcs.revision"]
+	if !ok {
+		return "", fmt.Errorf("no vcs.revision buildinfo")
 	}
+	if len(vcsRev) > 12 {
+		vcsRev = vcsRev[:12]
+	}
+	vcsTimeStr, ok := bi.Settings["vcs.time"]
+	if !ok {
+		return "", fmt.Errorf("no vcs.time buildinfo")
+	}
+	vcsTime, err := time.Parse(time.RFC3339, vcsTimeStr)
+	if err != nil {
+		return "", err
+	}
+
+	return module.PseudoVersion("", "", vcsTime, vcsRev), nil
 }
 
-func createBinaryProperties(binaryPath string) ([]cdx.Property, error) {
+func buildBinaryProperties(binaryPath string, bi *gomod.BuildInfo) ([]cdx.Property, error) {
+	properties := []cdx.Property{
+		sbom.NewProperty("binary:name", filepath.Base(binaryPath)),
+		sbom.NewProperty("build:env:GOVERSION", bi.GoVersion),
+	}
+
+	if len(bi.Settings) > 0 {
+		if cgo, ok := bi.Settings["CGO_ENABLED"]; ok {
+			properties = append(properties, sbom.NewProperty("build:env:CGO_ENABLED", cgo))
+		}
+		if goarch, ok := bi.Settings["GOARCH"]; ok {
+			properties = append(properties, sbom.NewProperty("build:env:GOARCH", goarch))
+		}
+		if goos, ok := bi.Settings["GOOS"]; ok {
+			properties = append(properties, sbom.NewProperty("build:env:GOOS", goos))
+		}
+		if compiler, ok := bi.Settings["-compiler"]; ok {
+			properties = append(properties, sbom.NewProperty("build:compiler", compiler))
+		}
+		if tags, ok := bi.Settings["-tags"]; ok {
+			for _, tag := range strings.Split(tags, ",") {
+				properties = append(properties, sbom.NewProperty("build:tag", tag))
+			}
+		}
+		if vcs, ok := bi.Settings["vcs"]; ok {
+			properties = append(properties, sbom.NewProperty("build:vcs", vcs))
+		}
+		if vcsRev, ok := bi.Settings["vcs.revision"]; ok {
+			properties = append(properties, sbom.NewProperty("build:vcs:revision", vcsRev))
+		}
+		if vcsTime, ok := bi.Settings["vcs.time"]; ok {
+			properties = append(properties, sbom.NewProperty("build:vcs:time", vcsTime))
+		}
+		if vcsModified, ok := bi.Settings["vcs.modified"]; ok {
+			properties = append(properties, sbom.NewProperty("build:vcs:modified", vcsModified))
+		}
+	}
+
 	binaryHashes, err := sbom.CalculateFileHashes(binaryPath,
 		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate binary hashes: %w", err)
 	}
-
-	properties := []cdx.Property{
-		sbom.NewProperty("binary:name", filepath.Base(binaryPath)),
-	}
 	for _, hash := range binaryHashes {
 		properties = append(properties, sbom.NewProperty(fmt.Sprintf("binary:hash:%s", hash.Algorithm), hash.Value))
 	}
 
+	sbom.SortProperties(properties)
+
 	return properties, nil
 }
 
-func createCompositions(mainComponent cdx.Component, components []cdx.Component) *[]cdx.Composition {
+func buildCompositions(mainComponent cdx.Component, components []cdx.Component) *[]cdx.Composition {
 	compositions := make([]cdx.Composition, 0)
 
 	// We know all components that the main component directly or indirectly depends on,
@@ -228,15 +300,15 @@ func createCompositions(mainComponent cdx.Component, components []cdx.Component)
 	return &compositions
 }
 
-func downloadModules(modules []gomod.Module, hashes map[string]string) error {
+func downloadModules(modules []gomod.Module) error {
 	modulesToDownload := make([]gomod.Module, 0)
-	for i, module := range modules {
-		if module.Path == gomod.StdlibModulePath {
+	for i := range modules {
+		if modules[i].Path == gomod.StdlibModulePath {
 			continue // We can't download the stdlib
 		}
 
 		// When modules are replaced, only download the replacement.
-		if module.Replace != nil {
+		if modules[i].Replace != nil {
 			modulesToDownload = append(modulesToDownload, *modules[i].Replace)
 		} else {
 			modulesToDownload = append(modulesToDownload, modules[i])
@@ -257,8 +329,8 @@ func downloadModules(modules []gomod.Module, hashes map[string]string) error {
 			continue
 		}
 
-		module := matchModule(modules, download.Coordinates())
-		if module == nil {
+		mm := matchModule(modules, download.Coordinates())
+		if mm == nil {
 			log.Warn().
 				Str("module", download.Coordinates()).
 				Msg("downloaded module not found")
@@ -268,34 +340,31 @@ func downloadModules(modules []gomod.Module, hashes map[string]string) error {
 		// Check that the hash of the downloaded module matches
 		// the one found in the binary. We want to report the version
 		// for the *exact* module version or nothing at all.
-		hash, ok := hashes[download.Coordinates()]
-		if ok {
-			if hash != download.Sum {
-				log.Warn().
-					Str("binaryHash", hash).
-					Str("downloadHash", download.Sum).
-					Str("module", download.Coordinates()).
-					Msg("module hash mismatch")
-				continue
-			}
+		if mm.Sum != "" && mm.Sum != download.Sum {
+			log.Warn().
+				Str("binaryHash", mm.Sum).
+				Str("downloadHash", download.Sum).
+				Str("module", download.Coordinates()).
+				Msg("module hash mismatch")
+			continue
 		}
 
 		log.Debug().
 			Str("module", download.Coordinates()).
 			Msg("module downloaded")
 
-		module.Dir = downloads[i].Dir
+		mm.Dir = downloads[i].Dir
 	}
 
 	return nil
 }
 
 func matchModule(modules []gomod.Module, coordinates string) *gomod.Module {
-	for i, module := range modules {
-		if module.Replace != nil && coordinates == module.Replace.Coordinates() {
+	for i, m := range modules {
+		if m.Replace != nil && coordinates == m.Replace.Coordinates() {
 			return modules[i].Replace
 		}
-		if coordinates == module.Coordinates() {
+		if coordinates == m.Coordinates() {
 			return &modules[i]
 		}
 	}

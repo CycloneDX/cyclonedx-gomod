@@ -24,8 +24,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestParseModulesFromBinary(t *testing.T) {
-	cmdOutput := `minikube: go1.16.4
+func TestParseBuildInfo(t *testing.T) {
+	t.Run("Go<1.18", func(t *testing.T) {
+		out := `minikube: go1.16.4
 path    k8s.io/minikube/cmd/minikube
 mod     k8s.io/minikube (devel) 
 dep     cloud.google.com/go     v0.84.0 h1:hVhK90DwCdOAYGME/FJd9vNIZye9HBR6Yy3fu4js3N8=
@@ -33,32 +34,71 @@ dep     github.com/briandowns/spinner   v1.11.1
 =>      github.com/alonyb/spinner       v1.12.7 h1:FflTMA9I2xRd8OQ5swyZY6Q1DFeaicA/bWo6/oM82a8=
 `
 
-	goVersion, modules, hashes := parseModulesFromBinary("minikube", strings.NewReader(cmdOutput))
-	require.Equal(t, "go1.16.4", goVersion)
-	require.Len(t, modules, 3)
-	require.Len(t, hashes, 2)
+		bi, err := parseBuildInfo("minikube", strings.NewReader(out))
+		require.NoError(t, err)
+		require.Equal(t, "go1.16.4", bi.GoVersion)
+		require.Equal(t, "k8s.io/minikube/cmd/minikube", bi.Path)
+		require.NotNil(t, bi.Main)
+		require.Len(t, bi.Deps, 2)
+		require.Nil(t, bi.Settings)
 
-	// Main module
-	require.Equal(t, "k8s.io/minikube", modules[0].Path)
-	require.Equal(t, "(devel)", modules[0].Version)
-	require.True(t, modules[0].Main)
-	require.NotContains(t, hashes, modules[0].Coordinates())
+		// Main module
+		require.Equal(t, "k8s.io/minikube", bi.Main.Path)
+		require.Equal(t, "(devel)", bi.Main.Version)
+		require.True(t, bi.Main.Main)
+		require.Empty(t, bi.Main.Sum)
 
-	// Module w/o replacement
-	require.Equal(t, "cloud.google.com/go", modules[1].Path)
-	require.Equal(t, "v0.84.0", modules[1].Version)
-	require.Contains(t, hashes, modules[1].Coordinates())
-	require.Equal(t, "h1:hVhK90DwCdOAYGME/FJd9vNIZye9HBR6Yy3fu4js3N8=", hashes["cloud.google.com/go@v0.84.0"])
+		// Module w/o replacement
+		require.Equal(t, "cloud.google.com/go", bi.Deps[0].Path)
+		require.Equal(t, "v0.84.0", bi.Deps[0].Version)
+		require.Equal(t, "h1:hVhK90DwCdOAYGME/FJd9vNIZye9HBR6Yy3fu4js3N8=", bi.Deps[0].Sum)
 
-	// Module with replacement
-	require.Equal(t, "github.com/briandowns/spinner", modules[2].Path)
-	require.Equal(t, "v1.11.1", modules[2].Version)
-	require.NotContains(t, hashes, modules[2].Coordinates())
-	require.NotNil(t, modules[2].Replace)
+		// Module with replacement
+		require.Equal(t, "github.com/briandowns/spinner", bi.Deps[1].Path)
+		require.Equal(t, "v1.11.1", bi.Deps[1].Version)
+		require.Empty(t, bi.Deps[1].Sum)
+		require.NotNil(t, bi.Deps[1].Replace)
 
-	// Replacement
-	require.Equal(t, "github.com/alonyb/spinner", modules[2].Replace.Path)
-	require.Equal(t, "v1.12.7", modules[2].Replace.Version)
-	require.Contains(t, hashes, modules[2].Replace.Coordinates())
-	require.Equal(t, "h1:FflTMA9I2xRd8OQ5swyZY6Q1DFeaicA/bWo6/oM82a8=", hashes["github.com/alonyb/spinner@v1.12.7"])
+		// Replacement
+		require.Equal(t, "github.com/alonyb/spinner", bi.Deps[1].Replace.Path)
+		require.Equal(t, "v1.12.7", bi.Deps[1].Replace.Version)
+		require.Equal(t, "h1:FflTMA9I2xRd8OQ5swyZY6Q1DFeaicA/bWo6/oM82a8=", bi.Deps[1].Replace.Sum)
+	})
+
+	t.Run("Go>=1.18", func(t *testing.T) {
+		out := `minikube: devel go1.18-36be0be Thu Dec 2 16:48:07 2021 +0000
+path    k8s.io/minikube/cmd/minikube
+mod     k8s.io/minikube (devel)
+build   GOARCH=amd64
+build   GOOS=linux
+build   GOAMD64=v1
+build   vcs=git
+build   vcs.revision=febc262087e9e1f7342679bb12155072a4879316
+build   vcs.time=2021-11-21T18:14:41Z
+build   vcs.modified=false
+`
+
+		bi, err := parseBuildInfo("minikube", strings.NewReader(out))
+		require.NoError(t, err)
+		require.Equal(t, "go1.18-36be0be", bi.GoVersion)
+		require.Equal(t, "k8s.io/minikube/cmd/minikube", bi.Path)
+		require.NotNil(t, bi.Main)
+		require.Empty(t, bi.Deps)
+		require.NotNil(t, bi.Settings)
+
+		// Main module
+		require.Equal(t, "k8s.io/minikube", bi.Main.Path)
+		require.Equal(t, "(devel)", bi.Main.Version)
+		require.True(t, bi.Main.Main)
+		require.Empty(t, bi.Main.Sum)
+
+		// Build Settings
+		require.Equal(t, "amd64", bi.Settings["GOARCH"])
+		require.Equal(t, "linux", bi.Settings["GOOS"])
+		require.Equal(t, "v1", bi.Settings["GOAMD64"])
+		require.Equal(t, "git", bi.Settings["vcs"])
+		require.Equal(t, "febc262087e9e1f7342679bb12155072a4879316", bi.Settings["vcs.revision"])
+		require.Equal(t, "2021-11-21T18:14:41Z", bi.Settings["vcs.time"])
+		require.Equal(t, "false", bi.Settings["vcs.modified"])
+	})
 }

@@ -77,3 +77,26 @@ func TestNewProperty(t *testing.T) {
 	require.Equal(t, "cdx:gomod:name", property.Name)
 	require.Equal(t, "value", property.Value)
 }
+
+func TestSortProperties(t *testing.T) {
+	properties := []cdx.Property{
+		{
+			Name:  "foo",
+			Value: "bar",
+		},
+		{
+			Name:  "foo",
+			Value: "baz",
+		},
+		{
+			Name:  "a",
+			Value: "first",
+		},
+	}
+
+	SortProperties(properties)
+
+	require.Equal(t, "first", properties[0].Value)
+	require.Equal(t, "bar", properties[1].Value)
+	require.Equal(t, "baz", properties[2].Value)
+}
