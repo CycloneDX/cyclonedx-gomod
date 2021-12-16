@@ -31,76 +31,76 @@ import (
 )
 
 func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
-    if sbomOptions.Reproducible {
-        return nil
-    }
+	if sbomOptions.Reproducible {
+		return nil
+	}
 
-    if bom.Metadata == nil {
-        bom.Metadata = &cdx.Metadata{}
-    }
+	if bom.Metadata == nil {
+		bom.Metadata = &cdx.Metadata{}
+	}
 
-    tool, err := sbom.BuildToolMetadata()
-    if err != nil {
-        return fmt.Errorf("failed to build tool metadata: %w", err)
-    }
+	tool, err := sbom.BuildToolMetadata()
+	if err != nil {
+		return fmt.Errorf("failed to build tool metadata: %w", err)
+	}
 
-    bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
-    bom.Metadata.Tools = &[]cdx.Tool{*tool}
+	bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
+	bom.Metadata.Tools = &[]cdx.Tool{*tool}
 
-    return nil
+	return nil
 }
 
 // SetSerialNumber sets the serial number of a given BOM according to the provided SBOMOptions.
 func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
-    if sbomOptions.NoSerialNumber {
-        return nil
-    }
+	if sbomOptions.NoSerialNumber {
+		return nil
+	}
 
-    if sbomOptions.SerialNumber == "" {
-        bom.SerialNumber = uuid.New().URN()
-    } else {
-        serial, err := uuid.Parse(sbomOptions.SerialNumber)
-        if err != nil {
-            return err
-        }
-        bom.SerialNumber = serial.URN()
-    }
+	if sbomOptions.SerialNumber == "" {
+		bom.SerialNumber = uuid.New().URN()
+	} else {
+		serial, err := uuid.Parse(sbomOptions.SerialNumber)
+		if err != nil {
+			return err
+		}
+		bom.SerialNumber = serial.URN()
+	}
 
-    return nil
+	return nil
 }
 
 // WriteBOM writes the given bom according to the provided OutputOptions.
 func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
-    log.Debug().
-        Str("output", outputOptions.OutputFilePath).
-        Bool("json", outputOptions.UseJSON).
-        Msg("writing sbom")
+	log.Debug().
+		Str("output", outputOptions.OutputFilePath).
+		Bool("json", outputOptions.UseJSON).
+		Msg("writing sbom")
 
-    var outputFormat cdx.BOMFileFormat
-    if outputOptions.UseJSON {
-        outputFormat = cdx.BOMFileFormatJSON
-    } else {
-        outputFormat = cdx.BOMFileFormatXML
-    }
+	var outputFormat cdx.BOMFileFormat
+	if outputOptions.UseJSON {
+		outputFormat = cdx.BOMFileFormatJSON
+	} else {
+		outputFormat = cdx.BOMFileFormatXML
+	}
 
-    var outputWriter io.Writer
-    if outputOptions.OutputFilePath == "" || outputOptions.OutputFilePath == "-" {
-        outputWriter = os.Stdout
-    } else {
-        outputFile, err := os.Create(outputOptions.OutputFilePath)
-        if err != nil {
-            return fmt.Errorf("failed to create output file %s: %w", outputOptions.OutputFilePath, err)
-        }
-        defer outputFile.Close()
-        outputWriter = outputFile
-    }
+	var outputWriter io.Writer
+	if outputOptions.OutputFilePath == "" || outputOptions.OutputFilePath == "-" {
+		outputWriter = os.Stdout
+	} else {
+		outputFile, err := os.Create(outputOptions.OutputFilePath)
+		if err != nil {
+			return fmt.Errorf("failed to create output file %s: %w", outputOptions.OutputFilePath, err)
+		}
+		defer outputFile.Close()
+		outputWriter = outputFile
+	}
 
-    encoder := cdx.NewBOMEncoder(outputWriter, outputFormat)
-    encoder.SetPretty(true)
+	encoder := cdx.NewBOMEncoder(outputWriter, outputFormat)
+	encoder.SetPretty(true)
 
-    if err := encoder.Encode(bom); err != nil {
-        return fmt.Errorf("failed to encode sbom: %w", err)
-    }
+	if err := encoder.Encode(bom); err != nil {
+		return fmt.Errorf("failed to encode sbom: %w", err)
+	}
 
-    return nil
+	return nil
 }

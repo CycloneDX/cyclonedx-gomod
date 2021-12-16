@@ -27,9 +27,9 @@ import (
 )
 
 func TestExecVersionCmd(t *testing.T) {
-    buf := new(bytes.Buffer)
+	buf := new(bytes.Buffer)
 
-    err := execVersionCmd(buf)
-    require.NoError(t, err)
-    require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
+	err := execVersionCmd(buf)
+	require.NoError(t, err)
+	require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
 }
