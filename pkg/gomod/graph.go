@@ -21,11 +21,11 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"io"
 	"sort"
 	"strings"
 
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/mod/semver"
 )

@@ -22,12 +22,13 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/util"
-	"github.com/rs/zerolog/log"
 	"io"
 	"path/filepath"
 	"strings"
+
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/util"
+	"github.com/rs/zerolog/log"
 )
 
 // IsVendoring determines whether of not the module at moduleDir is vendoring its dependencies.

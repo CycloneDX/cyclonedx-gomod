@@ -22,12 +22,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"io"
 	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"github.com/rs/zerolog/log"
 )
 

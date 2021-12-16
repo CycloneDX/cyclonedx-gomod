@@ -19,8 +19,9 @@ package gomod
 
 import (
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"path/filepath"
+
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 )
 
 // StdlibModulePath defines the path used for Go's standard library module.

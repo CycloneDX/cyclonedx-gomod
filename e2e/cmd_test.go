@@ -19,13 +19,13 @@ package e2e
 
 import (
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -33,72 +33,72 @@ import (
 )
 
 var (
-	snapshotter = cupaloy.NewDefaultConfig().
-			WithOptions(cupaloy.SnapshotSubdirectory("./testdata/snapshots"))
+    snapshotter = cupaloy.NewDefaultConfig().
+        WithOptions(cupaloy.SnapshotSubdirectory("./testdata/snapshots"))
 
-	// Prefix for temporary files and directories created during ITs
-	tmpPrefix = version.Name + "_"
+    // Prefix for temporary files and directories created during ITs
+    tmpPrefix = version.Name + "_"
 
-	// Serial number to use in order to keep generated SBOMs reproducible
-	zeroUUID = uuid.MustParse("00000000-0000-0000-0000-000000000000")
+    // Serial number to use in order to keep generated SBOMs reproducible
+    zeroUUID = uuid.MustParse("00000000-0000-0000-0000-000000000000")
 )
 
 func runSnapshotIT(t *testing.T, outputOptions *options.OutputOptions, execFunc func() error) {
-	skipIfShort(t)
+    skipIfShort(t)
 
-	bomFileExtension := ".xml"
-	if outputOptions.UseJSON {
-		bomFileExtension = ".json"
-	}
+    bomFileExtension := ".xml"
+    if outputOptions.UseJSON {
+        bomFileExtension = ".json"
+    }
 
-	// Create a temporary file to write the SBOM to
-	bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom"+bomFileExtension)
-	require.NoError(t, err)
-	defer os.Remove(bomFile.Name())
-	require.NoError(t, bomFile.Close())
+    // Create a temporary file to write the SBOM to
+    bomFile, err := os.CreateTemp("", tmpPrefix+t.Name()+"_*.bom"+bomFileExtension)
+    require.NoError(t, err)
+    defer os.Remove(bomFile.Name())
+    require.NoError(t, bomFile.Close())
 
-	// Generate the SBOM
-	outputOptions.OutputFilePath = bomFile.Name()
-	err = execFunc()
-	require.NoError(t, err)
+    // Generate the SBOM
+    outputOptions.OutputFilePath = bomFile.Name()
+    err = execFunc()
+    require.NoError(t, err)
 
-	// Sanity check: Make sure the SBOM is valid
-	assertValidSBOM(t, bomFile.Name())
+    // Sanity check: Make sure the SBOM is valid
+    assertValidSBOM(t, bomFile.Name())
 
-	// Read SBOM and compare with snapshot
-	bomFileContent, err := os.ReadFile(bomFile.Name())
-	require.NoError(t, err)
-	snapshotter.SnapshotT(t, string(bomFileContent))
+    // Read SBOM and compare with snapshot
+    bomFileContent, err := os.ReadFile(bomFile.Name())
+    require.NoError(t, err)
+    snapshotter.SnapshotT(t, string(bomFileContent))
 }
 
 func skipIfShort(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test in short mode")
-	}
+    if testing.Short() {
+        t.Skip("skipping integration test in short mode")
+    }
 }
 
 func assertValidSBOM(t *testing.T, bomFilePath string) {
-	inputFormat := "xml_v1_3"
-	if strings.HasSuffix(bomFilePath, ".json") {
-		inputFormat = "json_v1_3"
-	}
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFilePath, "--input-format", inputFormat, "--fail-on-errors")
-	valOut, err := valCmd.CombinedOutput()
-	if !assert.NoError(t, err) {
-		// Provide some context when test is failing
-		fmt.Printf("validation error: %s\n", string(valOut))
-	}
+    inputFormat := "xml_v1_3"
+    if strings.HasSuffix(bomFilePath, ".json") {
+        inputFormat = "json_v1_3"
+    }
+    valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFilePath, "--input-format", inputFormat, "--fail-on-errors")
+    valOut, err := valCmd.CombinedOutput()
+    if !assert.NoError(t, err) {
+        // Provide some context when test is failing
+        fmt.Printf("validation error: %s\n", string(valOut))
+    }
 }
 
 func extractFixture(t *testing.T, archivePath string) string {
-	tmpDir := t.TempDir()
+    tmpDir := t.TempDir()
 
-	cmd := exec.Command("tar", "xzf", archivePath, "-C", tmpDir)
-	out, err := cmd.CombinedOutput()
-	if !assert.NoError(t, err) {
-		// Provide some context when test is failing
-		fmt.Printf("validation error: %s\n", string(out))
-	}
+    cmd := exec.Command("tar", "xzf", archivePath, "-C", tmpDir)
+    out, err := cmd.CombinedOutput()
+    if !assert.NoError(t, err) {
+        // Provide some context when test is failing
+        fmt.Printf("validation error: %s\n", string(out))
+    }
 
-	return tmpDir
+    return tmpDir
 }

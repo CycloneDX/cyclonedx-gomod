@@ -20,16 +20,16 @@ package version
 import (
 	"bytes"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"testing"
 
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"github.com/stretchr/testify/require"
 )
 
 func TestExecVersionCmd(t *testing.T) {
-	buf := new(bytes.Buffer)
+    buf := new(bytes.Buffer)
 
-	err := execVersionCmd(buf)
-	require.NoError(t, err)
-	require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
+    err := execVersionCmd(buf)
+    require.NoError(t, err)
+    require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
 }

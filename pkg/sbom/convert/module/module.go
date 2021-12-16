@@ -21,13 +21,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/license"
-	pkgConv "github.com/CycloneDX/cyclonedx-gomod/pkg/sbom/convert/pkg"
 	"regexp"
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/license"
+	pkgConv "github.com/CycloneDX/cyclonedx-gomod/pkg/sbom/convert/pkg"
 	"github.com/rs/zerolog/log"
 )
 

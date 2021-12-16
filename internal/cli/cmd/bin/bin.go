@@ -21,19 +21,18 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/sbom"
-	modConv "github.com/CycloneDX/cyclonedx-gomod/pkg/sbom/convert/module"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"golang.org/x/mod/module"
-
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/sbom"
+	modConv "github.com/CycloneDX/cyclonedx-gomod/pkg/sbom/convert/module"
 	"github.com/peterbourgon/ff/v3/ffcli"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/mod/module"
 )
 
 func New() *ffcli.Command {

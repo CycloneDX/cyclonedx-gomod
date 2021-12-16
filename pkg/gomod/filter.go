@@ -20,10 +20,10 @@ package gomod
 import (
 	"bufio"
 	"bytes"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"io"
 	"strings"
 
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"github.com/rs/zerolog/log"
 )
 

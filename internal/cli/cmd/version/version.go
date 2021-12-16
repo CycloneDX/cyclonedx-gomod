@@ -20,25 +20,25 @@ package version
 import (
 	"context"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"io"
 	"os"
 
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
 func New() *ffcli.Command {
-	return &ffcli.Command{
-		Name:       "version",
-		ShortHelp:  "Show version information",
-		ShortUsage: "cyclonedx-gomod version",
-		Exec: func(_ context.Context, _ []string) error {
-			return execVersionCmd(os.Stdout)
-		},
-	}
+    return &ffcli.Command{
+        Name:       "version",
+        ShortHelp:  "Show version information",
+        ShortUsage: "cyclonedx-gomod version",
+        Exec: func(_ context.Context, _ []string) error {
+            return execVersionCmd(os.Stdout)
+        },
+    }
 }
 
 func execVersionCmd(writer io.Writer) error {
-	fmt.Fprintln(writer, version.Version)
-	return nil
+    fmt.Fprintln(writer, version.Version)
+    return nil
 }

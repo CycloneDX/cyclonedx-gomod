@@ -21,11 +21,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"io"
 	"os"
 	"os/exec"
 	"regexp"
+
+	"github.com/rs/zerolog/log"
 )
 
 // GetVersion returns the version of Go in the environment.

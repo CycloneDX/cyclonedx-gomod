@@ -23,17 +23,16 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"hash"
 	"io"
 	"os"
 	"sort"
 
-	"golang.org/x/crypto/sha3"
-
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/crypto/sha3"
 )
 
 func AssertLicenses(bom *cdx.BOM) {
