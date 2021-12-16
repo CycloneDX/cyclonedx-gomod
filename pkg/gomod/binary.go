@@ -20,10 +20,9 @@ package gomod
 import (
 	"bufio"
 	"bytes"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"io"
 	"strings"
-
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
 // BuildInfo represents the build information read from a Go binary.

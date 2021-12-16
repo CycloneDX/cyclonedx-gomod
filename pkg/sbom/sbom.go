@@ -23,6 +23,7 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"hash"
 	"io"
 	"os"
@@ -31,8 +32,7 @@ import (
 	"golang.org/x/crypto/sha3"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gomod"
 	"github.com/rs/zerolog/log"
 )
 

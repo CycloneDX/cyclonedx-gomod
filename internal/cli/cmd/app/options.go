@@ -21,12 +21,12 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/util"
 	"os"
 	"path/filepath"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gomod"
 )
 
 type Options struct {

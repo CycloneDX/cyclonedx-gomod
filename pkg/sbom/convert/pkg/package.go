@@ -19,11 +19,11 @@ package pkg
 
 import (
 	"fmt"
+	fileConv "github.com/CycloneDX/cyclonedx-gomod/pkg/sbom/convert/file"
 	"path/filepath"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	fileConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/file"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gomod"
 	"github.com/rs/zerolog/log"
 )
 

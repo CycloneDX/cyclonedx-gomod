@@ -20,9 +20,9 @@ package version
 import (
 	"bytes"
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"testing"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/stretchr/testify/require"
 )
 

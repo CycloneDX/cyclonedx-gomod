@@ -19,11 +19,11 @@ package file
 
 import (
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/sbom"
 
 	"github.com/rs/zerolog/log"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 )
 
 type Option func(absFilePath, relFilePath string, c *cdx.Component) error

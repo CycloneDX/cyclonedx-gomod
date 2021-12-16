@@ -19,13 +19,13 @@ package e2e
 
 import (
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

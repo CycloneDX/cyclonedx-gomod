@@ -3,7 +3,7 @@ package pkg
 import (
 	"testing"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gomod"
 	"github.com/stretchr/testify/require"
 )
 

@@ -19,13 +19,13 @@ package util
 
 import (
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/sbom"
 	"io"
 	"os"
 	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )

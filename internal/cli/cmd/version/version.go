@@ -20,10 +20,10 @@ package version
 import (
 	"context"
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/version"
 	"io"
 	"os"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
 

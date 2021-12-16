@@ -22,9 +22,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/gocmd"
 	"io"
-
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
 // See https://golang.org/ref/mod#go-mod-download
