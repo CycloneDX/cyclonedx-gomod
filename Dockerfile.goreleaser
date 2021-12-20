@@ -1,6 +1,6 @@
 # This Dockerfile is meant for GoReleaser exclusively, see .goreleaser.yml.
 # For manual builds, please use the regular Dockerfile or simply run "make docker".
-FROM golang:1.17.4-alpine3.15@sha256:d8bd35607c405fcef71d749aa367f86954706c3a57a602fb0bcaae3581043f8f
+FROM golang:1.17.5-alpine3.15@sha256:4918412049183afe42f1ecaf8f5c2a88917c2eab153ce5ecf4bf2d55c1507b74
 COPY cyclonedx-gomod /usr/local/bin/
 USER 1000
 ENTRYPOINT ["cyclonedx-gomod"]
