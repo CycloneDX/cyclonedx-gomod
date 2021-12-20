@@ -2,13 +2,19 @@ version: 2
 updates:
   - package-ecosystem: "docker"
     directory: "/"
+    reviewers:
+      - "CycloneDX/go-maintainers"
     schedule:
       interval: "daily"
   - package-ecosystem: "gomod"
     directory: "/"
+    reviewers:
+      - "CycloneDX/go-maintainers"
     schedule:
       interval: "daily"
   - package-ecosystem: "github-actions"
     directory: "/"
+    reviewers:
+      - "CycloneDX/go-maintainers"
     schedule:
       interval: "daily"
