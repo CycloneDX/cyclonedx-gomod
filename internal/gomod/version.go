@@ -18,14 +18,14 @@
 package gomod
 
 import (
-	"errors"
+	"bytes"
 	"fmt"
+	"io"
+	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/mod/module"
 	"golang.org/x/mod/semver"
@@ -50,7 +50,7 @@ func GetModuleVersion(moduleDir string) (string, error) {
 		if tagVersion, err := GetVersionFromTag(repoDir); err == nil {
 			return tagVersion, nil
 		} else {
-			if errors.Is(err, git.ErrRepositoryNotExists) {
+			if strings.Contains(err.Error(), "no git repository found") {
 				if strings.HasSuffix(repoDir, string(filepath.Separator)) {
 					// filepath.Abs and filepath.Dir both return paths
 					// that do not end with separators, UNLESS it's the
@@ -69,99 +69,117 @@ func GetModuleVersion(moduleDir string) (string, error) {
 // GetVersionFromTag checks if the HEAD commit is annotated with a tag and if it is, returns that tag's name.
 // If the HEAD commit is not tagged, a pseudo version will be generated and returned instead.
 func GetVersionFromTag(moduleDir string) (string, error) {
-	repo, err := git.PlainOpen(moduleDir)
+	headCommit, err := doExec("sh", []string{"-c", "git show-ref --heads | cut -d' ' -f1"}, moduleDir, nil)
 	if err != nil {
 		return "", err
 	}
 
-	headRef, err := repo.Head()
+	latestTag, err := doExec("sh", []string{"-c", "git describe --tags $(git rev-list --tags --max-count=1)"}, moduleDir, nil)
 	if err != nil {
 		return "", err
 	}
 
-	headCommit, err := repo.CommitObject(headRef.Hash())
+	latestTagCommit, err := doExec("sh", []string{"-c", fmt.Sprintf("git show-ref -s %s", string(latestTag))}, moduleDir, nil)
 	if err != nil {
 		return "", err
 	}
 
-	latestTag, err := GetLatestTag(repo, headCommit)
+	if string(latestTagCommit) == string(headCommit) {
+		return string(latestTag), nil
+	}
+
+	when, err := doExec("git", []string{"show", "--show-signature", strings.TrimSpace(string(latestTagCommit)), "--format=%cd", "--date=format:%Y-%m-%d %H:%M:%S"}, moduleDir, nil)
 	if err != nil {
-		if errors.Is(err, plumbing.ErrObjectNotFound) {
-			return module.PseudoVersion("v0", "", headCommit.Author.When, headCommit.Hash.String()[:12]), nil
+		return "", err
+	}
+
+	if strings.Contains(string(when), "gpg: Can't check signature: No public key") {
+		when, err = doExec("sh", []string{"-c", "tail -n +4 | head -n1"}, moduleDir, bytes.NewBuffer(when))
+		if err != nil {
+			return "", err
 		}
-
-		return "", err
 	}
 
-	if latestTag.commit.Hash.String() == headCommit.Hash.String() {
-		return latestTag.name, nil
+	suffix := strings.TrimSpace(string(when))
+	pseudoTime, err := time.Parse("2006-01-02 15:04:05", suffix)
+	if err != nil {
+		return "", err
 	}
 
 	return module.PseudoVersion(
-		semver.Major(latestTag.name),
-		latestTag.name,
-		latestTag.commit.Author.When,
-		latestTag.commit.Hash.String()[:12],
+		semver.Major(strings.TrimSpace(string(latestTag))),
+		strings.TrimSpace(string(latestTag)),
+		pseudoTime,
+		strings.TrimSpace(string(latestTagCommit))[:12],
 	), nil
 }
 
-type tag struct {
-	name   string
-	commit *object.Commit
+func doExec(cmd string, args []string, workDir string, stdin io.Reader) ([]byte, error) {
+	c := exec.Command(cmd, args...)
+	c.Dir = workDir
+	if stdin != nil {
+		c.Stdin = stdin
+	}
+	return c.CombinedOutput()
 }
 
-// GetLatestTag determines the latest tag relative to HEAD.
-// Only tags with valid semver are considered.
-func GetLatestTag(repo *git.Repository, headCommit *object.Commit) (*tag, error) {
-	log.Debug().
-		Str("headCommit", headCommit.Hash.String()).
-		Msg("getting latest tag for head commit")
+//type tag struct {
+//	name   string
+//	commit *object.Commit
+//}
 
-	tagRefs, err := repo.Tags()
-	if err != nil {
-		return nil, err
-	}
-
-	var latestTag tag
-
-	err = tagRefs.ForEach(func(ref *plumbing.Reference) error {
-		if semver.IsValid(ref.Name().Short()) {
-			rev := plumbing.Revision(ref.Name().String())
-
-			commitHash, err := repo.ResolveRevision(rev)
-			if err != nil {
-				return err
-			}
-
-			commit, err := repo.CommitObject(*commitHash)
-			if err != nil {
-				return err
-			}
-
-			isBeforeOrAtHead := commit.Committer.When.Before(headCommit.Author.When) ||
-				commit.Committer.When.Equal(headCommit.Committer.When)
-
-			if isBeforeOrAtHead && (latestTag.commit == nil || commit.Committer.When.After(latestTag.commit.Committer.When)) {
-				latestTag.name = ref.Name().Short()
-				latestTag.commit = commit
-			}
-		} else {
-			log.Debug().
-				Str("tag", ref.Name().Short()).
-				Str("hash", ref.Hash().String()).
-				Str("reason", "not a valid semver").
-				Msg("skipping tag")
-		}
-
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	if latestTag.commit == nil {
-		return nil, plumbing.ErrObjectNotFound
-	}
-
-	return &latestTag, nil
-}
+//// GetLatestTag determines the latest tag relative to HEAD.
+//// Only tags with valid semver are considered.
+//func GetLatestTag(repo *git.Repository, headCommit *object.Commit) (*tag, error) {
+//	log.Debug().
+//		Str("headCommit", headCommit.Hash.String()).
+//		Msg("getting latest tag for head commit")
+//
+//	tagRefs, err := repo.Tags()
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	var latestTag tag
+//
+//	err = tagRefs.ForEach(func(ref *plumbing.Reference) error {
+//		if semver.IsValid(ref.Name().Short()) {
+//			rev := plumbing.Revision(ref.Name().String())
+//
+//			commitHash, err := repo.ResolveRevision(rev)
+//			if err != nil {
+//				return err
+//			}
+//
+//			commit, err := repo.CommitObject(*commitHash)
+//			if err != nil {
+//				return err
+//			}
+//
+//			isBeforeOrAtHead := commit.Committer.When.Before(headCommit.Author.When) ||
+//				commit.Committer.When.Equal(headCommit.Committer.When)
+//
+//			if isBeforeOrAtHead && (latestTag.commit == nil || commit.Committer.When.After(latestTag.commit.Committer.When)) {
+//				latestTag.name = ref.Name().Short()
+//				latestTag.commit = commit
+//			}
+//		} else {
+//			log.Debug().
+//				Str("tag", ref.Name().Short()).
+//				Str("hash", ref.Hash().String()).
+//				Str("reason", "not a valid semver").
+//				Msg("skipping tag")
+//		}
+//
+//		return nil
+//	})
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	if latestTag.commit == nil {
+//		return nil, plumbing.ErrObjectNotFound
+//	}
+//
+//	return &latestTag, nil
+//}
