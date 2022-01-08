@@ -21,17 +21,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"io"
 	"os"
 	"os/exec"
 	"regexp"
+
+	"github.com/rs/zerolog"
 )
 
 // GetVersion returns the version of Go in the environment.
-func GetVersion() (string, error) {
+func GetVersion(logger zerolog.Logger) (string, error) {
 	buf := new(bytes.Buffer)
-	err := executeGoCommand([]string{"version"}, withStdout(buf))
+	err := executeGoCommand(logger, []string{"version"}, withStdout(buf))
 	if err != nil {
 		return "", err
 	}
@@ -55,9 +56,9 @@ func ParseVersion(s string) (string, error) {
 
 // GetEnv executes `go env -json` and returns the result as a map.
 // See https://pkg.go.dev/cmd/go#hdr-Print_Go_environment_information.
-func GetEnv() (map[string]string, error) {
+func GetEnv(logger zerolog.Logger) (map[string]string, error) {
 	buf := new(bytes.Buffer)
-	err := executeGoCommand([]string{"env", "-json"}, withStdout(buf))
+	err := executeGoCommand(logger, []string{"env", "-json"}, withStdout(buf))
 	if err != nil {
 		return nil, err
 	}
@@ -73,20 +74,20 @@ func GetEnv() (map[string]string, error) {
 
 // ListModule executes `go list -json -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
-func ListModule(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m"}, withDir(moduleDir), withStdout(writer))
+func ListModule(logger zerolog.Logger, moduleDir string, writer io.Writer) error {
+	return executeGoCommand(logger, []string{"list", "-mod", "readonly", "-json", "-m"}, withDir(moduleDir), withStdout(writer))
 }
 
 // ListModules executes `go list -json -m all` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
-func ListModules(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"list", "-mod", "readonly", "-json", "-m", "all"}, withDir(moduleDir), withStdout(writer))
+func ListModules(logger zerolog.Logger, moduleDir string, writer io.Writer) error {
+	return executeGoCommand(logger, []string{"list", "-mod", "readonly", "-json", "-m", "all"}, withDir(moduleDir), withStdout(writer))
 }
 
 // ListPackage executes `go list -json -e <PATTERN>` and writes the output to a given writer.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules.
-func ListPackage(moduleDir, packagePattern string, writer io.Writer) error {
-	return executeGoCommand([]string{"list", "-json", "-e", packagePattern},
+func ListPackage(logger zerolog.Logger, moduleDir, packagePattern string, writer io.Writer) error {
+	return executeGoCommand(logger, []string{"list", "-json", "-e", packagePattern},
 		withDir(moduleDir),
 		withStdout(writer),
 		withStderr(os.Stderr))
@@ -94,8 +95,8 @@ func ListPackage(moduleDir, packagePattern string, writer io.Writer) error {
 
 // ListPackages executes `go list -deps -json <PATTERN>` and writes the output to a given writer.
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules.
-func ListPackages(moduleDir, packagePattern string, writer io.Writer) error {
-	return executeGoCommand([]string{"list", "-deps", "-json", packagePattern},
+func ListPackages(logger zerolog.Logger, moduleDir, packagePattern string, writer io.Writer) error {
+	return executeGoCommand(logger, []string{"list", "-deps", "-json", packagePattern},
 		withDir(moduleDir),
 		withStdout(writer),
 		withStderr(os.Stderr),
@@ -104,20 +105,20 @@ func ListPackages(moduleDir, packagePattern string, writer io.Writer) error {
 
 // ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-vendor.
-func ListVendoredModules(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"mod", "vendor", "-v", "-e"}, withDir(moduleDir), withStderr(writer))
+func ListVendoredModules(logger zerolog.Logger, moduleDir string, writer io.Writer) error {
+	return executeGoCommand(logger, []string{"mod", "vendor", "-v", "-e"}, withDir(moduleDir), withStderr(writer))
 }
 
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-graph.
-func GetModuleGraph(moduleDir string, writer io.Writer) error {
-	return executeGoCommand([]string{"mod", "graph"}, withDir(moduleDir), withStdout(writer))
+func GetModuleGraph(logger zerolog.Logger, moduleDir string, writer io.Writer) error {
+	return executeGoCommand(logger, []string{"mod", "graph"}, withDir(moduleDir), withStdout(writer))
 }
 
 // ModWhy executes `go mod why -m -vendor` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-why.
-func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
-	return executeGoCommand(
+func ModWhy(logger zerolog.Logger, moduleDir string, modules []string, writer io.Writer) error {
+	return executeGoCommand(logger,
 		append([]string{"mod", "why", "-m", "-vendor"}, modules...),
 		withDir(moduleDir),
 		withStdout(writer),
@@ -127,14 +128,14 @@ func ModWhy(moduleDir string, modules []string, writer io.Writer) error {
 
 // LoadBuildInfo executes `go version -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-version-m.
-func LoadBuildInfo(binaryPath string, writer io.Writer) error {
-	return executeGoCommand([]string{"version", "-m", binaryPath}, withStdout(writer))
+func LoadBuildInfo(logger zerolog.Logger, binaryPath string, writer io.Writer) error {
+	return executeGoCommand(logger, []string{"version", "-m", binaryPath}, withStdout(writer))
 }
 
 // DownloadModules executes `go mod download -json` and writes the output to the given writers.
 // See https://golang.org/ref/mod#go-mod-download.
-func DownloadModules(modules []string, stdout, stderr io.Writer) error {
-	return executeGoCommand(
+func DownloadModules(logger zerolog.Logger, modules []string, stdout, stderr io.Writer) error {
+	return executeGoCommand(logger,
 		append([]string{"mod", "download", "-json"}, modules...),
 		withDir(os.TempDir()), // `mod download` modifies go.sum when executed in moduleDir
 		withStdout(stdout),
@@ -162,14 +163,14 @@ func withStdout(writer io.Writer) commandOption {
 	}
 }
 
-func executeGoCommand(args []string, options ...commandOption) error {
+func executeGoCommand(logger zerolog.Logger, args []string, options ...commandOption) error {
 	cmd := exec.Command("go", args...)
 
 	for _, option := range options {
 		option(cmd)
 	}
 
-	log.Debug().
+	logger.Debug().
 		Str("cmd", cmd.String()).
 		Str("dir", cmd.Dir).
 		Msg("executing command")

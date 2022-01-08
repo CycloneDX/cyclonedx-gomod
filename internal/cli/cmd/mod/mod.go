@@ -25,13 +25,13 @@ import (
 	"io"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/peterbourgon/ff/v3/ffcli"
+
 	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
-	"github.com/peterbourgon/ff/v3/ffcli"
-	"github.com/rs/zerolog/log"
 )
 
 func New() *ffcli.Command {
@@ -60,8 +60,6 @@ Examples:
 				options.ModuleDir = args[0]
 			}
 
-			options.LogOptions.ConfigureLogger()
-
 			return Exec(options)
 		},
 	}
@@ -73,18 +71,20 @@ func Exec(options Options) error {
 		return err
 	}
 
+	logger := options.Logger()
+
 	// Cheap trick to make Go download all required modules in the module graph
 	// without modifying go.sum (as `go mod download` would do).
-	err = gocmd.ModWhy(options.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
+	err = gocmd.ModWhy(logger, options.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
 	if err != nil {
 		return fmt.Errorf("failed to download modules: %w", err)
 	}
 
 	// Try to collect modules from vendor/ directory first and if that fails, use `go list`.
-	modules, err := gomod.GetVendoredModules(options.ModuleDir, options.IncludeTest)
+	modules, err := gomod.GetVendoredModules(logger, options.ModuleDir, options.IncludeTest)
 	if err != nil {
 		if errors.Is(err, gomod.ErrNotVendoring) {
-			modules, err = gomod.LoadModules(options.ModuleDir, options.IncludeTest)
+			modules, err = gomod.LoadModules(logger, options.ModuleDir, options.IncludeTest)
 			if err != nil {
 				return fmt.Errorf("failed to collect modules: %w", err)
 			}
@@ -94,7 +94,7 @@ func Exec(options Options) error {
 	}
 
 	if options.IncludeStd {
-		stdlibModule, err := gomod.LoadStdlibModule()
+		stdlibModule, err := gomod.LoadStdlibModule(logger)
 		if err != nil {
 			return fmt.Errorf("failed to load stdlib module: %w", err)
 		}
@@ -103,19 +103,19 @@ func Exec(options Options) error {
 		modules = append(modules, *stdlibModule)
 	}
 
-	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
+	err = gomod.ApplyModuleGraph(logger, options.ModuleDir, modules)
 	if err != nil {
 		return fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
 	// Determine version of main module
-	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
+	modules[0].Version, err = gomod.GetModuleVersion(logger, modules[0].Dir)
 	if err != nil {
-		log.Warn().Err(err).Msg("failed to determine version of main module")
+		logger.Warn().Err(err).Msg("failed to determine version of main module")
 	}
 
 	// Convert main module
-	mainComponent, err := modConv.ToComponent(modules[0],
+	mainComponent, err := modConv.ToComponent(logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentType(options.ComponentType)),
 		modConv.WithLicenses(options.ResolveLicenses),
 	)
@@ -124,7 +124,7 @@ func Exec(options Options) error {
 	}
 
 	// Convert the other modules
-	components, err := modConv.ToComponents(modules[1:],
+	components, err := modConv.ToComponents(logger, modules[1:],
 		modConv.WithLicenses(options.ResolveLicenses),
 		modConv.WithModuleHashes(),
 	)
@@ -142,7 +142,7 @@ func Exec(options Options) error {
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
-	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(logger, bom, options.SBOMOptions)
 	if err != nil {
 		return fmt.Errorf("failed to add common metadata: %w", err)
 	}

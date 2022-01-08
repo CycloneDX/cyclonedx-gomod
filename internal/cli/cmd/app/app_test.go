@@ -18,11 +18,13 @@
 package app
 
 import (
+	"io"
 	"os"
 	"runtime"
 	"testing"
 
 	"github.com/CycloneDX/cyclonedx-go"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -37,7 +39,7 @@ func TestCreateBuildProperties(t *testing.T) {
 		}()
 	}
 
-	properties, err := createBuildProperties()
+	properties, err := createBuildProperties(zerolog.New(io.Discard))
 	require.NoError(t, err)
 	require.Len(t, properties, 6)
 

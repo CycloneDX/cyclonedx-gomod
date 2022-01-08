@@ -62,7 +62,7 @@ func NewGenerator(binaryPath string, opts ...Option) (generate.Generator, error)
 
 // Generate implements the generate.Generator interface.
 func (g generator) Generate() (*cdx.BOM, error) {
-	bi, err := gomod.LoadBuildInfo(g.binaryPath)
+	bi, err := gomod.LoadBuildInfo(g.logger, g.binaryPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load build info: %w", err)
 	} else if bi.Main == nil {
@@ -101,13 +101,13 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
 	}
 
-	main, err := modConv.ToComponent(modules[0],
+	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
 		modConv.WithLicenses(g.resolveLicenses))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
-	components, err := modConv.ToComponents(modules[1:],
+	components, err := modConv.ToComponents(g.logger, modules[1:],
 		modConv.WithLicenses(g.resolveLicenses))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
@@ -115,7 +115,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	dependencies := sbom.BuildDependencyGraph(modules)
 	compositions := buildCompositions(main, components)
 
-	binaryProperties, err := buildBinaryProperties(g.binaryPath, bi)
+	binaryProperties, err := g.buildBinaryProperties(g.binaryPath, bi)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create binary properties")
 	}
@@ -158,7 +158,7 @@ func buildPseudoVersion(bi *gomod.BuildInfo) (string, error) {
 	return module.PseudoVersion("", "", vcsTime, vcsRev), nil
 }
 
-func buildBinaryProperties(binaryPath string, bi *gomod.BuildInfo) ([]cdx.Property, error) {
+func (g generator) buildBinaryProperties(binaryPath string, bi *gomod.BuildInfo) ([]cdx.Property, error) {
 	properties := []cdx.Property{
 		sbom.NewProperty("binary:name", filepath.Base(binaryPath)),
 		sbom.NewProperty("build:env:GOVERSION", bi.GoVersion),
@@ -196,7 +196,7 @@ func buildBinaryProperties(binaryPath string, bi *gomod.BuildInfo) ([]cdx.Proper
 		}
 	}
 
-	binaryHashes, err := sbom.CalculateFileHashes(binaryPath,
+	binaryHashes, err := sbom.CalculateFileHashes(g.logger, binaryPath,
 		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate binary hashes: %w", err)
@@ -250,7 +250,7 @@ func (g generator) downloadModules(modules []gomod.Module) error {
 		}
 	}
 
-	downloads, err := gomod.Download(modulesToDownload)
+	downloads, err := gomod.Download(g.logger, modulesToDownload)
 	if err != nil {
 		return err
 	}

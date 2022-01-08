@@ -20,16 +20,18 @@ package gocmd
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"runtime"
 	"strings"
 	"testing"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetVersion(t *testing.T) {
-	version, err := GetVersion()
+	version, err := GetVersion(zerolog.New(io.Discard))
 	require.NoError(t, err)
 	require.Equal(t, runtime.Version(), version)
 }
@@ -55,7 +57,7 @@ func TestParseVersion(t *testing.T) {
 }
 
 func TestGetEnv(t *testing.T) {
-	env, err := GetEnv()
+	env, err := GetEnv(zerolog.New(io.Discard))
 	require.NoError(t, err)
 
 	require.Contains(t, env, "CGO_ENABLED")
@@ -67,7 +69,7 @@ func TestGetEnv(t *testing.T) {
 
 func TestListModule(t *testing.T) {
 	buf := new(bytes.Buffer)
-	err := ListModule("../../", buf)
+	err := ListModule(zerolog.New(io.Discard), "../../", buf)
 	require.NoError(t, err)
 
 	mod := make(map[string]interface{})
@@ -79,7 +81,7 @@ func TestListModule(t *testing.T) {
 
 func TestListModules(t *testing.T) {
 	buf := new(bytes.Buffer)
-	err := ListModules("../../", buf)
+	err := ListModules(zerolog.New(io.Discard), "../../", buf)
 	require.NoError(t, err)
 
 	mod := make(map[string]interface{})
@@ -92,7 +94,7 @@ func TestListModules(t *testing.T) {
 
 func TestGetModuleGraph(t *testing.T) {
 	buf := new(bytes.Buffer)
-	err := GetModuleGraph("../../", buf)
+	err := GetModuleGraph(zerolog.New(io.Discard), "../../", buf)
 	require.NoError(t, err)
 
 	assert.Equal(t, 0, strings.Index(buf.String(), "github.com/CycloneDX/cyclonedx-gomod"))
@@ -100,7 +102,7 @@ func TestGetModuleGraph(t *testing.T) {
 
 func TestModWhy(t *testing.T) {
 	buf := new(bytes.Buffer)
-	err := ModWhy("../../", []string{"github.com/CycloneDX/cyclonedx-go"}, buf)
+	err := ModWhy(zerolog.New(io.Discard), "../../", []string{"github.com/CycloneDX/cyclonedx-go"}, buf)
 	require.NoError(t, err)
 
 	require.Equal(t, `# github.com/CycloneDX/cyclonedx-go

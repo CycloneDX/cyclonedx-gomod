@@ -27,8 +27,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"github.com/rs/zerolog/log"
 )
 
 // See https://golang.org/cmd/go/#hdr-List_packages_or_modules
@@ -63,14 +64,14 @@ func (pe PackageError) Error() string {
 	return pe.Err
 }
 
-func LoadPackage(moduleDir, packagePattern string) (*Package, error) {
-	log.Debug().
+func LoadPackage(logger zerolog.Logger, moduleDir, packagePattern string) (*Package, error) {
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Str("packagePattern", packagePattern).
 		Msg("loading package")
 
 	buf := new(bytes.Buffer)
-	err := gocmd.ListPackage(moduleDir, toRelativePackagePath(packagePattern), buf)
+	err := gocmd.ListPackage(logger, moduleDir, toRelativePackagePath(packagePattern), buf)
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +89,8 @@ func LoadPackage(moduleDir, packagePattern string) (*Package, error) {
 	return &pkg, nil
 }
 
-func LoadModulesFromPackages(moduleDir, packagePattern string) ([]Module, error) {
-	log.Debug().
+func LoadModulesFromPackages(logger zerolog.Logger, moduleDir, packagePattern string) ([]Module, error) {
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Msg("loading modules")
 
@@ -98,22 +99,22 @@ func LoadModulesFromPackages(moduleDir, packagePattern string) ([]Module, error)
 	}
 
 	buf := new(bytes.Buffer)
-	err := gocmd.ListPackages(moduleDir, toRelativePackagePath(packagePattern), buf)
+	err := gocmd.ListPackages(logger, moduleDir, toRelativePackagePath(packagePattern), buf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list packages for pattern \"%s\": %w", packagePattern, err)
 	}
 
-	pkgMap, err := parsePackages(buf)
+	pkgMap, err := parsePackages(logger, buf)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse `go list` output: %w", err)
 	}
 
-	modules, err := convertPackagesToModules(moduleDir, pkgMap)
+	modules, err := convertPackagesToModules(logger, moduleDir, pkgMap)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert packages to modules: %w", err)
 	}
 
-	err = ResolveLocalReplacements(moduleDir, modules)
+	err = ResolveLocalReplacements(logger, moduleDir, modules)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve local replacements: %w", err)
 	}
@@ -125,7 +126,7 @@ func LoadModulesFromPackages(moduleDir, packagePattern string) ([]Module, error)
 
 // parsePackages parses the output of `go list -json`.
 // The keys of the returned map are module coordinates (path@version).
-func parsePackages(reader io.Reader) (map[string][]Package, error) {
+func parsePackages(logger zerolog.Logger, reader io.Reader) (map[string][]Package, error) {
 	pkgsMap := make(map[string][]Package)
 	jsonDecoder := json.NewDecoder(reader)
 
@@ -147,7 +148,7 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 		if pkg.Standard {
 			coordinates = StdlibModulePath
 		} else if pkg.Module == nil {
-			log.Debug().
+			logger.Debug().
 				Str("package", pkg.ImportPath).
 				Str("reason", "no associated module").
 				Msg("skipping package")
@@ -167,7 +168,7 @@ func parsePackages(reader io.Reader) (map[string][]Package, error) {
 	return pkgsMap, nil
 }
 
-func convertPackagesToModules(mainModuleDir string, pkgsMap map[string][]Package) ([]Module, error) {
+func convertPackagesToModules(logger zerolog.Logger, mainModuleDir string, pkgsMap map[string][]Package) ([]Module, error) {
 	modules := make([]Module, 0, len(pkgsMap))
 	isVendoring := IsVendoring(mainModuleDir)
 
@@ -182,7 +183,7 @@ func convertPackagesToModules(mainModuleDir string, pkgsMap map[string][]Package
 		)
 
 		if coordinates == StdlibModulePath {
-			module, err = LoadStdlibModule()
+			module, err = LoadStdlibModule(logger)
 			if err != nil {
 				return nil, fmt.Errorf("failed to load stdlib module: %w", err)
 			}

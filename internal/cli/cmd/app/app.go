@@ -26,14 +26,15 @@ import (
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/rs/zerolog"
+
 	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
-	"github.com/peterbourgon/ff/v3/ffcli"
-	"github.com/rs/zerolog/log"
 )
 
 func New() *ffcli.Command {
@@ -91,8 +92,6 @@ Examples:
 				options.ModuleDir = args[0]
 			}
 
-			options.LogOptions.ConfigureLogger()
-
 			return Exec(options)
 		},
 	}
@@ -104,7 +103,9 @@ func Exec(options Options) error {
 		return err
 	}
 
-	modules, err := gomod.LoadModulesFromPackages(options.ModuleDir, options.Main)
+	logger := options.Logger()
+
+	modules, err := gomod.LoadModulesFromPackages(logger, options.ModuleDir, options.Main)
 	if err != nil {
 		return fmt.Errorf("failed to load modules: %w", err)
 	}
@@ -123,19 +124,19 @@ func Exec(options Options) error {
 
 	// Dependencies need to be applied prior to determining the main
 	// module's version, because `go mod graph` omits that version.
-	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
+	err = gomod.ApplyModuleGraph(logger, options.ModuleDir, modules)
 	if err != nil {
 		return fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
 	// Determine version of main module
-	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
+	modules[0].Version, err = gomod.GetModuleVersion(logger, modules[0].Dir)
 	if err != nil {
 		return fmt.Errorf("failed to determine version of main module: %w", err)
 	}
 
 	// Convert main module
-	mainComponent, err := modConv.ToComponent(modules[0],
+	mainComponent, err := modConv.ToComponent(logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
 		modConv.WithLicenses(options.ResolveLicenses),
 		modConv.WithPackages(options.IncludePackages,
@@ -148,7 +149,7 @@ func Exec(options Options) error {
 	// Build properties (e.g. the Go version) depend on the environment
 	// and are thus only included when the SBOM doesn't have to be reproducible.
 	if !options.SBOMOptions.Reproducible {
-		buildProperties, err := createBuildProperties()
+		buildProperties, err := createBuildProperties(logger)
 		if err != nil {
 			return err
 		}
@@ -160,7 +161,7 @@ func Exec(options Options) error {
 	}
 
 	// Convert the other modules
-	components, err := modConv.ToComponents(modules[1:],
+	components, err := modConv.ToComponents(logger, modules[1:],
 		modConv.WithLicenses(options.ResolveLicenses),
 		modConv.WithModuleHashes(),
 		modConv.WithPackages(options.IncludePackages,
@@ -180,7 +181,7 @@ func Exec(options Options) error {
 	bom.Metadata = &cdx.Metadata{
 		Component: mainComponent,
 	}
-	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(logger, bom, options.SBOMOptions)
 	if err != nil {
 		return fmt.Errorf("failed to add common metadata: %w", err)
 	}
@@ -189,7 +190,7 @@ func Exec(options Options) error {
 	dependencies := sbom.BuildDependencyGraph(modules)
 	bom.Dependencies = &dependencies
 
-	enrichWithApplicationDetails(bom, options.ModuleDir, options.Main)
+	enrichWithApplicationDetails(logger, bom, options.ModuleDir, options.Main)
 
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)
@@ -205,8 +206,8 @@ var buildEnv = []string{
 	"GOVERSION",
 }
 
-func createBuildProperties() (properties []cdx.Property, err error) {
-	env, err := gocmd.GetEnv()
+func createBuildProperties(logger zerolog.Logger) (properties []cdx.Property, err error) {
+	env, err := gocmd.GetEnv(logger)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +215,7 @@ func createBuildProperties() (properties []cdx.Property, err error) {
 	for _, buildEnvKey := range buildEnv {
 		buildEnvVal, ok := env[buildEnvKey]
 		if !ok {
-			log.Warn().
+			logger.Warn().
 				Str("env", buildEnvKey).
 				Msg("environment variable not found")
 			continue
@@ -270,7 +271,7 @@ func parseTagsFromGoFlags(goflags string) (tags []string) {
 //
 // If the package URL is updated, the BOM reference is as well.
 // All places within the BOM that reference the main component will be updated accordingly.
-func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainPkgDir string) {
+func enrichWithApplicationDetails(logger zerolog.Logger, bom *cdx.BOM, moduleDir, mainPkgDir string) {
 	// Resolve absolute paths to moduleDir and mainPkgDir.
 	// Both may contain traversals or similar elements we don't care about.
 	// This procedure is done during options validation already,
@@ -288,7 +289,7 @@ func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainPkgDir string) {
 		oldPURL := bom.Metadata.Component.PackageURL
 		newPURL := oldPURL + "#" + filepath.ToSlash(mainPkgDirRel)
 
-		log.Debug().
+		logger.Debug().
 			Str("old", oldPURL).
 			Str("new", newPURL).
 			Msg("updating purl of main component")

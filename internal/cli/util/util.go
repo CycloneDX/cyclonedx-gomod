@@ -24,13 +24,14 @@ import (
 	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/google/uuid"
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 )
 
-func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
+func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	if sbomOptions.Reproducible {
 		return nil
 	}
@@ -39,7 +40,7 @@ func AddCommonMetadata(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 		bom.Metadata = &cdx.Metadata{}
 	}
 
-	tool, err := sbom.BuildToolMetadata()
+	tool, err := sbom.BuildToolMetadata(logger)
 	if err != nil {
 		return fmt.Errorf("failed to build tool metadata: %w", err)
 	}
@@ -71,11 +72,6 @@ func SetSerialNumber(bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 
 // WriteBOM writes the given bom according to the provided OutputOptions.
 func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
-	log.Debug().
-		Str("output", outputOptions.OutputFilePath).
-		Bool("json", outputOptions.UseJSON).
-		Msg("writing sbom")
-
 	var outputFormat cdx.BOMFileFormat
 	if outputOptions.UseJSON {
 		outputFormat = cdx.BOMFileFormatJSON

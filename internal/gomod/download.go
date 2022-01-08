@@ -24,6 +24,8 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
@@ -44,12 +46,12 @@ func (m ModuleDownload) Coordinates() string {
 	return m.Path + "@" + m.Version
 }
 
-func Download(modules []Module) ([]ModuleDownload, error) {
+func Download(logger zerolog.Logger, modules []Module) ([]ModuleDownload, error) {
 	var downloads []ModuleDownload
 	chunks := chunkModules(modules, 20)
 
 	for _, chunk := range chunks {
-		chunkDownloads, err := downloadInternal(chunk)
+		chunkDownloads, err := downloadInternal(logger, chunk)
 		if err != nil {
 			return nil, err
 		}
@@ -60,7 +62,7 @@ func Download(modules []Module) ([]ModuleDownload, error) {
 	return downloads, nil
 }
 
-func downloadInternal(modules []Module) ([]ModuleDownload, error) {
+func downloadInternal(logger zerolog.Logger, modules []Module) ([]ModuleDownload, error) {
 	stdoutBuf := new(bytes.Buffer)
 	stderrBuf := new(bytes.Buffer)
 
@@ -69,7 +71,7 @@ func downloadInternal(modules []Module) ([]ModuleDownload, error) {
 		coordinates[i] = modules[i].Coordinates()
 	}
 
-	err := gocmd.DownloadModules(coordinates, stdoutBuf, stderrBuf)
+	err := gocmd.DownloadModules(logger, coordinates, stdoutBuf, stderrBuf)
 	if err != nil {
 		// `go mod download` will exit with code 1 if *any* of the
 		// module downloads failed. Download errors are reported for

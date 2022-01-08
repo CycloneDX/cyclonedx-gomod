@@ -22,10 +22,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"io"
 	"path/filepath"
 	"strings"
+
+	"github.com/rs/zerolog"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
@@ -38,7 +39,7 @@ func IsVendoring(moduleDir string) bool {
 
 var ErrNotVendoring = errors.New("the module is not vendoring its dependencies")
 
-func GetVendoredModules(moduleDir string, includeTest bool) ([]Module, error) {
+func GetVendoredModules(logger zerolog.Logger, moduleDir string, includeTest bool) ([]Module, error) {
 	if !IsModule(moduleDir) {
 		return nil, ErrNoModule
 	}
@@ -46,13 +47,13 @@ func GetVendoredModules(moduleDir string, includeTest bool) ([]Module, error) {
 		return nil, ErrNotVendoring
 	}
 
-	log.Debug().
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Bool("includeTest", includeTest).
 		Msg("loading vendored modules")
 
 	buf := new(bytes.Buffer)
-	err := gocmd.ListVendoredModules(moduleDir, buf)
+	err := gocmd.ListVendoredModules(logger, moduleDir, buf)
 	if err != nil {
 		return nil, fmt.Errorf("listing vendored modules failed: %w", err)
 	}
@@ -62,18 +63,18 @@ func GetVendoredModules(moduleDir string, includeTest bool) ([]Module, error) {
 		return nil, fmt.Errorf("parsing vendored modules failed: %w", err)
 	}
 
-	modules, err = FilterModules(moduleDir, modules, includeTest)
+	modules, err = FilterModules(logger, moduleDir, modules, includeTest)
 	if err != nil {
 		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
 
-	err = ResolveLocalReplacements(moduleDir, modules)
+	err = ResolveLocalReplacements(logger, moduleDir, modules)
 	if err != nil {
 		return nil, fmt.Errorf("resolving local modules failed: %w", err)
 	}
 
 	// Main module is not included in vendored module list, so we have to get it separately
-	mainModule, err := LoadModule(moduleDir)
+	mainModule, err := LoadModule(logger, moduleDir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get main module: %w", err)
 	}

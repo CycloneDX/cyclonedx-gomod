@@ -64,8 +64,6 @@ Example:
 				options.BinaryPath = args[0]
 			}
 
-			options.LogOptions.ConfigureLogger()
-
 			return Exec(options)
 		},
 	}
@@ -77,7 +75,10 @@ func Exec(options Options) error {
 		return err
 	}
 
+	logger := options.Logger()
+
 	generator, err := bin.NewGenerator(options.BinaryPath,
+		bin.WithLogger(logger),
 		bin.WithStdlib(options.IncludeStd),
 		bin.WithLicenseResolution(options.ResolveLicenses),
 		bin.WithVersionOverride(options.Version))
@@ -94,7 +95,7 @@ func Exec(options Options) error {
 	if err != nil {
 		return fmt.Errorf("failed to set serial number: %w", err)
 	}
-	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(logger, bom, options.SBOMOptions)
 	if err != nil {
 		return fmt.Errorf("failed to add common metadata")
 	}

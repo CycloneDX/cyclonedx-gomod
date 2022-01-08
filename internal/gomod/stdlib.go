@@ -21,6 +21,8 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
@@ -28,8 +30,8 @@ import (
 const StdlibModulePath = "std"
 
 // LoadStdlibModule loads the standard library module.
-func LoadStdlibModule() (*Module, error) {
-	env, err := gocmd.GetEnv()
+func LoadStdlibModule(logger zerolog.Logger) (*Module, error) {
+	env, err := gocmd.GetEnv(logger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get go env: %w", err)
 	}
@@ -39,12 +41,12 @@ func LoadStdlibModule() (*Module, error) {
 		return nil, fmt.Errorf("failed to determine GOROOT")
 	}
 
-	module, err := LoadModule(filepath.Join(goroot, "src"))
+	module, err := LoadModule(logger, filepath.Join(goroot, "src"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to load stdlib module: %w", err)
 	}
 
-	module.Version, err = gocmd.GetVersion()
+	module.Version, err = gocmd.GetVersion(logger)
 	if err != nil {
 		return nil, fmt.Errorf("failed to determine go version: %w", err)
 	}

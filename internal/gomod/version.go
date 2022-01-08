@@ -26,7 +26,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"golang.org/x/mod/module"
 	"golang.org/x/mod/semver"
 )
@@ -36,8 +36,8 @@ import (
 // If no Git repository is found in moduleDir, directories will be traversed
 // upwards until the root directory is reached. This is done to accommodate
 // for multi-module repositories, where modules are not placed in the repo root.
-func GetModuleVersion(moduleDir string) (string, error) {
-	log.Debug().
+func GetModuleVersion(logger zerolog.Logger, moduleDir string) (string, error) {
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Msg("detecting module version")
 
@@ -47,7 +47,7 @@ func GetModuleVersion(moduleDir string) (string, error) {
 	}
 
 	for {
-		if tagVersion, err := GetVersionFromTag(repoDir); err == nil {
+		if tagVersion, err := GetVersionFromTag(logger, repoDir); err == nil {
 			return tagVersion, nil
 		} else {
 			if errors.Is(err, git.ErrRepositoryNotExists) {
@@ -68,7 +68,7 @@ func GetModuleVersion(moduleDir string) (string, error) {
 
 // GetVersionFromTag checks if the HEAD commit is annotated with a tag and if it is, returns that tag's name.
 // If the HEAD commit is not tagged, a pseudo version will be generated and returned instead.
-func GetVersionFromTag(moduleDir string) (string, error) {
+func GetVersionFromTag(logger zerolog.Logger, moduleDir string) (string, error) {
 	repo, err := git.PlainOpen(moduleDir)
 	if err != nil {
 		return "", err
@@ -84,7 +84,7 @@ func GetVersionFromTag(moduleDir string) (string, error) {
 		return "", err
 	}
 
-	latestTag, err := GetLatestTag(repo, headCommit)
+	latestTag, err := GetLatestTag(logger, repo, headCommit)
 	if err != nil {
 		if errors.Is(err, plumbing.ErrObjectNotFound) {
 			return module.PseudoVersion("v0", "", headCommit.Author.When, headCommit.Hash.String()[:12]), nil
@@ -112,8 +112,8 @@ type tag struct {
 
 // GetLatestTag determines the latest tag relative to HEAD.
 // Only tags with valid semver are considered.
-func GetLatestTag(repo *git.Repository, headCommit *object.Commit) (*tag, error) {
-	log.Debug().
+func GetLatestTag(logger zerolog.Logger, repo *git.Repository, headCommit *object.Commit) (*tag, error) {
+	logger.Debug().
 		Str("headCommit", headCommit.Hash.String()).
 		Msg("getting latest tag for head commit")
 
@@ -146,7 +146,7 @@ func GetLatestTag(repo *git.Repository, headCommit *object.Commit) (*tag, error)
 				latestTag.commit = commit
 			}
 		} else {
-			log.Debug().
+			logger.Debug().
 				Str("tag", ref.Name().Short()).
 				Str("hash", ref.Hash().String()).
 				Str("reason", "not a valid semver").

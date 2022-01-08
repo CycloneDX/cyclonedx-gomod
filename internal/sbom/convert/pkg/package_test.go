@@ -1,10 +1,13 @@
 package pkg
 
 import (
+	"io"
 	"testing"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 )
 
 func TestToComponent(t *testing.T) {
@@ -17,7 +20,7 @@ func TestToComponent(t *testing.T) {
 		ImportPath: "packagePath",
 	}
 
-	c, err := ToComponent(p, m)
+	c, err := ToComponent(zerolog.New(io.Discard), p, m)
 	require.NoError(t, err)
 	require.Equal(t, "packagePath", c.Name)
 	require.Equal(t, "moduleVersion", c.Version)

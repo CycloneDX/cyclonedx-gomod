@@ -22,39 +22,41 @@ import (
 	"path/filepath"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	fileConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/file"
-	"github.com/rs/zerolog/log"
 )
 
-type Option func(gomod.Package, gomod.Module, *cdx.Component) error
+type Option func(zerolog.Logger, gomod.Package, gomod.Module, *cdx.Component) error
 
 func WithFiles(enabled bool) Option {
-	return func(p gomod.Package, m gomod.Module, c *cdx.Component) error {
+	return func(logger zerolog.Logger, pkg gomod.Package, module gomod.Module, component *cdx.Component) error {
 		if !enabled {
 			return nil
 		}
 
 		var files []string
-		files = append(files, p.GoFiles...)
-		files = append(files, p.CgoFiles...)
-		files = append(files, p.CFiles...)
-		files = append(files, p.CXXFiles...)
-		files = append(files, p.MFiles...)
-		files = append(files, p.HFiles...)
-		files = append(files, p.FFiles...)
-		files = append(files, p.SFiles...)
-		files = append(files, p.SwigFiles...)
-		files = append(files, p.SwigCXXFiles...)
-		files = append(files, p.SysoFiles...)
-		files = append(files, p.EmbedFiles...)
+		files = append(files, pkg.GoFiles...)
+		files = append(files, pkg.CgoFiles...)
+		files = append(files, pkg.CFiles...)
+		files = append(files, pkg.CXXFiles...)
+		files = append(files, pkg.MFiles...)
+		files = append(files, pkg.HFiles...)
+		files = append(files, pkg.FFiles...)
+		files = append(files, pkg.SFiles...)
+		files = append(files, pkg.SwigFiles...)
+		files = append(files, pkg.SwigCXXFiles...)
+		files = append(files, pkg.SysoFiles...)
+		files = append(files, pkg.EmbedFiles...)
 
 		var fileComponents []cdx.Component
 
-		for _, f := range files {
+		for _, file := range files {
 			fileComponent, err := fileConv.ToComponent(
-				filepath.Join(p.Dir, f),
-				f,
+				logger,
+				filepath.Join(pkg.Dir, file),
+				file,
 				fileConv.WithHashes(
 					cdx.HashAlgoMD5,
 					cdx.HashAlgoSHA1,
@@ -71,27 +73,27 @@ func WithFiles(enabled bool) Option {
 		}
 
 		if len(fileComponents) > 0 {
-			c.Components = &fileComponents
+			component.Components = &fileComponents
 		}
 
 		return nil
 	}
 }
 
-func ToComponent(p gomod.Package, m gomod.Module, options ...Option) (*cdx.Component, error) {
-	log.Debug().
-		Str("package", p.ImportPath).
+func ToComponent(logger zerolog.Logger, pkg gomod.Package, module gomod.Module, options ...Option) (*cdx.Component, error) {
+	logger.Debug().
+		Str("package", pkg.ImportPath).
 		Msg("converting package to component")
 
 	component := cdx.Component{
 		Type:       cdx.ComponentTypeLibrary,
-		Name:       p.ImportPath,
-		Version:    m.Version,
-		PackageURL: fmt.Sprintf("pkg:golang/%s@%s?type=package", p.ImportPath, m.Version),
+		Name:       pkg.ImportPath,
+		Version:    module.Version,
+		PackageURL: fmt.Sprintf("pkg:golang/%s@%s?type=package", pkg.ImportPath, module.Version),
 	}
 
 	for _, option := range options {
-		if err := option(p, m, &component); err != nil {
+		if err := option(logger, pkg, module, &component); err != nil {
 			return nil, err
 		}
 	}

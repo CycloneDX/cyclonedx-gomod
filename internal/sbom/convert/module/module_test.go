@@ -19,14 +19,17 @@ package module
 
 import (
 	"bytes"
+	"io"
 	"os/exec"
 	"path/filepath"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 )
 
 func TestWithLicenses(t *testing.T) {
@@ -36,7 +39,7 @@ func TestWithLicenses(t *testing.T) {
 		}
 		component := cdx.Component{}
 
-		err := WithLicenses(true)(module, &component)
+		err := WithLicenses(true)(zerolog.New(io.Discard), module, &component)
 		require.NoError(t, err)
 		require.NotNil(t, component.Evidence)
 		require.NotNil(t, component.Evidence.Licenses)
@@ -49,7 +52,7 @@ func TestWithLicenses(t *testing.T) {
 		}
 		component := cdx.Component{}
 
-		err := WithLicenses(true)(module, &component)
+		err := WithLicenses(true)(zerolog.New(io.Discard), module, &component)
 		require.NoError(t, err)
 		require.Nil(t, component.Evidence)
 	})
@@ -60,7 +63,7 @@ func TestWithLicenses(t *testing.T) {
 		}
 		component := cdx.Component{}
 
-		err := WithLicenses(true)(module, &component)
+		err := WithLicenses(true)(zerolog.New(io.Discard), module, &component)
 		require.Error(t, err)
 		require.Nil(t, component.Evidence)
 	})
@@ -71,7 +74,7 @@ func TestWithLicenses(t *testing.T) {
 		}
 		component := cdx.Component{}
 
-		err := WithLicenses(false)(module, &component)
+		err := WithLicenses(false)(zerolog.New(io.Discard), module, &component)
 		require.NoError(t, err)
 		require.Nil(t, component.Evidence)
 	})
@@ -99,7 +102,7 @@ func TestWithModuleHashes(t *testing.T) {
 	component := new(cdx.Component)
 
 	// Calculate hashes
-	err = WithModuleHashes()(module, component)
+	err = WithModuleHashes()(zerolog.New(io.Discard), module, component)
 	require.NoError(t, err)
 	require.NotNil(t, component.Hashes)
 
@@ -114,7 +117,7 @@ func TestWithComponentType(t *testing.T) {
 	module := gomod.Module{}
 	component := cdx.Component{}
 
-	err := WithComponentType(cdx.ComponentTypeContainer)(module, &component)
+	err := WithComponentType(cdx.ComponentTypeContainer)(zerolog.New(io.Discard), module, &component)
 	require.NoError(t, err)
 	require.Equal(t, cdx.ComponentTypeContainer, component.Type)
 }
@@ -123,7 +126,7 @@ func TestWithScope(t *testing.T) {
 	module := gomod.Module{}
 	component := cdx.Component{}
 
-	err := WithScope(cdx.ScopeExcluded)(module, &component)
+	err := WithScope(cdx.ScopeExcluded)(zerolog.New(io.Discard), module, &component)
 	require.NoError(t, err)
 	require.Equal(t, cdx.ScopeExcluded, component.Scope)
 }
@@ -135,7 +138,7 @@ func TestWithTestScope(t *testing.T) {
 		}
 		component := cdx.Component{}
 
-		err := WithTestScope(cdx.ScopeExcluded)(module, &component)
+		err := WithTestScope(cdx.ScopeExcluded)(zerolog.New(io.Discard), module, &component)
 		require.NoError(t, err)
 		require.Equal(t, cdx.ScopeExcluded, component.Scope)
 	})
@@ -146,7 +149,7 @@ func TestWithTestScope(t *testing.T) {
 		}
 		component := cdx.Component{}
 
-		err := WithTestScope(cdx.ScopeExcluded)(module, &component)
+		err := WithTestScope(cdx.ScopeExcluded)(zerolog.New(io.Discard), module, &component)
 		require.NoError(t, err)
 		require.Equal(t, cdx.Scope(""), component.Scope)
 	})
@@ -159,7 +162,7 @@ func TestToComponent(t *testing.T) {
 			Version: "version",
 		}
 
-		component, err := ToComponent(module)
+		component, err := ToComponent(zerolog.New(io.Discard), module)
 		require.NoError(t, err)
 		require.NotNil(t, component)
 
@@ -178,7 +181,7 @@ func TestToComponent(t *testing.T) {
 			TestOnly: true,
 		}
 
-		component, err := ToComponent(module)
+		component, err := ToComponent(zerolog.New(io.Discard), module)
 		require.NoError(t, err)
 		require.NotNil(t, component)
 
@@ -200,7 +203,7 @@ func TestToComponent(t *testing.T) {
 			},
 		}
 
-		component, err := ToComponent(module)
+		component, err := ToComponent(zerolog.New(io.Discard), module)
 		require.NoError(t, err)
 		require.NotNil(t, component)
 
@@ -219,7 +222,7 @@ func TestToComponent(t *testing.T) {
 			Sum:     "h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=",
 		}
 
-		component, err := ToComponent(module)
+		component, err := ToComponent(zerolog.New(io.Discard), module)
 		require.NoError(t, err)
 		require.NotNil(t, component)
 

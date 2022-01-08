@@ -18,11 +18,13 @@
 package gomod
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -44,7 +46,7 @@ func TestDownload(t *testing.T) {
 
 		os.Setenv("GOMODCACHE", tmpDir)
 
-		downloads, err := Download([]Module{
+		downloads, err := Download(zerolog.New(io.Discard), []Module{
 			{
 				Path:    "github.com/CycloneDX/cyclonedx-go",
 				Version: "v0.4.0",
@@ -58,7 +60,7 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("Error", func(t *testing.T) {
-		downloads, err := Download([]Module{
+		downloads, err := Download(zerolog.New(io.Discard), []Module{
 			{
 				Path:    "doesnotexist",
 				Version: "v0.0.0",

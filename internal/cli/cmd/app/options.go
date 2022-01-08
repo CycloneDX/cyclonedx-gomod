@@ -21,8 +21,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/rs/zerolog"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
@@ -115,7 +118,7 @@ func (o Options) validateMain(mainPkgDir string, errs *[]error) error {
 		return nil
 	}
 
-	pkg, err := gomod.LoadPackage(o.ModuleDir, o.Main)
+	pkg, err := gomod.LoadPackage(zerolog.New(io.Discard), o.ModuleDir, o.Main)
 	if err != nil {
 		return fmt.Errorf("failed to load package: %w", err)
 	}
