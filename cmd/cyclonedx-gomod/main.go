@@ -20,11 +20,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
-	"github.com/rs/zerolog/log"
 	"os"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 )
 
 func main() {

@@ -25,10 +25,11 @@ builds:
       -s
       -w
       -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{ .Tag }}
+    main: ./cmd/cyclonedx-gomod
     mod_timestamp: "{{ .CommitTimestamp }}"
     hooks:
       post:
-        - cmd: ./bin/cyclonedx-gomod app -licenses -packages -std -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
+        - cmd: ./bin/cyclonedx-gomod app -main ./cmd/cyclonedx-gomod -licenses -packages -std -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
           env:
             - GOARCH={{ .Arch }}
             - GOOS={{ .Os }}
