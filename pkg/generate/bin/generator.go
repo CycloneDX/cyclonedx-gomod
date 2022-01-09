@@ -38,8 +38,8 @@ type generator struct {
 	logger zerolog.Logger
 
 	binaryPath      string
+	detectLicenses  bool
 	includeStdlib   bool
-	resolveLicenses bool
 	versionOverride string
 }
 
@@ -88,7 +88,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		}
 	}
 
-	if g.resolveLicenses {
+	if g.detectLicenses {
 		// Before we can resolve licenses, we have to download the modules first
 		err = g.downloadModules(modules)
 		if err != nil {
@@ -103,12 +103,12 @@ func (g generator) Generate() (*cdx.BOM, error) {
 
 	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
-		modConv.WithLicenses(g.resolveLicenses))
+		modConv.WithLicenses(g.detectLicenses))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
 	components, err := modConv.ToComponents(g.logger, modules[1:],
-		modConv.WithLicenses(g.resolveLicenses))
+		modConv.WithLicenses(g.detectLicenses))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
 	}

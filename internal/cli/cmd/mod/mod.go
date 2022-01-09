@@ -19,19 +19,15 @@ package mod
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
-	"io"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/peterbourgon/ff/v3/ffcli"
 
 	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/generate/mod"
 )
 
 func New() *ffcli.Command {
@@ -73,84 +69,29 @@ func Exec(options Options) error {
 
 	logger := options.Logger()
 
-	// Cheap trick to make Go download all required modules in the module graph
-	// without modifying go.sum (as `go mod download` would do).
-	err = gocmd.ModWhy(logger, options.ModuleDir, []string{"github.com/CycloneDX/cyclonedx-gomod"}, io.Discard)
+	generator, err := mod.NewGenerator(options.ModuleDir,
+		mod.WithLogger(logger),
+		mod.WithComponentType(cdx.ComponentType(options.ComponentType)),
+		mod.WithIncludeStdlib(options.IncludeStd),
+		mod.WithIncludeTestModules(options.IncludeTest),
+		mod.WithLicenseDetection(options.ResolveLicenses))
 	if err != nil {
-		return fmt.Errorf("failed to download modules: %w", err)
+		return err
 	}
 
-	// Try to collect modules from vendor/ directory first and if that fails, use `go list`.
-	modules, err := gomod.GetVendoredModules(logger, options.ModuleDir, options.IncludeTest)
+	bom, err := generator.Generate()
 	if err != nil {
-		if errors.Is(err, gomod.ErrNotVendoring) {
-			modules, err = gomod.LoadModules(logger, options.ModuleDir, options.IncludeTest)
-			if err != nil {
-				return fmt.Errorf("failed to collect modules: %w", err)
-			}
-		} else {
-			return fmt.Errorf("failed to collect vendored modules: %w", err)
-		}
+		return err
 	}
 
-	if options.IncludeStd {
-		stdlibModule, err := gomod.LoadStdlibModule(logger)
-		if err != nil {
-			return fmt.Errorf("failed to load stdlib module: %w", err)
-		}
-
-		modules[0].Dependencies = append(modules[0].Dependencies, stdlibModule)
-		modules = append(modules, *stdlibModule)
-	}
-
-	err = gomod.ApplyModuleGraph(logger, options.ModuleDir, modules)
-	if err != nil {
-		return fmt.Errorf("failed to apply module graph: %w", err)
-	}
-
-	// Determine version of main module
-	modules[0].Version, err = gomod.GetModuleVersion(logger, modules[0].Dir)
-	if err != nil {
-		logger.Warn().Err(err).Msg("failed to determine version of main module")
-	}
-
-	// Convert main module
-	mainComponent, err := modConv.ToComponent(logger, modules[0],
-		modConv.WithComponentType(cdx.ComponentType(options.ComponentType)),
-		modConv.WithLicenses(options.ResolveLicenses),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to convert main module: %w", err)
-	}
-
-	// Convert the other modules
-	components, err := modConv.ToComponents(logger, modules[1:],
-		modConv.WithLicenses(options.ResolveLicenses),
-		modConv.WithModuleHashes(),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to convert modules: %w", err)
-	}
-
-	bom := cdx.NewBOM()
 	err = cliUtil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
 		return fmt.Errorf("failed to set serial number: %w", err)
-	}
-
-	// Assemble metadata
-	bom.Metadata = &cdx.Metadata{
-		Component: mainComponent,
 	}
 	err = cliUtil.AddCommonMetadata(logger, bom, options.SBOMOptions)
 	if err != nil {
 		return fmt.Errorf("failed to add common metadata: %w", err)
 	}
-
-	bom.Components = &components
-	dependencyGraph := sbom.BuildDependencyGraph(modules)
-	bom.Dependencies = &dependencyGraph
-
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)
 	}

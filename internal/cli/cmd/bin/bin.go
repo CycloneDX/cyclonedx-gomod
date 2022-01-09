@@ -79,8 +79,8 @@ func Exec(options Options) error {
 
 	generator, err := bin.NewGenerator(options.BinaryPath,
 		bin.WithLogger(logger),
-		bin.WithStdlib(options.IncludeStd),
-		bin.WithLicenseResolution(options.ResolveLicenses),
+		bin.WithIncludeStdlib(options.IncludeStd),
+		bin.WithLicenseDetection(options.ResolveLicenses),
 		bin.WithVersionOverride(options.Version))
 	if err != nil {
 		return err

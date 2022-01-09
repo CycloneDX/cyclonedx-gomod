@@ -15,12 +15,23 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package bin
+package mod
 
-import "github.com/rs/zerolog"
+import (
+	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/rs/zerolog"
+)
 
 // Option TODO
 type Option func(g *generator) error
+
+// WithComponentType TODO
+func WithComponentType(ctype cdx.ComponentType) Option {
+	return func(g *generator) error {
+		g.componentType = ctype
+		return nil
+	}
+}
 
 // WithIncludeStdlib TODO
 func WithIncludeStdlib(enable bool) Option {
@@ -30,10 +41,18 @@ func WithIncludeStdlib(enable bool) Option {
 	}
 }
 
+// WithIncludeTestModules TODO
+func WithIncludeTestModules(enable bool) Option {
+	return func(g *generator) error {
+		g.includeTest = enable
+		return nil
+	}
+}
+
 // WithLicenseDetection TODO
 func WithLicenseDetection(enable bool) Option {
 	return func(g *generator) error {
-		g.detectLicenses = enable
+		g.licenseDetection = enable
 		return nil
 	}
 }
@@ -42,14 +61,6 @@ func WithLicenseDetection(enable bool) Option {
 func WithLogger(logger zerolog.Logger) Option {
 	return func(g *generator) error {
 		g.logger = logger
-		return nil
-	}
-}
-
-// WithVersionOverride TODO
-func WithVersionOverride(version string) Option {
-	return func(g *generator) error {
-		g.versionOverride = version
 		return nil
 	}
 }

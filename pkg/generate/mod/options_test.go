@@ -15,11 +15,19 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package bin
+package mod
 
 import "testing"
 
+func TestWithComponentType(t *testing.T) {
+	// TODO
+}
+
 func TestWithIncludeStdlib(t *testing.T) {
+	// TODO
+}
+
+func TestWithIncludeTestModules(t *testing.T) {
 	// TODO
 }
 
@@ -28,9 +36,5 @@ func TestWithLicenseDetection(t *testing.T) {
 }
 
 func TestWithLogger(t *testing.T) {
-	// TODO
-}
-
-func TestWithVersionOverride(t *testing.T) {
 	// TODO
 }
