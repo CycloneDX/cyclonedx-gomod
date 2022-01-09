@@ -17,20 +17,39 @@
 
 package bin
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/require"
+)
 
 func TestWithIncludeStdlib(t *testing.T) {
-	// TODO
+	g := &generator{includeStdlib: false}
+	err := WithIncludeStdlib(true)(g)
+	require.NoError(t, err)
+	require.True(t, g.includeStdlib)
 }
 
 func TestWithLicenseDetection(t *testing.T) {
-	// TODO
+	g := &generator{detectLicenses: false}
+	err := WithLicenseDetection(true)(g)
+	require.NoError(t, err)
+	require.True(t, g.detectLicenses)
 }
 
 func TestWithLogger(t *testing.T) {
-	// TODO
+	g := &generator{logger: zerolog.New(os.Stdout)}
+	logger := zerolog.New(os.Stderr)
+	err := WithLogger(logger)(g)
+	require.NoError(t, err)
+	require.Equal(t, logger, g.logger)
 }
 
 func TestWithVersionOverride(t *testing.T) {
-	// TODO
+	g := &generator{versionOverride: ""}
+	err := WithVersionOverride("v1.0.0")(g)
+	require.NoError(t, err)
+	require.Equal(t, "v1.0.0", g.versionOverride)
 }
