@@ -52,7 +52,7 @@ func WithIncludeTestModules(enable bool) Option {
 // WithLicenseDetection TODO
 func WithLicenseDetection(enable bool) Option {
 	return func(g *generator) error {
-		g.licenseDetection = enable
+		g.detectLicenses = enable
 		return nil
 	}
 }

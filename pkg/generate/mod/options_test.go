@@ -17,24 +17,47 @@
 
 package mod
 
-import "testing"
+import (
+	"os"
+	"testing"
+
+	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/require"
+)
 
 func TestWithComponentType(t *testing.T) {
-	// TODO
+	g := &generator{componentType: cdx.ComponentTypeContainer}
+	err := WithComponentType(cdx.ComponentTypeDevice)(g)
+	require.NoError(t, err)
+	require.Equal(t, cdx.ComponentTypeDevice, g.componentType)
 }
 
 func TestWithIncludeStdlib(t *testing.T) {
-	// TODO
+	g := &generator{includeStdlib: false}
+	err := WithIncludeStdlib(true)(g)
+	require.NoError(t, err)
+	require.True(t, g.includeStdlib)
 }
 
 func TestWithIncludeTestModules(t *testing.T) {
-	// TODO
+	g := &generator{includeTest: false}
+	err := WithIncludeTestModules(true)(g)
+	require.NoError(t, err)
+	require.True(t, g.includeTest)
 }
 
 func TestWithLicenseDetection(t *testing.T) {
-	// TODO
+	g := &generator{detectLicenses: false}
+	err := WithLicenseDetection(true)(g)
+	require.NoError(t, err)
+	require.True(t, g.detectLicenses)
 }
 
 func TestWithLogger(t *testing.T) {
-	// TODO
+	g := &generator{logger: zerolog.New(os.Stdout)}
+	logger := zerolog.New(os.Stderr)
+	err := WithLogger(logger)(g)
+	require.NoError(t, err)
+	require.Equal(t, logger, g.logger)
 }

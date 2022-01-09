@@ -17,12 +17,28 @@
 
 package mod
 
-import "testing"
+import (
+	"errors"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
 
 func TestNewGenerator(t *testing.T) {
-	// TODO
-}
+	t.Run("Success", func(t *testing.T) {
+		g, err := NewGenerator("")
+		require.NoError(t, err)
+		require.NotNil(t, g)
+	})
 
-func TestGenerator_Generate(t *testing.T) {
-	// TODO
+	t.Run("OptionError", func(t *testing.T) {
+		failOption := func(g *generator) error {
+			return errors.New("test")
+		}
+
+		g, err := NewGenerator("", failOption)
+		require.Nil(t, g)
+		require.Error(t, err)
+		require.Equal(t, "test", err.Error())
+	})
 }

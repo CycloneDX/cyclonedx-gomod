@@ -36,11 +36,11 @@ import (
 type generator struct {
 	logger zerolog.Logger
 
-	moduleDir        string
-	componentType    cdx.ComponentType
-	includeStdlib    bool
-	includeTest      bool
-	licenseDetection bool
+	moduleDir      string
+	componentType  cdx.ComponentType
+	includeStdlib  bool
+	includeTest    bool
+	detectLicenses bool
 }
 
 // NewGenerator TODO
@@ -103,13 +103,13 @@ func (g generator) Generate() (*cdx.BOM, error) {
 
 	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(g.componentType),
-		modConv.WithLicenses(g.licenseDetection),
+		modConv.WithLicenses(g.detectLicenses),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
 	components, err := modConv.ToComponents(g.logger, modules[1:],
-		modConv.WithLicenses(g.licenseDetection),
+		modConv.WithLicenses(g.detectLicenses),
 		modConv.WithModuleHashes(),
 	)
 	if err != nil {
