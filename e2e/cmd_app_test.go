@@ -18,13 +18,22 @@
 package e2e
 
 import (
+	"io"
+	"os"
 	"testing"
+
+	"github.com/rs/zerolog"
+	"github.com/stretchr/testify/require"
 
 	appcmd "github.com/CycloneDX/cyclonedx-gomod/internal/cli/cmd/app"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
 func TestAppCmdSimple(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -41,6 +50,9 @@ func TestAppCmdSimple(t *testing.T) {
 }
 
 func TestAppCmdSimpleAssertLicenses(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -58,6 +70,9 @@ func TestAppCmdSimpleAssertLicenses(t *testing.T) {
 }
 
 func TestAppCmdSimpleWithFiles(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -76,6 +91,9 @@ func TestAppCmdSimpleWithFiles(t *testing.T) {
 }
 
 func TestAppCmdSimpleWithPackages(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/modcmd/simple.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -93,6 +111,9 @@ func TestAppCmdSimpleWithPackages(t *testing.T) {
 }
 
 func TestAppCmdSimpleMultiCommandUUID(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/appcmd/simple-multi-command.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -109,6 +130,9 @@ func TestAppCmdSimpleMultiCommandUUID(t *testing.T) {
 }
 
 func TestAppCmdSimpleMultiCommandPURL(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/appcmd/simple-multi-command.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -125,6 +149,9 @@ func TestAppCmdSimpleMultiCommandPURL(t *testing.T) {
 }
 
 func TestAppCmdVendored(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -141,6 +168,9 @@ func TestAppCmdVendored(t *testing.T) {
 }
 
 func TestAppCmdVendoredWithFiles(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -159,6 +189,9 @@ func TestAppCmdVendoredWithFiles(t *testing.T) {
 }
 
 func TestAppCmdVendoredWithPackages(t *testing.T) {
+	resetBuildEnv := setupAppTestBuildEnv(t)
+	defer resetBuildEnv()
+
 	fixturePath := extractFixture(t, "./testdata/modcmd/vendored.tar.gz")
 
 	appOptions := appcmd.Options{
@@ -173,4 +206,26 @@ func TestAppCmdVendoredWithPackages(t *testing.T) {
 	}
 
 	runSnapshotIT(t, &appOptions.OutputOptions, func() error { return appcmd.Exec(appOptions) })
+}
+
+func setupAppTestBuildEnv(t *testing.T) func() {
+	env, err := gocmd.GetEnv(zerolog.New(io.Discard))
+	require.NoError(t, err)
+
+	buildEnv := make(map[string][]string) // Env -> testValue, originalValue
+	buildEnv["CGO_ENABLED"] = []string{"0", env["CGO_ENABLED"]}
+	buildEnv["GOARCH"] = []string{"amd64", env["GOARCH"]}
+	buildEnv["GOOS"] = []string{"linux", env["GOOS"]}
+	buildEnv["GOFLAGS"] = []string{"-tags=foo,bar", env["GOFLAGS"]}
+	// TODO: Figure out how to deal with GOVERSION which isn't overridable
+
+	for k, vs := range buildEnv {
+		os.Setenv(k, vs[0])
+	}
+
+	return func() {
+		for k, vs := range buildEnv {
+			os.Setenv(k, vs[1])
+		}
+	}
 }

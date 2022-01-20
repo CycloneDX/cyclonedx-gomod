@@ -18,6 +18,7 @@
 package app
 
 import (
+	"errors"
 	"io"
 	"os"
 	"runtime"
@@ -29,7 +30,30 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateBuildProperties(t *testing.T) {
+func TestNewGenerator(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		g, err := NewGenerator("")
+		require.NoError(t, err)
+		require.NotNil(t, g)
+	})
+
+	t.Run("OptionError", func(t *testing.T) {
+		failOption := func(g *generator) error {
+			return errors.New("test")
+		}
+
+		g, err := NewGenerator("", failOption)
+		require.Nil(t, g)
+		require.Error(t, err)
+		require.Equal(t, "test", err.Error())
+	})
+}
+
+func TestGenerator_CreateBuildProperties(t *testing.T) {
+	g := generator{
+		logger: zerolog.New(io.Discard),
+	}
+
 	origGoflags := os.Getenv("GOFLAGS")
 	os.Setenv("GOFLAGS", "-tags=foo,bar")
 
@@ -39,7 +63,7 @@ func TestCreateBuildProperties(t *testing.T) {
 		}()
 	}
 
-	properties, err := createBuildProperties(zerolog.New(io.Discard))
+	properties, err := g.createBuildProperties()
 	require.NoError(t, err)
 	require.Len(t, properties, 6)
 

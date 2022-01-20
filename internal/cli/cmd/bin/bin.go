@@ -97,7 +97,7 @@ func Exec(options Options) error {
 	}
 	err = cliUtil.AddCommonMetadata(logger, bom, options.SBOMOptions)
 	if err != nil {
-		return fmt.Errorf("failed to add common metadata")
+		return fmt.Errorf("failed to add common metadata: %w", err)
 	}
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)
