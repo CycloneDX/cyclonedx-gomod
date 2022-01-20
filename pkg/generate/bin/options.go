@@ -19,10 +19,15 @@ package bin
 
 import "github.com/rs/zerolog"
 
-// Option TODO
+// Option allows for customization of the generator using the
+// functional options pattern.
 type Option func(g *generator) error
 
-// WithIncludeStdlib TODO
+// WithIncludeStdlib toggles the inclusion of a std component
+// representing the Go standard library in the generated BOM.
+//
+// When enabled, the std component will be represented as a
+// direct dependency of the main module.
 func WithIncludeStdlib(enable bool) Option {
 	return func(g *generator) error {
 		g.includeStdlib = enable
@@ -30,7 +35,12 @@ func WithIncludeStdlib(enable bool) Option {
 	}
 }
 
-// WithLicenseDetection TODO
+// WithLicenseDetection toggles the license detection feature.
+//
+// Because Go does not embed license information in binaries,
+// performing license detection requires downloading of source code.
+// This is done by `go mod download`ing all modules (including main)
+// to the module cache.
 func WithLicenseDetection(enable bool) Option {
 	return func(g *generator) error {
 		g.detectLicenses = enable
@@ -38,7 +48,7 @@ func WithLicenseDetection(enable bool) Option {
 	}
 }
 
-// WithLogger TODO
+// WithLogger overrides the default logger of the generator.
 func WithLogger(logger zerolog.Logger) Option {
 	return func(g *generator) error {
 		g.logger = logger
@@ -46,7 +56,14 @@ func WithLogger(logger zerolog.Logger) Option {
 	}
 }
 
-// WithVersionOverride TODO
+// WithVersionOverride overrides the version of the main component.
+//
+// This is useful in cases where a BOM is generated from development-
+// or snapshot-builds, in which case Go will set the version of the main
+// module to "(devel)". Because "(devel)" is very generic and not a valid semver,
+// overriding it may be useful.
+//
+// For analyzing release builds, this option should be avoided.
 func WithVersionOverride(version string) Option {
 	return func(g *generator) error {
 		g.versionOverride = version

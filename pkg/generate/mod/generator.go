@@ -43,11 +43,12 @@ type generator struct {
 	detectLicenses bool
 }
 
-// NewGenerator TODO
+// NewGenerator returns a generator that is capable of generating BOMs for Go modules.
 func NewGenerator(moduleDir string, opts ...Option) (generate.Generator, error) {
 	g := generator{
-		logger:    log.Logger,
-		moduleDir: moduleDir,
+		logger:        log.Logger,
+		moduleDir:     moduleDir,
+		componentType: cdx.ComponentTypeApplication,
 	}
 
 	var err error

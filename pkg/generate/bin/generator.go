@@ -43,7 +43,7 @@ type generator struct {
 	versionOverride string
 }
 
-// NewGenerator TODO
+// NewGenerator returns a generator that is capable of generating BOMs from Go module binaries.
 func NewGenerator(binaryPath string, opts ...Option) (generate.Generator, error) {
 	g := generator{
 		logger:     log.Logger,
@@ -165,34 +165,25 @@ func (g generator) buildBinaryProperties(binaryPath string, bi *gomod.BuildInfo)
 	}
 
 	if len(bi.Settings) > 0 {
-		if cgo, ok := bi.Settings["CGO_ENABLED"]; ok {
-			properties = append(properties, sbom.NewProperty("build:env:CGO_ENABLED", cgo))
+		addProperty := func(settingKey, property string) {
+			if setting, ok := bi.Settings[settingKey]; ok {
+				properties = append(properties, sbom.NewProperty(property, setting))
+			}
 		}
-		if goarch, ok := bi.Settings["GOARCH"]; ok {
-			properties = append(properties, sbom.NewProperty("build:env:GOARCH", goarch))
-		}
-		if goos, ok := bi.Settings["GOOS"]; ok {
-			properties = append(properties, sbom.NewProperty("build:env:GOOS", goos))
-		}
-		if compiler, ok := bi.Settings["-compiler"]; ok {
-			properties = append(properties, sbom.NewProperty("build:compiler", compiler))
-		}
+
+		addProperty("CGO_ENABLED", "build:env:CGO_ENABLED")
+		addProperty("GOARCH", "build:env:GOARCH")
+		addProperty("GOOS", "build:env:GOOS")
+		addProperty("-compiler", "build:compiler")
+		addProperty("vcs", "build:vcs")
+		addProperty("vcs.revision", "build:vcs:revision")
+		addProperty("vcs.time", "build:vcs:time")
+		addProperty("vcs.modified", "build:vcs:modified")
+
 		if tags, ok := bi.Settings["-tags"]; ok {
 			for _, tag := range strings.Split(tags, ",") {
 				properties = append(properties, sbom.NewProperty("build:tag", tag))
 			}
-		}
-		if vcs, ok := bi.Settings["vcs"]; ok {
-			properties = append(properties, sbom.NewProperty("build:vcs", vcs))
-		}
-		if vcsRev, ok := bi.Settings["vcs.revision"]; ok {
-			properties = append(properties, sbom.NewProperty("build:vcs:revision", vcsRev))
-		}
-		if vcsTime, ok := bi.Settings["vcs.time"]; ok {
-			properties = append(properties, sbom.NewProperty("build:vcs:time", vcsTime))
-		}
-		if vcsModified, ok := bi.Settings["vcs.modified"]; ok {
-			properties = append(properties, sbom.NewProperty("build:vcs:modified", vcsModified))
 		}
 	}
 

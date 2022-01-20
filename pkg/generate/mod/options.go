@@ -22,10 +22,12 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// Option TODO
+// Option allows for customization of the generator using the
+// functional options pattern.
 type Option func(g *generator) error
 
-// WithComponentType TODO
+// WithComponentType overrides the type of the main component.
+// Default is ComponentTypeApplication.
 func WithComponentType(ctype cdx.ComponentType) Option {
 	return func(g *generator) error {
 		g.componentType = ctype
@@ -33,7 +35,11 @@ func WithComponentType(ctype cdx.ComponentType) Option {
 	}
 }
 
-// WithIncludeStdlib TODO
+// WithIncludeStdlib toggles the inclusion of a std component
+// representing the Go standard library in the generated BOM.
+//
+// When enabled, the std component will be represented as a
+// direct dependency of the main module.
 func WithIncludeStdlib(enable bool) Option {
 	return func(g *generator) error {
 		g.includeStdlib = enable
@@ -41,7 +47,7 @@ func WithIncludeStdlib(enable bool) Option {
 	}
 }
 
-// WithIncludeTestModules TODO
+// WithIncludeTestModules toggles the inclusion of test-only modules.
 func WithIncludeTestModules(enable bool) Option {
 	return func(g *generator) error {
 		g.includeTest = enable
@@ -49,7 +55,7 @@ func WithIncludeTestModules(enable bool) Option {
 	}
 }
 
-// WithLicenseDetection TODO
+// WithLicenseDetection toggles the license detection feature.
 func WithLicenseDetection(enable bool) Option {
 	return func(g *generator) error {
 		g.detectLicenses = enable
@@ -57,7 +63,7 @@ func WithLicenseDetection(enable bool) Option {
 	}
 }
 
-// WithLogger TODO
+// WithLogger overrides the default logger of the generator.
 func WithLogger(logger zerolog.Logger) Option {
 	return func(g *generator) error {
 		g.logger = logger

@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/CycloneDX/cyclonedx-gomod/actions/workflows/ci.yml/badge.svg)](https://github.com/CycloneDX/cyclonedx-gomod/actions/workflows/ci.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/CycloneDX/cyclonedx-gomod)](https://goreportcard.com/report/github.com/CycloneDX/cyclonedx-gomod)
+[![Go Reference](https://pkg.go.dev/badge/github.com/CycloneDX/cyclonedx-gomod.svg)](https://pkg.go.dev/github.com/CycloneDX/cyclonedx-gomod)
 [![Latest GitHub release](https://img.shields.io/github/v/release/CycloneDX/cyclonedx-gomod?sort=semver)](https://github.com/CycloneDX/cyclonedx-gomod/releases/latest)
 [![License](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg)](LICENSE)  
 [![Website](https://img.shields.io/badge/https://-cyclonedx.org-blue.svg)](https://cyclonedx.org/)
@@ -264,6 +265,16 @@ $ docker run -it --rm \
 > When using the `app` command, please keep in mind that the Go version may influence module selection.  
 > We generally recommend using a [precompiled binary](https://github.com/CycloneDX/cyclonedx-gomod/releases) 
 > and running it in the same environment in which you're building your application in.
+
+### Library Usage
+
+Starting with `v1.2.0`, *cyclonedx-gomod* can be used as a library as well:
+
+```shell
+go get -v github.com/CycloneDX/cyclonedx-gomod
+```
+
+Refer to the [documentation](https://pkg.go.dev/github.com/CycloneDX/cyclonedx-gomod) for details and examples.
 
 ## Important Notes
 

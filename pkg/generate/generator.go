@@ -19,8 +19,21 @@ package generate
 
 import cdx "github.com/CycloneDX/cyclonedx-go"
 
-// Generator TODO
+// Generator is the interface that provides abstraction for multiple BOM generation strategies.
+//
+// The returned BOM MUST NOT include any of the following elements:
+//  - SerialNumber
+//  - Metadata.Timestamp
+//  - Metadata.Tools
+//  - Metadata.Authors
+//  - Metadata.Manufacture
+//  - Metadata.Supplier
+//  - Metadata.Licenses
+// It is the responsibility of the caller to ensure that these elements
+// are set according to their context and use case.
+//
+// At the very least, callers SHOULD set the SerialNumber and Metadata.Timestamp
+// elements before publishing or forwarding the generated BOM.
 type Generator interface {
-	// Generate TODO
 	Generate() (*cdx.BOM, error)
 }
