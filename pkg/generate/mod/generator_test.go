@@ -19,9 +19,14 @@ package mod
 
 import (
 	"errors"
+	"path/filepath"
 	"testing"
 
+	"github.com/CycloneDX/cyclonedx-go"
+	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/testutil"
 )
 
 func TestNewGenerator(t *testing.T) {
@@ -40,5 +45,112 @@ func TestNewGenerator(t *testing.T) {
 		require.Nil(t, g)
 		require.Error(t, err)
 		require.Equal(t, "test", err.Error())
+	})
+}
+
+func TestGenerator_Generate(t *testing.T) {
+	testutil.SkipIfShort(t)
+
+	snapShooter := cupaloy.NewDefaultConfig().
+		WithOptions(cupaloy.SnapshotSubdirectory("./testdata/snapshots"))
+
+	t.Run("Simple", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleMultiCommand", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-multi-command.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleLocal", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-local.tar.gz")
+
+		g, err := NewGenerator(filepath.Join(fixturePath, "local"),
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	// Test with a "simple" module with only a few dependencies,
+	// but as a subdirectory of a Git repository. The expectation is that the
+	// (pseudo-) version is inherited from the repository of the parent dir.
+	//
+	// nested/
+	// |-+ .git/
+	// |-+ simple/
+	//   |-+ go.mod
+	//   |-+ go.sum
+	//   |-+ main.go
+	t.Run("SimpleNested", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-nested.tar.gz")
+
+		g, err := NewGenerator(filepath.Join(fixturePath, "simple"),
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleNoDependencies", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-no-dependencies.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleVendor", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
 	})
 }

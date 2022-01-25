@@ -25,9 +25,12 @@ import (
 	"testing"
 
 	"github.com/CycloneDX/cyclonedx-go"
+	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/testutil"
 )
 
 func TestNewGenerator(t *testing.T) {
@@ -46,6 +49,141 @@ func TestNewGenerator(t *testing.T) {
 		require.Nil(t, g)
 		require.Error(t, err)
 		require.Equal(t, "test", err.Error())
+	})
+}
+
+func TestGenerator_Generate(t *testing.T) {
+	testutil.SkipIfShort(t)
+
+	snapShooter := cupaloy.NewDefaultConfig().
+		WithOptions(cupaloy.SnapshotSubdirectory("./testdata/snapshots"))
+
+	t.Run("Simple", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleWithFiles", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithIncludeFiles(true),
+			WithIncludePackages(true),
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleWithPackages", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithIncludePackages(true),
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleMultiCommandPURL", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-multi-command.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger),
+			WithMainDir("cmd/purl"))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleMultiCommandUUID", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-multi-command.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger),
+			WithMainDir("cmd/uuid"))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleVendor", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleVendorWithFiles", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithIncludeFiles(true),
+			WithIncludePackages(true),
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("SimpleVendorWithPackages", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithIncludePackages(true),
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
 	})
 }
 

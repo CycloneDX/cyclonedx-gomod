@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.3" serialNumber="urn:uuid:00000000-0000-0000-0000-000000000000" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" version="1">
   <metadata>
-    <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?type=module" type="application">
+    <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module#cmd/uuid" type="application">
       <name>testmod-simple</name>
-      <version>v0.0.0-20210716183230-c7ea7c975ab8</version>
-      <purl>pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?type=module</purl>
+      <version>v0.0.0-20210901192510-dc2d14d2351d</version>
+      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module#cmd/uuid</purl>
       <properties>
-        <property name="cdx:gomod:build:env:CGO_ENABLED">0</property>
+        <property name="cdx:gomod:build:env:CGO_ENABLED">1</property>
         <property name="cdx:gomod:build:env:GOARCH">amd64</property>
         <property name="cdx:gomod:build:env:GOOS">linux</property>
         <property name="cdx:gomod:build:env:GOVERSION">go1.17.6</property>
-        <property name="cdx:gomod:build:tag">foo</property>
-        <property name="cdx:gomod:build:tag">bar</property>
       </properties>
     </component>
   </metadata>
@@ -39,7 +37,7 @@
     </component>
   </components>
   <dependencies>
-    <dependency ref="pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?type=module">
+    <dependency ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module#cmd/uuid">
       <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>

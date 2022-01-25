@@ -21,7 +21,11 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/CycloneDX/cyclonedx-go"
+	"github.com/bradleyjkemp/cupaloy/v2"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/testutil"
 )
 
 func TestNewGenerator(t *testing.T) {
@@ -40,5 +44,38 @@ func TestNewGenerator(t *testing.T) {
 		require.Nil(t, g)
 		require.Error(t, err)
 		require.Equal(t, "test", err.Error())
+	})
+}
+
+func TestGenerator_Generate(t *testing.T) {
+	testutil.SkipIfShort(t)
+
+	snapShooter := cupaloy.NewDefaultConfig().
+		WithOptions(cupaloy.SnapshotSubdirectory("./testdata/snapshots"))
+
+	t.Run("Simple", func(t *testing.T) {
+		g, err := NewGenerator("../testdata/simple",
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+	})
+
+	t.Run("Simple1.18", func(t *testing.T) {
+		g, err := NewGenerator("../testdata/simple1.18",
+			WithLicenseDetection(true),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
 	})
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bom xmlns="http://cyclonedx.org/schema/bom/1.3" version="1">
+  <metadata>
+    <component bom-ref="pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?type=module" type="application">
+      <name>testmod-nodeps</name>
+      <version>v0.0.0-20210716190350-6880323ad03d</version>
+      <purl>pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?type=module</purl>
+    </component>
+  </metadata>
+  <components></components>
+  <dependencies>
+    <dependency ref="pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?type=module"></dependency>
+  </dependencies>
+</bom>
