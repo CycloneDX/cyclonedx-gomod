@@ -81,7 +81,7 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	require.NoError(t, err)
 	defer func() {
 		if err := bomFile.Close(); err != nil {
-			fmt.Printf("failed to close bom file: %w", err)
+			fmt.Printf("failed to close bom file: %v", err)
 		}
 	}()
 
