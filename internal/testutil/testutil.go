@@ -40,7 +40,7 @@ var SilentLogger = zerolog.New(io.Discard)
 func ExtractFixtureArchive(t *testing.T, archivePath string) string {
 	tmpDir := t.TempDir()
 
-	cmd := exec.Command("tar", "xzf", archivePath, "-C", tmpDir)
+	cmd := exec.Command("tar", "xzf", archivePath, "-C", tmpDir) // #nosec G204
 	out, err := cmd.CombinedOutput()
 	if !assert.NoError(t, err) {
 		// Provide some context when test is failing
@@ -79,14 +79,18 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 
 	bomFile, err := os.Create(filepath.Join(t.TempDir(), fmt.Sprintf("bom.%s", fileExtension)))
 	require.NoError(t, err)
-	defer bomFile.Close()
+	defer func() {
+		if err := bomFile.Close(); err != nil {
+			fmt.Printf("failed to close bom file: %w", err)
+		}
+	}()
 
 	encoder := cdx.NewBOMEncoder(bomFile, fileFormat)
 	encoder.SetPretty(true)
 	err = encoder.Encode(bom)
 	require.NoError(t, err)
 
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--fail-on-errors")
+	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--fail-on-errors") // #nosec G204
 	valOut, err := valCmd.CombinedOutput()
 	if !assert.NoError(t, err) {
 		// Provide some context when test is failing
