@@ -90,7 +90,7 @@ func ListPackage(logger zerolog.Logger, moduleDir, packagePattern string, writer
 	return executeGoCommand(logger, []string{"list", "-json", "-e", packagePattern},
 		withDir(moduleDir),
 		withStdout(writer),
-		withStderr(os.Stderr))
+		withStderr(newLoggerWriter(logger))) // reports download status
 }
 
 // ListPackages executes `go list -deps -json <PATTERN>` and writes the output to a given writer.
@@ -99,7 +99,7 @@ func ListPackages(logger zerolog.Logger, moduleDir, packagePattern string, write
 	return executeGoCommand(logger, []string{"list", "-deps", "-json", packagePattern},
 		withDir(moduleDir),
 		withStdout(writer),
-		withStderr(os.Stderr),
+		withStderr(newLoggerWriter(logger)), // reports download status
 	)
 }
 
@@ -122,7 +122,7 @@ func ModWhy(logger zerolog.Logger, moduleDir string, modules []string, writer io
 		append([]string{"mod", "why", "-m", "-vendor"}, modules...),
 		withDir(moduleDir),
 		withStdout(writer),
-		withStderr(os.Stderr), // reports download status
+		withStderr(newLoggerWriter(logger)), // reports download status
 	)
 }
 
@@ -139,7 +139,7 @@ func DownloadModules(logger zerolog.Logger, modules []string, stdout, stderr io.
 		append([]string{"mod", "download", "-json"}, modules...),
 		withDir(os.TempDir()), // `mod download` modifies go.sum when executed in moduleDir
 		withStdout(stdout),
-		withStderr(stderr),
+		withStderr(newLoggerWriter(logger)), // reports download status
 	)
 }
 
@@ -181,4 +181,22 @@ func executeGoCommand(logger zerolog.Logger, args []string, options ...commandOp
 	}
 
 	return nil
+}
+
+// loggerWriter is a workaround to be able to log go output
+// with zerolog loggers. zerolog.Logger does implement the io.Writer
+// interface, but it ignores log levels per default.
+type loggerWriter struct {
+	logger zerolog.Logger
+}
+
+func newLoggerWriter(logger zerolog.Logger) io.Writer {
+	return &loggerWriter{
+		logger: logger,
+	}
+}
+
+func (s loggerWriter) Write(p []byte) (n int, err error) {
+	s.logger.Debug().Msg(string(bytes.TrimSpace(p)))
+	return len(p), nil
 }
