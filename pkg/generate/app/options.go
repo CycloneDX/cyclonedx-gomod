@@ -21,7 +21,8 @@ import "github.com/rs/zerolog"
 
 type Option func(g *generator) error
 
-// WithIncludeFiles TODO
+// WithIncludeFiles toggles the inclusion of files.
+// Has no effect when packages are not included as well.
 func WithIncludeFiles(enable bool) Option {
 	return func(g *generator) error {
 		g.includeFiles = enable
@@ -29,7 +30,7 @@ func WithIncludeFiles(enable bool) Option {
 	}
 }
 
-// WithIncludePackages TODO
+// WithIncludePackages toggles the inclusion of packages.
 func WithIncludePackages(enable bool) Option {
 	return func(g *generator) error {
 		g.includePackages = enable
@@ -65,7 +66,7 @@ func WithLogger(logger zerolog.Logger) Option {
 	}
 }
 
-// WithMainDir TODO
+// WithMainDir overrides the main directory of the application.
 func WithMainDir(dir string) Option {
 	return func(g *generator) error {
 		g.mainDir = dir

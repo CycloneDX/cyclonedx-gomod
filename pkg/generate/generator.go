@@ -15,12 +15,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
+// Package generate exposes cyclonedx-gomod's SBOM generation capabilities.
 package generate
 
 import cdx "github.com/CycloneDX/cyclonedx-go"
 
 // Generator is the interface that provides abstraction for multiple BOM generation strategies.
 //
+// Generators MUST only consider facts. Results MUST be reproducible.
 // The returned BOM MUST NOT include any of the following elements:
 //  - SerialNumber
 //  - Metadata.Timestamp

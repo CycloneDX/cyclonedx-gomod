@@ -88,13 +88,11 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
-	// Determine version of main module
 	modules[0].Version, err = gomod.GetModuleVersion(g.logger, modules[0].Dir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to determine version of main module: %w", err)
 	}
 
-	// Convert main module
 	mainComponent, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
 		modConv.WithLicenses(g.detectLicenses),
@@ -115,7 +113,6 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		*mainComponent.Properties = append(*mainComponent.Properties, buildProperties...)
 	}
 
-	// Convert the other modules
 	components, err := modConv.ToComponents(g.logger, modules[1:],
 		modConv.WithLicenses(g.detectLicenses),
 		modConv.WithModuleHashes(),
@@ -134,7 +131,10 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	bom.Components = &components
 	bom.Dependencies = &dependencies
 
-	g.enrichWithApplicationDetails(bom)
+	err = g.includeAppPathInMainComponentPURL(bom)
+	if err != nil {
+		return nil, fmt.Errorf("failed to enrich bom with app details: %w", err)
+	}
 
 	return bom, nil
 }
@@ -192,42 +192,44 @@ func parseTagsFromGoFlags(goflags string) (tags []string) {
 	return
 }
 
-// enrichWithApplicationDetails determines the application name as well as
-// the path to the application (path to mainFile's parent dir) relative to moduleDir.
+// includeAppPathInMainComponentPURL determines the application name as well as
+// the path to the application (path to mainDir) relative to moduleDir.
 // If the application path is not equal to moduleDir, it is added to the main component's
 // package URL as sub path. For example:
 //
-// + moduleDir <- application name
+// + moduleDir 		<- application name
 // |-+ main.go
 //
 // + moduleDir
 // |-+ cmd
-//   |-+ app   <- application name
+//   |-+ mainDir	<- application name
 //     |-+ main.go
 //
 // The package URLs for the above examples would look like this:
-//   1. pkg:golang/../module@version         (untouched)
-//   2. pkg:golang/../module@version#cmd/app (with sub path)
+//   1. pkg:golang/.../module@version         		(untouched)
+//   2. pkg:golang/.../module@version#cmd/mainDir 	(with sub path)
 //
 // If the package URL is updated, the BOM reference is as well.
 // All places within the BOM that reference the main component will be updated accordingly.
-func (g generator) enrichWithApplicationDetails(bom *cdx.BOM) {
-	// Resolve absolute paths to moduleDir and mainPkgDir.
-	// Both may contain traversals or similar elements we don't care about.
-	// This procedure is done during options validation already,
-	// which is why we don't check for errors here.
-	moduleDirAbs, _ := filepath.Abs(g.moduleDir)
-	mainPkgDirAbs, _ := filepath.Abs(filepath.Join(moduleDirAbs, g.mainDir))
+func (g generator) includeAppPathInMainComponentPURL(bom *cdx.BOM) error {
+	moduleDirAbs, err := filepath.Abs(g.moduleDir)
+	if err != nil {
+		return fmt.Errorf("failed to make moduleDir absolute: %w", err)
+	}
+	mainDirAbs, err := filepath.Abs(filepath.Join(moduleDirAbs, g.mainDir))
+	if err != nil {
+		return fmt.Errorf("failed to make mainDir absolute: %w", err)
+	}
 
-	// Construct path to mainPkgDir relative to moduleDir
-	mainPkgDirRel := strings.TrimPrefix(mainPkgDirAbs, moduleDirAbs)
-	mainPkgDirRel = strings.TrimPrefix(mainPkgDirRel, string(os.PathSeparator))
+	// Construct path to mainDir relative to moduleDir
+	mainDirRel := strings.TrimPrefix(mainDirAbs, moduleDirAbs)
+	mainDirRel = strings.TrimPrefix(mainDirRel, string(os.PathSeparator))
 
-	if mainPkgDirRel != "" {
-		mainPkgDirRel = strings.TrimSuffix(mainPkgDirRel, string(os.PathSeparator))
+	if mainDirRel != "" {
+		mainDirRel = strings.TrimSuffix(mainDirRel, string(os.PathSeparator))
 
 		oldPURL := bom.Metadata.Component.PackageURL
-		newPURL := oldPURL + "#" + filepath.ToSlash(mainPkgDirRel)
+		newPURL := oldPURL + "#" + filepath.ToSlash(mainDirRel)
 
 		g.logger.Debug().
 			Str("old", oldPURL).
@@ -246,4 +248,6 @@ func (g generator) enrichWithApplicationDetails(bom *cdx.BOM) {
 			}
 		}
 	}
+
+	return nil
 }
