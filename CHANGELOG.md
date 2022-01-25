@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.0 (unreleased)
+
+### Enhancements
+
+* Expose SBOM generation functionality ([#99](https://github.com/CycloneDX/cyclonedx-gomod/issues/99), [#108](https://github.com/CycloneDX/cyclonedx-gomod/issues/108) via [#114](https://github.com/CycloneDX/cyclonedx-gomod/pull/114))
+
+### Dependency Updates
+
+* Update `github.com/rs/zerolog` from `v1.26.0` to `v1.26.1` (via [#107](https://github.com/CycloneDX/cyclonedx-gomod/pull/107))
+
 ## v1.1.0
 
 ### Enhancements
