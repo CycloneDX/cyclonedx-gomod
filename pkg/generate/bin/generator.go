@@ -129,6 +129,8 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	bom.Dependencies = &dependencies
 	bom.Compositions = &compositions
 
+	g.includeAppPathInMainComponentPURL(bi, bom)
+
 	return bom, nil
 }
 
@@ -296,4 +298,49 @@ func matchModule(modules []gomod.Module, coordinates string) *gomod.Module {
 	}
 
 	return nil
+}
+
+func (g generator) includeAppPathInMainComponentPURL(bi *gomod.BuildInfo, bom *cdx.BOM) {
+	if bi.Path != bi.Main.Path && strings.HasPrefix(bi.Path, bi.Main.Path) {
+		subpath := strings.TrimPrefix(bi.Path, bi.Main.Path)
+		subpath = strings.TrimPrefix(subpath, "/")
+
+		oldPURL := bom.Metadata.Component.PackageURL
+		newPURL := oldPURL + "#" + subpath
+
+		// Update PURL of main component
+		bom.Metadata.Component.BOMRef = newPURL
+		bom.Metadata.Component.PackageURL = newPURL
+
+		// Update PURL in dependency graph
+		if bom.Dependencies != nil {
+			for i, dep := range *bom.Dependencies {
+				if dep.Ref == oldPURL {
+					(*bom.Dependencies)[i].Ref = newPURL
+					break
+				}
+			}
+		}
+
+		// Update PURL in compositions
+		if bom.Compositions != nil {
+			for i := range *bom.Compositions {
+				if (*bom.Compositions)[i].Assemblies != nil {
+					for j, assembly := range *(*bom.Compositions)[i].Assemblies {
+						if string(assembly) == oldPURL {
+							(*(*bom.Compositions)[i].Assemblies)[j] = cdx.BOMReference(newPURL)
+						}
+					}
+				}
+
+				if (*bom.Compositions)[i].Dependencies != nil {
+					for j, dependency := range *(*bom.Compositions)[i].Dependencies {
+						if string(dependency) == oldPURL {
+							(*(*bom.Compositions)[i].Dependencies)[j] = cdx.BOMReference(newPURL)
+						}
+					}
+				}
+			}
+		}
+	}
 }
