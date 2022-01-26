@@ -175,6 +175,7 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	encoder.SetPretty(true)
 	err = encoder.Encode(bom)
 	require.NoError(t, err)
+	require.NoError(t, bomFile.Close())
 
 	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--fail-on-errors") // #nosec G204
 	valOut, err := valCmd.CombinedOutput()
