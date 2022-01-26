@@ -46,11 +46,316 @@
         </licenses>
       </evidence>
     </component>
+    <component bom-ref="pkg:golang/std@REDACTED?type=module" type="library">
+      <name>std</name>
+      <version>REDACTED</version>
+      <scope>required</scope>
+      <purl>pkg:golang/std@REDACTED?type=module</purl>
+      <components>
+        <component type="library">
+          <name>bufio</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/bufio@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>bytes</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/bytes@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>context</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/context@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto/aes</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto/aes@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto/cipher</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto/cipher@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto/internal/subtle</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto/internal/subtle@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto/md5</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto/md5@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto/rand</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto/rand@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto/sha1</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto/sha1@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>crypto/subtle</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/crypto/subtle@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>database/sql/driver</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/database/sql/driver@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>encoding/binary</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/encoding/binary@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>encoding/hex</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/encoding/hex@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>errors</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/errors@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>fmt</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/fmt@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>hash</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/hash@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/abi</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/abi@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/bytealg</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/bytealg@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/cpu</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/cpu@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/fmtsort</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/fmtsort@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/goexperiment</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/goexperiment@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/itoa</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/itoa@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/nettrace</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/nettrace@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/oserror</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/oserror@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/poll</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/poll@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/race</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/race@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/reflectlite</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/reflectlite@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/singleflight</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/singleflight@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/syscall/execenv</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/syscall/execenv@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/syscall/unix</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/syscall/unix@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/testlog</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/testlog@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>internal/unsafeheader</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/internal/unsafeheader@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>io</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/io@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>io/fs</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/io/fs@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>math</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/math@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>math/big</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/math/big@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>math/bits</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/math/bits@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>math/rand</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/math/rand@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>net</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/net@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>os</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/os@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>path</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/path@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>reflect</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/reflect@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>runtime</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/runtime@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>runtime/cgo</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/runtime/cgo@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>runtime/internal/atomic</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/runtime/internal/atomic@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>runtime/internal/math</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/runtime/internal/math@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>runtime/internal/sys</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/runtime/internal/sys@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>sort</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/sort@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>strconv</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/strconv@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>strings</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/strings@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>sync</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/sync@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>sync/atomic</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/sync/atomic@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>syscall</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/syscall@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>time</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/time@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>unicode</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/unicode@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>unicode/utf8</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/unicode/utf8@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>unsafe</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/unsafe@REDACTED?type=package</purl>
+        </component>
+        <component type="library">
+          <name>vendor/golang.org/x/net/dns/dnsmessage</name>
+          <version>REDACTED</version>
+          <purl>pkg:golang/vendor/golang.org/x/net/dns/dnsmessage@REDACTED?type=package</purl>
+        </component>
+      </components>
+    </component>
   </components>
   <dependencies>
     <dependency ref="pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module">
       <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
+      <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
+    <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
   </dependencies>
 </bom>

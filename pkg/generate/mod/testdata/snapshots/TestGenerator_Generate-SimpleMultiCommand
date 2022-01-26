@@ -43,13 +43,21 @@
         </reference>
       </externalReferences>
     </component>
+    <component bom-ref="pkg:golang/std@REDACTED?type=module" type="library">
+      <name>std</name>
+      <version>REDACTED</version>
+      <scope>required</scope>
+      <purl>pkg:golang/std@REDACTED?type=module</purl>
+    </component>
   </components>
   <dependencies>
     <dependency ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module">
       <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
       <dependency ref="pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module"></dependency>
+      <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
     </dependency>
     <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
     <dependency ref="pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module"></dependency>
+    <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
   </dependencies>
 </bom>

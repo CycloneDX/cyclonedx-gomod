@@ -17,11 +17,19 @@
       </hashes>
       <purl>pkg:golang/testmod-local-dependency?type=module</purl>
     </component>
+    <component bom-ref="pkg:golang/std@REDACTED?type=module" type="library">
+      <name>std</name>
+      <version>REDACTED</version>
+      <scope>required</scope>
+      <purl>pkg:golang/std@REDACTED?type=module</purl>
+    </component>
   </components>
   <dependencies>
     <dependency ref="pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module">
+      <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
       <dependency ref="pkg:golang/testmod-local-dependency?type=module"></dependency>
     </dependency>
     <dependency ref="pkg:golang/testmod-local-dependency?type=module"></dependency>
+    <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
   </dependencies>
 </bom>

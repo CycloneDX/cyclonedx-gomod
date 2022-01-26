@@ -197,7 +197,7 @@ func convertPackagesToModules(logger zerolog.Logger, mainModuleDir string, pkgsM
 			return nil, fmt.Errorf("no module is associated with package %s", pkgs[0].ImportPath)
 		}
 
-		if !module.Main && isVendoring {
+		if !module.Main && module.Path != StdlibModulePath && isVendoring {
 			module.Vendored = true
 			vendorPath := filepath.Join(mainModuleDir, "vendor", module.Path)
 

@@ -25,6 +25,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -66,6 +67,70 @@ func RequireMatchingPropertyToBeRedacted(t *testing.T, properties []cdx.Property
 	}
 
 	t.Fatalf("property %s does not exist", name)
+}
+
+// RequireStdlibComponentToBeRedacted ensures that a stdlib component is present and redacts its version.
+//
+// Version will be redacted from packages as well, if applicable.
+// If files are expected, their correlating components will be removed and replaced by an empty slice.
+func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackages, expectFiles bool) {
+	var (
+		version string
+		oldPURL string
+		newPURL string
+	)
+
+	for i, component := range *bom.Components {
+		if component.Name == "std" {
+			require.Regexp(t, `^go1\.`, component.Version)
+
+			version = component.Version
+			oldPURL = component.PackageURL
+			newPURL = strings.ReplaceAll((*bom.Components)[i].PackageURL, version, "REDACTED")
+
+			(*bom.Components)[i].Version = "REDACTED"
+			(*bom.Components)[i].BOMRef = newPURL
+			(*bom.Components)[i].PackageURL = newPURL
+
+			if component.Components != nil { // Redact version from packages as well
+				for j, component2 := range *(*bom.Components)[i].Components {
+					require.Equal(t, version, component2.Version)
+
+					(*(*bom.Components)[i].Components)[j].Version = "REDACTED"
+					(*(*bom.Components)[i].Components)[j].PackageURL = strings.ReplaceAll(component2.PackageURL, version, "REDACTED")
+
+					// Redact all files, as they may differ from one go version to another.
+					// It isn't worth the hassle to redact single fields for the time being.
+					if component2.Components != nil {
+						// Use an empty slice instead of null, in order for this modification
+						// to be somewhat visible in the snapshot file.
+						(*(*bom.Components)[i].Components)[j].Components = &[]cdx.Component{}
+					} else if expectFiles {
+						t.Fatalf("stdlib is missing files")
+					}
+				}
+			} else if expectPackages {
+				t.Fatalf("stdlib is missing packages")
+			}
+
+			break
+		}
+	}
+	if newPURL == "" {
+		t.Fatalf("stdlib component not found")
+	}
+
+	for i, dependency := range *bom.Dependencies {
+		if dependency.Ref == oldPURL { // Dependant
+			(*bom.Dependencies)[i].Ref = newPURL
+		} else if dependency.Dependencies != nil { // Dependencies
+			for j, dependency2 := range *(*bom.Dependencies)[i].Dependencies {
+				if dependency2.Ref == oldPURL {
+					(*(*bom.Dependencies)[i].Dependencies)[j].Ref = newPURL
+				}
+			}
+		}
+	}
 }
 
 // RequireMatchingSBOMSnapshot encodes a BOM and compares it to the snapshot of a test case.

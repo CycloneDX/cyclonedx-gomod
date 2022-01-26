@@ -58,6 +58,7 @@ func TestGenerator_Generate(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -65,14 +66,17 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
 	t.Run("SimpleMultiCommand", func(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-multi-command.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -80,14 +84,17 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
 	t.Run("SimpleLocal", func(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-local.tar.gz")
 
 		g, err := NewGenerator(filepath.Join(fixturePath, "local"),
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -95,8 +102,10 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
 	// Test with a "simple" module with only a few dependencies,
@@ -113,6 +122,7 @@ func TestGenerator_Generate(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-nested.tar.gz")
 
 		g, err := NewGenerator(filepath.Join(fixturePath, "simple"),
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -120,14 +130,17 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
 	t.Run("SimpleNoDependencies", func(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-no-dependencies.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -135,14 +148,17 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
 	t.Run("SimpleVendor", func(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -150,7 +166,9 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 }

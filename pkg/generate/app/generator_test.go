@@ -63,7 +63,8 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithLicenseDetection(true),
-			WithLogger(testutil.SilentLogger))
+			WithLogger(testutil.SilentLogger),
+			WithIncludeStdlib(true))
 		require.NoError(t, err)
 
 		bom, err := g.Generate()
@@ -75,6 +76,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
@@ -84,6 +86,7 @@ func TestGenerator_Generate(t *testing.T) {
 		g, err := NewGenerator(fixturePath,
 			WithIncludeFiles(true),
 			WithIncludePackages(true),
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -97,6 +100,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, true)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
@@ -105,6 +109,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludePackages(true),
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -118,6 +123,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
@@ -125,6 +131,7 @@ func TestGenerator_Generate(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-multi-command.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger),
 			WithMainDir("cmd/purl"))
@@ -139,6 +146,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
@@ -146,6 +154,7 @@ func TestGenerator_Generate(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-multi-command.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger),
 			WithMainDir("cmd/uuid"))
@@ -160,6 +169,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
@@ -167,6 +177,7 @@ func TestGenerator_Generate(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -180,6 +191,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
@@ -189,6 +201,7 @@ func TestGenerator_Generate(t *testing.T) {
 		g, err := NewGenerator(fixturePath,
 			WithIncludeFiles(true),
 			WithIncludePackages(true),
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -202,6 +215,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, true)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 
@@ -210,6 +224,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludePackages(true),
+			WithIncludeStdlib(true),
 			WithLicenseDetection(true),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
@@ -223,6 +238,7 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
 	})
 }
