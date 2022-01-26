@@ -276,6 +276,12 @@ go get -v github.com/CycloneDX/cyclonedx-gomod
 
 Refer to the [documentation](https://pkg.go.dev/github.com/CycloneDX/cyclonedx-gomod) for details and examples.
 
+> Be warned that *cyclonedx-gomod* is and will continue to be primarily a CLI tool.  
+> While we'll only introduce breaking changes to the exposed APIs in accordance with semver,
+> we will not invest in supporting older versions. If you intend on depending on our API,
+> please assess if you'll be able to keep up. For example, we will move to the newest Go version
+> shortly after its GA, and will almost definitely use backwards-incompatible features going forward.
+
 ## Important Notes
 
 ### Vendoring
