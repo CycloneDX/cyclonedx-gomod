@@ -35,6 +35,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Redacted marks an intentionally removed field.
+const Redacted = "REDACTED"
+
 // SilentLogger discards all inputs.
 var SilentLogger = zerolog.New(io.Discard)
 
@@ -61,7 +64,7 @@ func RequireMatchingPropertyToBeRedacted(t *testing.T, properties []cdx.Property
 	for i, property := range properties {
 		if property.Name == name {
 			require.Regexp(t, valueRegex, property.Value)
-			properties[i].Value = "REDACTED"
+			properties[i].Value = Redacted
 			return
 		}
 	}
@@ -86,9 +89,9 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 
 			version = component.Version
 			oldPURL = component.PackageURL
-			newPURL = strings.ReplaceAll((*bom.Components)[i].PackageURL, version, "REDACTED")
+			newPURL = strings.ReplaceAll((*bom.Components)[i].PackageURL, version, Redacted)
 
-			(*bom.Components)[i].Version = "REDACTED"
+			(*bom.Components)[i].Version = Redacted
 			(*bom.Components)[i].BOMRef = newPURL
 			(*bom.Components)[i].PackageURL = newPURL
 
@@ -96,8 +99,8 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 				for j, component2 := range *(*bom.Components)[i].Components {
 					require.Equal(t, version, component2.Version)
 
-					(*(*bom.Components)[i].Components)[j].Version = "REDACTED"
-					(*(*bom.Components)[i].Components)[j].PackageURL = strings.ReplaceAll(component2.PackageURL, version, "REDACTED")
+					(*(*bom.Components)[i].Components)[j].Version = Redacted
+					(*(*bom.Components)[i].Components)[j].PackageURL = strings.ReplaceAll(component2.PackageURL, version, Redacted)
 
 					// Redact all files, as they may differ from one go version to another.
 					// It isn't worth the hassle to redact single fields for the time being.
