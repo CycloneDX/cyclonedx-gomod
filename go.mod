@@ -11,7 +11,7 @@ require (
 	github.com/peterbourgon/ff/v3 v3.1.0
 	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e
+	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
 	golang.org/x/mod v0.5.1
 )
 
@@ -40,7 +40,7 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
 	github.com/xanzy/ssh-agent v0.3.0 // indirect
 	golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
