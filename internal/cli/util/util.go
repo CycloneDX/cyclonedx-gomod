@@ -31,11 +31,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 )
 
-func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
-	if sbomOptions.Reproducible {
-		return nil
-	}
-
+func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM) error {
 	if bom.Metadata == nil {
 		bom.Metadata = &cdx.Metadata{}
 	}

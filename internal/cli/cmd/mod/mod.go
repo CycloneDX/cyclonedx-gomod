@@ -44,7 +44,7 @@ func New() *ffcli.Command {
 
 Examples:
   $ cyclonedx-gomod mod -licenses -type library -json -output bom.json ./cyclonedx-go
-  $ cyclonedx-gomod mod -reproducible -test -output bom.xml ./cyclonedx-go`,
+  $ cyclonedx-gomod mod -test -output bom.xml ./cyclonedx-go`,
 		FlagSet: fs,
 		Exec: func(ctx context.Context, args []string) error {
 			if len(args) > 1 {
@@ -88,7 +88,7 @@ func Exec(options Options) error {
 	if err != nil {
 		return fmt.Errorf("failed to set serial number: %w", err)
 	}
-	err = cliUtil.AddCommonMetadata(logger, bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(logger, bom)
 	if err != nil {
 		return fmt.Errorf("failed to add common metadata: %w", err)
 	}

@@ -108,17 +108,12 @@ type SBOMOptions struct {
 	NoSerialNumber  bool
 	ResolveLicenses bool
 	SerialNumber    string
-
-	// Make SBOM reproducible by omitting dynamic content.
-	// Only used internally for testing.
-	Reproducible bool
 }
 
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.AssertLicenses, "assert-licenses", false, "Assert detected licenses")
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
-	// Reproducible is used for testing only and intentionally omitted here
 	fs.BoolVar(&s.ResolveLicenses, "licenses", false, "Perform license detection")
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
 }
