@@ -9,6 +9,8 @@
 ### Dependency Updates
 
 * Update `github.com/rs/zerolog` from `v1.26.0` to `v1.26.1` (via [#107](https://github.com/CycloneDX/cyclonedx-gomod/pull/107))
+* Update `golang.org/x/text` from `v0.3.6` to `v0.3.7` (via [#115](https://github.com/CycloneDX/cyclonedx-gomod/pull/115))
+* Update `golang.org/x/crypto` from `v0.0.0-20211215165025-cf75a172585e` to `v0.0.0-20220112180741-5e0467b6c7ce` (via [#115](https://github.com/CycloneDX/cyclonedx-gomod/pull/115))
 
 ### Building and Packaging
 
