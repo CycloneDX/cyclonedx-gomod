@@ -15,6 +15,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
+// Package testutil provides utility functions for tests.
 package testutil
 
 import (
@@ -48,6 +49,23 @@ func ExtractFixtureArchive(t *testing.T, archivePath string) string {
 	}
 
 	return tmpDir
+}
+
+// RequireMatchingPropertyToBeRedacted ensures that a given property is present and its value matched the provided regex.
+//
+// If a property matches, its value is then replaced by the string "REDACTED".
+// This is intended to be used for properties that hold dynamic values that are expected to differ
+// from system to system. Only use if absolutely necessary!
+func RequireMatchingPropertyToBeRedacted(t *testing.T, properties []cdx.Property, name, valueRegex string) {
+	for i, property := range properties {
+		if property.Name == name {
+			require.Regexp(t, valueRegex, property.Value)
+			properties[i].Value = "REDACTED"
+			return
+		}
+	}
+
+	t.Fatalf("property %s does not exist", name)
 }
 
 // RequireMatchingSBOMSnapshot encodes a BOM and compares it to the snapshot of a test case.

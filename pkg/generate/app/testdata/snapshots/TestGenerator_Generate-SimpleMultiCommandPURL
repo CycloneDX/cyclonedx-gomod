@@ -6,10 +6,10 @@
       <version>v0.0.0-20210901192510-dc2d14d2351d</version>
       <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module#cmd/purl</purl>
       <properties>
-        <property name="cdx:gomod:build:env:CGO_ENABLED">1</property>
-        <property name="cdx:gomod:build:env:GOARCH">amd64</property>
-        <property name="cdx:gomod:build:env:GOOS">linux</property>
-        <property name="cdx:gomod:build:env:GOVERSION">go1.17.6</property>
+        <property name="cdx:gomod:build:env:CGO_ENABLED">REDACTED</property>
+        <property name="cdx:gomod:build:env:GOARCH">REDACTED</property>
+        <property name="cdx:gomod:build:env:GOOS">REDACTED</property>
+        <property name="cdx:gomod:build:env:GOVERSION">REDACTED</property>
       </properties>
     </component>
   </metadata>
