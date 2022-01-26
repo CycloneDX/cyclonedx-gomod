@@ -10,6 +10,10 @@
 
 * Update `github.com/rs/zerolog` from `v1.26.0` to `v1.26.1` (via [#107](https://github.com/CycloneDX/cyclonedx-gomod/pull/107))
 
+### Building and Packaging
+
+* Bump `golang` container base images from `1.17.5` to `1.17.6` (via [#113](https://github.com/CycloneDX/cyclonedx-gomod/pull/113))
+
 ## v1.1.0
 
 ### Enhancements
