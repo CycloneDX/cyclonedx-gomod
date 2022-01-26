@@ -23,8 +23,9 @@ import (
 	"io"
 	"strings"
 
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"github.com/rs/zerolog/log"
 )
 
 // FilterModules queries `go mod why` with all provided modules to determine whether or not
@@ -45,8 +46,8 @@ import (
 // See:
 //   - https://github.com/golang/go/issues/30720
 //   - https://github.com/golang/go/issues/26904
-func FilterModules(moduleDir string, modules []Module, includeTest bool) ([]Module, error) {
-	log.Debug().
+func FilterModules(logger zerolog.Logger, moduleDir string, modules []Module, includeTest bool) ([]Module, error) {
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Int("moduleCount", len(modules)).
 		Bool("includeTest", includeTest).
@@ -62,13 +63,13 @@ func FilterModules(moduleDir string, modules []Module, includeTest bool) ([]Modu
 			paths[i] = chunk[i].Path
 		}
 
-		if err := gocmd.ModWhy(moduleDir, paths, buf); err != nil {
+		if err := gocmd.ModWhy(logger, moduleDir, paths, buf); err != nil {
 			return nil, err
 		}
 
 		for modPath, modPkgs := range parseModWhy(buf) {
 			if len(modPkgs) == 0 {
-				log.Debug().
+				logger.Debug().
 					Str("module", modPath).
 					Str("reason", "not needed").
 					Msg("filtering module")
@@ -84,7 +85,7 @@ func FilterModules(moduleDir string, modules []Module, includeTest bool) ([]Modu
 				}
 			}
 			if !includeTest && testOnly {
-				log.Debug().
+				logger.Debug().
 					Str("module", modPath).
 					Str("reason", "test only").
 					Msg("filtering module")

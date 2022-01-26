@@ -25,31 +25,32 @@ import (
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
 	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
-	"github.com/rs/zerolog/log"
 )
 
-type Option func(gomod.Module, *cdx.Component) error
+type Option func(zerolog.Logger, gomod.Module, *cdx.Component) error
 
 // WithLicenses attempts to resolve licenses for the module and attach them
 // to the component's license evidence.
 func WithLicenses(enabled bool) Option {
-	return func(m gomod.Module, c *cdx.Component) error {
+	return func(logger zerolog.Logger, module gomod.Module, component *cdx.Component) error {
 		if !enabled {
 			return nil
 		}
 
-		if m.Dir == "" {
-			log.Warn().
-				Str("module", m.Coordinates()).
+		if module.Dir == "" {
+			logger.Warn().
+				Str("module", module.Coordinates()).
 				Str("reason", "module not in cache").
 				Msg("can't resolve module license")
 			return nil
 		}
 
-		resolvedLicenses, err := license.Resolve(m)
+		resolvedLicenses, err := license.Resolve(logger, module)
 
 		if err == nil {
 			componentLicenses := make(cdx.Licenses, len(resolvedLicenses))
@@ -57,16 +58,16 @@ func WithLicenses(enabled bool) Option {
 				componentLicenses[i] = cdx.LicenseChoice{License: &resolvedLicenses[i]}
 			}
 
-			c.Evidence = &cdx.Evidence{
+			component.Evidence = &cdx.Evidence{
 				Licenses: &componentLicenses,
 			}
 		} else {
 			if errors.Is(err, license.ErrNoLicenseDetected) {
-				log.Warn().Str("module", m.Coordinates()).Msg("no license detected")
+				logger.Warn().Str("module", module.Coordinates()).Msg("no license detected")
 				return nil
 			}
 
-			return fmt.Errorf("failed to resolve license for %s: %v", m.Coordinates(), err)
+			return fmt.Errorf("failed to resolve license for %s: %v", module.Coordinates(), err)
 		}
 
 		return nil
@@ -75,37 +76,37 @@ func WithLicenses(enabled bool) Option {
 
 // WithComponentType overrides the type of the component.
 func WithComponentType(ctype cdx.ComponentType) Option {
-	return func(_ gomod.Module, c *cdx.Component) error {
-		c.Type = ctype
+	return func(_ zerolog.Logger, _ gomod.Module, component *cdx.Component) error {
+		component.Type = ctype
 		return nil
 	}
 }
 
 func WithModuleHashes() Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if m.Main {
+	return func(logger zerolog.Logger, module gomod.Module, component *cdx.Component) error {
+		if module.Main {
 			// We currently don't have an accurate way of hashing the main module, as it may contain
 			// files that are .gitignore'd and thus not part of the hashes in Go's sumdb.
-			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for main module")
+			logger.Debug().Str("module", module.Coordinates()).Msg("not calculating hash for main module")
 			return nil
 		}
 
-		if m.Vendored {
+		if module.Vendored {
 			// Go's vendoring mechanism doesn't copy all files that make up a module to the vendor dir.
 			// Hashing vendored modules thus won't result in the expected hash, probably causing more
 			// confusion than anything else.
-			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for vendored module")
+			logger.Debug().Str("module", module.Coordinates()).Msg("not calculating hash for vendored module")
 			return nil
 		}
 
-		if m.Path == gomod.StdlibModulePath {
+		if module.Path == gomod.StdlibModulePath {
 			// There are no module hashes published for the standard library.
-			log.Debug().Str("module", m.Coordinates()).Msg("not calculating hash for stdlib module")
+			logger.Debug().Str("module", module.Coordinates()).Msg("not calculating hash for stdlib module")
 			return nil
 		}
 
-		log.Debug().Str("module", m.Coordinates()).Msg("calculating module hash")
-		h1, err := m.Hash()
+		logger.Debug().Str("module", module.Coordinates()).Msg("calculating module hash")
+		h1, err := module.Hash()
 		if err != nil {
 			return fmt.Errorf("failed to calculate module hash: %w", err)
 		}
@@ -115,7 +116,7 @@ func WithModuleHashes() Option {
 			return fmt.Errorf("failed to base64 decode module hash: %w", err)
 		}
 
-		c.Hashes = &[]cdx.Hash{
+		component.Hashes = &[]cdx.Hash{
 			{Algorithm: cdx.HashAlgoSHA256, Value: fmt.Sprintf("%x", h1Bytes)},
 		}
 
@@ -124,22 +125,22 @@ func WithModuleHashes() Option {
 }
 
 func WithPackages(enabled bool, options ...pkgConv.Option) Option {
-	return func(m gomod.Module, c *cdx.Component) error {
+	return func(logger zerolog.Logger, module gomod.Module, component *cdx.Component) error {
 		if !enabled {
 			return nil
 		}
 
 		var pkgComponents []cdx.Component
-		for i := range m.Packages {
-			component, err := pkgConv.ToComponent(m.Packages[i], m, options...)
+		for i := range module.Packages {
+			pkgComponent, err := pkgConv.ToComponent(logger, module.Packages[i], module, options...)
 			if err != nil {
 				return fmt.Errorf("failed to convert package: %w", err)
 			}
-			pkgComponents = append(pkgComponents, *component)
+			pkgComponents = append(pkgComponents, *pkgComponent)
 		}
 
 		if len(pkgComponents) > 0 {
-			c.Components = &pkgComponents
+			component.Components = &pkgComponents
 		}
 
 		return nil
@@ -148,8 +149,8 @@ func WithPackages(enabled bool, options ...pkgConv.Option) Option {
 
 // WithScope overrides the scope of the component.
 func WithScope(scope cdx.Scope) Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		c.Scope = scope
+	return func(_ zerolog.Logger, _ gomod.Module, component *cdx.Component) error {
+		component.Scope = scope
 		return nil
 	}
 }
@@ -157,9 +158,9 @@ func WithScope(scope cdx.Scope) Option {
 // WithTestScope overrides the scope of the component,
 // if the corresponding module has the TestOnly flag set.
 func WithTestScope(scope cdx.Scope) Option {
-	return func(m gomod.Module, c *cdx.Component) error {
-		if m.TestOnly {
-			c.Scope = scope
+	return func(_ zerolog.Logger, module gomod.Module, component *cdx.Component) error {
+		if module.TestOnly {
+			component.Scope = scope
 		}
 
 		return nil
@@ -168,12 +169,12 @@ func WithTestScope(scope cdx.Scope) Option {
 
 // ToComponent converts a gomod.Module to a CycloneDX component.
 // The component can be further customized using options, before it's returned.
-func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error) {
+func ToComponent(logger zerolog.Logger, module gomod.Module, options ...Option) (*cdx.Component, error) {
 	if module.Replace != nil {
-		return ToComponent(*module.Replace, options...)
+		return ToComponent(logger, *module.Replace, options...)
 	}
 
-	log.Debug().
+	logger.Debug().
 		Str("module", module.Coordinates()).
 		Msg("converting module to component")
 
@@ -218,7 +219,7 @@ func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error)
 	}
 
 	for _, option := range options {
-		if err := option(module, &component); err != nil {
+		if err := option(logger, module, &component); err != nil {
 			return nil, err
 		}
 	}
@@ -227,11 +228,11 @@ func ToComponent(module gomod.Module, options ...Option) (*cdx.Component, error)
 }
 
 // ToComponents converts a slice of gomod.Module to a slice of CycloneDX components.
-func ToComponents(modules []gomod.Module, options ...Option) ([]cdx.Component, error) {
+func ToComponents(logger zerolog.Logger, modules []gomod.Module, options ...Option) ([]cdx.Component, error) {
 	components := make([]cdx.Component, 0, len(modules))
 
 	for i := range modules {
-		component, err := ToComponent(modules[i], options...)
+		component, err := ToComponent(logger, modules[i], options...)
 		if err != nil {
 			return nil, err
 		}

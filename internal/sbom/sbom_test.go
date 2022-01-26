@@ -18,9 +18,11 @@
 package sbom
 
 import (
+	"io"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -36,7 +38,7 @@ func TestCalculateFileHashes(t *testing.T) {
 			cdx.HashAlgoSHA3_512,
 		}
 
-		hashes, err := CalculateFileHashes("../../NOTICE", algos...) // TODO: use another file (create a tempfile?)
+		hashes, err := CalculateFileHashes(zerolog.New(io.Discard), "../../NOTICE", algos...) // TODO: use another file (create a tempfile?)
 		require.NoError(t, err)
 		require.Len(t, hashes, 7)
 		require.Equal(t, "90b8bc82c30341e88830b0ea82f18548", hashes[0].Value)
@@ -58,7 +60,7 @@ func TestCalculateFileHashes(t *testing.T) {
 
 		for _, algo := range algos {
 			t.Run(string(algo), func(t *testing.T) {
-				_, err := CalculateFileHashes("", algo)
+				_, err := CalculateFileHashes(zerolog.New(io.Discard), "", algo)
 				require.Error(t, err)
 				require.Contains(t, err.Error(), "unsupported hash algorithm")
 			})
@@ -66,7 +68,7 @@ func TestCalculateFileHashes(t *testing.T) {
 	})
 
 	t.Run("NoAlgorithms", func(t *testing.T) {
-		hashes, err := CalculateFileHashes("")
+		hashes, err := CalculateFileHashes(zerolog.New(io.Discard), "")
 		require.NoError(t, err)
 		require.Empty(t, hashes)
 	})

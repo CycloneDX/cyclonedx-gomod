@@ -20,28 +20,28 @@ package file
 import (
 	"fmt"
 
-	"github.com/rs/zerolog/log"
-
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 )
 
-type Option func(absFilePath, relFilePath string, c *cdx.Component) error
+type Option func(logger zerolog.Logger, absFilePath, relFilePath string, component *cdx.Component) error
 
 func WithHashes(algos ...cdx.HashAlgorithm) Option {
-	return func(abs, _ string, c *cdx.Component) error {
-		hashes, err := sbom.CalculateFileHashes(abs, algos...)
+	return func(logger zerolog.Logger, abs, _ string, component *cdx.Component) error {
+		hashes, err := sbom.CalculateFileHashes(logger, abs, algos...)
 		if err != nil {
 			return err
 		}
 
-		c.Hashes = &hashes
+		component.Hashes = &hashes
 		return nil
 	}
 }
 
-func ToComponent(absFilePath, relFilePath string, options ...Option) (*cdx.Component, error) {
-	log.Debug().
+func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, options ...Option) (*cdx.Component, error) {
+	logger.Debug().
 		Str("file", absFilePath).
 		Msg("converting file to component")
 
@@ -51,14 +51,14 @@ func ToComponent(absFilePath, relFilePath string, options ...Option) (*cdx.Compo
 		Scope: cdx.ScopeRequired,
 	}
 
-	hashes, err := sbom.CalculateFileHashes(absFilePath, cdx.HashAlgoSHA1)
+	hashes, err := sbom.CalculateFileHashes(logger, absFilePath, cdx.HashAlgoSHA1)
 	if err != nil {
 		return nil, err
 	}
 	component.Version = fmt.Sprintf("v0.0.0-%s", hashes[0].Value[:12])
 
 	for _, option := range options {
-		err = option(absFilePath, relFilePath, &component)
+		err = option(logger, absFilePath, relFilePath, &component)
 		if err != nil {
 			return nil, err
 		}

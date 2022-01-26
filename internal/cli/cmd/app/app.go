@@ -21,19 +21,12 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
 
-	cdx "github.com/CycloneDX/cyclonedx-go"
-	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
-	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
-	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
 	"github.com/peterbourgon/ff/v3/ffcli"
-	"github.com/rs/zerolog/log"
+
+	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/generate/app"
 )
 
 func New() *ffcli.Command {
@@ -91,8 +84,6 @@ Examples:
 				options.ModuleDir = args[0]
 			}
 
-			options.LogOptions.ConfigureLogger()
-
 			return Exec(options)
 		},
 	}
@@ -104,205 +95,35 @@ func Exec(options Options) error {
 		return err
 	}
 
-	modules, err := gomod.LoadModulesFromPackages(options.ModuleDir, options.Main)
+	logger := options.Logger()
+
+	generator, err := app.NewGenerator(options.ModuleDir,
+		app.WithLogger(logger),
+		app.WithIncludeFiles(options.IncludeFiles),
+		app.WithIncludePackages(options.IncludePackages),
+		app.WithIncludeStdlib(options.IncludeStd),
+		app.WithLicenseDetection(options.ResolveLicenses),
+		app.WithMainDir(options.Main))
 	if err != nil {
-		return fmt.Errorf("failed to load modules: %w", err)
+		return err
 	}
 
-	for i, module := range modules {
-		if module.Path == gomod.StdlibModulePath {
-			if options.IncludeStd {
-				modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
-				break
-			} else {
-				modules = append(modules[:i], modules[i+1:]...)
-				break
-			}
-		}
-	}
-
-	// Dependencies need to be applied prior to determining the main
-	// module's version, because `go mod graph` omits that version.
-	err = gomod.ApplyModuleGraph(options.ModuleDir, modules)
+	bom, err := generator.Generate()
 	if err != nil {
-		return fmt.Errorf("failed to apply module graph: %w", err)
+		return err
 	}
 
-	// Determine version of main module
-	modules[0].Version, err = gomod.GetModuleVersion(modules[0].Dir)
-	if err != nil {
-		return fmt.Errorf("failed to determine version of main module: %w", err)
-	}
-
-	// Convert main module
-	mainComponent, err := modConv.ToComponent(modules[0],
-		modConv.WithComponentType(cdx.ComponentTypeApplication),
-		modConv.WithLicenses(options.ResolveLicenses),
-		modConv.WithPackages(options.IncludePackages,
-			pkgConv.WithFiles(options.IncludeFiles)),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to convert main module: %w", err)
-	}
-
-	// Build properties (e.g. the Go version) depend on the environment
-	// and are thus only included when the SBOM doesn't have to be reproducible.
-	if !options.SBOMOptions.Reproducible {
-		buildProperties, err := createBuildProperties()
-		if err != nil {
-			return err
-		}
-		if mainComponent.Properties == nil {
-			mainComponent.Properties = &buildProperties
-		} else {
-			*mainComponent.Properties = append(*mainComponent.Properties, buildProperties...)
-		}
-	}
-
-	// Convert the other modules
-	components, err := modConv.ToComponents(modules[1:],
-		modConv.WithLicenses(options.ResolveLicenses),
-		modConv.WithModuleHashes(),
-		modConv.WithPackages(options.IncludePackages,
-			pkgConv.WithFiles(options.IncludeFiles)),
-	)
-	if err != nil {
-		return fmt.Errorf("failed to convert modules: %w", err)
-	}
-
-	bom := cdx.NewBOM()
 	err = cliUtil.SetSerialNumber(bom, options.SBOMOptions)
 	if err != nil {
 		return fmt.Errorf("failed to set serial number: %w", err)
 	}
-
-	// Assemble metadata
-	bom.Metadata = &cdx.Metadata{
-		Component: mainComponent,
-	}
-	err = cliUtil.AddCommonMetadata(bom, options.SBOMOptions)
+	err = cliUtil.AddCommonMetadata(logger, bom)
 	if err != nil {
 		return fmt.Errorf("failed to add common metadata: %w", err)
 	}
-
-	bom.Components = &components
-	dependencies := sbom.BuildDependencyGraph(modules)
-	bom.Dependencies = &dependencies
-
-	enrichWithApplicationDetails(bom, options.ModuleDir, options.Main)
-
 	if options.AssertLicenses {
 		sbom.AssertLicenses(bom)
 	}
 
 	return cliUtil.WriteBOM(bom, options.OutputOptions)
-}
-
-var buildEnv = []string{
-	"CGO_ENABLED",
-	"GOARCH",
-	"GOOS",
-	"GOVERSION",
-}
-
-func createBuildProperties() (properties []cdx.Property, err error) {
-	env, err := gocmd.GetEnv()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, buildEnvKey := range buildEnv {
-		buildEnvVal, ok := env[buildEnvKey]
-		if !ok {
-			log.Warn().
-				Str("env", buildEnvKey).
-				Msg("environment variable not found")
-			continue
-		}
-
-		if buildEnvVal != "" {
-			properties = append(properties, sbom.NewProperty("build:env:"+buildEnvKey, buildEnvVal))
-		}
-	}
-
-	goflags, ok := env["GOFLAGS"]
-	if ok {
-		tags := parseTagsFromGoFlags(goflags)
-		for _, tag := range tags {
-			properties = append(properties, sbom.NewProperty("build:tag", tag))
-		}
-	}
-
-	return
-}
-
-func parseTagsFromGoFlags(goflags string) (tags []string) {
-	fields := strings.Fields(goflags)
-
-	for _, field := range fields {
-		if !strings.HasPrefix(field, "-tags=") {
-			continue
-		}
-
-		tagList := strings.Split(field, "=")[1]
-		tags = append(tags, strings.Split(tagList, ",")...)
-	}
-
-	return
-}
-
-// enrichWithApplicationDetails determines the application name as well as
-// the path to the application (path to mainFile's parent dir) relative to moduleDir.
-// If the application path is not equal to moduleDir, it is added to the main component's
-// package URL as sub path. For example:
-//
-// + moduleDir <- application name
-// |-+ main.go
-//
-// + moduleDir
-// |-+ cmd
-//   |-+ app   <- application name
-//     |-+ main.go
-//
-// The package URLs for the above examples would look like this:
-//   1. pkg:golang/../module@version         (untouched)
-//   2. pkg:golang/../module@version#cmd/app (with sub path)
-//
-// If the package URL is updated, the BOM reference is as well.
-// All places within the BOM that reference the main component will be updated accordingly.
-func enrichWithApplicationDetails(bom *cdx.BOM, moduleDir, mainPkgDir string) {
-	// Resolve absolute paths to moduleDir and mainPkgDir.
-	// Both may contain traversals or similar elements we don't care about.
-	// This procedure is done during options validation already,
-	// which is why we don't check for errors here.
-	moduleDirAbs, _ := filepath.Abs(moduleDir)
-	mainPkgDirAbs, _ := filepath.Abs(filepath.Join(moduleDirAbs, mainPkgDir))
-
-	// Construct path to mainPkgDir relative to moduleDir
-	mainPkgDirRel := strings.TrimPrefix(mainPkgDirAbs, moduleDirAbs)
-	mainPkgDirRel = strings.TrimPrefix(mainPkgDirRel, string(os.PathSeparator))
-
-	if mainPkgDirRel != "" {
-		mainPkgDirRel = strings.TrimSuffix(mainPkgDirRel, string(os.PathSeparator))
-
-		oldPURL := bom.Metadata.Component.PackageURL
-		newPURL := oldPURL + "#" + filepath.ToSlash(mainPkgDirRel)
-
-		log.Debug().
-			Str("old", oldPURL).
-			Str("new", newPURL).
-			Msg("updating purl of main component")
-
-		// Update PURL of main component
-		bom.Metadata.Component.BOMRef = newPURL
-		bom.Metadata.Component.PackageURL = newPURL
-
-		// Update PURL in dependency graph
-		for i, dep := range *bom.Dependencies {
-			if dep.Ref == oldPURL {
-				(*bom.Dependencies)[i].Ref = newPURL
-				break
-			}
-		}
-	}
 }

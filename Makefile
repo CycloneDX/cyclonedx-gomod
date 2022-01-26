@@ -6,11 +6,11 @@ LDFLAGS="-s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version=
 
 build:
 	mkdir -p ./bin
-	CGO_ENABLED=0 go build -v -ldflags=${LDFLAGS} -o ./bin/cyclonedx-gomod
+	CGO_ENABLED=0 go build -v -ldflags=${LDFLAGS} -o ./bin/cyclonedx-gomod ./cmd/cyclonedx-gomod
 .PHONY: build
 
 install:
-	CGO_ENABLED=0 go install -v -ldflags=${LDFLAGS}
+	CGO_ENABLED=0 go install -v -ldflags=${LDFLAGS} ./cmd/cyclonedx-gomod
 .PHONY: install
 
 unit-test:

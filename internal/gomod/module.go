@@ -27,11 +27,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"golang.org/x/mod/semver"
 	"golang.org/x/mod/sumdb/dirhash"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 // See https://golang.org/ref/mod#go-list-m
@@ -80,13 +81,13 @@ func IsModule(dir string) bool {
 // ErrNoModule indicates that a given path is not a valid Go module
 var ErrNoModule = errors.New("not a go module")
 
-func LoadModule(moduleDir string) (*Module, error) {
-	log.Debug().
+func LoadModule(logger zerolog.Logger, moduleDir string) (*Module, error) {
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Msg("loading module")
 
 	buf := new(bytes.Buffer)
-	err := gocmd.ListModule(moduleDir, buf)
+	err := gocmd.ListModule(logger, moduleDir, buf)
 	if err != nil {
 		return nil, fmt.Errorf("listing module failed: %w", err)
 	}
@@ -100,8 +101,8 @@ func LoadModule(moduleDir string) (*Module, error) {
 	return &module, nil
 }
 
-func LoadModules(moduleDir string, includeTest bool) ([]Module, error) {
-	log.Debug().
+func LoadModules(logger zerolog.Logger, moduleDir string, includeTest bool) ([]Module, error) {
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Bool("includeTest", includeTest).
 		Msg("loading modules")
@@ -111,7 +112,7 @@ func LoadModules(moduleDir string, includeTest bool) ([]Module, error) {
 	}
 
 	buf := new(bytes.Buffer)
-	err := gocmd.ListModules(moduleDir, buf)
+	err := gocmd.ListModules(logger, moduleDir, buf)
 	if err != nil {
 		return nil, fmt.Errorf("listing modules failed: %w", err)
 	}
@@ -121,12 +122,12 @@ func LoadModules(moduleDir string, includeTest bool) ([]Module, error) {
 		return nil, fmt.Errorf("parsing modules failed: %w", err)
 	}
 
-	modules, err = FilterModules(moduleDir, modules, includeTest)
+	modules, err = FilterModules(logger, moduleDir, modules, includeTest)
 	if err != nil {
 		return nil, fmt.Errorf("filtering modules failed: %w", err)
 	}
 
-	err = ResolveLocalReplacements(moduleDir, modules)
+	err = ResolveLocalReplacements(logger, moduleDir, modules)
 	if err != nil {
 		return nil, fmt.Errorf("failed to resolve local replacements: %w", err)
 	}
@@ -175,7 +176,7 @@ func sortModules(modules []Module) {
 }
 
 // ResolveLocalReplacements tries to resolve paths and versions for local replacement modules.
-func ResolveLocalReplacements(mainModuleDir string, modules []Module) error {
+func ResolveLocalReplacements(logger zerolog.Logger, mainModuleDir string, modules []Module) error {
 	for i, module := range modules {
 		if module.Replace == nil {
 			// Only replacements can be local
@@ -196,13 +197,13 @@ func ResolveLocalReplacements(mainModuleDir string, modules []Module) error {
 		}
 
 		if !IsModule(localModuleDir) {
-			log.Warn().
+			logger.Warn().
 				Str("moduleDir", localModuleDir).
 				Msg("local replacement does not exist or is not a module")
 			continue
 		}
 
-		err := resolveLocalReplacement(localModuleDir, modules[i].Replace)
+		err := resolveLocalReplacement(logger, localModuleDir, modules[i].Replace)
 		if err != nil {
 			return fmt.Errorf("resolving local module %s failed: %w", module.Replace.Coordinates(), err)
 		}
@@ -211,12 +212,12 @@ func ResolveLocalReplacements(mainModuleDir string, modules []Module) error {
 	return nil
 }
 
-func resolveLocalReplacement(localModuleDir string, module *Module) error {
-	log.Debug().
+func resolveLocalReplacement(logger zerolog.Logger, localModuleDir string, module *Module) error {
+	logger.Debug().
 		Str("moduleDir", localModuleDir).
 		Msg("resolving local replacement module")
 
-	localModule, err := LoadModule(localModuleDir)
+	localModule, err := LoadModule(logger, localModuleDir)
 	if err != nil {
 		return err
 	}
@@ -226,14 +227,14 @@ func resolveLocalReplacement(localModuleDir string, module *Module) error {
 
 	// Try to resolve the version. Only works when module.Dir is a Git repo.
 	if module.Version == "" {
-		version, err := GetModuleVersion(module.Dir)
+		version, err := GetModuleVersion(logger, module.Dir)
 		if err == nil {
 			module.Version = version
 		} else {
 			// We don't fail with an error here, because our possibilities are limited.
 			// module.Dir may be a Mercurial repo or just a normal directory, in which case we
 			// cannot detect versions reliably right now.
-			log.Warn().
+			logger.Warn().
 				Err(err).
 				Str("module", module.Path).
 				Str("moduleDir", localModuleDir).

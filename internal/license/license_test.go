@@ -18,16 +18,19 @@
 package license
 
 import (
+	"io"
 	"testing"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 )
 
 func TestResolve(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		licenses, err := Resolve(gomod.Module{
+		licenses, err := Resolve(zerolog.New(io.Discard), gomod.Module{
 			Dir: "../../",
 		})
 		require.NoError(t, err)
@@ -38,7 +41,7 @@ func TestResolve(t *testing.T) {
 	t.Run("No License Detected", func(t *testing.T) {
 		tmpDir := t.TempDir()
 
-		_, err := Resolve(gomod.Module{
+		_, err := Resolve(zerolog.New(io.Discard), gomod.Module{
 			Dir: tmpDir,
 		})
 		require.Error(t, err)

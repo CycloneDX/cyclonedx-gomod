@@ -23,6 +23,8 @@ import (
 	"io"
 	"strings"
 
+	"github.com/rs/zerolog"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
@@ -36,9 +38,9 @@ type BuildInfo struct {
 	Settings  map[string]string // Other information about the build.
 }
 
-func LoadBuildInfo(binaryPath string) (*BuildInfo, error) {
+func LoadBuildInfo(logger zerolog.Logger, binaryPath string) (*BuildInfo, error) {
 	buf := new(bytes.Buffer)
-	err := gocmd.LoadBuildInfo(binaryPath, buf)
+	err := gocmd.LoadBuildInfo(logger, binaryPath, buf)
 	if err != nil {
 		return nil, err
 	}

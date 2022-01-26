@@ -25,24 +25,25 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
-	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog"
 	"golang.org/x/mod/semver"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
-func ApplyModuleGraph(moduleDir string, modules []Module) error {
-	log.Debug().
+func ApplyModuleGraph(logger zerolog.Logger, moduleDir string, modules []Module) error {
+	logger.Debug().
 		Str("moduleDir", moduleDir).
 		Int("moduleCount", len(modules)).
 		Msg("applying module graph")
 
 	buf := new(bytes.Buffer)
-	err := gocmd.GetModuleGraph(moduleDir, buf)
+	err := gocmd.GetModuleGraph(logger, moduleDir, buf)
 	if err != nil {
 		return err
 	}
 
-	err = parseModuleGraph(buf, modules)
+	err = parseModuleGraph(logger, buf, modules)
 	if err != nil {
 		return err
 	}
@@ -59,7 +60,7 @@ func ApplyModuleGraph(moduleDir string, modules []Module) error {
 //
 // The Module slice is expected to contain only "effective" modules,
 // with only a single version per module, as provided by `go list -m` or `go list -deps`.
-func parseModuleGraph(reader io.Reader, modules []Module) error {
+func parseModuleGraph(logger zerolog.Logger, reader io.Reader, modules []Module) error {
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -84,7 +85,7 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		// the effective modules slice. Hence, we search for the dependency in non-strict mode.
 		dependency := findModule(modules, fields[1], false)
 		if dependency == nil {
-			log.Debug().
+			logger.Debug().
 				Str("dependant", dependant.Coordinates()).
 				Str("dependency", fields[1]).
 				Str("reason", "dependency not in list of selected modules").
@@ -93,7 +94,7 @@ func parseModuleGraph(reader io.Reader, modules []Module) error {
 		}
 
 		if dependant.Main && dependency.Indirect {
-			log.Debug().
+			logger.Debug().
 				Str("dependant", dependant.Coordinates()).
 				Str("dependency", dependency.Coordinates()).
 				Str("reason", "indirect dependency").

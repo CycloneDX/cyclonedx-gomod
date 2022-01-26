@@ -1,35 +1,35 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.3",
-  "serialNumber": "urn:uuid:27ade8f0-bc72-418d-b60b-7ec0bf998cf3",
+  "serialNumber": "urn:uuid:15aff25b-df3d-4d31-9de5-a86be8cb3ac0",
   "version": 1,
   "metadata": {
-    "timestamp": "2021-12-04T15:26:15Z",
+    "timestamp": "2022-01-26T12:44:08Z",
     "tools": [
       {
         "vendor": "CycloneDX",
         "name": "cyclonedx-gomod",
-        "version": "v0.0.0-20211204162508-eb14a129b8dd",
+        "version": "v0.0.0-20220126133025-f73551881789",
         "hashes": [
           {
             "alg": "MD5",
-            "content": "97e3f972e8a8d2cb8bee54410cdc229f"
+            "content": "6e5d5cc1f21db2040663c63155df8d57"
           },
           {
             "alg": "SHA-1",
-            "content": "fdbd34237ae76eca2c72c24827f422e6d80cf802"
+            "content": "d65c58f99679b1e8fb5cbc2a4651139d818dd6e4"
           },
           {
             "alg": "SHA-256",
-            "content": "ad286820fb3db638b48cacf595c7abd1cc6ee96536367a326411b82a66581ab4"
+            "content": "cfcc399ba50f7f422f01ec3279f60b32f4390130cc8bb8c8f34e47c2ec5a5fe8"
           },
           {
             "alg": "SHA-384",
-            "content": "fdb10234dbd02859aba7c2d0ee41e5b961df91aa9e9774d1dc01f346248d93de9675ec584a1dfe9d556076831945b773"
+            "content": "49b7816217079adb33042dd81ec4e997666223d2536d2e34235d7c103cfa783ef5969777988eafd5a79302f3a73e74b1"
           },
           {
             "alg": "SHA-512",
-            "content": "4e797444a851842a8392871654acc83aa6c43a5a035a29fae28458e575b437c08ccd47996287e0af094a0ff534b0a169b4d160e85059c9bebf4e07a289407632"
+            "content": "7013bacfc966b77585491ba217864e4a5cb943603f9fe9d85932f55bb70d120e520937f99daf33d1a4f6c918f5e9c23b63225249342167800705aa997032b402"
           }
         ]
       }
@@ -55,7 +55,7 @@
         },
         {
           "name": "cdx:gomod:build:env:GOVERSION",
-          "value": "go1.17.4"
+          "value": "go1.17.5"
         }
       ],
       "components": [

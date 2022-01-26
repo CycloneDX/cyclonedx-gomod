@@ -28,12 +28,13 @@ import (
 	"os"
 	"sort"
 
+	"github.com/rs/zerolog"
 	"golang.org/x/crypto/sha3"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
-	"github.com/rs/zerolog/log"
 )
 
 func AssertLicenses(bom *cdx.BOM) {
@@ -102,13 +103,13 @@ func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	return depGraph
 }
 
-func BuildToolMetadata() (*cdx.Tool, error) {
+func BuildToolMetadata(logger zerolog.Logger) (*cdx.Tool, error) {
 	toolExePath, err := os.Executable()
 	if err != nil {
 		return nil, err
 	}
 
-	toolHashes, err := CalculateFileHashes(toolExePath,
+	toolHashes, err := CalculateFileHashes(logger, toolExePath,
 		cdx.HashAlgoMD5, cdx.HashAlgoSHA1, cdx.HashAlgoSHA256, cdx.HashAlgoSHA384, cdx.HashAlgoSHA512)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
@@ -122,12 +123,12 @@ func BuildToolMetadata() (*cdx.Tool, error) {
 	}, nil
 }
 
-func CalculateFileHashes(filePath string, algos ...cdx.HashAlgorithm) ([]cdx.Hash, error) {
+func CalculateFileHashes(logger zerolog.Logger, filePath string, algos ...cdx.HashAlgorithm) ([]cdx.Hash, error) {
 	if len(algos) == 0 {
 		return make([]cdx.Hash, 0), nil
 	}
 
-	log.Debug().
+	logger.Debug().
 		Str("file", filePath).
 		Interface("algos", algos).
 		Msg("calculating file hashes")
