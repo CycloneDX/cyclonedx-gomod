@@ -150,20 +150,15 @@ func RequireMatchingSBOMSnapshot(t *testing.T, snapShooter *cupaloy.Config, bom 
 
 // RequireValidSBOM encodes the BOM and validates it using the CycloneDX CLI.
 func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) {
-	var (
-		inputFormat   string
-		fileExtension string
-	)
+	var inputFormat string
 	switch fileFormat {
 	case cdx.BOMFileFormatJSON:
-		fileExtension = "json"
-		inputFormat = "json_v1_3"
+		inputFormat = "json"
 	case cdx.BOMFileFormatXML:
-		fileExtension = "xml"
-		inputFormat = "xml_v1_3"
+		inputFormat = "xml"
 	}
 
-	bomFile, err := os.Create(filepath.Join(t.TempDir(), fmt.Sprintf("bom.%s", fileExtension)))
+	bomFile, err := os.Create(filepath.Join(t.TempDir(), fmt.Sprintf("bom.%s", inputFormat)))
 	require.NoError(t, err)
 	defer func() {
 		if err := bomFile.Close(); err != nil {
@@ -177,7 +172,7 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	require.NoError(t, err)
 	require.NoError(t, bomFile.Close())
 
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--fail-on-errors") // #nosec G204
+	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--input-version", "v1_3", "--fail-on-errors") // #nosec G204
 	valOut, err := valCmd.CombinedOutput()
 	if !assert.NoError(t, err) {
 		// Provide some context when test is failing
