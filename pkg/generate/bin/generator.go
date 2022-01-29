@@ -32,14 +32,15 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/generate"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
 )
 
 type generator struct {
 	logger zerolog.Logger
 
 	binaryPath      string
-	detectLicenses  bool
 	includeStdlib   bool
+	licenseDetector licensedetect.Detector
 	versionOverride string
 }
 
@@ -88,7 +89,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		}
 	}
 
-	if g.detectLicenses {
+	if g.licenseDetector != nil {
 		// Before we can resolve licenses, we have to download the modules first
 		err = g.downloadModules(modules)
 		if err != nil {
@@ -103,12 +104,12 @@ func (g generator) Generate() (*cdx.BOM, error) {
 
 	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
-		modConv.WithLicenses(g.detectLicenses))
+		modConv.WithLicenses(g.licenseDetector))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
 	components, err := modConv.ToComponents(g.logger, modules[1:],
-		modConv.WithLicenses(g.detectLicenses))
+		modConv.WithLicenses(g.licenseDetector))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
 	}

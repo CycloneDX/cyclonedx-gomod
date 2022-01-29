@@ -31,6 +31,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/testutil"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/standard"
 )
 
 func TestNewGenerator(t *testing.T) {
@@ -62,7 +63,7 @@ func TestGenerator_Generate(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger),
 			WithIncludeStdlib(true))
 		require.NoError(t, err)
@@ -87,7 +88,7 @@ func TestGenerator_Generate(t *testing.T) {
 			WithIncludeFiles(true),
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -110,7 +111,7 @@ func TestGenerator_Generate(t *testing.T) {
 		g, err := NewGenerator(fixturePath,
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -132,7 +133,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger),
 			WithMainDir("cmd/purl"))
 		require.NoError(t, err)
@@ -155,7 +156,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger),
 			WithMainDir("cmd/uuid"))
 		require.NoError(t, err)
@@ -178,7 +179,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -202,7 +203,7 @@ func TestGenerator_Generate(t *testing.T) {
 			WithIncludeFiles(true),
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -225,7 +226,7 @@ func TestGenerator_Generate(t *testing.T) {
 		g, err := NewGenerator(fixturePath,
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 

@@ -19,7 +19,6 @@ package module
 
 import (
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -28,17 +27,17 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-	"github.com/CycloneDX/cyclonedx-gomod/internal/license"
 	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
 )
 
 type Option func(zerolog.Logger, gomod.Module, *cdx.Component) error
 
-// WithLicenses attempts to resolve licenses for the module and attach them
-// to the component's license evidence.
-func WithLicenses(enabled bool) Option {
+// WithLicenses attempts to detect licenses for the module using a provided license detector
+// and attach them to the component's license evidence.
+func WithLicenses(detector licensedetect.Detector) Option {
 	return func(logger zerolog.Logger, module gomod.Module, component *cdx.Component) error {
-		if !enabled {
+		if detector == nil {
 			return nil
 		}
 
@@ -50,24 +49,22 @@ func WithLicenses(enabled bool) Option {
 			return nil
 		}
 
-		resolvedLicenses, err := license.Resolve(logger, module)
+		detectedLicenses, err := detector.Detect(module.Path, module.Version, module.Dir)
+		if err != nil {
+			return fmt.Errorf("failed to detect licenses for %s: %v", module.Coordinates(), err)
+		}
 
-		if err == nil {
-			componentLicenses := make(cdx.Licenses, len(resolvedLicenses))
-			for i := range resolvedLicenses {
-				componentLicenses[i] = cdx.LicenseChoice{License: &resolvedLicenses[i]}
+		if len(detectedLicenses) > 0 {
+			componentLicenses := make(cdx.Licenses, len(detectedLicenses))
+			for i := range detectedLicenses {
+				componentLicenses[i] = cdx.LicenseChoice{License: &detectedLicenses[i]}
 			}
 
 			component.Evidence = &cdx.Evidence{
 				Licenses: &componentLicenses,
 			}
 		} else {
-			if errors.Is(err, license.ErrNoLicenseDetected) {
-				logger.Warn().Str("module", module.Coordinates()).Msg("no license detected")
-				return nil
-			}
-
-			return fmt.Errorf("failed to resolve license for %s: %v", module.Coordinates(), err)
+			logger.Warn().Str("module", module.Coordinates()).Msg("no licenses detected")
 		}
 
 		return nil

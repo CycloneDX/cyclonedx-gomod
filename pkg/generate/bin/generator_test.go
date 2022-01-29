@@ -23,9 +23,11 @@ import (
 
 	"github.com/CycloneDX/cyclonedx-go"
 	"github.com/bradleyjkemp/cupaloy/v2"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/testutil"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/standard"
 )
 
 func TestNewGenerator(t *testing.T) {
@@ -55,7 +57,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 	t.Run("Simple", func(t *testing.T) {
 		g, err := NewGenerator("../testdata/simple",
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -68,7 +70,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 	t.Run("Simple1.18", func(t *testing.T) {
 		g, err := NewGenerator("../testdata/simple1.18",
-			WithLicenseDetection(true),
+			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 

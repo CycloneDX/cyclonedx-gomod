@@ -31,16 +31,17 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/generate"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
 )
 
 type generator struct {
 	logger zerolog.Logger
 
-	moduleDir      string
-	componentType  cdx.ComponentType
-	includeStdlib  bool
-	includeTest    bool
-	detectLicenses bool
+	moduleDir       string
+	componentType   cdx.ComponentType
+	includeStdlib   bool
+	includeTest     bool
+	licenseDetector licensedetect.Detector
 }
 
 // NewGenerator returns a generator that is capable of generating BOMs for Go modules.
@@ -104,13 +105,13 @@ func (g generator) Generate() (*cdx.BOM, error) {
 
 	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(g.componentType),
-		modConv.WithLicenses(g.detectLicenses),
+		modConv.WithLicenses(g.licenseDetector),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
 	components, err := modConv.ToComponents(g.logger, modules[1:],
-		modConv.WithLicenses(g.detectLicenses),
+		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithModuleHashes(),
 	)
 	if err != nil {

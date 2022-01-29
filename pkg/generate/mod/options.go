@@ -20,6 +20,8 @@ package mod
 import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/rs/zerolog"
+
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
 )
 
 // Option allows for customization of the generator using the
@@ -55,10 +57,12 @@ func WithIncludeTestModules(enable bool) Option {
 	}
 }
 
-// WithLicenseDetection toggles the license detection feature.
-func WithLicenseDetection(enable bool) Option {
+// WithLicenseDetector sets the license detector.
+//
+// When nil, no license detection will be performed. Default is nil.
+func WithLicenseDetector(detector licensedetect.Detector) Option {
 	return func(g *generator) error {
-		g.detectLicenses = enable
+		g.licenseDetector = detector
 		return nil
 	}
 }

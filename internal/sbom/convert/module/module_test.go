@@ -19,6 +19,7 @@ package module
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"os/exec"
 	"path/filepath"
@@ -32,49 +33,72 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 )
 
+type stubLicenseDetector struct {
+	Err      error
+	Licenses []cdx.License
+}
+
+func (d stubLicenseDetector) Detect(_, _, _ string) ([]cdx.License, error) {
+	if d.Err != nil {
+		return nil, d.Err
+	}
+
+	return d.Licenses, nil
+}
+
 func TestWithLicenses(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		module := gomod.Module{
-			Dir: "../../../",
-		}
 		component := cdx.Component{}
+		detector := &stubLicenseDetector{
+			Licenses: []cdx.License{
+				{
+					ID: "Apache-2.0",
+				},
+			},
+		}
 
-		err := WithLicenses(true)(zerolog.New(io.Discard), module, &component)
+		err := WithLicenses(detector)(zerolog.Nop(), gomod.Module{Dir: t.TempDir()}, &component)
 		require.NoError(t, err)
 		require.NotNil(t, component.Evidence)
 		require.NotNil(t, component.Evidence.Licenses)
 		require.Len(t, *component.Evidence.Licenses, 1)
 	})
 
-	t.Run("Not Found", func(t *testing.T) {
-		module := gomod.Module{
-			Dir: ".",
-		}
+	t.Run("NoLicenseFound", func(t *testing.T) {
 		component := cdx.Component{}
+		detector := &stubLicenseDetector{
+			Licenses: []cdx.License{},
+		}
 
-		err := WithLicenses(true)(zerolog.New(io.Discard), module, &component)
+		err := WithLicenses(detector)(zerolog.Nop(), gomod.Module{Dir: t.TempDir()}, &component)
 		require.NoError(t, err)
 		require.Nil(t, component.Evidence)
 	})
 
-	t.Run("Other Error", func(t *testing.T) {
-		module := gomod.Module{
-			Dir: "./doesNotExist",
-		}
+	t.Run("ModuleNotInCache", func(t *testing.T) {
 		component := cdx.Component{}
+		detector := &stubLicenseDetector{}
 
-		err := WithLicenses(true)(zerolog.New(io.Discard), module, &component)
+		err := WithLicenses(detector)(zerolog.Nop(), gomod.Module{Dir: ""}, &component)
+		require.NoError(t, err)
+		require.Nil(t, component.Evidence)
+	})
+
+	t.Run("OtherError", func(t *testing.T) {
+		component := cdx.Component{}
+		detector := &stubLicenseDetector{
+			Err: errors.New("test"),
+		}
+
+		err := WithLicenses(detector)(zerolog.Nop(), gomod.Module{Dir: t.TempDir()}, &component)
 		require.Error(t, err)
 		require.Nil(t, component.Evidence)
 	})
 
 	t.Run("Disabled", func(t *testing.T) {
-		module := gomod.Module{
-			Dir: "../../../",
-		}
 		component := cdx.Component{}
 
-		err := WithLicenses(false)(zerolog.New(io.Discard), module, &component)
+		err := WithLicenses(nil)(zerolog.Nop(), gomod.Module{Dir: t.TempDir()}, &component)
 		require.NoError(t, err)
 		require.Nil(t, component.Evidence)
 	})

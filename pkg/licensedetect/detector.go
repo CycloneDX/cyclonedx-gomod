@@ -15,36 +15,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package license
+// Package licensedetect exposes cyclonedx-gomod's license detection functionality.
+package licensedetect
 
-import (
-	"io"
-	"testing"
+import cdx "github.com/CycloneDX/cyclonedx-go"
 
-	"github.com/rs/zerolog"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
-)
-
-func TestResolve(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		licenses, err := Resolve(zerolog.New(io.Discard), gomod.Module{
-			Dir: "../../",
-		})
-		require.NoError(t, err)
-		require.Len(t, licenses, 1)
-		assert.Equal(t, "Apache-2.0", licenses[0].ID)
-	})
-
-	t.Run("No License Detected", func(t *testing.T) {
-		tmpDir := t.TempDir()
-
-		_, err := Resolve(zerolog.New(io.Discard), gomod.Module{
-			Dir: tmpDir,
-		})
-		require.Error(t, err)
-		require.ErrorIs(t, err, ErrNoLicenseDetected)
-	})
+// Detector TODO
+type Detector interface {
+	Detect(path, version, dir string) ([]cdx.License, error)
 }

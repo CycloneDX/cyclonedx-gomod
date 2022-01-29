@@ -33,15 +33,16 @@ import (
 	modConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/module"
 	pkgConv "github.com/CycloneDX/cyclonedx-gomod/internal/sbom/convert/pkg"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/generate"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
 )
 
 type generator struct {
 	logger zerolog.Logger
 
-	detectLicenses  bool
 	includeFiles    bool
 	includePackages bool
 	includeStdlib   bool
+	licenseDetector licensedetect.Detector
 	mainDir         string
 	moduleDir       string
 }
@@ -95,7 +96,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 
 	mainComponent, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
-		modConv.WithLicenses(g.detectLicenses),
+		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithPackages(g.includePackages,
 			pkgConv.WithFiles(g.includeFiles)),
 	)
@@ -114,7 +115,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	}
 
 	components, err := modConv.ToComponents(g.logger, modules[1:],
-		modConv.WithLicenses(g.detectLicenses),
+		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithModuleHashes(),
 		modConv.WithPackages(g.includePackages,
 			pkgConv.WithFiles(g.includeFiles)),
