@@ -20,7 +20,10 @@ package licensedetect
 
 import cdx "github.com/CycloneDX/cyclonedx-go"
 
-// Detector TODO
+// Detector is the interface that provides abstraction for license detection strategies.
+//
+// Detectors are provided with a module's path, version, and local directory (in Go's module cache).
+// The latter may be empty, if the module has not been downloaded to the module cache.
 type Detector interface {
 	Detect(path, version, dir string) ([]cdx.License, error)
 }
