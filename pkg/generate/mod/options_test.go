@@ -24,6 +24,8 @@ import (
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 func TestWithComponentType(t *testing.T) {
@@ -47,11 +49,13 @@ func TestWithIncludeTestModules(t *testing.T) {
 	require.True(t, g.includeTest)
 }
 
-func TestWithLicenseDetection(t *testing.T) {
-	g := &generator{detectLicenses: false}
-	err := WithLicenseDetection(true)(g)
+func TestWithLicenseDetector(t *testing.T) {
+	detector := local.NewDetector(zerolog.Nop())
+
+	g := &generator{licenseDetector: nil}
+	err := WithLicenseDetector(detector)(g)
 	require.NoError(t, err)
-	require.True(t, g.detectLicenses)
+	require.Equal(t, detector, g.licenseDetector)
 }
 
 func TestWithLogger(t *testing.T) {

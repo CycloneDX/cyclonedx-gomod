@@ -27,6 +27,8 @@ import (
 	cliUtil "github.com/CycloneDX/cyclonedx-gomod/internal/cli/util"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/generate/app"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 func New() *ffcli.Command {
@@ -97,12 +99,17 @@ func Exec(options Options) error {
 
 	logger := options.Logger()
 
+	var licenseDetector licensedetect.Detector
+	if options.ResolveLicenses {
+		licenseDetector = local.NewDetector(logger)
+	}
+
 	generator, err := app.NewGenerator(options.ModuleDir,
 		app.WithLogger(logger),
 		app.WithIncludeFiles(options.IncludeFiles),
 		app.WithIncludePackages(options.IncludePackages),
 		app.WithIncludeStdlib(options.IncludeStd),
-		app.WithLicenseDetection(options.ResolveLicenses),
+		app.WithLicenseDetector(licenseDetector),
 		app.WithMainDir(options.Main))
 	if err != nil {
 		return err

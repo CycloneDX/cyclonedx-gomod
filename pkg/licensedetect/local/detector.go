@@ -15,10 +15,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-package license
+// Package local provides the logic for local license detection.
+package local
 
 import (
 	"errors"
+	"fmt"
 	"sort"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -26,15 +28,25 @@ import (
 	"github.com/go-enry/go-license-detector/v4/licensedb/filer"
 	"github.com/rs/zerolog"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
 )
-
-var ErrNoLicenseDetected = errors.New("no license detected")
 
 const minDetectionConfidence = 0.85
 
-func Resolve(logger zerolog.Logger, module gomod.Module) ([]cdx.License, error) {
-	licensesFiler, err := filer.FromDirectory(module.Dir)
+type detector struct {
+	logger zerolog.Logger
+}
+
+// NewDetector returns a license detector capable of detecting licenses locally.
+func NewDetector(logger zerolog.Logger) licensedetect.Detector {
+	return &detector{
+		logger: logger,
+	}
+}
+
+// Detect implements the licensedetect.Detector interface.
+func (d detector) Detect(path, version, dir string) ([]cdx.License, error) {
+	licensesFiler, err := filer.FromDirectory(dir)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +54,7 @@ func Resolve(logger zerolog.Logger, module gomod.Module) ([]cdx.License, error) 
 	detectedLicenses, err := licensedb.Detect(licensesFiler)
 	if err != nil {
 		if errors.Is(err, licensedb.ErrNoLicenseFound) {
-			return nil, ErrNoLicenseDetected
+			return []cdx.License{}, nil
 		}
 		return nil, err
 	}
@@ -70,20 +82,20 @@ func Resolve(logger zerolog.Logger, module gomod.Module) ([]cdx.License, error) 
 	}
 
 	if detectedLicense == "" {
-		return nil, ErrNoLicenseDetected
+		return []cdx.License{}, nil
 	}
 	if detectedLicenseConfidence < minDetectionConfidence {
-		logger.Debug().
-			Str("module", module.Coordinates()).
+		d.logger.Debug().
+			Str("module", fmt.Sprintf("%s@%s", path, version)).
 			Str("license", detectedLicense).
 			Float32("confidence", detectedLicenseConfidence).
 			Float32("minConfidence", minDetectionConfidence).
 			Msg("detection confidence for license is too low")
-		return nil, ErrNoLicenseDetected
+		return []cdx.License{}, nil
 	}
 
-	logger.Debug().
-		Str("module", module.Coordinates()).
+	d.logger.Debug().
+		Str("module", fmt.Sprintf("%s@%s", path, version)).
 		Str("license", detectedLicense).
 		Float32("confidence", detectedLicenseConfidence).
 		Msg("license detected")

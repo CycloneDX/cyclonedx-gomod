@@ -17,7 +17,11 @@
 
 package bin
 
-import "github.com/rs/zerolog"
+import (
+	"github.com/rs/zerolog"
+
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
+)
 
 // Option allows for customization of the generator using the
 // functional options pattern.
@@ -35,15 +39,17 @@ func WithIncludeStdlib(enable bool) Option {
 	}
 }
 
-// WithLicenseDetection toggles the license detection feature.
+// WithLicenseDetector sets the license detector.
 //
 // Because Go does not embed license information in binaries,
 // performing license detection requires downloading of source code.
 // This is done by `go mod download`ing all modules (including main)
 // to the module cache.
-func WithLicenseDetection(enable bool) Option {
+//
+// When nil, no license detection will be performed. Default is nil.
+func WithLicenseDetector(detector licensedetect.Detector) Option {
 	return func(g *generator) error {
-		g.detectLicenses = enable
+		g.licenseDetector = detector
 		return nil
 	}
 }

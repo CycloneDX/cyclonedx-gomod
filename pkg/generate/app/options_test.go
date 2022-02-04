@@ -23,6 +23,8 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 func TestWithIncludeFiles(t *testing.T) {
@@ -46,11 +48,13 @@ func TestWithIncludeStdlib(t *testing.T) {
 	require.True(t, g.includeStdlib)
 }
 
-func TestWithLicenseDetection(t *testing.T) {
-	g := &generator{detectLicenses: false}
-	err := WithLicenseDetection(true)(g)
+func TestWithLicenseDetector(t *testing.T) {
+	detector := local.NewDetector(zerolog.Nop())
+
+	g := &generator{licenseDetector: detector}
+	err := WithLicenseDetector(detector)(g)
 	require.NoError(t, err)
-	require.True(t, g.detectLicenses)
+	require.Equal(t, detector, g.licenseDetector)
 }
 
 func TestWithLogger(t *testing.T) {
