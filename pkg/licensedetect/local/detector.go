@@ -37,7 +37,7 @@ type detector struct {
 	logger zerolog.Logger
 }
 
-// NewDetector TODO
+// NewDetector returns a license detector capable of detecting licenses locally.
 func NewDetector(logger zerolog.Logger) licensedetect.Detector {
 	return &detector{
 		logger: logger,
