@@ -1,4 +1,4 @@
-FROM gitpod/workspace-go:2022-02-04-10-54-10
+FROM gitpod/workspace-go:2022-02-04-10-54-10@sha256:8ea7684f6b1294c21065918880e6f31d16ac58b61361754b8d384b8e8f8279ae
 
 USER root
 
