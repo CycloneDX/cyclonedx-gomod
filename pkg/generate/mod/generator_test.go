@@ -28,7 +28,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/testutil"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/standard"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 func TestNewGenerator(t *testing.T) {
@@ -61,7 +61,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -79,7 +79,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -97,7 +97,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(filepath.Join(fixturePath, "local"),
 			WithIncludeStdlib(true),
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -125,7 +125,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(filepath.Join(fixturePath, "simple"),
 			WithIncludeStdlib(true),
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -143,7 +143,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -161,7 +161,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 

@@ -38,6 +38,10 @@ type Option func(zerolog.Logger, gomod.Module, *cdx.Component) error
 func WithLicenses(detector licensedetect.Detector) Option {
 	return func(logger zerolog.Logger, module gomod.Module, component *cdx.Component) error {
 		if detector == nil {
+			logger.Debug().
+				Str("module", module.Coordinates()).
+				Str("reason", "no detector provided").
+				Msg("skipping license detection")
 			return nil
 		}
 

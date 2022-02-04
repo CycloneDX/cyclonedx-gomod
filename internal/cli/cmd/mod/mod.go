@@ -29,7 +29,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/generate/mod"
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/standard"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 func New() *ffcli.Command {
@@ -73,7 +73,7 @@ func Exec(options Options) error {
 
 	var licenseDetector licensedetect.Detector
 	if options.ResolveLicenses {
-		licenseDetector = standard.NewDetector(logger)
+		licenseDetector = local.NewDetector(logger)
 	}
 
 	generator, err := mod.NewGenerator(options.ModuleDir,

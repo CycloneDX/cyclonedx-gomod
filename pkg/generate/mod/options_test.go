@@ -25,7 +25,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/standard"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 func TestWithComponentType(t *testing.T) {
@@ -50,7 +50,7 @@ func TestWithIncludeTestModules(t *testing.T) {
 }
 
 func TestWithLicenseDetector(t *testing.T) {
-	detector := standard.NewDetector(zerolog.Nop())
+	detector := local.NewDetector(zerolog.Nop())
 
 	g := &generator{licenseDetector: nil}
 	err := WithLicenseDetector(detector)(g)

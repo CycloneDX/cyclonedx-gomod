@@ -27,7 +27,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/testutil"
-	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/standard"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 func TestNewGenerator(t *testing.T) {
@@ -57,7 +57,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 	t.Run("Simple", func(t *testing.T) {
 		g, err := NewGenerator("../testdata/simple",
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -70,7 +70,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 	t.Run("Simple1.18", func(t *testing.T) {
 		g, err := NewGenerator("../testdata/simple1.18",
-			WithLicenseDetector(standard.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 

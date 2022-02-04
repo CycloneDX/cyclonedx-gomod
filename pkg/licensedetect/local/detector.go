@@ -15,10 +15,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright (c) OWASP Foundation. All Rights Reserved.
 
-// Package standard provides the standard license detection logic.
-//
-// TODO: Find a better name? This one's too generic...
-package standard
+// Package local provides the logic for local license detection.
+package local
 
 import (
 	"errors"
