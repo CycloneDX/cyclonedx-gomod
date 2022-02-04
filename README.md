@@ -335,6 +335,8 @@ See the [LICENSE](./LICENSE) file for the full license.
 
 ## Contributing
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/CycloneDX/cyclonedx-gomod)
+
 Pull requests are welcome. But please read the
 [CycloneDX contributing guidelines](https://github.com/CycloneDX/.github/blob/master/CONTRIBUTING.md) first.
 
@@ -344,5 +346,5 @@ supported Go versions for every pull request.
 ### Running Tests
 
 Some tests make use of the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli), e.g. to validate SBOMs.  
-Make sure to download the CLI binary and make it available as `cyclonedx` in your `$PATH`.  
-See also *Setup CycloneDX CLI* in the [workflow](https://github.com/CycloneDX/cyclonedx-gomod/blob/master/.github/workflows/ci.yml).
+Make sure to download the CLI binary and make it available as `cyclonedx` in your `$PATH`.
+This is done automatically for [Gitpod](https://gitpod.io/#https://github.com/CycloneDX/cyclonedx-gomod).
