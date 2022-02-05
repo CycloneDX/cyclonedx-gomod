@@ -99,9 +99,24 @@ milestones:
     close: true
 
 changelog:
+  use: github
   sort: asc
+  groups:
+    - title: Enhancements
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: Fixes
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: Building and Packaging
+      regexp: "^.*build[(\\w)]*:+.*$"
+      order: 2
+    - title: Documentation
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 3
+    - title: Others
+      order: 999
   filters:
     exclude:
-      - '^docs:'
       - '^test:'
       - '^Merge '
