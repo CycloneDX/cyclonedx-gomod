@@ -120,6 +120,16 @@ func BuildToolMetadata(logger zerolog.Logger) (*cdx.Tool, error) {
 		Name:    version.Name,
 		Version: version.Version,
 		Hashes:  &toolHashes,
+		ExternalReferences: &[]cdx.ExternalReference{
+			{
+				Type: cdx.ERTypeVCS,
+				URL:  "https://github.com/CycloneDX/cyclonedx-gomod",
+			},
+			{
+				Type: cdx.ERTypeWebsite,
+				URL:  "https://cyclonedx.org",
+			},
+		},
 	}, nil
 }
 
