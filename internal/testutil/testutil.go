@@ -161,8 +161,8 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	bomFile, err := os.Create(filepath.Join(t.TempDir(), fmt.Sprintf("bom.%s", inputFormat)))
 	require.NoError(t, err)
 	defer func() {
-		if err := bomFile.Close(); err != nil {
-			fmt.Printf("failed to close bom file: %v", err)
+		if err := bomFile.Close(); err != nil && err.Error() != "file already closed" {
+			fmt.Printf("failed to close bom file: %v\n", err)
 		}
 	}()
 
@@ -172,7 +172,7 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	require.NoError(t, err)
 	require.NoError(t, bomFile.Close())
 
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--input-version", "v1_3", "--fail-on-errors") // #nosec G204
+	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--input-version", "v1_4", "--fail-on-errors") // #nosec G204
 	valOut, err := valCmd.CombinedOutput()
 	if !assert.NoError(t, err) {
 		// Provide some context when test is failing
