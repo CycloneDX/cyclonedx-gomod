@@ -26,7 +26,7 @@ Building from source requires Go 1.17 or newer.
 
 ## Compatibility
 
-*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, which currently is [1.3](https://cyclonedx.org/docs/1.3/). 
+*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, which currently is [1.4](https://cyclonedx.org/docs/1.4/). 
 You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple BOM formats or specification versions. 
 
 ## Usage
