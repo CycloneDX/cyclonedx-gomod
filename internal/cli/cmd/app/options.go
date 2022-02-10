@@ -21,7 +21,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 
@@ -118,7 +117,7 @@ func (o Options) validateMain(mainPkgDir string, errs *[]error) error {
 		return nil
 	}
 
-	pkg, err := gomod.LoadPackage(zerolog.New(io.Discard), o.ModuleDir, o.Main)
+	pkg, err := gomod.LoadPackage(zerolog.Nop(), o.ModuleDir, o.Main)
 	if err != nil {
 		return fmt.Errorf("failed to load package: %w", err)
 	}

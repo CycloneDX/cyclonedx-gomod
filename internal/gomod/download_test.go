@@ -18,7 +18,6 @@
 package gomod
 
 import (
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -46,7 +45,7 @@ func TestDownload(t *testing.T) {
 
 		os.Setenv("GOMODCACHE", tmpDir)
 
-		downloads, err := Download(zerolog.New(io.Discard), []Module{
+		downloads, err := Download(zerolog.Nop(), []Module{
 			{
 				Path:    "github.com/CycloneDX/cyclonedx-go",
 				Version: "v0.4.0",
@@ -60,7 +59,7 @@ func TestDownload(t *testing.T) {
 	})
 
 	t.Run("Error", func(t *testing.T) {
-		downloads, err := Download(zerolog.New(io.Discard), []Module{
+		downloads, err := Download(zerolog.Nop(), []Module{
 			{
 				Path:    "doesnotexist",
 				Version: "v0.0.0",

@@ -21,7 +21,6 @@ package testutil
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -39,7 +38,7 @@ import (
 const Redacted = "REDACTED"
 
 // SilentLogger discards all inputs.
-var SilentLogger = zerolog.New(io.Discard)
+var SilentLogger = zerolog.Nop()
 
 // ExtractFixtureArchive extracts a test fixture's TAR archive to a temporary directory and returns its path.
 func ExtractFixtureArchive(t *testing.T, archivePath string) string {
