@@ -4,13 +4,11 @@ on:
   push:
     branches:
       - main
-      - develop
     paths-ignore:
       - examples/**
   pull_request:
     branches:
       - main
-      - develop
     paths-ignore:
       - examples/**
   schedule:
