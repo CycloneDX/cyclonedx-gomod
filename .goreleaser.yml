@@ -102,7 +102,7 @@ changelog:
   use: github
   sort: asc
   groups:
-    - title: Enhancements
+    - title: Features
       regexp: "^.*feat[(\\w)]*:+.*$"
       order: 0
     - title: Fixes

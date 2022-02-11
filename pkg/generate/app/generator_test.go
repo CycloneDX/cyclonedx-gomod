@@ -19,7 +19,6 @@ package app
 
 import (
 	"errors"
-	"io"
 	"os"
 	"runtime"
 	"testing"
@@ -246,7 +245,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 func TestGenerator_CreateBuildProperties(t *testing.T) {
 	g := generator{
-		logger: zerolog.New(io.Discard),
+		logger: zerolog.Nop(),
 	}
 
 	origGoflags := os.Getenv("GOFLAGS")

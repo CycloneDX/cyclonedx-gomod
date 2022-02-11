@@ -21,7 +21,6 @@ package testutil
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -39,7 +38,7 @@ import (
 const Redacted = "REDACTED"
 
 // SilentLogger discards all inputs.
-var SilentLogger = zerolog.New(io.Discard)
+var SilentLogger = zerolog.Nop()
 
 // ExtractFixtureArchive extracts a test fixture's TAR archive to a temporary directory and returns its path.
 func ExtractFixtureArchive(t *testing.T, archivePath string) string {
@@ -95,23 +94,19 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 			(*bom.Components)[i].BOMRef = newPURL
 			(*bom.Components)[i].PackageURL = newPURL
 
+			// Redact all packages and files, as they may differ from one go version to another.
 			if component.Components != nil { // Redact version from packages as well
-				for j, component2 := range *(*bom.Components)[i].Components {
+				for _, component2 := range *(*bom.Components)[i].Components {
 					require.Equal(t, version, component2.Version)
 
-					(*(*bom.Components)[i].Components)[j].Version = Redacted
-					(*(*bom.Components)[i].Components)[j].PackageURL = strings.ReplaceAll(component2.PackageURL, version, Redacted)
-
-					// Redact all files, as they may differ from one go version to another.
-					// It isn't worth the hassle to redact single fields for the time being.
-					if component2.Components != nil {
-						// Use an empty slice instead of null, in order for this modification
-						// to be somewhat visible in the snapshot file.
-						(*(*bom.Components)[i].Components)[j].Components = &[]cdx.Component{}
-					} else if expectFiles {
-						t.Fatalf("stdlib is missing files")
+					if expectFiles {
+						require.NotNil(t, component2.Components, "stdlib is missing files")
 					}
 				}
+
+				// Use an empty slice instead of nil, in order for this modification
+				// to be somewhat visible in the snapshot file.
+				(*bom.Components)[i].Components = &[]cdx.Component{}
 			} else if expectPackages {
 				t.Fatalf("stdlib is missing packages")
 			}

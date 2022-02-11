@@ -20,22 +20,23 @@ RUN useradd -m --uid 1000 cdx
 # Install CycloneDX CLI
 RUN apt update && \
     apt install -y libicu-dev && \
-    wget -q -O /usr/local/bin/cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.18.0/cyclonedx-linux-x64 && \
-    echo "6b387448d3660147fed9f60a74feadf2d165c6275e2915a22193a1350d5f9436 /usr/local/bin/cyclonedx" | sha256sum -c && \
+    wget -q -O /usr/local/bin/cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.22.0/cyclonedx-linux-x64 && \
+    echo "ae39404a9dc8b2e7be0a9559781ee9fe3492201d2629de139d702fd4535ffdd6 /usr/local/bin/cyclonedx" | sha256sum -c && \
     chmod +x /usr/local/bin/cyclonedx
 
 # Create generation script
 RUN echo "#!/bin/bash\n\n\
+set -x \n\
 cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1.bom.json -licenses -main cmd/minikube /home/cdx/minikube \n\
 cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-packages.bom.json -licenses -packages -main cmd/minikube /home/cdx/minikube \n\
 cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-files.bom.json -licenses -packages -files -main cmd/minikube /home/cdx/minikube \n\
 cyclonedx-gomod mod -json -output /examples/mod_minikube-v1.23.1.bom.json -licenses /home/cdx/minikube \n\
 cyclonedx-gomod bin -json -output /examples/bin_minikube-v1.23.1.bom.json -licenses -version v1.23.1 /home/cdx/minikube-linux-amd64 \n\
-cyclonedx validate --input-file /examples/app_minikube-v1.23.1.bom.json --input-format json_v1_3 --fail-on-errors \n\
-cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-packages.bom.json --input-format json_v1_3 --fail-on-errors \n\
-cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-files.bom.json --input-format json_v1_3 --fail-on-errors \n\
-cyclonedx validate --input-file /examples/mod_minikube-v1.23.1.bom.json --input-format json_v1_3 --fail-on-errors \n\
-cyclonedx validate --input-file /examples/bin_minikube-v1.23.1.bom.json --input-format json_v1_3 --fail-on-errors \n\
+cyclonedx validate --input-file /examples/app_minikube-v1.23.1.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
+cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-packages.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
+cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-files.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
+cyclonedx validate --input-file /examples/mod_minikube-v1.23.1.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
+cyclonedx validate --input-file /examples/bin_minikube-v1.23.1.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
 " > /home/cdx/generate-examples.sh
 
 # Install cyclonedx-gomod

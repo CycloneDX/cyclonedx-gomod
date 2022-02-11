@@ -18,7 +18,6 @@
 package gomod
 
 import (
-	"io"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
@@ -36,7 +35,7 @@ func TestGetLatestTag(t *testing.T) {
 	headCommit, err := repo.CommitObject(plumbing.NewHash("a20be9f00d406e7b792973ee1826e637e58a23d7"))
 	require.NoError(t, err)
 
-	tag, err := GetLatestTag(zerolog.New(io.Discard), repo, headCommit)
+	tag, err := GetLatestTag(zerolog.Nop(), repo, headCommit)
 	require.NoError(t, err)
 	require.NotNil(t, tag)
 

@@ -18,7 +18,6 @@
 package gomod
 
 import (
-	"io"
 	"testing"
 
 	"github.com/rs/zerolog"
@@ -26,7 +25,7 @@ import (
 )
 
 func TestLoadStdlibModule(t *testing.T) {
-	module, err := LoadStdlibModule(zerolog.New(io.Discard))
+	module, err := LoadStdlibModule(zerolog.Nop())
 	require.NoError(t, err)
 	require.Equal(t, "std", module.Path)
 	require.Regexp(t, `^go\d\.`, module.Version)

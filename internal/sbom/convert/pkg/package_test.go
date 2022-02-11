@@ -18,7 +18,6 @@
 package pkg
 
 import (
-	"io"
 	"testing"
 
 	"github.com/rs/zerolog"
@@ -37,7 +36,7 @@ func TestToComponent(t *testing.T) {
 		ImportPath: "packagePath",
 	}
 
-	c, err := ToComponent(zerolog.New(io.Discard), p, m)
+	c, err := ToComponent(zerolog.Nop(), p, m)
 	require.NoError(t, err)
 	require.Equal(t, "packagePath", c.Name)
 	require.Equal(t, "moduleVersion", c.Version)

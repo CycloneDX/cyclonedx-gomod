@@ -1,35 +1,45 @@
 {
   "bomFormat": "CycloneDX",
-  "specVersion": "1.3",
-  "serialNumber": "urn:uuid:15aff25b-df3d-4d31-9de5-a86be8cb3ac0",
+  "specVersion": "1.4",
+  "serialNumber": "urn:uuid:221f88ea-c7b0-4113-b3f1-87705cfe812a",
   "version": 1,
   "metadata": {
-    "timestamp": "2022-01-26T12:44:08Z",
+    "timestamp": "2022-02-11T15:51:24Z",
     "tools": [
       {
         "vendor": "CycloneDX",
         "name": "cyclonedx-gomod",
-        "version": "v0.0.0-20220126133025-f73551881789",
+        "version": "v0.0.0-20220211164550-4255da92db09",
         "hashes": [
           {
             "alg": "MD5",
-            "content": "6e5d5cc1f21db2040663c63155df8d57"
+            "content": "121a56cd685b03d70df1c7086e56e242"
           },
           {
             "alg": "SHA-1",
-            "content": "d65c58f99679b1e8fb5cbc2a4651139d818dd6e4"
+            "content": "6a3f516da7e258e73e6d712636253969cede1160"
           },
           {
             "alg": "SHA-256",
-            "content": "cfcc399ba50f7f422f01ec3279f60b32f4390130cc8bb8c8f34e47c2ec5a5fe8"
+            "content": "32fda80c9882092e1b767d3b1bfbf323b5d21d09376ef86c2b7facc639af5285"
           },
           {
             "alg": "SHA-384",
-            "content": "49b7816217079adb33042dd81ec4e997666223d2536d2e34235d7c103cfa783ef5969777988eafd5a79302f3a73e74b1"
+            "content": "3db4f0b63926754be34c7ea32dfc75781d6f6ce7ec7e5c2299703032ba6221115bf17fd36092a6f832c001611d2efbda"
           },
           {
             "alg": "SHA-512",
-            "content": "7013bacfc966b77585491ba217864e4a5cb943603f9fe9d85932f55bb70d120e520937f99daf33d1a4f6c918f5e9c23b63225249342167800705aa997032b402"
+            "content": "746d71a12901626285f8601115d884ebbbad5abac79466c98938279f28a53ab5c53c24a7e77162fd831c67989edcd4e04f8f3c9f9bdef89d88f30fa3d4c8e2b5"
+          }
+        ],
+        "externalReferences": [
+          {
+            "url": "https://github.com/CycloneDX/cyclonedx-gomod",
+            "type": "vcs"
+          },
+          {
+            "url": "https://cyclonedx.org",
+            "type": "website"
           }
         ]
       }
@@ -55,7 +65,7 @@
         },
         {
           "name": "cdx:gomod:build:env:GOVERSION",
-          "value": "go1.17.5"
+          "value": "go1.17.7"
         }
       ],
       "components": [
