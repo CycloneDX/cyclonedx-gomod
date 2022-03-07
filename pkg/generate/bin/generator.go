@@ -63,7 +63,7 @@ func NewGenerator(binaryPath string, opts ...Option) (generate.Generator, error)
 
 // Generate implements the generate.Generator interface.
 func (g generator) Generate() (*cdx.BOM, error) {
-	bi, err := gomod.LoadBuildInfo(g.logger, g.binaryPath)
+	bi, err := gomod.LoadBuildInfo(g.binaryPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load build info: %w", err)
 	} else if bi.Main == nil {
@@ -95,11 +95,6 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		if err != nil {
 			return nil, fmt.Errorf("failed to download modules: %w", err)
 		}
-	}
-
-	// Make all modules a direct dependency of the main module
-	for i := 1; i < len(modules); i++ {
-		modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
 	}
 
 	main, err := modConv.ToComponent(g.logger, modules[0],
