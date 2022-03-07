@@ -1,11 +1,11 @@
-FROM golang:1.17.7-alpine3.15@sha256:c23027af83ff27f663d7983750a9a08f442adb2e7563250787b23ab3b6750d9e as build
+FROM golang:1.17.8-alpine3.15@sha256:b35984144ec2c2dfd6200e112a9b8ecec4a8fd9eff0babaff330f1f82f14cb2a as build
 ARG VERSION=latest
 WORKDIR /tmp/cyclonedx-gomod
 RUN apk --no-cache add git make
 COPY . .
 RUN make install
 
-FROM golang:1.17.7-alpine3.15@sha256:c23027af83ff27f663d7983750a9a08f442adb2e7563250787b23ab3b6750d9e
+FROM golang:1.17.8-alpine3.15@sha256:b35984144ec2c2dfd6200e112a9b8ecec4a8fd9eff0babaff330f1f82f14cb2a
 COPY --from=build /go/bin/cyclonedx-gomod /usr/local/bin/
 USER 1000
 ENTRYPOINT ["cyclonedx-gomod"]
