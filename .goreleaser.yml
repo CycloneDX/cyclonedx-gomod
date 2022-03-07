@@ -2,121 +2,121 @@ project_name: cyclonedx-gomod
 
 before:
   hooks:
-    - go mod tidy
-    # Prebuild a binary that'll be used to generate SBOMs later
-    - sh -c "VERSION={{ .Version }} make build"
+  - go mod tidy
+  # Prebuild a binary that'll be used to generate SBOMs later
+  - sh -c "VERSION={{ .Version }} make build"
 
 gomod:
   proxy: true
 
 builds:
-  - env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-    flags: |
-      -trimpath
-    ldflags: |
-      -s
-      -w
-      -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{ .Tag }}
-    main: ./cmd/cyclonedx-gomod
-    mod_timestamp: "{{ .CommitTimestamp }}"
-    hooks:
-      post:
-        - cmd: ./bin/cyclonedx-gomod app -main ./cmd/cyclonedx-gomod -licenses -packages -std -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
-          env:
-            - GOARCH={{ .Arch }}
-            - GOOS={{ .Os }}
+- env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+  - windows
+  - darwin
+  goarch:
+  - amd64
+  - arm64
+  flags: -trimpath
+  ldflags: -s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version={{ .Tag }}
+  main: ./cmd/cyclonedx-gomod
+  mod_timestamp: "{{ .CommitTimestamp }}"
+
+sboms:
+- documents:
+  - "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.bom.json"
+  artifacts: binary
+  cmd: "../bin/cyclonedx-gomod"
+  args: [ "app", "-main", "./cmd/cyclonedx-gomod", "-licenses", "-packages", "-std", "-json", "-output", "$document", "$PWD" ]
+  env:
+  - GOARCH={{ .Arch }}
+  - GOOS={{ .Os }}
 
 dockers:
-  - goos: linux
-    goarch: amd64
-    dockerfile: Dockerfile.goreleaser
-    use: buildx
-    image_templates:
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-    build_flag_templates:
-      - "--platform=linux/amd64"
-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.version={{ .Tag }}"
-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.created={{ .Date }}"
-      - "--label=org.opencontainers.image.vendor=CycloneDX"
-      - "--label=org.opencontainers.image.url=https://cyclonedx.org"
-      - "--label=org.opencontainers.image.source={{ .GitURL }}"
-  - goos: linux
-    goarch: arm64
-    dockerfile: Dockerfile.goreleaser
-    use: buildx
-    image_templates:
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-    build_flag_templates:
-      - "--platform=linux/arm64"
-      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-      - "--label=org.opencontainers.image.version={{ .Tag }}"
-      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-      - "--label=org.opencontainers.image.created={{ .Date }}"
-      - "--label=org.opencontainers.image.vendor=CycloneDX"
-      - "--label=org.opencontainers.image.url=https://cyclonedx.org"
-      - "--label=org.opencontainers.image.source={{ .GitURL }}"
+- goos: linux
+  goarch: amd64
+  dockerfile: Dockerfile.goreleaser
+  use: buildx
+  image_templates:
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  build_flag_templates:
+  - "--platform=linux/amd64"
+  - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+  - "--label=org.opencontainers.image.version={{ .Tag }}"
+  - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+  - "--label=org.opencontainers.image.created={{ .Date }}"
+  - "--label=org.opencontainers.image.vendor=CycloneDX"
+  - "--label=org.opencontainers.image.url=https://cyclonedx.org"
+  - "--label=org.opencontainers.image.source={{ .GitURL }}"
+- goos: linux
+  goarch: arm64
+  dockerfile: Dockerfile.goreleaser
+  use: buildx
+  image_templates:
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+  build_flag_templates:
+  - "--platform=linux/arm64"
+  - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+  - "--label=org.opencontainers.image.version={{ .Tag }}"
+  - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+  - "--label=org.opencontainers.image.created={{ .Date }}"
+  - "--label=org.opencontainers.image.vendor=CycloneDX"
+  - "--label=org.opencontainers.image.url=https://cyclonedx.org"
+  - "--label=org.opencontainers.image.source={{ .GitURL }}"
 
 docker_manifests:
-  - name_template: "cyclonedx/{{ .ProjectName }}:latest"
-    image_templates:
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-  - name_template: "cyclonedx/{{ .ProjectName }}:{{ .Tag }}"
-    image_templates:
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-  - name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}"
-    image_templates:
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-  - name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
-    image_templates:
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-      - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+- name_template: "cyclonedx/{{ .ProjectName }}:latest"
+  image_templates:
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+- name_template: "cyclonedx/{{ .ProjectName }}:{{ .Tag }}"
+  image_templates:
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+- name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}"
+  image_templates:
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+- name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
+  image_templates:
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
 
 archives:
-  - format_overrides:
-      - goos: windows
-        format: zip
+- format_overrides:
+  - goos: windows
+    format: zip
 
 release:
   prerelease: auto
   extra_files:
-    - glob: ./*.bom.json
+  - glob: ./*.bom.json
 
 milestones:
-  - name_template: "{{ .Tag }}"
-    close: true
+- name_template: "{{ .Tag }}"
+  close: true
 
 changelog:
   use: github
   sort: asc
   groups:
-    - title: Features
-      regexp: "^.*feat[(\\w)]*:+.*$"
-      order: 0
-    - title: Fixes
-      regexp: "^.*fix[(\\w)]*:+.*$"
-      order: 1
-    - title: Building and Packaging
-      regexp: "^.*build[(\\w)]*:+.*$"
-      order: 2
-    - title: Documentation
-      regexp: "^.*docs[(\\w)]*:+.*$"
-      order: 3
-    - title: Others
-      order: 999
+  - title: Features
+    regexp: "^.*feat[(\\w)]*:+.*$"
+    order: 0
+  - title: Fixes
+    regexp: "^.*fix[(\\w)]*:+.*$"
+    order: 1
+  - title: Building and Packaging
+    regexp: "^.*build[(\\w)]*:+.*$"
+    order: 2
+  - title: Documentation
+    regexp: "^.*docs[(\\w)]*:+.*$"
+    order: 3
+  - title: Others
+    order: 999
   filters:
     exclude:
-      - '^test:'
-      - '^Merge '
+    - '^test:'
+    - '^Merge '
