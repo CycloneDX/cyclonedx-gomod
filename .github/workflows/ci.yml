@@ -35,7 +35,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: "1.17"
+          go-version: "1.18.0-rc.1"
           check-latest: true
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3.1.0
@@ -49,7 +49,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: "1.17"
+          go-version: "1.18.0-rc.1"
           check-latest: true
       - name: Setup CycloneDX CLI
         run: |
