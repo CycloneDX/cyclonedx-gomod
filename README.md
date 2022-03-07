@@ -209,47 +209,64 @@ You can find it on the GitHub marketplace: [*gh-gomod-generate-sbom*](https://gi
 
 ### GoReleaser 🚀
 
-The recommended way of integrating with [GoReleaser](https://goreleaser.com/) is via `post` [build hook](https://goreleaser.com/customization/build/#build-hooks):
+The recommended way of integrating with [GoReleaser](https://goreleaser.com/) is via its [*sbom* feature](https://goreleaser.com/customization/sbom/).
+You can find some example configurations for each *cyclonedx-gomod* command below, given the following [`builds`](https://goreleaser.com/customization/build/):
 
 ```yaml
 builds:
-  - env:
-      - CGO_ENABLED=0
-    goos:
-      - linux
-      - windows
-      - darwin
-    goarch:
-      - amd64
-      - arm64
-    tags:
-      - foo
-      - bar
-    hooks:
-      post:
-        # Generate an SBOM for every build in the build matrix
-        - cmd: cyclonedx-gomod app -licenses -json -output "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}.bom.json"
-          # Target architecture and OS, as well as build tags have to be provided
-          # via environment variables. Architecture and OS are available as template
-          # variables, but tags have to be hardcoded.
-          # CGO_ENABLED is inherited from the env node above in this example.
-          env:
-            - GOARCH={{ .Arch }}
-            - GOOS={{ .Os }}
-            - GOFLAGS="-tags=foo,bar"
-
-release:
-  # Attach SBOMs to GitHub release
-  extra_files:
-    - glob: ./*.bom.json
+- env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+  - windows
+  - darwin
+  goarch:
+  - amd64
+  - arm64
+  tags:
+  - foo
+  - bar
 ```
 
-When generating SBOMs during a GoReleaser execution, it's important to `gitignore` these files.
-Otherwise, GoReleaser will complain about the state of the repo being dirty.
-Given the naming scheme above, the following `.gitignore` line does the job:
+```yaml
+# app command:
+# - generate a SBOM for each binary built
+# - provide build context via environment variables
 
+sboms:
+- documents:
+  - "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.bom.json"
+  artifacts: binary
+  cmd: cyclonedx-gomod
+  args: ["app", "-licenses", "-json", "-output", "$document", "$PWD"]
+  env:
+  - GOARCH={{ .Arch }}
+  - GOOS={{ .Os }}
+  - GOFLAGS="-tags=foo,bar"
 ```
-*.bom.json
+
+```yaml
+# bin command:
+# - generate a SBOM for each binary built
+
+sboms:
+- documents:
+  - "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.bom.json"
+  artifacts: binary
+  cmd: cyclonedx-gomod
+  args: ["bin", "-json", "-output", "$document", "$artifact"]
+```
+
+```yaml
+# mod command:
+# - generate a single SBOM for the entire module
+
+sboms:
+- documents:
+  - bom.json
+  artifacts: any
+  cmd: cyclonedx-gomod
+  args: [ "mod", "-licenses", "-std", "-json", "-output", "$document", "$PWD" ]
 ```
 
 ### Docker 🐳
