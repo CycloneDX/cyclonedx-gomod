@@ -242,7 +242,7 @@ sboms:
   env:
   - GOARCH={{ .Arch }}
   - GOOS={{ .Os }}
-  - GOFLAGS="-tags=foo,bar"
+  - GOFLAGS=-tags=foo,bar
 ```
 
 ```yaml
