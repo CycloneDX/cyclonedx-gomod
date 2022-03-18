@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/peterbourgon/ff/v3 v3.1.0
 	github.com/rs/zerolog v1.26.1
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
 	golang.org/x/mod v0.5.1
 )
