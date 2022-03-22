@@ -1,4 +1,4 @@
-name: goreleaser-ci
+name: GoReleaser CI
 
 on:
   pull_request:
