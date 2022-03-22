@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  goreleaser-dryrun:
+    name: GoReleaser Dry Run
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.17"
+        check-latest: true
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v2.9.1
+      with:
+        version: 1.7.0
+        args: release --skip-publish --snapshot
