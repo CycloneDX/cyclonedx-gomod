@@ -1,4 +1,4 @@
-name: goreleaser-dryrun
+name: goreleaser-ci
 
 on:
   pull_request:
@@ -6,8 +6,8 @@ on:
     - main
 
 jobs:
-  goreleaser-dryrun:
-    name: GoReleaser Dry Run
+  goreleaser-ci:
+    name: Test
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
