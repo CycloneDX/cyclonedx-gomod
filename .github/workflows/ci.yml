@@ -3,62 +3,83 @@ name: CI
 on:
   push:
     branches:
-      - main
+    - main
     paths-ignore:
-      - examples/**
+    - examples/**
   pull_request:
     branches:
-      - main
+    - main
     paths-ignore:
-      - examples/**
+    - examples/**
   schedule:
-    - cron: 0 0 * * *
+  - cron: 0 0 * * *
 
 jobs:
   licensecheck:
     name: License Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Check license headers
-        uses: apache/skywalking-eyes@v0.2.0
-        with:
-          config: .licenserc.yml
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    - name: Check license headers
+      uses: apache/skywalking-eyes@v0.2.0
+      with:
+        config: .licenserc.yml
 
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: "1.17"
-          check-latest: true
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v3.1.0
-        with:
-          version: latest
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.17"
+        check-latest: true
+    - name: Run golangci-lint
+      uses: golangci/golangci-lint-action@v3.1.0
+      with:
+        version: latest
 
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: "1.17"
-          check-latest: true
-      - name: Setup CycloneDX CLI
-        run: |
-          mkdir -p "$HOME/.local/bin"
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-          wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.22.0/cyclonedx-linux-x64
-          echo "ae39404a9dc8b2e7be0a9559781ee9fe3492201d2629de139d702fd4535ffdd6 $HOME/.local/bin/cyclonedx" | sha256sum -c
-          chmod +x "$HOME/.local/bin/cyclonedx"
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Test
-        run: make test
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.17"
+        check-latest: true
+    - name: Setup CycloneDX CLI
+      run: |
+        mkdir -p "$HOME/.local/bin"
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.22.0/cyclonedx-linux-x64
+        echo "ae39404a9dc8b2e7be0a9559781ee9fe3492201d2629de139d702fd4535ffdd6 $HOME/.local/bin/cyclonedx" | sha256sum -c
+        chmod +x "$HOME/.local/bin/cyclonedx"
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    - name: Test
+      run: make test
+
+  goreleaser-dryrun:
+    name: GoReleaser Dry Run
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.17"
+        check-latest: true
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@v2.9.1
+      with:
+        version: 1.7.0
+        args: release --skip-publish --snapshot
