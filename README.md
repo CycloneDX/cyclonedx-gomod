@@ -238,7 +238,7 @@ sboms:
   - "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.bom.json"
   artifacts: binary
   cmd: cyclonedx-gomod
-  args: ["app", "-licenses", "-json", "-output", "$document", "$PWD"]
+  args: ["app", "-licenses", "-json", "-output", "$document", "../"]
   env:
   - GOARCH={{ .Arch }}
   - GOOS={{ .Os }}
@@ -266,8 +266,11 @@ sboms:
   - bom.json
   artifacts: any
   cmd: cyclonedx-gomod
-  args: [ "mod", "-licenses", "-std", "-json", "-output", "$document", "$PWD" ]
+  args: [ "mod", "-licenses", "-std", "-json", "-output", "$document", "../" ]
 ```
+
+GoReleaser will execute `cmd`s in its `dist` directory, which is a subdirectory of the project root. 
+Because `app` and `mod` both expect the module's root directory as argument, `../` must be provided.
 
 ### Docker 🐳
 
