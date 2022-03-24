@@ -29,7 +29,7 @@ sboms:
   - "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}.bom.json"
   artifacts: binary
   cmd: "../bin/cyclonedx-gomod"
-  args: [ "app", "-main", "./cmd/cyclonedx-gomod", "-licenses", "-packages", "-std", "-json", "-output", "$document", "$PWD" ]
+  args: [ "app", "-main", "./cmd/cyclonedx-gomod", "-licenses", "-packages", "-std", "-json", "-output", "$document", "../" ]
   env:
   - GOARCH={{ .Arch }}
   - GOOS={{ .Os }}
