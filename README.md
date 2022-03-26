@@ -22,7 +22,7 @@ Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/c
 go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
 ```
 
-Building from source requires Go 1.17 or newer.
+Building from source requires Go 1.18 or newer.
 
 ## Compatibility
 
@@ -281,7 +281,7 @@ $ docker run -it --rm \
     cyclonedx/cyclonedx-gomod:v1 mod -json -output /out/bom.json /usr/src/mymodule
 ```
 
-> The image is based on `golang:1.17-alpine`.  
+> The image is based on `golang:1.18-alpine`.  
 > When using the `app` command, please keep in mind that the Go version may influence module selection.  
 > We generally recommend using a [precompiled binary](https://github.com/CycloneDX/cyclonedx-gomod/releases) 
 > and running it in the same environment in which you're building your application in.

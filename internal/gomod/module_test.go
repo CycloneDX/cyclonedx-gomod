@@ -41,7 +41,7 @@ func TestModule_Coordinates(t *testing.T) {
 
 func TestModule_Hash(t *testing.T) {
 	// Download a specific version of a module
-	cmd := exec.Command("go", "get", "github.com/google/uuid@v1.2.0")
+	cmd := exec.Command("go", "mod", "download", "github.com/google/uuid@v1.2.0")
 	cmd.Dir = t.TempDir() // Just has to be outside of this module's directory to prevent modification of go.mod
 	require.NoError(t, cmd.Run())
 

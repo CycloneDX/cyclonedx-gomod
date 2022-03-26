@@ -10,7 +10,7 @@
 # for linux/amd64. If you're on a different platform, you'll have to run
 #   GOOS=linux GOARCH=amd64 make examples-image
 # instead.
-FROM golang:1.17.8-bullseye@sha256:6f49eeaceb65a5e46d3e6199583beadbe3c8d028a225b680c5b34b4c13ec5105
+FROM golang:1.18.0-bullseye@sha256:ada87de4d857ada7d975fd143bee1a58a9cb597639233a8adcd92bf2cbbfe7fe
 
 VOLUME /examples
 

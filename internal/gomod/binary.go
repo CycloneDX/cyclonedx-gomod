@@ -18,12 +18,8 @@
 package gomod
 
 import (
-	"bufio"
-	"bytes"
-	"io"
-	"strings"
-
-	"github.com/rs/zerolog"
+	"debug/buildinfo"
+	"fmt"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
@@ -38,78 +34,61 @@ type BuildInfo struct {
 	Settings  map[string]string // Other information about the build.
 }
 
-func LoadBuildInfo(logger zerolog.Logger, binaryPath string) (*BuildInfo, error) {
-	buf := new(bytes.Buffer)
-	err := gocmd.LoadBuildInfo(logger, binaryPath, buf)
+func LoadBuildInfo(binaryPath string) (*BuildInfo, error) {
+	stdBuildInfo, err := buildinfo.ReadFile(binaryPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read build info: %w", err)
+	}
+
+	buildInfo := BuildInfo{
+		Path: stdBuildInfo.Path,
+		Main: &Module{
+			Path:    stdBuildInfo.Main.Path,
+			Version: stdBuildInfo.Main.Version,
+			Main:    true,
+			Sum:     stdBuildInfo.Main.Sum,
+		},
+	}
+
+	buildInfo.GoVersion, err = gocmd.ParseVersion(stdBuildInfo.GoVersion)
 	if err != nil {
 		return nil, err
 	}
 
-	buildInfo, err := parseBuildInfo(binaryPath, buf)
-	if err != nil {
-		return nil, err
+	var deps []Module
+	for i := range stdBuildInfo.Deps {
+		dep := Module{
+			Path:    stdBuildInfo.Deps[i].Path,
+			Version: stdBuildInfo.Deps[i].Version,
+			Sum:     stdBuildInfo.Deps[i].Sum,
+		}
+		if stdBuildInfo.Deps[i].Replace != nil {
+			dep.Replace = &Module{
+				Path:    stdBuildInfo.Deps[i].Replace.Path,
+				Version: stdBuildInfo.Deps[i].Replace.Version,
+				Sum:     stdBuildInfo.Deps[i].Replace.Sum,
+			}
+		}
+		deps = append(deps, dep)
+	}
+	if len(deps) > 0 {
+		// Make all deps a direct dependency of main
+		buildInfo.Main.Dependencies = make([]*Module, len(deps))
+		for i := range deps {
+			buildInfo.Main.Dependencies[i] = &deps[i]
+		}
+		sortDependencies(buildInfo.Main.Dependencies)
+
+		buildInfo.Deps = deps
+	}
+
+	settings := make(map[string]string)
+	for _, setting := range stdBuildInfo.Settings {
+		settings[setting.Key] = setting.Value
+	}
+	if len(settings) > 0 {
+		buildInfo.Settings = settings
 	}
 
 	return &buildInfo, nil
-}
-
-func parseBuildInfo(binaryPath string, reader io.Reader) (bi BuildInfo, err error) {
-	moduleIndex := 0
-	scanner := bufio.NewScanner(reader)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.TrimSpace(line) == "" {
-			continue
-		}
-
-		fields := strings.Fields(line)
-		switch fields[0] {
-		case binaryPath + ":":
-			var gv string
-			gv, err = gocmd.ParseVersion(line)
-			if err != nil {
-				return
-			} else {
-				bi.GoVersion = gv
-			}
-		case "path": // Path of main package of main module
-			bi.Path = fields[1]
-		case "mod": // Main module
-			bi.Main = &Module{
-				Path:    fields[1],
-				Version: fields[2],
-				Main:    true,
-			}
-		case "dep": // Dependency module
-			module := Module{
-				Path:    fields[1],
-				Version: fields[2],
-			}
-			if len(fields) == 4 {
-				// Hash won't be available when the module is replaced
-				module.Sum = fields[3]
-			}
-			bi.Deps = append(bi.Deps, module)
-			moduleIndex += 1
-		case "=>": // Replacement
-			module := Module{
-				Path:    fields[1],
-				Version: fields[2],
-			}
-			if len(fields) == 4 {
-				module.Sum = fields[3]
-			}
-			bi.Deps[moduleIndex-1].Replace = &module
-		case "build": // Build settings (Go 1.18+)
-			kv := strings.SplitN(fields[1], "=", 2)
-			if len(kv) == 2 {
-				if bi.Settings == nil {
-					bi.Settings = make(map[string]string)
-				}
-				bi.Settings[kv[0]] = kv[1]
-			}
-		}
-	}
-
-	return
 }
