@@ -16,6 +16,12 @@
 
 Prebuilt binaries are available on the [releases](https://github.com/CycloneDX/cyclonedx-gomod/releases) page.
 
+### Homebrew
+
+```shell
+brew install cyclonedx/cyclonedx/cyclonedx-gomod
+```
+
 ### From Source
 
 ```shell
