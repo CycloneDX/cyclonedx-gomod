@@ -1,16 +1,13 @@
 name: GoReleaser CI
 
 on:
-  pull_request:
-    branches:
-    - main
+  workflow_dispatch: {}
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   goreleaser-ci:
-    name: Test
+    name: Test Release
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:

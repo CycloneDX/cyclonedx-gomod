@@ -12,8 +12,7 @@ on:
     paths-ignore:
     - examples/**
 
-permissions:
-  contents: read
+permissions: {}
 
 jobs:
   licensecheck:
