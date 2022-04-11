@@ -17,13 +17,13 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v3
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+      uses: github/codeql-action/init@v2
       with:
         languages: "go"
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+    - name: Run Autobuild
+      uses: github/codeql-action/autobuild@v2
+    - name: Perform Analysis
+      uses: github/codeql-action/analyze@v2
