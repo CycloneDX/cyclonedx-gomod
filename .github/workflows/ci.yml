@@ -11,12 +11,13 @@ on:
     - main
     paths-ignore:
     - examples/**
-  schedule:
-  - cron: 0 0 * * *
+
+permissions: {}
 
 jobs:
   licensecheck:
     name: License Check
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
@@ -28,6 +29,7 @@ jobs:
 
   lint:
     name: Lint
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
@@ -44,6 +46,7 @@ jobs:
 
   test:
     name: Test
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
     - name: Setup Go
@@ -55,8 +58,8 @@ jobs:
       run: |
         mkdir -p "$HOME/.local/bin"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
-        wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.22.0/cyclonedx-linux-x64
-        echo "ae39404a9dc8b2e7be0a9559781ee9fe3492201d2629de139d702fd4535ffdd6 $HOME/.local/bin/cyclonedx" | sha256sum -c
+        wget -O "$HOME/.local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.0/cyclonedx-linux-x64
+        echo "691cf7ed82ecce1f85e6d21bccd1ed2d7968e40eb6be7504b392c8b3a0943891 $HOME/.local/bin/cyclonedx" | sha256sum -c
         chmod +x "$HOME/.local/bin/cyclonedx"
     - name: Checkout Repository
       uses: actions/checkout@v3
