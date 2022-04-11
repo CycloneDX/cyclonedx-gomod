@@ -11,12 +11,14 @@ on:
     - main
     paths-ignore:
     - examples/**
-  schedule:
-  - cron: 0 0 * * *
+
+permissions:
+  contents: read
 
 jobs:
   licensecheck:
     name: License Check
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
@@ -28,6 +30,7 @@ jobs:
 
   lint:
     name: Lint
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
@@ -44,6 +47,7 @@ jobs:
 
   test:
     name: Test
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
     - name: Setup Go

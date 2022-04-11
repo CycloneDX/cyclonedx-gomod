@@ -1,12 +1,17 @@
-name: goreleaser
+name: GoReleaser
 
 on:
   push:
     tags:
     - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   goreleaser:
+    name: Release
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
