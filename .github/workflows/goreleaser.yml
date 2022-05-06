@@ -24,7 +24,7 @@ jobs:
         go-version: "1.18"
         check-latest: true
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@v2
     - name: Docker login
       uses: docker/login-action@v1
       with:
