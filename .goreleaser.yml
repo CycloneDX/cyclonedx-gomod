@@ -34,13 +34,29 @@ sboms:
   - GOARCH={{ .Arch }}
   - GOOS={{ .Os }}
 
+# signs the checksum file
+# all files (including the sboms) are included in the checksum, so we don't need to sign each one if we don't want to
+# https://goreleaser.com/customization/sign
+signs:
+  - cmd: cosign
+    env:
+      - COSIGN_EXPERIMENTAL=1
+    certificate: '${artifact}.pem'
+    args:
+      - sign-blob
+      - '--output-certificate=${certificate}'
+      - '--output-signature=${signature}'
+      - '${artifact}'
+    artifacts: checksum
+    output: true
+
 dockers:
 - goos: linux
   goarch: amd64
   dockerfile: Dockerfile.goreleaser
   use: buildx
   image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-amd64"
   build_flag_templates:
   - "--platform=linux/amd64"
   - "--label=org.opencontainers.image.title={{ .ProjectName }}"
@@ -55,7 +71,7 @@ dockers:
   dockerfile: Dockerfile.goreleaser
   use: buildx
   image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-arm64"
   build_flag_templates:
   - "--platform=linux/arm64"
   - "--label=org.opencontainers.image.title={{ .ProjectName }}"
@@ -67,22 +83,34 @@ dockers:
   - "--label=org.opencontainers.image.source={{ .GitURL }}"
 
 docker_manifests:
-- name_template: "cyclonedx/{{ .ProjectName }}:latest"
+- name_template: "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:latest"
   image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-- name_template: "cyclonedx/{{ .ProjectName }}:{{ .Tag }}"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-arm64"
+- name_template: "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}"
   image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-- name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-arm64"
+- name_template: "{{ .Env.docker_repository_owner}}/{{ .ProjectName }}:v{{ .Major }}"
   image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-- name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-arm64"
+- name_template: "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
   image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-amd64"
+  - "{{ .Env.docker_repository_owner }}/{{ .ProjectName }}:{{ .Tag }}-arm64"
+
+# signs our docker image
+# https://goreleaser.com/customization/docker_sign
+docker_signs:
+  - cmd: cosign
+    env:
+    - COSIGN_EXPERIMENTAL=1
+    artifacts: all
+    output: true
+    args:
+    - 'sign'
+    - '${artifact}'
 
 archives:
 - format_overrides:

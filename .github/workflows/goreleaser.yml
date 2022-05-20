@@ -5,8 +5,11 @@ on:
     tags:
     - 'v*'
 
+
+# Source: https://github.com/goreleaser/supply-chain-example/blob/main/.github/workflows/release.yml
 permissions:
-  contents: write
+  contents: write # needed to write releases
+  id-token: write # needed for keyless signing
 
 jobs:
   goreleaser:
@@ -23,6 +26,7 @@ jobs:
       with:
         go-version: "1.18"
         check-latest: true
+    - uses: sigstore/cosign-installer@v2.3.0         # installs cosign
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Docker login
@@ -37,3 +41,4 @@ jobs:
         args: release --rm-dist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        docker_repository_owner: cyclonedx
