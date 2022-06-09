@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/peterbourgon/ff/v3 v3.1.0
 	github.com/rs/zerolog v1.27.0
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.7.2
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
 	golang.org/x/mod v0.5.1
 )
@@ -49,5 +49,5 @@ require (
 	gonum.org/v1/gonum v0.7.0 // indirect
 	gopkg.in/neurosnap/sentences.v1 v1.0.6 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
