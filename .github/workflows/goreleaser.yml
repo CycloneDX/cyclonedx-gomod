@@ -26,7 +26,7 @@ jobs:
       with:
         go-version: "1.18"
         check-latest: true
-    - uses: sigstore/cosign-installer@v2.3.0         # installs cosign
+    - uses: sigstore/cosign-installer@v2.4.0         # installs cosign
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Docker login
