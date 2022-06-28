@@ -1,16 +1,13 @@
-ifeq ($(VERSION),)
-	VERSION=v0.0.0-$(shell git show -s --date=format:'%Y%m%d%H%M%S' --format=%cd HEAD)-$(shell git rev-parse HEAD | head -c 12)
-endif
-
-LDFLAGS="-s -w -X github.com/CycloneDX/cyclonedx-gomod/internal/version.Version=${VERSION}"
+GOFLAGS=-trimpath
+LDFLAGS="-s -w"
 
 build:
 	mkdir -p ./bin
-	CGO_ENABLED=0 go build -v -ldflags=${LDFLAGS} -o ./bin/cyclonedx-gomod ./cmd/cyclonedx-gomod
+	CGO_ENABLED=0 go build -v ${GOFLAGS} -ldflags=${LDFLAGS} -o ./bin/cyclonedx-gomod ./cmd/cyclonedx-gomod
 .PHONY: build
 
 install:
-	CGO_ENABLED=0 go install -v -ldflags=${LDFLAGS} ./cmd/cyclonedx-gomod
+	CGO_ENABLED=0 go install -v ${GOFLAGS} -ldflags=${LDFLAGS} ./cmd/cyclonedx-gomod
 .PHONY: install
 
 unit-test:
@@ -22,7 +19,9 @@ test:
 .PHONY: test
 
 clean:
-	go clean ./...
+	rm -rf ./bin
+	rm -rf ./dist
+	go clean -testcache ./...
 .PHONY: clean
 
 docker:
@@ -30,15 +29,15 @@ docker:
 .PHONY: docker
 
 goreleaser-dryrun:
-	goreleaser release --skip-publish --snapshot
+	goreleaser release --skip-publish --skip-sign --snapshot
 .PHONY: goreleaser-dryrun
 
-examples-image: build
-	docker build -t cyclonedx-gomod-examples -f Dockerfile.examples ./bin
-.PHONY: examples-image
+build-examples-image:
+	docker build -t cyclonedx/cyclonedx-gomod:examples -f Dockerfile.examples .
+.PHONY: build-examples-image
 
-examples:
-	docker run -i --rm -v "$(shell pwd)/examples:/examples" cyclonedx-gomod-examples
+examples: build-examples-image
+	docker run -it --rm -v "$(shell pwd)/examples:/examples" cyclonedx/cyclonedx-gomod:examples
 .PHONY: examples
 
 all: clean build test

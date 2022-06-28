@@ -1,57 +1,50 @@
 # This Dockerfile is meant for generating example SBOMs in a way
 # that is reproducible for everyone.
-#
-# To use, simply run:
-#   make examples-image
-#   make examples
-# The resulting files will be written to ./examples/*.bom.json
-#
-# Note that this currently only works when cyclonedx-gomod was built
-# for linux/amd64. If you're on a different platform, you'll have to run
-#   GOOS=linux GOARCH=amd64 make examples-image
-# instead.
-FROM golang:1.18.0-bullseye@sha256:ada87de4d857ada7d975fd143bee1a58a9cb597639233a8adcd92bf2cbbfe7fe
+FROM golang:1.18.3-alpine3.16@sha256:7cc62574fcf9c5fb87ad42a9789d5539a6a085971d58ee75dd2ee146cb8a8695 AS build
+WORKDIR /usr/src/app
+RUN apk --no-cache add git make
+COPY ./go.mod ./go.sum ./
+RUN go mod download
+COPY . .
+RUN make install
 
+FROM golang:1.18.3-alpine3.16@sha256:7cc62574fcf9c5fb87ad42a9789d5539a6a085971d58ee75dd2ee146cb8a8695
 VOLUME /examples
 
-# Create non-root user
-RUN useradd -m --uid 1000 cdx
+# Install prerequisites
+RUN apk --no-cache add git icu-dev && \
+    git config --system advice.detachedHead false
 
 # Install CycloneDX CLI
-RUN apt update && \
-    apt install -y libicu-dev && \
-    wget -q -O /usr/local/bin/cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.22.0/cyclonedx-linux-x64 && \
-    echo "ae39404a9dc8b2e7be0a9559781ee9fe3492201d2629de139d702fd4535ffdd6 /usr/local/bin/cyclonedx" | sha256sum -c && \
+RUN if [ "$(uname -m)" == "aarch64" ]; then CLI_ARCH="arm64"; else CLI_ARCH="musl-x64"; fi && \
+    wget -q -O /usr/local/bin/cyclonedx "https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.0/cyclonedx-linux-${CLI_ARCH}" && \
     chmod +x /usr/local/bin/cyclonedx
 
-# Create generation script
-RUN echo "#!/bin/bash\n\n\
-set -x \n\
-cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1.bom.json -licenses -main cmd/minikube /home/cdx/minikube \n\
-cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-packages.bom.json -licenses -packages -main cmd/minikube /home/cdx/minikube \n\
-cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-files.bom.json -licenses -packages -files -main cmd/minikube /home/cdx/minikube \n\
-cyclonedx-gomod mod -json -output /examples/mod_minikube-v1.23.1.bom.json -licenses /home/cdx/minikube \n\
-cyclonedx-gomod bin -json -output /examples/bin_minikube-v1.23.1.bom.json -licenses -version v1.23.1 /home/cdx/minikube-linux-amd64 \n\
+# Install cyclonedx-gomod
+COPY --from=build /go/bin/cyclonedx-gomod /usr/local/bin/
+
+# Create example SBOM generation script.
+# The script clones a specific Minikube version and downloads a corresponding prebuilt Minikube binary.
+# It then generates SBOMs for Minikube in multiple flavors and checks their validity using the CycloneDX CLI.
+RUN echo -e "#!/bin/sh\n\n\
+set -ex\n\
+git clone --branch v1.23.1 --single-branch https://github.com/kubernetes/minikube.git /tmp/minikube \n\
+wget -q -O /tmp/minikube-linux-amd64 https://github.com/kubernetes/minikube/releases/download/v1.23.1/minikube-linux-amd64 \n\
+echo 'fc23f94e870b18c2fc015af18fe2dee00452059100e42a5483b9440da1a5fba2  /tmp/minikube-linux-amd64' | sha256sum -c \n\
+chmod +x /tmp/minikube-linux-amd64 \n\
+\n\
+cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1.bom.json -licenses -main cmd/minikube /tmp/minikube \n\
+cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-packages.bom.json -licenses -packages -main cmd/minikube /tmp/minikube \n\
+cyclonedx-gomod app -json -output /examples/app_minikube-v1.23.1_with-files.bom.json -licenses -packages -files -main cmd/minikube /tmp/minikube \n\
+cyclonedx-gomod mod -json -output /examples/mod_minikube-v1.23.1.bom.json -licenses /tmp/minikube \n\
+cyclonedx-gomod bin -json -output /examples/bin_minikube-v1.23.1.bom.json -licenses -version v1.23.1 /tmp/minikube-linux-amd64 \n\
+\n\
 cyclonedx validate --input-file /examples/app_minikube-v1.23.1.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
 cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-packages.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
 cyclonedx validate --input-file /examples/app_minikube-v1.23.1_with-files.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
 cyclonedx validate --input-file /examples/mod_minikube-v1.23.1.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
-cyclonedx validate --input-file /examples/bin_minikube-v1.23.1.bom.json --input-format json --input-version v1_4 --fail-on-errors \n\
-" > /home/cdx/generate-examples.sh
+cyclonedx validate --input-file /examples/bin_minikube-v1.23.1.bom.json --input-format json --input-version v1_4 --fail-on-errors \
+" > /usr/local/bin/generate-examples.sh
 
-# Install cyclonedx-gomod
-COPY ./cyclonedx-gomod /usr/local/bin/
-
-# Change to non-root user
-USER cdx
-WORKDIR /home/cdx
-
-# Clone minikube repo and download binary
-RUN git config --global advice.detachedHead false && \
-    git clone --branch v1.23.1 --single-branch https://github.com/kubernetes/minikube.git && \
-    wget -q https://github.com/kubernetes/minikube/releases/download/v1.23.1/minikube-linux-amd64 && \
-    echo "fc23f94e870b18c2fc015af18fe2dee00452059100e42a5483b9440da1a5fba2 minikube-linux-amd64" | sha256sum -c && \
-    chmod +x minikube-linux-amd64
-
-ENTRYPOINT ["/bin/bash"]
-CMD ["/home/cdx/generate-examples.sh"]
+ENTRYPOINT ["/bin/sh"]
+CMD ["/usr/local/bin/generate-examples.sh"]

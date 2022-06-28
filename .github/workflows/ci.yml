@@ -47,7 +47,7 @@ jobs:
       uses: aquasecurity/trivy-action@0.5.0
       with:
         scan-type: config
-        skip-files: Dockerfile.gitpod
+        skip-files: "Dockerfile.examples,Dockerfile.gitpod"
         severity: "MEDIUM,HIGH,CRITICAL"
         exit-code: "1"
 

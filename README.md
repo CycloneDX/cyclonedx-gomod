@@ -205,7 +205,7 @@ The whole process of generating these examples is encapsulated in [`Dockerfile.e
 To generate them yourself, simply execute the following command:
 
 ```shell
-$ GOOS=linux GOARCH=amd64 make examples-image examples
+$ make examples
 ```
 
 ### GitHub Actions 🤖
