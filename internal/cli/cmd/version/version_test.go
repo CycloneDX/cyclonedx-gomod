@@ -19,17 +19,44 @@ package version
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/json"
+	"strings"
 	"testing"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/stretchr/testify/require"
 )
 
 func TestExecVersionCmd(t *testing.T) {
-	buf := new(bytes.Buffer)
+	t.Run("Plain", func(t *testing.T) {
+		buf := new(bytes.Buffer)
 
-	err := execVersionCmd(buf)
-	require.NoError(t, err)
-	require.Equal(t, fmt.Sprintf("%s\n", version.Version), buf.String())
+		err := execVersionCmd(buf, false)
+		require.NoError(t, err)
+
+		lines := strings.Split(strings.TrimSpace(buf.String()), "\n")
+		require.Len(t, lines, 4)
+		require.Equal(t, "Version:\tv0.0.0-unknown", lines[0]) // Actual version is not set during tests
+		require.Regexp(t, `^GoVersion:\s+go.+`, lines[1])
+		require.Regexp(t, `^OS:\s+[a-z]+`, lines[2])
+		require.Regexp(t, `^Arch:\s+[a-z]+`, lines[3])
+	})
+
+	t.Run("JSON", func(t *testing.T) {
+		buf := new(bytes.Buffer)
+
+		err := execVersionCmd(buf, true)
+		require.NoError(t, err)
+
+		var output map[string]any
+		err = json.NewDecoder(buf).Decode(&output)
+		require.NoError(t, err)
+
+		require.Len(t, output, 4)
+		require.Contains(t, output, "Version")
+		require.Equal(t, "v0.0.0-unknown", output["Version"])
+		require.Contains(t, output, "GoVersion")
+		require.Regexp(t, `go.+`, output["GoVersion"])
+		require.Contains(t, output, "OS")
+		require.Contains(t, output, "Arch")
+	})
 }

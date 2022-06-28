@@ -19,26 +19,53 @@ package version
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
+	"flag"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"io"
 	"os"
+	"text/template"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/version"
 	"github.com/peterbourgon/ff/v3/ffcli"
 )
 
 func New() *ffcli.Command {
+	fs := flag.NewFlagSet("cyclonedx-gomod version", flag.ExitOnError)
+
+	var useJSON bool
+	fs.BoolVar(&useJSON, "json", false, "Output in JSON")
+
 	return &ffcli.Command{
 		Name:       "version",
 		ShortHelp:  "Show version information",
 		ShortUsage: "cyclonedx-gomod version",
+		FlagSet:    fs,
 		Exec: func(_ context.Context, _ []string) error {
-			return execVersionCmd(os.Stdout)
+			return execVersionCmd(os.Stdout, useJSON)
 		},
 	}
 }
 
-func execVersionCmd(writer io.Writer) error {
-	fmt.Fprintln(writer, version.Version)
-	return nil
+var outputTmpl = template.Must(template.New("").Parse(`Version:{{"\t"}}{{ .Version }}
+{{ if .ModuleSum -}}
+ModuleSum:{{"\t"}}{{ .ModuleSum }}
+{{ end -}}
+{{ if .Commit -}}
+Commit:{{"\t\t"}}{{ .Commit }}
+CommitDate:{{"\t"}}{{ .CommitDate }}
+Modified:{{"\t"}}{{ .Modified }}
+{{ end -}}
+GoVersion:{{"\t"}}{{ .GoVersion }}
+OS:{{"\t\t"}}{{ .OS }}
+Arch:{{"\t\t"}}{{ .Arch }}
+`))
+
+func execVersionCmd(writer io.Writer, useJSON bool) error {
+	if useJSON {
+		enc := json.NewEncoder(writer)
+		enc.SetIndent("", "  ")
+		return enc.Encode(version.Info)
+	}
+
+	return outputTmpl.Execute(writer, version.Info)
 }

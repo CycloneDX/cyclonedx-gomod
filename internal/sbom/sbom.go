@@ -116,9 +116,9 @@ func BuildToolMetadata(logger zerolog.Logger) (*cdx.Tool, error) {
 	}
 
 	return &cdx.Tool{
-		Vendor:  version.Author,
-		Name:    version.Name,
-		Version: version.Version,
+		Vendor:  "CycloneDX",
+		Name:    "cyclonedx-gomod",
+		Version: version.Info.Version,
 		Hashes:  &toolHashes,
 		ExternalReferences: &[]cdx.ExternalReference{
 			{
