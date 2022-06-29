@@ -1,0 +1,9 @@
+/.github/
+/bin/
+/dist/
+*.md
+*.yml
+Dockerfile*
+CODEOWNERS
+LICENSE
+NOTICE
