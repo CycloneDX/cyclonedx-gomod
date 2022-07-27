@@ -149,7 +149,7 @@ func CalculateFileHashes(logger zerolog.Logger, filePath string, algos ...cdx.Ha
 	for _, algo := range algos {
 		var hashWriter hash.Hash
 
-		switch algo { //exhaustive:ignore
+		switch algo { //nolint:exhaustive
 		case cdx.HashAlgoMD5:
 			hashWriter = md5.New() // #nosec G401
 		case cdx.HashAlgoSHA1:
