@@ -88,7 +88,7 @@ docker_manifests:
   image_templates:
   - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
   - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-- name_template: "{{ .Env.docker_repository_owner}}/{{ .ProjectName }}:v{{ .Major }}"
+- name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}"
   image_templates:
   - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
   - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
