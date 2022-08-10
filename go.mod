@@ -8,7 +8,7 @@ require (
 	github.com/go-enry/go-license-detector/v4 v4.3.0
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/google/uuid v1.3.0
-	github.com/peterbourgon/ff/v3 v3.1.0
+	github.com/peterbourgon/ff/v3 v3.3.0
 	github.com/rs/zerolog v1.27.0
 	github.com/stretchr/testify v1.8.0
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce
