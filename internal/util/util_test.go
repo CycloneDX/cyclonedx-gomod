@@ -33,9 +33,3 @@ func TestFileExists(t *testing.T) {
 	defer os.Remove(tmpFile.Name())
 	require.True(t, FileExists(tmpFile.Name()))
 }
-
-func TestStringsIndexOf(t *testing.T) {
-	assert.Equal(t, 0, StringsIndexOf([]string{"foo", "bar"}, "foo"))
-	assert.Equal(t, 1, StringsIndexOf([]string{"foo", "bar"}, "bar"))
-	assert.Equal(t, -1, StringsIndexOf([]string{"foo", "bar"}, "baz"))
-}

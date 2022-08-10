@@ -27,6 +27,7 @@ import (
 	"strings"
 
 	"github.com/rs/zerolog"
+	"golang.org/x/exp/slices"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
@@ -102,7 +103,7 @@ func parseVendoredModules(mainModulePath string, reader io.Reader) ([]Module, er
 
 		// Replacements may be specified as
 		//   Path [Version] => Path [Version]
-		arrowIndex := util.StringsIndexOf(fields, "=>")
+		arrowIndex := slices.Index(fields, "=>")
 
 		var module Module
 

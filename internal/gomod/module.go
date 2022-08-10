@@ -24,10 +24,10 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/rs/zerolog"
+	"golang.org/x/exp/slices"
 	"golang.org/x/mod/semver"
 	"golang.org/x/mod/sumdb/dirhash"
 
@@ -160,18 +160,18 @@ func parseModules(reader io.Reader) ([]Module, error) {
 // Main modules take precedence, so that they will represent the first elements of the sorted slice.
 // If the path of two modules are equal, they'll be compared by their semantic version instead.
 func sortModules(modules []Module) {
-	sort.Slice(modules, func(i, j int) bool {
-		if modules[i].Main && !modules[j].Main {
+	slices.SortFunc(modules, func(a, b Module) bool {
+		if a.Main && !b.Main {
 			return true
-		} else if !modules[i].Main && modules[j].Main {
+		} else if !a.Main && b.Main {
 			return false
 		}
 
-		if modules[i].Path == modules[j].Path {
-			return semver.Compare(modules[i].Version, modules[j].Version) == -1
+		if a.Path == b.Path {
+			return semver.Compare(a.Version, b.Version) == -1
 		}
 
-		return modules[i].Path < modules[j].Path
+		return a.Path < b.Path
 	})
 }
 
