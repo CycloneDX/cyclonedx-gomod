@@ -38,8 +38,8 @@ import (
 // Note that this method doesn't work when replacements have already been applied to the module slice.
 // Consider a go.mod file containing the following lines:
 //
-// 		require golang.org/x/crypto v0.0.0-xxx-xxx
-//		replace golang.org/x/crypto => github.com/ProtonMail/go-crypto v0.0.0-xxx-xxx
+//	require golang.org/x/crypto v0.0.0-xxx-xxx
+//	replace golang.org/x/crypto => github.com/ProtonMail/go-crypto v0.0.0-xxx-xxx
 //
 // Querying `go mod why -m` with `golang.org/x/crypto` yields the expected result, querying it with
 // `github.com/ProtonMail/go-crypto` will always yield `(main module does not need github.com/ProtonMail/go-crypto)`.
