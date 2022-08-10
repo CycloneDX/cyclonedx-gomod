@@ -22,10 +22,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"sort"
 	"strings"
 
 	"github.com/rs/zerolog"
+	"golang.org/x/exp/slices"
 	"golang.org/x/mod/semver"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
@@ -127,11 +127,11 @@ func findModule(modules []Module, coordinates string, strict bool) *Module {
 // sortDependencies sorts a given Module pointer slice ascendingly by path.
 // If the path of two modules are equal, they'll be compared by their semantic version instead.
 func sortDependencies(dependencies []*Module) {
-	sort.Slice(dependencies, func(i, j int) bool {
-		if dependencies[i].Path == dependencies[j].Path {
-			return semver.Compare(dependencies[i].Version, dependencies[j].Version) == -1
+	slices.SortFunc(dependencies, func(a, b *Module) bool {
+		if a.Path == b.Path {
+			return semver.Compare(a.Version, b.Version) == -1
 		}
 
-		return dependencies[i].Path < dependencies[j].Path
+		return a.Path < b.Path
 	})
 }

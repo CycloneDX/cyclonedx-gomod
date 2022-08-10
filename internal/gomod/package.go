@@ -24,10 +24,10 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/rs/zerolog"
+	"golang.org/x/exp/slices"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
@@ -233,8 +233,8 @@ func convertPackagesToModules(logger zerolog.Logger, mainModuleDir string, pkgsM
 
 // sortPackages sorts a given Package slice ascending by import path.
 func sortPackages(pkgs []Package) {
-	sort.Slice(pkgs, func(i, j int) bool {
-		return pkgs[i].ImportPath < pkgs[j].ImportPath
+	slices.SortFunc(pkgs, func(a, b Package) bool {
+		return a.ImportPath < b.ImportPath
 	})
 }
 

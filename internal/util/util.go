@@ -47,13 +47,3 @@ func IsSubPath(subject, path string) (bool, error) {
 
 	return true, nil
 }
-
-// StringsIndexOf determines the index of a string in a string slice.
-func StringsIndexOf(haystack []string, needle string) int {
-	for i := range haystack {
-		if haystack[i] == needle {
-			return i
-		}
-	}
-	return -1
-}

@@ -26,10 +26,10 @@ import (
 	"hash"
 	"io"
 	"os"
-	"sort"
 
 	"github.com/rs/zerolog"
 	"golang.org/x/crypto/sha3"
+	"golang.org/x/exp/slices"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 
@@ -205,11 +205,11 @@ func NewProperty(name, value string) cdx.Property {
 }
 
 func SortProperties(ps []cdx.Property) {
-	sort.Slice(ps, func(i, j int) bool {
-		if ps[i].Name == ps[j].Name {
-			return ps[i].Value < ps[j].Value
+	slices.SortFunc(ps, func(a, b cdx.Property) bool {
+		if a.Name == b.Name {
+			return a.Value < b.Value
 		}
 
-		return ps[i].Name < ps[j].Name
+		return a.Name < b.Name
 	})
 }
