@@ -203,12 +203,12 @@ func parseTagsFromGoFlags(goflags string) (tags []string) {
 //
 // + moduleDir
 // |-+ cmd
-//   |-+ mainDir	<- application name
-//     |-+ main.go
+// ..|-+ mainDir	<- application name
+// ....|-+ main.go
 //
 // The package URLs for the above examples would look like this:
-//   1. pkg:golang/.../module@version         		(untouched)
-//   2. pkg:golang/.../module@version#cmd/mainDir 	(with sub path)
+//  1. pkg:golang/.../module@version         		(untouched)
+//  2. pkg:golang/.../module@version#cmd/mainDir 	(with sub path)
 //
 // If the package URL is updated, the BOM reference is as well.
 // All places within the BOM that reference the main component will be updated accordingly.

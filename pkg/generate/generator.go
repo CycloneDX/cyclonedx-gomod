@@ -24,13 +24,14 @@ import cdx "github.com/CycloneDX/cyclonedx-go"
 //
 // Generators MUST only consider facts. Results MUST be reproducible.
 // The returned BOM MUST NOT include any of the following elements:
-//  - SerialNumber
-//  - Metadata.Timestamp
-//  - Metadata.Tools
-//  - Metadata.Authors
-//  - Metadata.Manufacture
-//  - Metadata.Supplier
-//  - Metadata.Licenses
+//   - SerialNumber
+//   - Metadata.Timestamp
+//   - Metadata.Tools
+//   - Metadata.Authors
+//   - Metadata.Manufacture
+//   - Metadata.Supplier
+//   - Metadata.Licenses
+//
 // It is the responsibility of the caller to ensure that these elements
 // are set according to their context and use case.
 //
