@@ -55,7 +55,7 @@ Multiple subcommands are offered, each targeting different use cases:
   tests and test packages. Build constraints are NOT evaluated, allowing for 
   a "whole picture" view on the target module's dependencies.
 
-- "bin" offers support of generating rudimentary SBOMs from binaries built with Go modules.
+- "bin" offers support for generating rudimentary SBOMs from binaries built with Go modules.
 
 Distributors of applications will typically use "app" and provide the resulting SBOMs
 alongside their application's binaries. This enables users to only consume SBOMs for
@@ -276,7 +276,7 @@ sboms:
 ```
 
 GoReleaser will execute `cmd`s in its `dist` directory, which is a subdirectory of the project root. 
-Because `app` and `mod` both expect the module's root directory as argument, `../` must be provided.
+Because `app` and `mod` both expect the module's root directory as an argument, `../` must be provided.
 
 ### Docker 🐳
 
@@ -315,7 +315,7 @@ Refer to the [documentation](https://pkg.go.dev/github.com/CycloneDX/cyclonedx-g
 Modules that use [vendoring](https://golang.org/ref/mod#go-mod-vendor) are, although in a limited manner, supported.  
 Limitations are as follows:
 
-* **No hashes.** Go doesn't copy all module files to `vendor`, only those that are required to build
+* **No hashes.** Go doesn't copy all module files to the `vendor`, only those that are required to build
   and test the main module. Because [module checksums](#hashes) consider almost all files in a module's directory though, 
   calculating accurate hashes from the `vendor` directory is not possible. As a consequence, SBOMs for modules that use
   vendoring do not include component hashes.
