@@ -46,7 +46,7 @@ Multiple subcommands are offered, each targeting different use cases:
   tests and test packages. Build constraints are NOT evaluated, allowing for 
   a "whole picture" view on the target module's dependencies.
 
-- "bin" offers support of generating rudimentary SBOMs from binaries built with Go modules.
+- "bin" offers support for generating rudimentary SBOMs from binaries built with Go modules.
 
 Distributors of applications will typically use "app" and provide the resulting SBOMs
 alongside their application's binaries. This enables users to only consume SBOMs for
