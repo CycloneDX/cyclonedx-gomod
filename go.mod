@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/CycloneDX/cyclonedx-go v0.6.0
-	github.com/bradleyjkemp/cupaloy/v2 v2.7.0
+	github.com/bradleyjkemp/cupaloy/v2 v2.8.0
 	github.com/go-enry/go-license-detector/v4 v4.3.0
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/google/uuid v1.3.0
