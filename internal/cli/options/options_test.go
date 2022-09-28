@@ -20,6 +20,7 @@ package options
 import (
 	"testing"
 
+	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,7 +34,19 @@ func TestLogOptions_Validate(t *testing.T) {
 func TestOutputOptions_Validate(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		var options OutputOptions
-		require.NoError(t, options.Validate())
+
+		err := options.Validate()
+		require.Error(t, err)
+		require.ErrorContains(t, err, cdx.ErrInvalidSpecVersion.Error())
+	})
+
+	t.Run("InvalidOutputVersion", func(t *testing.T) {
+		var options OutputOptions
+		options.OutputVersion = "1.5"
+
+		err := options.Validate()
+		require.Error(t, err)
+		require.ErrorContains(t, err, cdx.ErrInvalidSpecVersion.Error())
 	})
 }
 

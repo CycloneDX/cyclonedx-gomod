@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/stretchr/testify/require"
 )
 
@@ -100,6 +101,7 @@ func TestOptions_Validate(t *testing.T) {
 		var options Options
 		options.ModuleDir = tmpDir
 		options.Main = "cmd/app"
+		options.OutputVersion = cdx.SpecVersion1_4.String()
 
 		err = options.Validate()
 		require.NoError(t, err)

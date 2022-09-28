@@ -85,12 +85,12 @@ func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 		cdxDependant := cdx.Dependency{Ref: module.PackageURL()}
 
 		if module.Dependencies != nil {
-			cdxDependencies := make([]cdx.Dependency, len(module.Dependencies))
+			cdxDependencies := make([]string, len(module.Dependencies))
 			for i := range module.Dependencies {
 				if module.Dependencies[i].Replace != nil {
-					cdxDependencies[i] = cdx.Dependency{Ref: module.Dependencies[i].Replace.PackageURL()}
+					cdxDependencies[i] = module.Dependencies[i].Replace.PackageURL()
 				} else {
-					cdxDependencies[i] = cdx.Dependency{Ref: module.Dependencies[i].PackageURL()}
+					cdxDependencies[i] = module.Dependencies[i].PackageURL()
 				}
 			}
 			if len(cdxDependencies) > 0 {

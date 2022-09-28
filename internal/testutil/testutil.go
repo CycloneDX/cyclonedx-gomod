@@ -123,8 +123,8 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 			(*bom.Dependencies)[i].Ref = newPURL
 		} else if dependency.Dependencies != nil { // Dependencies
 			for j, dependency2 := range *(*bom.Dependencies)[i].Dependencies {
-				if dependency2.Ref == oldPURL {
-					(*(*bom.Dependencies)[i].Dependencies)[j].Ref = newPURL
+				if dependency2 == oldPURL {
+					(*(*bom.Dependencies)[i].Dependencies)[j] = newPURL
 				}
 			}
 		}
