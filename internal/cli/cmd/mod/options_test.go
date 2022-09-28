@@ -20,14 +20,17 @@ package mod
 import (
 	"testing"
 
-	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 )
 
 func TestModOptions_Validate(t *testing.T) {
 	t.Run("InvalidComponentType", func(t *testing.T) {
 		var modOptions Options
 		modOptions.ComponentType = "foobar"
+		modOptions.OutputVersion = cdx.SpecVersion1_4.String()
 
 		err := modOptions.Validate()
 		require.Error(t, err)

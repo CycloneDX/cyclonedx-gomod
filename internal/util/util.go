@@ -22,6 +22,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	cdx "github.com/CycloneDX/cyclonedx-go"
 )
 
 func FileExists(path string) bool {
@@ -46,4 +48,23 @@ func IsSubPath(subject, path string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func ParseSpecVersion(specVersion string) (sv cdx.SpecVersion, err error) {
+	switch specVersion {
+	case cdx.SpecVersion1_0.String():
+		sv = cdx.SpecVersion1_0
+	case cdx.SpecVersion1_1.String():
+		sv = cdx.SpecVersion1_1
+	case cdx.SpecVersion1_2.String():
+		sv = cdx.SpecVersion1_2
+	case cdx.SpecVersion1_3.String():
+		sv = cdx.SpecVersion1_3
+	case cdx.SpecVersion1_4.String():
+		sv = cdx.SpecVersion1_4
+	default:
+		err = cdx.ErrInvalidSpecVersion
+	}
+
+	return
 }

@@ -29,6 +29,7 @@ import (
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM) error {
@@ -75,6 +76,11 @@ func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
 		outputFormat = cdx.BOMFileFormatXML
 	}
 
+	outputVersion, err := util.ParseSpecVersion(outputOptions.OutputVersion)
+	if err != nil {
+		return fmt.Errorf("failed to parse output version: %w", err)
+	}
+
 	var outputWriter io.Writer
 	if outputOptions.OutputFilePath == "" || outputOptions.OutputFilePath == "-" {
 		outputWriter = os.Stdout
@@ -90,7 +96,7 @@ func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
 	encoder := cdx.NewBOMEncoder(outputWriter, outputFormat)
 	encoder.SetPretty(true)
 
-	if err := encoder.Encode(bom); err != nil {
+	if err := encoder.EncodeVersion(bom, outputVersion); err != nil {
 		return fmt.Errorf("failed to encode sbom: %w", err)
 	}
 

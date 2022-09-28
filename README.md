@@ -129,6 +129,7 @@ FLAGS
   -main ...               Path to the application's main package, relative to MODULE_PATH
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
+  -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
   -packages=false         Include packages
   -serial ...             Serial number
   -std=false              Include Go standard library as component and dependency of the module
@@ -164,6 +165,7 @@ FLAGS
   -licenses=false         Perform license detection
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
+  -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
   -serial ...             Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -verbose=false          Enable verbose output
@@ -188,6 +190,7 @@ FLAGS
   -licenses=false         Perform license detection
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
+  -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
   -serial ...             Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -test=false             Include test dependencies

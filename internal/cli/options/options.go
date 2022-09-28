@@ -21,11 +21,15 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
+	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"github.com/google/uuid"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
 // ValidationError represents a validation error for options.
@@ -89,16 +93,31 @@ func (l LogOptions) Validate() error {
 // OutputOptions provides options for customizing the output.
 type OutputOptions struct {
 	OutputFilePath string
+	OutputVersion  string
 	UseJSON        bool
 }
 
 func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
+	versionChoices := []string{
+		cdx.SpecVersion1_4.String(),
+		cdx.SpecVersion1_3.String(),
+		cdx.SpecVersion1_2.String(),
+		cdx.SpecVersion1_1.String(),
+		cdx.SpecVersion1_0.String(),
+	}
+
 	fs.BoolVar(&o.UseJSON, "json", false, "Output in JSON")
 	fs.StringVar(&o.OutputFilePath, "output", "-", "Output file path (or - for STDOUT)")
+	fs.StringVar(&o.OutputVersion, "output-version", cdx.SpecVersion1_4.String(),
+		fmt.Sprintf("Output spec verson (%s)", strings.Join(versionChoices, ", ")))
 }
 
 func (o OutputOptions) Validate() error {
-	return nil // Nothing to validate
+	if _, err := util.ParseSpecVersion(o.OutputVersion); err != nil {
+		return &ValidationError{Errors: []error{err}}
+	}
+
+	return nil
 }
 
 // SBOMOptions provides options for customizing the SBOM.
