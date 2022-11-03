@@ -1,10 +1,27 @@
-FROM gitpod/workspace-go:latest
+# This file is part of CycloneDX Go
+#
+# Licensed under the Apache License, Version 2.0 (the “License”);
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an “AS IS” BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) OWASP Foundation. All Rights Reserved.
+
+FROM gitpod/workspace-go:latest@sha256:2be827f022fddfb5c244b3c6705f971ba3de07490d64789cd6b2aa420176f4b1
 
 USER root
 
 RUN \
-    wget -O "/usr/local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.0/cyclonedx-linux-x64 && \
-    echo "691cf7ed82ecce1f85e6d21bccd1ed2d7968e40eb6be7504b392c8b3a0943891 /usr/local/bin/cyclonedx" | sha256sum -c && \
+    wget -O "/usr/local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64 && \
+    echo "ef0d3b31d176e02bc594f83e19cfcea053c6bc5b197351f71696e189390f851d /usr/local/bin/cyclonedx" | sha256sum -c && \
     chmod +x "/usr/local/bin/cyclonedx"
 
 USER gitpod
