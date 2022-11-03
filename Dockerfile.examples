@@ -17,7 +17,7 @@ RUN apk --no-cache add git icu-dev && \
 
 # Install CycloneDX CLI
 RUN if [ "$(uname -m)" == "aarch64" ]; then CLI_ARCH="arm64"; else CLI_ARCH="musl-x64"; fi && \
-    wget -q -O /usr/local/bin/cyclonedx "https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.0/cyclonedx-linux-${CLI_ARCH}" && \
+    wget -q -O /usr/local/bin/cyclonedx "https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-${CLI_ARCH}" && \
     chmod +x /usr/local/bin/cyclonedx
 
 # Install cyclonedx-gomod
