@@ -12,7 +12,7 @@ on:
     paths-ignore:
     - examples/**
 
-permissions: {}
+permissions: { }
 
 jobs:
   licensecheck:
@@ -21,9 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
     - name: Check license headers
-      uses: apache/skywalking-eyes@v0.4.0
+      uses: apache/skywalking-eyes@438e4ea5682269933ea2c8b5608662e52af26959 # tag=v0.4.0
       with:
         config: .licenserc.yml
 
@@ -33,18 +33,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
     - name: Setup Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@c4a742cab115ed795e34d4513e2cf7d472deb55f # tag=v3.3.1
       with:
         go-version: "1.18"
         check-latest: true
     - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@v3.3.0
+      uses: golangci/golangci-lint-action@07db5389c99593f11ad7b44463c2d4233066a9b1 # tag=v3.3.0
       with:
         version: latest
     - name: Scan Dockerfiles
-      uses: aquasecurity/trivy-action@0.7.1
+      uses: aquasecurity/trivy-action@d63413b0a4a4482237085319f7f4a1ce99a8f2ac # tag=0.7.1
       with:
         scan-type: config
         skip-files: "Dockerfile.examples,Dockerfile.gitpod"
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Setup Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@c4a742cab115ed795e34d4513e2cf7d472deb55f # tag=v3.3.1
       with:
         go-version: "1.18"
         check-latest: true
@@ -69,6 +69,6 @@ jobs:
         echo "691cf7ed82ecce1f85e6d21bccd1ed2d7968e40eb6be7504b392c8b3a0943891 $HOME/.local/bin/cyclonedx" | sha256sum -c
         chmod +x "$HOME/.local/bin/cyclonedx"
     - name: Checkout Repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3.1.0
     - name: Test
       run: make test
