@@ -4,7 +4,7 @@
     <component bom-ref="pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module" type="application">
       <name>testmod-local</name>
       <version>v0.0.0-20210716185356-32d6b8adc872</version>
-      <purl>pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module</purl>
+      <purl>pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module&amp;goos=&amp;goarch=</purl>
     </component>
   </metadata>
   <components>
@@ -14,13 +14,13 @@
       <hashes>
         <hash alg="SHA-256">0fc77332094208335c4c70c9580b2a9c29ec4e7da87267a62e0dcfdc19608c85</hash>
       </hashes>
-      <purl>pkg:golang/testmod-local-dependency?type=module</purl>
+      <purl>pkg:golang/testmod-local-dependency?type=module&amp;goos=&amp;goarch=</purl>
     </component>
     <component bom-ref="pkg:golang/std@REDACTED?type=module" type="library">
       <name>std</name>
       <version>REDACTED</version>
       <scope>required</scope>
-      <purl>pkg:golang/std@REDACTED?type=module</purl>
+      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=&amp;goarch=</purl>
     </component>
   </components>
   <dependencies>

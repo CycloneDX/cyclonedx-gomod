@@ -77,9 +77,10 @@ func RequireMatchingPropertyToBeRedacted(t *testing.T, properties []cdx.Property
 // If files are expected, their correlating components will be removed and replaced by an empty slice.
 func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackages, expectFiles bool) {
 	var (
-		version string
-		oldPURL string
-		newPURL string
+		version   string
+		oldBOMRef string
+		newBOMRef string
+		newPURL   string
 	)
 
 	for i, component := range *bom.Components {
@@ -87,11 +88,12 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 			require.Regexp(t, `^go1\.`, component.Version)
 
 			version = component.Version
-			oldPURL = component.PackageURL
+			oldBOMRef = component.BOMRef
+			newBOMRef = strings.ReplaceAll((*bom.Components)[i].BOMRef, version, Redacted)
 			newPURL = strings.ReplaceAll((*bom.Components)[i].PackageURL, version, Redacted)
 
 			(*bom.Components)[i].Version = Redacted
-			(*bom.Components)[i].BOMRef = newPURL
+			(*bom.Components)[i].BOMRef = newBOMRef
 			(*bom.Components)[i].PackageURL = newPURL
 
 			// Redact all packages and files, as they may differ from one go version to another.
@@ -110,21 +112,20 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 			} else if expectPackages {
 				t.Fatalf("stdlib is missing packages")
 			}
-
 			break
 		}
 	}
-	if newPURL == "" {
+	if newPURL == "" && newBOMRef == "" {
 		t.Fatalf("stdlib component not found")
 	}
 
 	for i, dependency := range *bom.Dependencies {
-		if dependency.Ref == oldPURL { // Dependant
-			(*bom.Dependencies)[i].Ref = newPURL
+		if dependency.Ref == oldBOMRef { // Dependant
+			(*bom.Dependencies)[i].Ref = newBOMRef
 		} else if dependency.Dependencies != nil { // Dependencies
 			for j, dependency2 := range *(*bom.Dependencies)[i].Dependencies {
-				if dependency2 == oldPURL {
-					(*(*bom.Dependencies)[i].Dependencies)[j] = newPURL
+				if dependency2 == oldBOMRef {
+					(*(*bom.Dependencies)[i].Dependencies)[j] = newBOMRef
 				}
 			}
 		}

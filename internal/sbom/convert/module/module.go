@@ -180,7 +180,7 @@ func ToComponent(logger zerolog.Logger, module gomod.Module, options ...Option) 
 		Msg("converting module to component")
 
 	component := cdx.Component{
-		BOMRef:     module.PackageURL(),
+		BOMRef:     module.BOMRef(),
 		Type:       cdx.ComponentTypeLibrary,
 		Name:       module.Path,
 		Version:    module.Version,

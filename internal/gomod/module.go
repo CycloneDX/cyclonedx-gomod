@@ -23,6 +23,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -69,8 +70,12 @@ func (m Module) Hash() (string, error) {
 	return h1, nil
 }
 
-func (m Module) PackageURL() string {
+func (m Module) BOMRef() string {
 	return fmt.Sprintf("pkg:golang/%s?type=module", m.Coordinates())
+}
+
+func (m Module) PackageURL() string {
+	return fmt.Sprintf("pkg:golang/%s?type=module&goos=%s&goarch=%s", m.Coordinates(), os.Getenv("GOOS"), os.Getenv("GOARCH"))
 }
 
 // IsModule determines whether dir is a Go module.

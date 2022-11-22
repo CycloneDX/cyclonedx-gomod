@@ -20,6 +20,7 @@ package module
 import (
 	"bytes"
 	"errors"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -184,6 +185,8 @@ func TestToComponent(t *testing.T) {
 			Path:    "path",
 			Version: "version",
 		}
+		goos := os.Getenv("GOOS")
+		goarch := os.Getenv("GOARCH")
 
 		component, err := ToComponent(zerolog.Nop(), module)
 		require.NoError(t, err)
@@ -193,7 +196,7 @@ func TestToComponent(t *testing.T) {
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "path", component.Name)
 		require.Equal(t, "version", component.Version)
-		require.Equal(t, "pkg:golang/path@version?type=module", component.PackageURL)
+		require.Equal(t, "pkg:golang/path@version?type=module&goos="+goos+"&goarch="+goarch, component.PackageURL)
 		require.Equal(t, cdx.ScopeRequired, component.Scope)
 	})
 
@@ -203,6 +206,8 @@ func TestToComponent(t *testing.T) {
 			Version:  "version",
 			TestOnly: true,
 		}
+		goos := os.Getenv("GOOS")
+		goarch := os.Getenv("GOARCH")
 
 		component, err := ToComponent(zerolog.Nop(), module)
 		require.NoError(t, err)
@@ -212,7 +217,7 @@ func TestToComponent(t *testing.T) {
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "path", component.Name)
 		require.Equal(t, "version", component.Version)
-		require.Equal(t, "pkg:golang/path@version?type=module", component.PackageURL)
+		require.Equal(t, "pkg:golang/path@version?type=module&goos="+goos+"&goarch="+goarch, component.PackageURL)
 		require.Equal(t, cdx.ScopeOptional, component.Scope)
 	})
 
@@ -225,6 +230,8 @@ func TestToComponent(t *testing.T) {
 				Version: "versionReplace",
 			},
 		}
+		goos := os.Getenv("GOOS")
+		goarch := os.Getenv("GOARCH")
 
 		component, err := ToComponent(zerolog.Nop(), module)
 		require.NoError(t, err)
@@ -234,7 +241,7 @@ func TestToComponent(t *testing.T) {
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "pathReplace", component.Name)
 		require.Equal(t, "versionReplace", component.Version)
-		require.Equal(t, "pkg:golang/pathReplace@versionReplace?type=module", component.PackageURL)
+		require.Equal(t, "pkg:golang/pathReplace@versionReplace?type=module&goos="+goos+"&goarch="+goarch, component.PackageURL)
 		require.Equal(t, cdx.ScopeRequired, component.Scope)
 	})
 

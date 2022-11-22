@@ -19,6 +19,7 @@ package gomod
 
 import (
 	"bytes"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -66,13 +67,25 @@ func TestModule_Hash(t *testing.T) {
 	require.Equal(t, "h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=", hash)
 }
 
-func TestModule_PackageURL(t *testing.T) {
+func TestModule_BOMRef(t *testing.T) {
+
 	module := Module{
 		Path:    "github.com/CycloneDX/cyclonedx-go",
 		Version: "v0.1.0",
 	}
+	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module", module.BOMRef())
+}
 
-	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module", module.PackageURL())
+func TestModule_PackageURL(t *testing.T) {
+
+	module := Module{
+		Path:    "github.com/CycloneDX/cyclonedx-go",
+		Version: "v0.1.0",
+	}
+	goos := os.Getenv("GOOS")
+	goarch := os.Getenv("GOARCH")
+
+	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module&goos="+goos+"&goarch="+goarch, module.PackageURL())
 }
 
 func TestIsModule(t *testing.T) {

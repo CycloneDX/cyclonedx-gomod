@@ -232,19 +232,24 @@ func (g generator) includeAppPathInMainComponentPURL(bom *cdx.BOM) error {
 		oldPURL := bom.Metadata.Component.PackageURL
 		newPURL := oldPURL + "#" + filepath.ToSlash(mainDirRel)
 
+		oldBOMRef := bom.Metadata.Component.BOMRef
+		newBOMRef := oldBOMRef + "#" + filepath.ToSlash(mainDirRel)
+
 		g.logger.Debug().
-			Str("old", oldPURL).
-			Str("new", newPURL).
+			Str("oldpurl", oldPURL).
+			Str("newpurl", newPURL).
+			Str("oldbomref", oldBOMRef).
+			Str("newbomref", newBOMRef).
 			Msg("updating purl of main component")
 
-		// Update PURL of main component
-		bom.Metadata.Component.BOMRef = newPURL
+		// Update BOMRef and PURL of main component
+		bom.Metadata.Component.BOMRef = newBOMRef
 		bom.Metadata.Component.PackageURL = newPURL
 
-		// Update PURL in dependency graph
+		// Update PURL in dependency graph (without GOOS and GOARCH)
 		for i, dep := range *bom.Dependencies {
-			if dep.Ref == oldPURL {
-				(*bom.Dependencies)[i].Ref = newPURL
+			if dep.Ref == oldBOMRef {
+				(*bom.Dependencies)[i].Ref = newBOMRef
 				break
 			}
 		}
