@@ -184,7 +184,7 @@ func ToComponent(logger zerolog.Logger, module gomod.Module, options ...Option) 
 		Type:       cdx.ComponentTypeLibrary,
 		Name:       module.Path,
 		Version:    module.Version,
-		PackageURL: module.PackageURL(logger),
+		PackageURL: module.PackageURL(),
 	}
 
 	if !module.Main { // Main component can't have a scope

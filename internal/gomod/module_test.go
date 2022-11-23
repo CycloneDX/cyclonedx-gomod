@@ -25,6 +25,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -80,7 +81,7 @@ func TestModule_BOMRef(t *testing.T) {
 
 func TestModule_PackageURL(t *testing.T) {
 	// To get value from "go env -json", cannot just use t.GetEnv() might return ""
-	envMap, _ = gocmd.GetEnv(g)
+	envMap, _ = gocmd.GetEnv(zerolog.Nop())
 	goos := envMap["GOOS"]
 	goarch := envMap["GOARCH"]
 
@@ -90,7 +91,7 @@ func TestModule_PackageURL(t *testing.T) {
 	}
 	assert.Equal(t, "linux", goos)
 	assert.Equal(t, "amd64", goarch)
-	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module&goos="+goos+"&goarch="+goarch, module.PackageURL(g))
+	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module&goos="+goos+"&goarch="+goarch, module.PackageURL())
 }
 
 func TestIsModule(t *testing.T) {

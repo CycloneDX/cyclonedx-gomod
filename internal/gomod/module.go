@@ -76,12 +76,11 @@ func (m Module) BOMRef() string {
 var (
 	envOnce sync.Once
 	envMap  map[string]string
-	g       zerolog.Logger
 )
 
-func (m Module) PackageURL(logger zerolog.Logger) string {
+func (m Module) PackageURL() string {
 	envOnce.Do(func() {
-		envMap, _ = gocmd.GetEnv(g)
+		envMap, _ = gocmd.GetEnv(zerolog.Nop())
 	})
 
 	return fmt.Sprintf("pkg:golang/%s?type=module&goos=%s&goarch=%s", m.Coordinates(), envMap["GOOS"], envMap["GOARCH"])
