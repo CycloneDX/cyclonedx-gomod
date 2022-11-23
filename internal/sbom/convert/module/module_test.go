@@ -20,7 +20,6 @@ package module
 import (
 	"bytes"
 	"errors"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -31,6 +30,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
+
 )
 
 type stubLicenseDetector struct {
@@ -180,13 +181,16 @@ func TestWithTestScope(t *testing.T) {
 }
 
 func TestToComponent(t *testing.T) {
+	// To get value from "go env -json", cannot just use t.GetEnv() might return ""
+	envMap, _ := gocmd.GetEnv(zerolog.Nop())
+	goos := envMap["GOOS"]
+	goarch := envMap["GOARCH"]
+
 	t.Run("Success", func(t *testing.T) {
 		module := gomod.Module{
 			Path:    "path",
 			Version: "version",
 		}
-		goos := os.Getenv("GOOS")
-		goarch := os.Getenv("GOARCH")
 
 		component, err := ToComponent(zerolog.Nop(), module)
 		require.NoError(t, err)
@@ -206,8 +210,6 @@ func TestToComponent(t *testing.T) {
 			Version:  "version",
 			TestOnly: true,
 		}
-		goos := os.Getenv("GOOS")
-		goarch := os.Getenv("GOARCH")
 
 		component, err := ToComponent(zerolog.Nop(), module)
 		require.NoError(t, err)
@@ -230,8 +232,6 @@ func TestToComponent(t *testing.T) {
 				Version: "versionReplace",
 			},
 		}
-		goos := os.Getenv("GOOS")
-		goarch := os.Getenv("GOARCH")
 
 		component, err := ToComponent(zerolog.Nop(), module)
 		require.NoError(t, err)

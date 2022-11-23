@@ -19,7 +19,7 @@ package gomod
 
 import (
 	"bytes"
-	"os"
+
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -27,6 +27,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 )
 
 func TestModule_Coordinates(t *testing.T) {
@@ -77,15 +79,18 @@ func TestModule_BOMRef(t *testing.T) {
 }
 
 func TestModule_PackageURL(t *testing.T) {
+	// To get value from "go env -json", cannot just use t.GetEnv() might return ""
+	envMap, _ = gocmd.GetEnv(g)
+	goos := envMap["GOOS"]
+	goarch := envMap["GOARCH"]
 
 	module := Module{
 		Path:    "github.com/CycloneDX/cyclonedx-go",
 		Version: "v0.1.0",
 	}
-	goos := os.Getenv("GOOS")
-	goarch := os.Getenv("GOARCH")
-
-	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module&goos="+goos+"&goarch="+goarch, module.PackageURL())
+	assert.Equal(t, "linux", goos)
+	assert.Equal(t, "amd64", goarch)
+	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module&goos="+goos+"&goarch="+goarch, module.PackageURL(g))
 }
 
 func TestIsModule(t *testing.T) {
