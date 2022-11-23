@@ -4,7 +4,7 @@
     <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module#cmd/purl" type="application">
       <name>testmod-simple</name>
       <version>v0.0.0-20210901192510-dc2d14d2351d</version>
-      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module&amp;goos=&amp;goarch=#cmd/purl</purl>
+      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module&amp;goos=linux&amp;goarch=amd64#cmd/purl</purl>
       <properties>
         <property name="cdx:gomod:build:env:CGO_ENABLED">REDACTED</property>
         <property name="cdx:gomod:build:env:GOARCH">REDACTED</property>
@@ -21,7 +21,7 @@
       <hashes>
         <hash alg="SHA-256">79f58173df0efdd059460d69c36c620f3a2f9e532309af4d3e77da88176e87c2</hash>
       </hashes>
-      <purl>pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module&amp;goos=&amp;goarch=</purl>
+      <purl>pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module&amp;goos=linux&amp;goarch=amd64</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/package-url/packageurl-go</url>
@@ -32,7 +32,7 @@
       <name>std</name>
       <version>REDACTED</version>
       <scope>required</scope>
-      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=&amp;goarch=</purl>
+      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=linux&amp;goarch=amd64</purl>
     </component>
   </components>
   <dependencies>

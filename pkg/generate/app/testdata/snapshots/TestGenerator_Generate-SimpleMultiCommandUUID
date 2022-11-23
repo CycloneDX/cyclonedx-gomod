@@ -4,7 +4,7 @@
     <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module#cmd/uuid" type="application">
       <name>testmod-simple</name>
       <version>v0.0.0-20210901192510-dc2d14d2351d</version>
-      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module&amp;goos=&amp;goarch=#cmd/uuid</purl>
+      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module&amp;goos=linux&amp;goarch=amd64#cmd/uuid</purl>
       <properties>
         <property name="cdx:gomod:build:env:CGO_ENABLED">REDACTED</property>
         <property name="cdx:gomod:build:env:GOARCH">REDACTED</property>
@@ -21,7 +21,7 @@
       <hashes>
         <hash alg="SHA-256">a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b</hash>
       </hashes>
-      <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=module&amp;goos=&amp;goarch=</purl>
+      <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=module&amp;goos=linux&amp;goarch=amd64</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/google/uuid</url>
@@ -39,7 +39,7 @@
       <name>std</name>
       <version>REDACTED</version>
       <scope>required</scope>
-      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=&amp;goarch=</purl>
+      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=linux&amp;goarch=amd64</purl>
     </component>
   </components>
   <dependencies>
