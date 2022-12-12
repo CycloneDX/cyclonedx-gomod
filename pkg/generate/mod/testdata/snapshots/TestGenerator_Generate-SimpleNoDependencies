@@ -4,7 +4,7 @@
     <component bom-ref="pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?type=module" type="application">
       <name>testmod-nodeps</name>
       <version>v0.0.0-20210716190350-6880323ad03d</version>
-      <purl>pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?type=module</purl>
+      <purl>pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?type=module&amp;goos=linux&amp;goarch=amd64</purl>
     </component>
   </metadata>
   <components>
@@ -12,7 +12,7 @@
       <name>std</name>
       <version>REDACTED</version>
       <scope>required</scope>
-      <purl>pkg:golang/std@REDACTED?type=module</purl>
+      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=linux&amp;goarch=amd64</purl>
     </component>
   </components>
   <dependencies>

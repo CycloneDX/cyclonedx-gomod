@@ -29,6 +29,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 )
 
@@ -179,6 +180,11 @@ func TestWithTestScope(t *testing.T) {
 }
 
 func TestToComponent(t *testing.T) {
+	// To get value from "go env -json", cannot just use t.GetEnv() might return ""
+	envMap, _ := gocmd.GetEnv(zerolog.Nop())
+	goos := envMap["GOOS"]
+	goarch := envMap["GOARCH"]
+
 	t.Run("Success", func(t *testing.T) {
 		module := gomod.Module{
 			Path:    "path",
@@ -193,7 +199,7 @@ func TestToComponent(t *testing.T) {
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "path", component.Name)
 		require.Equal(t, "version", component.Version)
-		require.Equal(t, "pkg:golang/path@version?type=module", component.PackageURL)
+		require.Equal(t, "pkg:golang/path@version?type=module&goos="+goos+"&goarch="+goarch, component.PackageURL)
 		require.Equal(t, cdx.ScopeRequired, component.Scope)
 	})
 
@@ -212,7 +218,7 @@ func TestToComponent(t *testing.T) {
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "path", component.Name)
 		require.Equal(t, "version", component.Version)
-		require.Equal(t, "pkg:golang/path@version?type=module", component.PackageURL)
+		require.Equal(t, "pkg:golang/path@version?type=module&goos="+goos+"&goarch="+goarch, component.PackageURL)
 		require.Equal(t, cdx.ScopeOptional, component.Scope)
 	})
 
@@ -234,7 +240,7 @@ func TestToComponent(t *testing.T) {
 		require.Equal(t, cdx.ComponentTypeLibrary, component.Type)
 		require.Equal(t, "pathReplace", component.Name)
 		require.Equal(t, "versionReplace", component.Version)
-		require.Equal(t, "pkg:golang/pathReplace@versionReplace?type=module", component.PackageURL)
+		require.Equal(t, "pkg:golang/pathReplace@versionReplace?type=module&goos="+goos+"&goarch="+goarch, component.PackageURL)
 		require.Equal(t, cdx.ScopeRequired, component.Scope)
 	})
 

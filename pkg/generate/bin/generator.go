@@ -302,17 +302,19 @@ func (g generator) includeAppPathInMainComponentPURL(bi *gomod.BuildInfo, bom *c
 		subpath = strings.TrimPrefix(subpath, "/")
 
 		oldPURL := bom.Metadata.Component.PackageURL
+		oldBOMRef := bom.Metadata.Component.BOMRef
 		newPURL := oldPURL + "#" + subpath
+		newBOMRef := oldBOMRef + "#" + subpath
 
-		// Update PURL of main component
-		bom.Metadata.Component.BOMRef = newPURL
+		// Update BOMRef and PURL of main component
+		bom.Metadata.Component.BOMRef = newBOMRef
 		bom.Metadata.Component.PackageURL = newPURL
 
-		// Update PURL in dependency graph
+		// Update PURL in dependency graph (without GOOS and GOARCH)
 		if bom.Dependencies != nil {
 			for i, dep := range *bom.Dependencies {
-				if dep.Ref == oldPURL {
-					(*bom.Dependencies)[i].Ref = newPURL
+				if dep.Ref == oldBOMRef {
+					(*bom.Dependencies)[i].Ref = newBOMRef
 					break
 				}
 			}
@@ -323,16 +325,16 @@ func (g generator) includeAppPathInMainComponentPURL(bi *gomod.BuildInfo, bom *c
 			for i := range *bom.Compositions {
 				if (*bom.Compositions)[i].Assemblies != nil {
 					for j, assembly := range *(*bom.Compositions)[i].Assemblies {
-						if string(assembly) == oldPURL {
-							(*(*bom.Compositions)[i].Assemblies)[j] = cdx.BOMReference(newPURL)
+						if string(assembly) == oldBOMRef {
+							(*(*bom.Compositions)[i].Assemblies)[j] = cdx.BOMReference(newBOMRef)
 						}
 					}
 				}
 
 				if (*bom.Compositions)[i].Dependencies != nil {
 					for j, dependency := range *(*bom.Compositions)[i].Dependencies {
-						if string(dependency) == oldPURL {
-							(*(*bom.Compositions)[i].Dependencies)[j] = cdx.BOMReference(newPURL)
+						if string(dependency) == oldBOMRef {
+							(*(*bom.Compositions)[i].Dependencies)[j] = cdx.BOMReference(newBOMRef)
 						}
 					}
 				}
