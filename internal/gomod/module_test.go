@@ -89,8 +89,6 @@ func TestModule_PackageURL(t *testing.T) {
 		Path:    "github.com/CycloneDX/cyclonedx-go",
 		Version: "v0.1.0",
 	}
-	assert.Equal(t, "linux", goos)
-	assert.Equal(t, "amd64", goarch)
 	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module&goos="+goos+"&goarch="+goarch, module.PackageURL())
 }
 
