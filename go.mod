@@ -9,7 +9,7 @@ require (
 	github.com/go-git/go-git/v5 v5.5.2
 	github.com/google/uuid v1.3.0
 	github.com/peterbourgon/ff/v3 v3.3.0
-	github.com/rs/zerolog v1.28.0
+	github.com/rs/zerolog v1.29.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/crypto v0.5.0
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e
