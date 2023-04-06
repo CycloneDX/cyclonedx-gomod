@@ -21,10 +21,10 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # tag=v3.5.0
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@67a35a08586135a9573f4327e904ecbf517a882d # tag=v2.11.2
+      uses: github/codeql-action/init@8c8d71dde4abced210732d8486586914b97752e8 # tag=v2.11.2
       with:
         languages: "go"
     - name: Run Autobuild
-      uses: github/codeql-action/autobuild@67a35a08586135a9573f4327e904ecbf517a882d # tag=v2.11.2
+      uses: github/codeql-action/autobuild@8c8d71dde4abced210732d8486586914b97752e8 # tag=v2.11.2
     - name: Perform Analysis
-      uses: github/codeql-action/analyze@67a35a08586135a9573f4327e904ecbf517a882d # tag=v2.11.2
+      uses: github/codeql-action/analyze@8c8d71dde4abced210732d8486586914b97752e8 # tag=v2.11.2
