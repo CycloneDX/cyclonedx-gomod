@@ -1,5 +1,5 @@
-github.com/CycloneDX/cyclonedx-go v0.7.0 h1:jNxp8hL7UpcvPDFXjY+Y1ibFtsW+e5zyF9QoSmhK/zg=
-github.com/CycloneDX/cyclonedx-go v0.7.0/go.mod h1:W5Z9w8pTTL+t+yG3PCiFRGlr8PUlE0pGWzKSJbsyXkg=
+github.com/CycloneDX/cyclonedx-go v0.7.1 h1:5w1SxjGm9MTMNTuRbEPyw21ObdbaagTWF/KfF0qHTRE=
+github.com/CycloneDX/cyclonedx-go v0.7.1/go.mod h1:N/nrdWQI2SIjaACyyDs/u7+ddCkyl/zkNs8xFsHF2Ps=
 github.com/Microsoft/go-winio v0.5.2 h1:a9IhgEQBCUEk6QCdml9CiJGhAws+YwffDHEMp1VMrpA=
 github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
 github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 h1:wPbRQzjjwFc0ih8puEVAOFGELsn1zoIIYdxvML7mDxA=
