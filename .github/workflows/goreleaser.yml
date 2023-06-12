@@ -27,7 +27,7 @@ jobs:
         check-latest: true
     - uses: sigstore/cosign-installer@871cdc754496eb3792209f6e81422fac01b793b4 # tag=v2.8.1
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@e81a89b1732b9c48d79cd809d8d81d79c4647a18 # tag=v2.1.0
+      uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7 # tag=v2.2.0
     - name: Docker login
       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a # tag=v2.1.0
       with:
