@@ -25,7 +25,7 @@ jobs:
       with:
         go-version: "1.18"
         check-latest: true
-    - uses: sigstore/cosign-installer@ef0e9691595ea19ec990a46b1a591dcafe568f34 # tag=v2.8.1
+    - uses: sigstore/cosign-installer@a5d81fb6bdbcbb3d239e864d6552820420254494 # tag=v2.8.1
     - name: Set up QEMU
       uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7 # tag=v2.2.0
     - name: Docker login
