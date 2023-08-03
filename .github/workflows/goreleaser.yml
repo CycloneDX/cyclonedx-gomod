@@ -23,7 +23,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@fac708d6674e30b6ba41289acaab6d4b75aa0753 # tag=v4.0.1
       with:
-        go-version: "1.18"
+        go-version: "1.20"
         check-latest: true
     - uses: sigstore/cosign-installer@a5d81fb6bdbcbb3d239e864d6552820420254494 # tag=v2.8.1
     - name: Set up QEMU
