@@ -52,20 +52,6 @@ type LogOptions struct {
 	Verbose bool
 }
 
-// ConfigureLogger configures the global logger according to LogOptions.
-func (l LogOptions) ConfigureLogger() {
-	log.Logger = log.Output(zerolog.ConsoleWriter{
-		Out:     os.Stderr,
-		NoColor: os.Getenv("CI") != "",
-	})
-
-	if l.Verbose {
-		zerolog.SetGlobalLevel(zerolog.DebugLevel)
-	} else {
-		zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	}
-}
-
 // Logger returns a zerolog.Logger configured according to LogOptions.
 func (l LogOptions) Logger() zerolog.Logger {
 	logger := log.Output(zerolog.ConsoleWriter{

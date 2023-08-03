@@ -20,6 +20,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/rs/zerolog"
 	"os"
 
 	"github.com/rs/zerolog/log"
@@ -34,7 +35,12 @@ func main() {
 		if _, ok := err.(*options.ValidationError); ok {
 			_, _ = fmt.Fprintln(os.Stderr, err)
 		} else {
-			log.Err(err).Msg("")
+			logger := log.Output(zerolog.ConsoleWriter{
+				Out:     os.Stderr,
+				NoColor: os.Getenv("CI") != "",
+			})
+
+			logger.Err(err).Msg("")
 		}
 		os.Exit(1)
 	}
