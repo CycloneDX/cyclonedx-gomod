@@ -16,7 +16,8 @@
 # vendor/
 
 # IntelliJ / GoLand
-.idea/
+.idea/*
+!.idea/icon.svg
 *.iml
 
 # GoReleaser
