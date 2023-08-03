@@ -127,11 +127,11 @@ func findModule(modules []Module, coordinates string, strict bool) *Module {
 // sortDependencies sorts a given Module pointer slice ascendingly by path.
 // If the path of two modules are equal, they'll be compared by their semantic version instead.
 func sortDependencies(dependencies []*Module) {
-	slices.SortFunc(dependencies, func(a, b *Module) bool {
+	slices.SortFunc(dependencies, func(a, b *Module) int {
 		if a.Path == b.Path {
-			return semver.Compare(a.Version, b.Version) == -1
+			return semver.Compare(a.Version, b.Version)
 		}
 
-		return a.Path < b.Path
+		return strings.Compare(a.Path, b.Path)
 	})
 }

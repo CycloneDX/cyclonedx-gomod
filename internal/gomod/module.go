@@ -173,18 +173,18 @@ func parseModules(reader io.Reader) ([]Module, error) {
 // Main modules take precedence, so that they will represent the first elements of the sorted slice.
 // If the path of two modules are equal, they'll be compared by their semantic version instead.
 func sortModules(modules []Module) {
-	slices.SortFunc(modules, func(a, b Module) bool {
+	slices.SortFunc(modules, func(a, b Module) int {
 		if a.Main && !b.Main {
-			return true
+			return -1
 		} else if !a.Main && b.Main {
-			return false
+			return 1
 		}
 
 		if a.Path == b.Path {
-			return semver.Compare(a.Version, b.Version) == -1
+			return semver.Compare(a.Version, b.Version)
 		}
 
-		return a.Path < b.Path
+		return strings.Compare(a.Path, b.Path)
 	})
 }
 

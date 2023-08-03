@@ -26,6 +26,7 @@ import (
 	"hash"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/rs/zerolog"
 	"golang.org/x/crypto/sha3"
@@ -205,11 +206,11 @@ func NewProperty(name, value string) cdx.Property {
 }
 
 func SortProperties(ps []cdx.Property) {
-	slices.SortFunc(ps, func(a, b cdx.Property) bool {
+	slices.SortFunc(ps, func(a, b cdx.Property) int {
 		if a.Name == b.Name {
-			return a.Value < b.Value
+			return strings.Compare(a.Value, b.Value)
 		}
 
-		return a.Name < b.Name
+		return strings.Compare(a.Name, b.Name)
 	})
 }

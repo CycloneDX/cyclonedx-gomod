@@ -21,7 +21,7 @@ test:
 clean:
 	rm -rf ./bin
 	rm -rf ./dist
-	go clean -testcache ./...
+	go clean -testcache
 .PHONY: clean
 
 docker:

@@ -233,8 +233,8 @@ func convertPackagesToModules(logger zerolog.Logger, mainModuleDir string, pkgsM
 
 // sortPackages sorts a given Package slice ascending by import path.
 func sortPackages(pkgs []Package) {
-	slices.SortFunc(pkgs, func(a, b Package) bool {
-		return a.ImportPath < b.ImportPath
+	slices.SortFunc(pkgs, func(a, b Package) int {
+		return strings.Compare(a.ImportPath, b.ImportPath)
 	})
 }
 
