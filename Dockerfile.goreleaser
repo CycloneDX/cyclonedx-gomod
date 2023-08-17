@@ -1,6 +1,6 @@
 # This Dockerfile is meant for GoReleaser exclusively, see .goreleaser.yml.
 # For manual builds, please use the regular Dockerfile or simply run "make docker".
-FROM golang:1.20.7-alpine3.18@sha256:7efb78dac256c450d194e556e96f80936528335033a26d703ec8146cec8c2090
+FROM golang:1.21.0-alpine3.18@sha256:445f34008a77b0b98bf1821bf7ef5e37bb63cc42d22ee7c21cc17041070d134f
 # When running as non-root user, GOCACHE must be set to a directory
 # that is writable by that user. It will otherwise default to /.cache/go-build,
 # which is owned by root.
