@@ -15,7 +15,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) OWASP Foundation. All Rights Reserved.
 
-FROM gitpod/workspace-go:latest@sha256:487cfd318089b22461c0e73c9508394825eed0ac8ee2f7f2a9d39a2cda292ef5
+FROM gitpod/workspace-go:latest@sha256:5e45d830e1af5b10c6ac9542b6485f432169c366a0d7bc9c0d4444be1cddcfb0
 
 USER root
 
