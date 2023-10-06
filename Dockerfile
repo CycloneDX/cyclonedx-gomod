@@ -1,4 +1,4 @@
-FROM golang:1.20.7-alpine3.18@sha256:7efb78dac256c450d194e556e96f80936528335033a26d703ec8146cec8c2090 AS build
+FROM golang:1.21.2-alpine3.18@sha256:a76f153cff6a59112777c071b0cde1b6e4691ddc7f172be424228da1bfb7bbda AS build
 WORKDIR /usr/src/app
 RUN apk --no-cache add git make
 COPY ./go.mod ./go.sum ./
@@ -6,7 +6,7 @@ RUN go mod download
 COPY . .
 RUN make install
 
-FROM golang:1.20.7-alpine3.18@sha256:7efb78dac256c450d194e556e96f80936528335033a26d703ec8146cec8c2090
+FROM golang:1.21.2-alpine3.18@sha256:a76f153cff6a59112777c071b0cde1b6e4691ddc7f172be424228da1bfb7bbda
 # When running as non-root user, GOCACHE must be set to a directory
 # that is writable by that user. It will otherwise default to /.cache/go-build,
 # which is owned by root.
