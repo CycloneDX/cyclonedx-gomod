@@ -257,14 +257,16 @@ var (
 	vcsUrlGoPkgInRegexWithoutUser = regexp.MustCompile(`^gopkg\.in/([^.]+)\..*$`)
 )
 
+const vcsHttpsPrefix = "https://"
+
 func resolveVCSURL(modulePath string) string {
 	switch {
 	case strings.HasPrefix(modulePath, "github.com/"):
-		return "https://" + vcsUrlMajorVersionSuffixRegex.ReplaceAllString(modulePath, "")
+		return vcsHttpsPrefix + vcsUrlMajorVersionSuffixRegex.ReplaceAllString(modulePath, "")
 	case vcsUrlGoPkgInRegexWithUser.MatchString(modulePath):
-		return "https://" + vcsUrlGoPkgInRegexWithUser.ReplaceAllString(modulePath, "github.com/$1/$2")
+		return vcsHttpsPrefix + vcsUrlGoPkgInRegexWithUser.ReplaceAllString(modulePath, "github.com/$1/$2")
 	case vcsUrlGoPkgInRegexWithoutUser.MatchString(modulePath):
-		return "https://" + vcsUrlGoPkgInRegexWithoutUser.ReplaceAllString(modulePath, "github.com/go-$1/$1")
+		return vcsHttpsPrefix + vcsUrlGoPkgInRegexWithoutUser.ReplaceAllString(modulePath, "github.com/go-$1/$1")
 	}
 
 	return ""
