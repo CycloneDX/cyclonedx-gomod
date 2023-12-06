@@ -29,7 +29,7 @@ docker:
 .PHONY: docker
 
 goreleaser-dryrun:
-	goreleaser release --skip-publish --skip-sign --snapshot
+	goreleaser release --skip publish,sign --snapshot
 .PHONY: goreleaser-dryrun
 
 build-examples-image:
