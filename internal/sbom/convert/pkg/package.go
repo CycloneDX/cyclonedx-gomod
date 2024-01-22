@@ -30,7 +30,7 @@ import (
 
 type Option func(zerolog.Logger, gomod.Package, gomod.Module, *cdx.Component) error
 
-func WithFiles(enabled bool) Option {
+func WithFiles(enabled bool, pathEnabled bool) Option {
 	return func(logger zerolog.Logger, pkg gomod.Package, module gomod.Module, component *cdx.Component) error {
 		if !enabled {
 			return nil
@@ -57,6 +57,7 @@ func WithFiles(enabled bool) Option {
 				logger,
 				filepath.Join(pkg.Dir, file),
 				file,
+				pathEnabled,
 				fileConv.WithHashes(
 					cdx.HashAlgoMD5,
 					cdx.HashAlgoSHA1,

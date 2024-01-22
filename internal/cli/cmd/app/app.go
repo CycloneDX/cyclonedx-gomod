@@ -68,9 +68,11 @@ In order to not only include modules, but also the packages within them,
 the -packages flag can be used. Packages are represented as subcomponents of modules.
 
 By passing -files, all files that would be included in a binary will be attached
-as subcomponents of their respective package. File versions follow the v0.0.0-SHORTHASH pattern, 
+as subcomponents of their respective package. File versions follow the v0.0.0-SHORTHASH pattern,
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 Because files are subcomponents of packages, -files can only be used in conjunction with -packages.
+When -paths option is additionally enabled, each file would have a property with
+an absolute file path.
 
 Licenses detected via -licenses flag will, per default, be reported as evidence.
 This is because it can not be guaranteed that the detected licenses are in fact correct.
@@ -116,6 +118,7 @@ func Exec(options Options) error {
 		app.WithLogger(logger),
 		app.WithIncludeFiles(options.IncludeFiles),
 		app.WithIncludePackages(options.IncludePackages),
+		app.WithIncludePaths(options.IncludePaths),
 		app.WithIncludeStdlib(options.IncludeStd),
 		app.WithLicenseDetector(licenseDetector),
 		app.WithMainDir(options.Main))

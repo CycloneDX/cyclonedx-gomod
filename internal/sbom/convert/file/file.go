@@ -40,7 +40,7 @@ func WithHashes(algos ...cdx.HashAlgorithm) Option {
 	}
 }
 
-func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, options ...Option) (*cdx.Component, error) {
+func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, pathEnabled bool, options ...Option) (*cdx.Component, error) {
 	logger.Debug().
 		Str("file", absFilePath).
 		Msg("converting file to component")
@@ -56,6 +56,13 @@ func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, options
 		return nil, err
 	}
 	component.Version = fmt.Sprintf("v0.0.0-%s", hashes[0].Value[:12])
+
+	if pathEnabled {
+		if component.Properties == nil {
+			component.Properties = &[]cdx.Property{}
+		}
+		*component.Properties = append(*component.Properties, sbom.NewProperty("path", absFilePath))
+	}
 
 	for _, option := range options {
 		err = option(logger, absFilePath, relFilePath, &component)
