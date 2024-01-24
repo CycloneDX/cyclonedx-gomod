@@ -117,7 +117,7 @@ as subcomponents of their respective package. File versions follow the v0.0.0-SH
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 Because files are subcomponents of packages, -files can only be used in conjunction with -packages.
 When -paths option is additionally enabled, each file would have a property with
-an absolute file path.
+a file path relative to its module root.
 
 Licenses detected via -licenses flag will, per default, be reported as evidence.
 This is because it can not be guaranteed that the detected licenses are in fact correct.
@@ -141,7 +141,7 @@ FLAGS
   -output -               Output file path (or - for STDOUT)
   -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
   -packages=false         Include packages
-  -paths=false            Include absolute file paths
+  -paths=false            Include file paths relative to their module root
   -serial string          Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -verbose=false          Enable verbose output

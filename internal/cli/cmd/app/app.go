@@ -72,7 +72,7 @@ as subcomponents of their respective package. File versions follow the v0.0.0-SH
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 Because files are subcomponents of packages, -files can only be used in conjunction with -packages.
 When -paths option is additionally enabled, each file would have a property with
-an absolute file path.
+a file path relative to its module root.
 
 Licenses detected via -licenses flag will, per default, be reported as evidence.
 This is because it can not be guaranteed that the detected licenses are in fact correct.

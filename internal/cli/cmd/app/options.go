@@ -50,7 +50,7 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 
 	fs.BoolVar(&o.IncludeFiles, "files", false, "Include files")
 	fs.BoolVar(&o.IncludePackages, "packages", false, "Include packages")
-	fs.BoolVar(&o.IncludePaths, "paths", false, "Include absolute file paths")
+	fs.BoolVar(&o.IncludePaths, "paths", false, "Include file paths relative to their module root")
 	fs.StringVar(&o.Main, "main", "", "Path to the application's main package, relative to MODULE_PATH")
 }
 

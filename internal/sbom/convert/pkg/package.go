@@ -58,6 +58,7 @@ func WithFiles(enabled bool, pathEnabled bool) Option {
 				filepath.Join(pkg.Dir, file),
 				file,
 				pathEnabled,
+				module,
 				fileConv.WithHashes(
 					cdx.HashAlgoMD5,
 					cdx.HashAlgoSHA1,

@@ -19,10 +19,13 @@ package file
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/rs/zerolog"
 
+	"github.com/CycloneDX/cyclonedx-gomod/internal/gomod"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/sbom"
 )
 
@@ -40,7 +43,7 @@ func WithHashes(algos ...cdx.HashAlgorithm) Option {
 	}
 }
 
-func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, pathEnabled bool, options ...Option) (*cdx.Component, error) {
+func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, pathEnabled bool, module gomod.Module, options ...Option) (*cdx.Component, error) {
 	logger.Debug().
 		Str("file", absFilePath).
 		Msg("converting file to component")
@@ -61,7 +64,15 @@ func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, pathEna
 		if component.Properties == nil {
 			component.Properties = &[]cdx.Property{}
 		}
-		*component.Properties = append(*component.Properties, sbom.NewProperty("file:path", absFilePath))
+		trimmedPath := strings.TrimPrefix(absFilePath, module.Dir)
+		if trimmedPath == absFilePath {
+			workDir, err := os.Getwd()
+			if err != nil {
+				return nil, err
+			}
+			trimmedPath = strings.TrimPrefix(absFilePath, workDir)
+		}
+		*component.Properties = append(*component.Properties, sbom.NewProperty("file:path", trimmedPath))
 	}
 
 	for _, option := range options {

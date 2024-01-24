@@ -42,7 +42,7 @@ func WithIncludePackages(enable bool) Option {
 	}
 }
 
-// WithIncludePaths toggles the inclusion of absolute file paths.
+// WithIncludePaths toggles the inclusion of file paths.
 // Has no effect when files are not included as well.
 func WithIncludePaths(enable bool) Option {
 	return func(g *generator) error {
