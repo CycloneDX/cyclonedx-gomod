@@ -61,7 +61,7 @@ func ToComponent(logger zerolog.Logger, absFilePath, relFilePath string, pathEna
 		if component.Properties == nil {
 			component.Properties = &[]cdx.Property{}
 		}
-		*component.Properties = append(*component.Properties, sbom.NewProperty("path", absFilePath))
+		*component.Properties = append(*component.Properties, sbom.NewProperty("file:path", absFilePath))
 	}
 
 	for _, option := range options {
