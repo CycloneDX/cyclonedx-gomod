@@ -42,6 +42,15 @@ func WithIncludePackages(enable bool) Option {
 	}
 }
 
+// WithIncludePaths toggles the inclusion of file paths.
+// Has no effect when files are not included as well.
+func WithIncludePaths(enable bool) Option {
+	return func(g *generator) error {
+		g.includePaths = enable
+		return nil
+	}
+}
+
 // WithIncludeStdlib toggles the inclusion of a std component
 // representing the Go standard library in the generated BOM.
 //

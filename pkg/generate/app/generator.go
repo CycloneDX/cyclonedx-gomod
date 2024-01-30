@@ -41,6 +41,7 @@ type generator struct {
 
 	includeFiles    bool
 	includePackages bool
+	includePaths    bool
 	includeStdlib   bool
 	licenseDetector licensedetect.Detector
 	mainDir         string
@@ -98,7 +99,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
 		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithPackages(g.includePackages,
-			pkgConv.WithFiles(g.includeFiles)),
+			pkgConv.WithFiles(g.includeFiles, g.includePaths)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
@@ -118,7 +119,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithModuleHashes(),
 		modConv.WithPackages(g.includePackages,
-			pkgConv.WithFiles(g.includeFiles)),
+			pkgConv.WithFiles(g.includeFiles, g.includePaths)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)

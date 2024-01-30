@@ -38,6 +38,7 @@ type Options struct {
 
 	IncludeFiles    bool
 	IncludePackages bool
+	IncludePaths    bool
 	Main            string
 	ModuleDir       string
 }
@@ -49,6 +50,7 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 
 	fs.BoolVar(&o.IncludeFiles, "files", false, "Include files")
 	fs.BoolVar(&o.IncludePackages, "packages", false, "Include packages")
+	fs.BoolVar(&o.IncludePaths, "paths", false, "Include file paths relative to their module root")
 	fs.StringVar(&o.Main, "main", "", "Path to the application's main package, relative to MODULE_PATH")
 }
 
@@ -74,6 +76,10 @@ func (o Options) Validate() error {
 
 	if o.IncludeFiles && !o.IncludePackages {
 		errs = append(errs, fmt.Errorf("including files without including packages is not supported"))
+	}
+
+	if o.IncludePaths && !o.IncludeFiles {
+		errs = append(errs, fmt.Errorf("including paths without including files is not supported"))
 	}
 
 	err := o.validateMain(o.Main, &errs)

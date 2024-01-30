@@ -113,9 +113,11 @@ In order to not only include modules, but also the packages within them,
 the -packages flag can be used. Packages are represented as subcomponents of modules.
 
 By passing -files, all files that would be included in a binary will be attached
-as subcomponents of their respective package. File versions follow the v0.0.0-SHORTHASH pattern, 
+as subcomponents of their respective package. File versions follow the v0.0.0-SHORTHASH pattern,
 where SHORTHASH is the first 12 characters of the file's SHA1 hash.
 Because files are subcomponents of packages, -files can only be used in conjunction with -packages.
+When -paths option is additionally enabled, each file would have a property with
+a file path relative to its module root.
 
 Licenses detected via -licenses flag will, per default, be reported as evidence.
 This is because it can not be guaranteed that the detected licenses are in fact correct.
@@ -127,19 +129,20 @@ For documentation on the respective fields of the CycloneDX specification, refer
 
 Examples:
   $ GOARCH=arm64 GOOS=linux GOFLAGS="-tags=foo,bar" cyclonedx-gomod app -output linux-arm64.bom.xml
-  $ cyclonedx-gomod app -json -output acme-app.bom.json -files -licenses -main cmd/acme-app /usr/src/acme-module
+  $ cyclonedx-gomod app -json -output acme-app.bom.json -packages -files -licenses -main cmd/acme-app /usr/src/acme-module
 
 FLAGS
   -assert-licenses=false  Assert detected licenses
   -files=false            Include files
   -json=false             Output in JSON
   -licenses=false         Perform license detection
-  -main ...               Path to the application's main package, relative to MODULE_PATH
+  -main string            Path to the application's main package, relative to MODULE_PATH
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
   -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
   -packages=false         Include packages
-  -serial ...             Serial number
+  -paths=false            Include file paths relative to their module root
+  -serial string          Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -verbose=false          Enable verbose output
 ```
