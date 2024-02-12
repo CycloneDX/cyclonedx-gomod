@@ -3,7 +3,7 @@ module github.com/CycloneDX/cyclonedx-gomod
 go 1.20
 
 require (
-	github.com/CycloneDX/cyclonedx-go v0.7.1
+	github.com/CycloneDX/cyclonedx-go v0.8.0
 	github.com/bradleyjkemp/cupaloy/v2 v2.8.0
 	github.com/go-enry/go-license-detector/v4 v4.3.0
 	github.com/go-git/go-git/v5 v5.11.0
