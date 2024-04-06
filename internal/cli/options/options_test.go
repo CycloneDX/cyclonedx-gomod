@@ -42,7 +42,7 @@ func TestOutputOptions_Validate(t *testing.T) {
 
 	t.Run("InvalidOutputVersion", func(t *testing.T) {
 		var options OutputOptions
-		options.OutputVersion = "1.5"
+		options.OutputVersion = "1.6"
 
 		err := options.Validate()
 		require.Error(t, err)
