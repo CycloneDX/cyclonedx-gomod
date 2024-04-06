@@ -43,7 +43,9 @@ func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM) error {
 	}
 
 	bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
-	bom.Metadata.Tools = &[]cdx.Tool{*tool}
+	bom.Metadata.Tools = &cdx.ToolsChoice{
+		Tools: &[]cdx.Tool{*tool}, //nolint:staticcheck
+	}
 
 	return nil
 }
