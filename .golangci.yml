@@ -14,3 +14,7 @@ linters:
 linters-settings:
   goconst:
     ignore-tests: true
+  gosec:
+    config:
+      global:
+        nosec: true
