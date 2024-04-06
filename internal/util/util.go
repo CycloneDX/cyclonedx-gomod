@@ -62,6 +62,8 @@ func ParseSpecVersion(specVersion string) (sv cdx.SpecVersion, err error) {
 		sv = cdx.SpecVersion1_3
 	case cdx.SpecVersion1_4.String():
 		sv = cdx.SpecVersion1_4
+	case cdx.SpecVersion1_5.String():
+		sv = cdx.SpecVersion1_5
 	default:
 		err = cdx.ErrInvalidSpecVersion
 	}
