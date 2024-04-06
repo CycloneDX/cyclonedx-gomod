@@ -104,7 +104,7 @@ func BuildDependencyGraph(modules []gomod.Module) []cdx.Dependency {
 	return depGraph
 }
 
-func BuildToolMetadata(logger zerolog.Logger) (*cdx.Tool, error) {
+func BuildToolMetadata(logger zerolog.Logger) (*cdx.Tool, error) { //nolint:staticcheck
 	toolExePath, err := os.Executable()
 	if err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ func BuildToolMetadata(logger zerolog.Logger) (*cdx.Tool, error) {
 		return nil, fmt.Errorf("failed to calculate tool hashes: %w", err)
 	}
 
-	return &cdx.Tool{
+	return &cdx.Tool{ //nolint:staticcheck
 		Vendor:  "CycloneDX",
 		Name:    "cyclonedx-gomod",
 		Version: version.Info.Version,
