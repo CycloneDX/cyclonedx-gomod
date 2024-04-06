@@ -18,8 +18,8 @@
 package sbom
 
 import (
-	"crypto/md5"  // #nosec G501
-	"crypto/sha1" // #nosec G505
+	"crypto/md5"  //nolint:gosec // #nosec G501
+	"crypto/sha1" //nolint:gosec // #nosec G505
 	"crypto/sha256"
 	"crypto/sha512"
 	"fmt"
@@ -152,9 +152,9 @@ func CalculateFileHashes(logger zerolog.Logger, filePath string, algos ...cdx.Ha
 
 		switch algo { //nolint:exhaustive
 		case cdx.HashAlgoMD5:
-			hashWriter = md5.New() // #nosec G401
+			hashWriter = md5.New() //nolint:gosec // #nosec G401
 		case cdx.HashAlgoSHA1:
-			hashWriter = sha1.New() // #nosec G401
+			hashWriter = sha1.New() //nolint:gosec // #nosec G401
 		case cdx.HashAlgoSHA256:
 			hashWriter = sha256.New()
 		case cdx.HashAlgoSHA384:
