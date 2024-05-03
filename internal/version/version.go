@@ -38,7 +38,7 @@ var Info = struct {
 	Version: "v0.0.0-unknown",
 }
 
-// nolint: gochecknoinits
+//nolint:init
 func init() {
 	bi, ok := debug.ReadBuildInfo()
 	if !ok {
