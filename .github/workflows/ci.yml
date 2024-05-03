@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # tag=v4.1.2
+      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # tag=v4.1.4
     - name: Check license headers
       uses: apache/skywalking-eyes@438e4ea5682269933ea2c8b5608662e52af26959 # tag=v0.4.0
       with:
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # tag=v4.1.2
+      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # tag=v4.1.4
     - name: Setup Go
       uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # tag=v5.0.0
       with:
@@ -69,6 +69,6 @@ jobs:
         echo "bd26ccba454cc9f12b6860136e1b14117b829a5f27e993607ff526262c5a7ff0 $HOME/.local/bin/cyclonedx" | sha256sum -c
         chmod +x "$HOME/.local/bin/cyclonedx"
     - name: Checkout Repository
-      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # tag=v4.1.2
+      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # tag=v4.1.4
     - name: Test
       run: make test
