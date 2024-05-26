@@ -59,7 +59,7 @@ func TestOptions_Validate(t *testing.T) {
 
 	t.Run("Main Is File", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		err := os.WriteFile(filepath.Join(tmpDir, "main.go"), []byte("package main"), os.ModePerm)
+		err := os.WriteFile(filepath.Join(tmpDir, "main.go"), []byte("package main"), 0600)
 		require.NoError(t, err)
 
 		var options Options
@@ -73,11 +73,11 @@ func TestOptions_Validate(t *testing.T) {
 
 	t.Run("Main Isnt A Main Package", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		err := os.MkdirAll(filepath.Join(tmpDir, "cmd/app"), os.ModePerm)
+		err := os.MkdirAll(filepath.Join(tmpDir, "cmd/app"), 0700)
 		require.NoError(t, err)
-		err = os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte("module foobar"), os.ModePerm)
+		err = os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte("module foobar"), 0600)
 		require.NoError(t, err)
-		err = os.WriteFile(filepath.Join(tmpDir, "cmd/app/main.go"), []byte("package baz"), os.ModePerm)
+		err = os.WriteFile(filepath.Join(tmpDir, "cmd/app/main.go"), []byte("package baz"), 0600)
 		require.NoError(t, err)
 
 		var options Options
@@ -91,11 +91,11 @@ func TestOptions_Validate(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		tmpDir := t.TempDir()
-		err := os.MkdirAll(filepath.Join(tmpDir, "cmd/app"), os.ModePerm)
+		err := os.MkdirAll(filepath.Join(tmpDir, "cmd/app"), 0700)
 		require.NoError(t, err)
-		err = os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte("module foobar"), os.ModePerm)
+		err = os.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte("module foobar"), 0600)
 		require.NoError(t, err)
-		err = os.WriteFile(filepath.Join(tmpDir, "cmd/app/main.go"), []byte("package main"), os.ModePerm)
+		err = os.WriteFile(filepath.Join(tmpDir, "cmd/app/main.go"), []byte("package main"), 0600)
 		require.NoError(t, err)
 
 		var options Options
