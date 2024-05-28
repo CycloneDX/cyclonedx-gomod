@@ -29,7 +29,7 @@ jobs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # tag=v3.0.0
     - name: Docker login
-      uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # tag=v3.1.0
+      uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # tag=v3.2.0
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
