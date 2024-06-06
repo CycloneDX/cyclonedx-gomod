@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.5" version="1">
+<bom xmlns="http://cyclonedx.org/schema/bom/1.6" version="1">
   <metadata>
     <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?type=module" type="application">
       <name>testmod-simple</name>
       <version>v0.0.0-20210716183230-c7ea7c975ab8</version>
-      <purl>pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?type=module&amp;goos=linux&amp;goarch=amd64</purl>
+      <purl>pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?type=module&amp;goos=darwin&amp;goarch=arm64</purl>
     </component>
     <properties>
       <property name="cdx:gomod:binary:hash:MD5">2c07cd14d44d6755840ac54352af3b8e</property>
@@ -32,7 +32,7 @@
       <hashes>
         <hash alg="SHA-256">a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b</hash>
       </hashes>
-      <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=module&amp;goos=linux&amp;goarch=amd64</purl>
+      <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=module&amp;goos=darwin&amp;goarch=arm64</purl>
       <externalReferences>
         <reference type="vcs">
           <url>https://github.com/google/uuid</url>
