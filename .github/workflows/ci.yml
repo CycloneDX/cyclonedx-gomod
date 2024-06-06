@@ -23,7 +23,7 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # tag=v4.1.6
     - name: Check license headers
-      uses: apache/skywalking-eyes@438e4ea5682269933ea2c8b5608662e52af26959 # tag=v0.4.0
+      uses: apache/skywalking-eyes@cd7b195c51fd3d6ad52afceb760719ddc6b3ee91 # tag=v0.6.0
       with:
         config: .licenserc.yml
 
