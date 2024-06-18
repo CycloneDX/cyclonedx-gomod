@@ -44,7 +44,7 @@ jobs:
       with:
         version: latest
     - name: Scan Dockerfiles
-      uses: aquasecurity/trivy-action@595be6a0f6560a0a8fc419ddf630567fc623531d # tag=0.22.0
+      uses: aquasecurity/trivy-action@7c2007bcb556501da015201bcba5aa14069b74e2 # tag=0.23.0
       with:
         scan-type: config
         skip-files: "Dockerfile.examples,Dockerfile.gitpod"
