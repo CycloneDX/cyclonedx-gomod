@@ -168,7 +168,7 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	require.NoError(t, err)
 	require.NoError(t, bomFile.Close())
 
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--input-version", "v1_5", "--fail-on-errors") //nolint:gosec // #nosec G204
+	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--input-version", "v1_6", "--fail-on-errors") //nolint:gosec // #nosec G204
 	valOut, err := valCmd.CombinedOutput()
 	if !assert.NoError(t, err) {
 		// Provide some context when test is failing
