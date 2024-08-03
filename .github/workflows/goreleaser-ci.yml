@@ -21,7 +21,7 @@ jobs:
         go-version: "1.22"
         check-latest: true
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # tag=v3.0.0
+      uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # tag=v3.2.0
     - name: Run GoReleaser
       uses: goreleaser/goreleaser-action@5742e2a039330cbb23ebf35f046f814d4c6ff811 # tag=v5.1.0
       with:
