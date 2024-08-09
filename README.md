@@ -32,7 +32,7 @@ Building from source requires Go 1.21 or newer.
 
 ## Compatibility
 
-*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, which currently is [1.4](https://cyclonedx.org/docs/1.4/). 
+*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, and currently supports up to [1.5](https://cyclonedx.org/docs/1.5/). 
 You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple BOM formats or specification versions. 
 
 ## Usage
@@ -139,7 +139,7 @@ FLAGS
   -main string            Path to the application's main package, relative to MODULE_PATH
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
-  -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
+  -output-version 1.5     Output spec verson (1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -packages=false         Include packages
   -paths=false            Include file paths relative to their module root
   -serial string          Serial number
@@ -155,10 +155,10 @@ USAGE
 
 Generate SBOMs for binaries.
 
-Although the binary is never executed, it must be executable.
+Although the binary is never executed by cyclonedx-gomod, it must be executable.
 This is a requirement by the "go version -m" command that is used to provide this functionality.
 
-When license detection is enabled, all modules (including the main module) 
+When license detection is enabled, all modules (including the main module)
 will be downloaded to the module cache using "go mod download".
 For the download of the main module to work, its version has to be provided
 via the -version flag.
@@ -184,11 +184,11 @@ FLAGS
   -licenses=false         Perform license detection
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
-  -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
-  -serial ...             Serial number
+  -output-version 1.5     Output spec verson (1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -serial string          Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -verbose=false          Enable verbose output
-  -version ...            Version of the main component
+  -version string         Version of the main component
 ```
 
 #### `mod`
@@ -217,8 +217,8 @@ FLAGS
   -licenses=false         Perform license detection
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
-  -output-version 1.4     Output spec verson (1.4, 1.3, 1.2, 1.1, 1.0)
-  -serial ...             Serial number
+  -output-version 1.5     Output spec verson (1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -serial string          Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -test=false             Include test dependencies
   -type application       Type of the main component
