@@ -21,7 +21,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 
 	"github.com/rs/zerolog"
@@ -82,7 +81,7 @@ func downloadInternal(logger zerolog.Logger, modules []Module) ([]ModuleDownload
 		//
 		// See https://github.com/golang/go/issues/35380
 		if stderrBuf.Len() != 0 {
-			return nil, fmt.Errorf(stderrBuf.String())
+			return nil, errors.New(stderrBuf.String())
 		}
 	}
 
