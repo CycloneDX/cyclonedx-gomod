@@ -1,4 +1,4 @@
-# This file is part of CycloneDX Go
+# This file is part of CycloneDX GoMod
 #
 # Licensed under the Apache License, Version 2.0 (the “License”);
 # you may not use this file except in compliance with the License.
@@ -16,12 +16,3 @@
 # Copyright (c) OWASP Foundation. All Rights Reserved.
 
 FROM gitpod/workspace-go:latest@sha256:9c95281efb4025f8ce7ee8e45490a42e81948b6a6ff7de31c667056d3553e7dd
-
-USER root
-
-RUN \
-    wget -O "/usr/local/bin/cyclonedx" https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64 && \
-    echo "ef0d3b31d176e02bc594f83e19cfcea053c6bc5b197351f71696e189390f851d /usr/local/bin/cyclonedx" | sha256sum -c && \
-    chmod +x "/usr/local/bin/cyclonedx"
-
-USER gitpod

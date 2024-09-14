@@ -21,9 +21,7 @@ package testutil
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -146,35 +144,21 @@ func RequireMatchingSBOMSnapshot(t *testing.T, snapShooter *cupaloy.Config, bom 
 
 // RequireValidSBOM encodes the BOM and validates it using the CycloneDX CLI.
 func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) {
-	var inputFormat string
-	switch fileFormat {
-	case cdx.BOMFileFormatJSON:
-		inputFormat = "json"
-	case cdx.BOMFileFormatXML:
-		inputFormat = "xml"
-	}
+	buf := bytes.Buffer{}
 
-	bomFile, err := os.Create(filepath.Join(t.TempDir(), fmt.Sprintf("bom.%s", inputFormat)))
-	require.NoError(t, err)
-	defer func() {
-		if err := bomFile.Close(); err != nil && err.Error() != "file already closed" {
-			fmt.Printf("failed to close bom file: %v\n", err)
-		}
-	}()
-
-	encoder := cdx.NewBOMEncoder(bomFile, fileFormat)
+	encoder := cdx.NewBOMEncoder(&buf, fileFormat)
 	encoder.SetPretty(true)
-	err = encoder.Encode(bom)
+	err := encoder.Encode(bom)
 	require.NoError(t, err)
-	require.NoError(t, bomFile.Close())
 
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--input-version", "v1_6", "--fail-on-errors") //nolint:gosec // #nosec G204
-	valOut, err := valCmd.CombinedOutput()
-	if !assert.NoError(t, err) {
-		// Provide some context when test is failing
-		fmt.Printf("validation error: %s\n", string(valOut))
-		t.FailNow()
+	var v validator
+	if fileFormat == cdx.BOMFileFormatJSON {
+		v = newJSONValidator()
+	} else {
+		v = newXMLValidator()
 	}
+	err = v.Validate(buf.Bytes(), cdx.SpecVersion1_6)
+	require.NoError(t, err)
 }
 
 // SkipIfShort skips the test if `go test` was launched using the -short flag.
