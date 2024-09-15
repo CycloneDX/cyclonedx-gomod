@@ -64,8 +64,9 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("Simple1.18", func(t *testing.T) {
@@ -77,7 +78,8 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 	})
 }

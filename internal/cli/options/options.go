@@ -85,6 +85,7 @@ type OutputOptions struct {
 
 func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 	versionChoices := []string{
+		cdx.SpecVersion1_6.String(),
 		cdx.SpecVersion1_5.String(),
 		cdx.SpecVersion1_4.String(),
 		cdx.SpecVersion1_3.String(),
@@ -95,7 +96,7 @@ func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 
 	fs.BoolVar(&o.UseJSON, "json", false, "Output in JSON")
 	fs.StringVar(&o.OutputFilePath, "output", "-", "Output file path (or - for STDOUT)")
-	fs.StringVar(&o.OutputVersion, "output-version", cdx.SpecVersion1_5.String(),
+	fs.StringVar(&o.OutputVersion, "output-version", cdx.SpecVersion1_6.String(),
 		fmt.Sprintf("Output spec verson (%s)", strings.Join(versionChoices, ", ")))
 }
 

@@ -68,10 +68,11 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleMultiCommand", func(t *testing.T) {
@@ -86,10 +87,11 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleLocal", func(t *testing.T) {
@@ -104,10 +106,11 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	// Test with a "simple" module with only a few dependencies,
@@ -132,10 +135,11 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleNoDependencies", func(t *testing.T) {
@@ -150,10 +154,11 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleVendor", func(t *testing.T) {
@@ -168,9 +173,10 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 }

@@ -1,34 +1,54 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.5" version="1">
-  <metadata>
-    <component bom-ref="pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module" type="application">
-      <name>testmod-local</name>
-      <version>v0.0.0-20210716185356-32d6b8adc872</version>
-      <purl>pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-    </component>
-  </metadata>
-  <components>
-    <component bom-ref="pkg:golang/testmod-local-dependency?type=module" type="library">
-      <name>testmod-local-dependency</name>
-      <scope>required</scope>
-      <hashes>
-        <hash alg="SHA-256">0fc77332094208335c4c70c9580b2a9c29ec4e7da87267a62e0dcfdc19608c85</hash>
-      </hashes>
-      <purl>pkg:golang/testmod-local-dependency?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-    </component>
-    <component bom-ref="pkg:golang/std@REDACTED?type=module" type="library">
-      <name>std</name>
-      <version>REDACTED</version>
-      <scope>required</scope>
-      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-    </component>
-  </components>
-  <dependencies>
-    <dependency ref="pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module">
-      <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
-      <dependency ref="pkg:golang/testmod-local-dependency?type=module"></dependency>
-    </dependency>
-    <dependency ref="pkg:golang/testmod-local-dependency?type=module"></dependency>
-    <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
-  </dependencies>
-</bom>
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "bom-ref": "pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module",
+      "type": "application",
+      "name": "testmod-local",
+      "version": "v0.0.0-20210716185356-32d6b8adc872",
+      "purl": "pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:golang/testmod-local-dependency?type=module",
+      "type": "library",
+      "name": "testmod-local-dependency",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0fc77332094208335c4c70c9580b2a9c29ec4e7da87267a62e0dcfdc19608c85"
+        }
+      ],
+      "purl": "pkg:golang/testmod-local-dependency?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
+    },
+    {
+      "bom-ref": "pkg:golang/std@REDACTED?type=module",
+      "type": "library",
+      "name": "std",
+      "version": "REDACTED",
+      "scope": "required",
+      "purl": "pkg:golang/std@REDACTED?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module",
+      "dependsOn": [
+        "pkg:golang/std@REDACTED?type=module",
+        "pkg:golang/testmod-local-dependency?type=module"
+      ]
+    },
+    {
+      "ref": "pkg:golang/testmod-local-dependency?type=module"
+    },
+    {
+      "ref": "pkg:golang/std@REDACTED?type=module"
+    }
+  ]
+}
+

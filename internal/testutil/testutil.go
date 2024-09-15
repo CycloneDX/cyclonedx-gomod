@@ -21,9 +21,8 @@ package testutil
 import (
 	"bytes"
 	"fmt"
-	"os"
+	"github.com/package-url/packageurl-go"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -132,6 +131,44 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 	}
 }
 
+func RequireVolatilePURLQualifiersToBeRedacted(t *testing.T, bom *cdx.BOM) {
+	if bom.Metadata.Component != nil && bom.Metadata.Component.PackageURL != "" {
+		purl, err := packageurl.FromString(bom.Metadata.Component.PackageURL)
+		require.NoError(t, err)
+
+		qualifierMap := purl.Qualifiers.Map()
+		for k := range qualifierMap {
+			if k == "goarch" {
+				qualifierMap[k] = Redacted
+			} else if k == "goos" {
+				qualifierMap[k] = Redacted
+			}
+		}
+
+		purl.Qualifiers = packageurl.QualifiersFromMap(qualifierMap)
+		bom.Metadata.Component.PackageURL = purl.String()
+	}
+
+	for i, component := range *bom.Components {
+		if component.PackageURL != "" {
+			purl, err := packageurl.FromString(component.PackageURL)
+			require.NoError(t, err)
+
+			qualifierMap := purl.Qualifiers.Map()
+			for k := range qualifierMap {
+				if k == "goarch" {
+					qualifierMap[k] = Redacted
+				} else if k == "goos" {
+					qualifierMap[k] = Redacted
+				}
+			}
+
+			purl.Qualifiers = packageurl.QualifiersFromMap(qualifierMap)
+			(*bom.Components)[i].PackageURL = purl.String()
+		}
+	}
+}
+
 // RequireMatchingSBOMSnapshot encodes a BOM and compares it to the snapshot of a test case.
 func RequireMatchingSBOMSnapshot(t *testing.T, snapShooter *cupaloy.Config, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) {
 	buf := new(bytes.Buffer)
@@ -146,35 +183,21 @@ func RequireMatchingSBOMSnapshot(t *testing.T, snapShooter *cupaloy.Config, bom 
 
 // RequireValidSBOM encodes the BOM and validates it using the CycloneDX CLI.
 func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) {
-	var inputFormat string
-	switch fileFormat {
-	case cdx.BOMFileFormatJSON:
-		inputFormat = "json"
-	case cdx.BOMFileFormatXML:
-		inputFormat = "xml"
-	}
+	buf := bytes.Buffer{}
 
-	bomFile, err := os.Create(filepath.Join(t.TempDir(), fmt.Sprintf("bom.%s", inputFormat)))
-	require.NoError(t, err)
-	defer func() {
-		if err := bomFile.Close(); err != nil && err.Error() != "file already closed" {
-			fmt.Printf("failed to close bom file: %v\n", err)
-		}
-	}()
-
-	encoder := cdx.NewBOMEncoder(bomFile, fileFormat)
+	encoder := cdx.NewBOMEncoder(&buf, fileFormat)
 	encoder.SetPretty(true)
-	err = encoder.Encode(bom)
+	err := encoder.Encode(bom)
 	require.NoError(t, err)
-	require.NoError(t, bomFile.Close())
 
-	valCmd := exec.Command("cyclonedx", "validate", "--input-file", bomFile.Name(), "--input-format", inputFormat, "--input-version", "v1_5", "--fail-on-errors") //nolint:gosec // #nosec G204
-	valOut, err := valCmd.CombinedOutput()
-	if !assert.NoError(t, err) {
-		// Provide some context when test is failing
-		fmt.Printf("validation error: %s\n", string(valOut))
-		t.FailNow()
+	var v validator
+	if fileFormat == cdx.BOMFileFormatJSON {
+		v = newJSONValidator()
+	} else {
+		panic("xml validation not available")
 	}
+	err = v.Validate(buf.Bytes(), cdx.SpecVersion1_6)
+	require.NoError(t, err)
 }
 
 // SkipIfShort skips the test if `go test` was launched using the -short flag.

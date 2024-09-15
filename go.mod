@@ -3,14 +3,17 @@ module github.com/CycloneDX/cyclonedx-gomod
 go 1.23.1
 
 require (
-	github.com/CycloneDX/cyclonedx-go v0.8.0
+	github.com/CycloneDX/cyclonedx-go v0.9.1
 	github.com/bradleyjkemp/cupaloy/v2 v2.8.0
 	github.com/go-enry/go-license-detector/v4 v4.3.0
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/uuid v1.6.0
+	github.com/package-url/packageurl-go v0.1.3
 	github.com/peterbourgon/ff/v3 v3.4.0
+	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
+	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/crypto v0.27.0
 	golang.org/x/exp v0.0.0-20230801115018-d63ba01acd4b
 	golang.org/x/mod v0.21.0
@@ -37,7 +40,6 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/montanaflynn/stats v0.0.0-20151014174947-eeaced052adb // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
@@ -45,6 +47,8 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v0.0.0-20170918181015-86672fcb3f95 // indirect
 	github.com/skeema/knownhosts v1.2.2 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
+	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
