@@ -28,11 +28,11 @@ brew install cyclonedx/cyclonedx/cyclonedx-gomod
 go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
 ```
 
-Building from source requires Go 1.21 or newer.
+Building from source requires Go 1.23.1 or newer.
 
 ## Compatibility
 
-*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, and currently supports up to [1.5](https://cyclonedx.org/docs/1.5/). 
+*cyclonedx-gomod* aims to produce SBOMs according to the latest CycloneDX specification, and currently supports up to [1.6](https://cyclonedx.org/docs/1.6/). 
 You can use the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli#convert-command) to convert between multiple BOM formats or specification versions. 
 
 ## Usage
@@ -139,7 +139,7 @@ FLAGS
   -main string            Path to the application's main package, relative to MODULE_PATH
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
-  -output-version 1.5     Output spec verson (1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -output-version 1.6     Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -packages=false         Include packages
   -paths=false            Include file paths relative to their module root
   -serial string          Serial number
@@ -184,7 +184,7 @@ FLAGS
   -licenses=false         Perform license detection
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
-  -output-version 1.5     Output spec verson (1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -output-version 1.6     Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -serial string          Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -verbose=false          Enable verbose output
@@ -217,7 +217,7 @@ FLAGS
   -licenses=false         Perform license detection
   -noserial=false         Omit serial number
   -output -               Output file path (or - for STDOUT)
-  -output-version 1.5     Output spec verson (1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -output-version 1.6     Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -serial string          Serial number
   -std=false              Include Go standard library as component and dependency of the module
   -test=false             Include test dependencies
@@ -403,9 +403,3 @@ Pull requests are welcome. But please read the
 
 It is generally expected that pull requests will include relevant tests. Tests are automatically run against all
 supported Go versions for every pull request.
-
-### Running Tests
-
-Some tests make use of the [CycloneDX CLI](https://github.com/CycloneDX/cyclonedx-cli), e.g. to validate SBOMs.  
-Make sure to download the CLI binary and make it available as `cyclonedx` in your `$PATH`.
-This is done automatically for [Gitpod](https://gitpod.io/#https://github.com/CycloneDX/cyclonedx-gomod).
