@@ -70,6 +70,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
@@ -88,6 +89,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
@@ -106,6 +108,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
@@ -134,6 +137,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
@@ -152,6 +156,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
@@ -170,6 +175,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})

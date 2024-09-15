@@ -9,7 +9,7 @@
       "type": "application",
       "name": "testmod-nodeps",
       "version": "v0.0.0-20210716190350-6880323ad03d",
-      "purl": "pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/testmod-nodeps@v0.0.0-20210716190350-6880323ad03d?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     }
   },
   "components": [
@@ -19,7 +19,7 @@
       "name": "std",
       "version": "REDACTED",
       "scope": "required",
-      "purl": "pkg:golang/std@REDACTED?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/std@REDACTED?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     }
   ],
   "dependencies": [

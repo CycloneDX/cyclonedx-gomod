@@ -9,7 +9,7 @@
       "type": "application",
       "name": "testmod-simple",
       "version": "(devel)",
-      "purl": "pkg:golang/testmod-simple@(devel)?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/testmod-simple@%28devel%29?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     },
     "properties": [
       {
@@ -55,7 +55,7 @@
           "content": "a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b"
         }
       ],
-      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module",
       "externalReferences": [
         {
           "url": "https://github.com/google/uuid",

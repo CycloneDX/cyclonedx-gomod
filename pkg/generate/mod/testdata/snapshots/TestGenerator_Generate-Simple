@@ -9,7 +9,7 @@
       "type": "application",
       "name": "testmod-simple",
       "version": "v0.0.0-20210716183230-c7ea7c975ab8",
-      "purl": "pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/testmod-simple@v0.0.0-20210716183230-c7ea7c975ab8?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     }
   },
   "components": [
@@ -25,7 +25,7 @@
           "content": "a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b"
         }
       ],
-      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module",
       "externalReferences": [
         {
           "url": "https://github.com/google/uuid",
@@ -48,7 +48,7 @@
       "name": "std",
       "version": "REDACTED",
       "scope": "required",
-      "purl": "pkg:golang/std@REDACTED?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/std@REDACTED?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     }
   ],
   "dependencies": [

@@ -9,7 +9,7 @@
       "type": "application",
       "name": "testmod-vendored",
       "version": "v0.0.0-20210716185931-5c9f3d791930",
-      "purl": "pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module\u0026goos=linux\u0026goarch=amd64",
+      "purl": "pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?goarch=REDACTED\u0026goos=REDACTED\u0026type=module",
       "properties": [
         {
           "name": "cdx:gomod:build:env:CGO_ENABLED",
@@ -75,7 +75,7 @@
       "name": "github.com/google/uuid",
       "version": "v1.2.0",
       "scope": "required",
-      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module",
       "externalReferences": [
         {
           "url": "https://github.com/google/uuid",
@@ -444,7 +444,7 @@
       "name": "std",
       "version": "REDACTED",
       "scope": "required",
-      "purl": "pkg:golang/std@REDACTED?type=module\u0026goos=linux\u0026goarch=amd64",
+      "purl": "pkg:golang/std@REDACTED?goarch=REDACTED\u0026goos=REDACTED\u0026type=module",
       "components": []
     }
   ],

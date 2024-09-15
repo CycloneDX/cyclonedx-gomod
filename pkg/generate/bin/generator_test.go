@@ -64,6 +64,7 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 	})
@@ -77,6 +78,7 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 	})

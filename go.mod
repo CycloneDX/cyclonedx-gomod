@@ -8,6 +8,7 @@ require (
 	github.com/go-enry/go-license-detector/v4 v4.3.0
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/google/uuid v1.6.0
+	github.com/package-url/packageurl-go v0.1.3
 	github.com/peterbourgon/ff/v3 v3.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0

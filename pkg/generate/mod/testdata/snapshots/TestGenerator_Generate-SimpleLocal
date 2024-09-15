@@ -9,7 +9,7 @@
       "type": "application",
       "name": "testmod-local",
       "version": "v0.0.0-20210716185356-32d6b8adc872",
-      "purl": "pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/testmod-local@v0.0.0-20210716185356-32d6b8adc872?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     }
   },
   "components": [
@@ -24,7 +24,7 @@
           "content": "0fc77332094208335c4c70c9580b2a9c29ec4e7da87267a62e0dcfdc19608c85"
         }
       ],
-      "purl": "pkg:golang/testmod-local-dependency?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/testmod-local-dependency?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     },
     {
       "bom-ref": "pkg:golang/std@REDACTED?type=module",
@@ -32,7 +32,7 @@
       "name": "std",
       "version": "REDACTED",
       "scope": "required",
-      "purl": "pkg:golang/std@REDACTED?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/std@REDACTED?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     }
   ],
   "dependencies": [

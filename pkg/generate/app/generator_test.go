@@ -72,6 +72,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
@@ -96,6 +97,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
@@ -119,6 +121,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
@@ -142,6 +145,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
@@ -165,6 +169,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
@@ -187,6 +192,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
@@ -211,6 +217,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
@@ -234,6 +241,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)

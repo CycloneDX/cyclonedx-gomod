@@ -9,7 +9,7 @@
       "type": "application",
       "name": "testmod-simple",
       "version": "v0.0.0-20210901192510-dc2d14d2351d",
-      "purl": "pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module\u0026goos=linux\u0026goarch=amd64#cmd/purl",
+      "purl": "pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?goarch=REDACTED\u0026goos=REDACTED\u0026type=module#cmd/purl",
       "properties": [
         {
           "name": "cdx:gomod:build:env:CGO_ENABLED",
@@ -43,7 +43,7 @@
           "content": "79f58173df0efdd059460d69c36c620f3a2f9e532309af4d3e77da88176e87c2"
         }
       ],
-      "purl": "pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "purl": "pkg:golang/github.com/package-url/packageurl-go@v0.1.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module",
       "externalReferences": [
         {
           "url": "https://github.com/package-url/packageurl-go",
@@ -57,7 +57,7 @@
       "name": "std",
       "version": "REDACTED",
       "scope": "required",
-      "purl": "pkg:golang/std@REDACTED?type=module\u0026goos=linux\u0026goarch=amd64"
+      "purl": "pkg:golang/std@REDACTED?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     }
   ],
   "dependencies": [

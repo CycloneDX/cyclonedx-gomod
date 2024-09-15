@@ -21,6 +21,7 @@ package testutil
 import (
 	"bytes"
 	"fmt"
+	"github.com/package-url/packageurl-go"
 	"os/exec"
 	"strings"
 	"testing"
@@ -126,6 +127,44 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 					(*(*bom.Dependencies)[i].Dependencies)[j] = newBOMRef
 				}
 			}
+		}
+	}
+}
+
+func RequireVolatilePURLQualifiersToBeRedacted(t *testing.T, bom *cdx.BOM) {
+	if bom.Metadata.Component != nil && bom.Metadata.Component.PackageURL != "" {
+		purl, err := packageurl.FromString(bom.Metadata.Component.PackageURL)
+		require.NoError(t, err)
+
+		qualifierMap := purl.Qualifiers.Map()
+		for k := range qualifierMap {
+			if k == "goarch" {
+				qualifierMap[k] = Redacted
+			} else if k == "goos" {
+				qualifierMap[k] = Redacted
+			}
+		}
+
+		purl.Qualifiers = packageurl.QualifiersFromMap(qualifierMap)
+		bom.Metadata.Component.PackageURL = purl.String()
+	}
+
+	for i, component := range *bom.Components {
+		if component.PackageURL != "" {
+			purl, err := packageurl.FromString(component.PackageURL)
+			require.NoError(t, err)
+
+			qualifierMap := purl.Qualifiers.Map()
+			for k := range qualifierMap {
+				if k == "goarch" {
+					qualifierMap[k] = Redacted
+				} else if k == "goos" {
+					qualifierMap[k] = Redacted
+				}
+			}
+
+			purl.Qualifiers = packageurl.QualifiersFromMap(qualifierMap)
+			(*bom.Components)[i].PackageURL = purl.String()
 		}
 	}
 }
