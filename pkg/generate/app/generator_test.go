@@ -70,14 +70,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleWithFiles", func(t *testing.T) {
@@ -94,14 +94,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, true)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleWithPackages", func(t *testing.T) {
@@ -117,14 +117,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleMultiCommandPURL", func(t *testing.T) {
@@ -140,14 +140,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleMultiCommandUUID", func(t *testing.T) {
@@ -163,14 +163,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleVendor", func(t *testing.T) {
@@ -185,14 +185,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleVendorWithFiles", func(t *testing.T) {
@@ -209,14 +209,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, true)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
 	t.Run("SimpleVendorWithPackages", func(t *testing.T) {
@@ -232,14 +232,14 @@ func TestGenerator_Generate(t *testing.T) {
 		bom, err := g.Generate()
 		require.NoError(t, err)
 
-		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, false)
-		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatXML)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 }
 

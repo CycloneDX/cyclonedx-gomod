@@ -1,63 +1,94 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.6" version="1">
-  <metadata>
-    <component bom-ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module" type="application">
-      <name>testmod-simple</name>
-      <version>v0.0.0-20210901192510-dc2d14d2351d</version>
-      <purl>pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-    </component>
-  </metadata>
-  <components>
-    <component bom-ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module" type="library">
-      <name>github.com/google/uuid</name>
-      <version>v1.2.0</version>
-      <scope>required</scope>
-      <hashes>
-        <hash alg="SHA-256">a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b</hash>
-      </hashes>
-      <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-      <externalReferences>
-        <reference type="vcs">
-          <url>https://github.com/google/uuid</url>
-        </reference>
-      </externalReferences>
-      <evidence>
-        <licenses>
-          <license>
-            <id>BSD-3-Clause</id>
-          </license>
-        </licenses>
-      </evidence>
-    </component>
-    <component bom-ref="pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module" type="library">
-      <name>github.com/package-url/packageurl-go</name>
-      <version>v0.1.0</version>
-      <scope>required</scope>
-      <hashes>
-        <hash alg="SHA-256">79f58173df0efdd059460d69c36c620f3a2f9e532309af4d3e77da88176e87c2</hash>
-      </hashes>
-      <purl>pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-      <externalReferences>
-        <reference type="vcs">
-          <url>https://github.com/package-url/packageurl-go</url>
-        </reference>
-      </externalReferences>
-    </component>
-    <component bom-ref="pkg:golang/std@REDACTED?type=module" type="library">
-      <name>std</name>
-      <version>REDACTED</version>
-      <scope>required</scope>
-      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-    </component>
-  </components>
-  <dependencies>
-    <dependency ref="pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module">
-      <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
-      <dependency ref="pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module"></dependency>
-      <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
-    </dependency>
-    <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
-    <dependency ref="pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module"></dependency>
-    <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
-  </dependencies>
-</bom>
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "bom-ref": "pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module",
+      "type": "application",
+      "name": "testmod-simple",
+      "version": "v0.0.0-20210901192510-dc2d14d2351d",
+      "purl": "pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module\u0026goos=linux\u0026goarch=amd64"
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:golang/github.com/google/uuid@v1.2.0?type=module",
+      "type": "library",
+      "name": "github.com/google/uuid",
+      "version": "v1.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b"
+        }
+      ],
+      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "externalReferences": [
+        {
+          "url": "https://github.com/google/uuid",
+          "type": "vcs"
+        }
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "BSD-3-Clause"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module",
+      "type": "library",
+      "name": "github.com/package-url/packageurl-go",
+      "version": "v0.1.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "79f58173df0efdd059460d69c36c620f3a2f9e532309af4d3e77da88176e87c2"
+        }
+      ],
+      "purl": "pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "externalReferences": [
+        {
+          "url": "https://github.com/package-url/packageurl-go",
+          "type": "vcs"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/std@REDACTED?type=module",
+      "type": "library",
+      "name": "std",
+      "version": "REDACTED",
+      "scope": "required",
+      "purl": "pkg:golang/std@REDACTED?type=module\u0026goos=linux\u0026goarch=amd64"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:golang/testmod-simple@v0.0.0-20210901192510-dc2d14d2351d?type=module",
+      "dependsOn": [
+        "pkg:golang/github.com/google/uuid@v1.2.0?type=module",
+        "pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module",
+        "pkg:golang/std@REDACTED?type=module"
+      ]
+    },
+    {
+      "ref": "pkg:golang/github.com/google/uuid@v1.2.0?type=module"
+    },
+    {
+      "ref": "pkg:golang/github.com/package-url/packageurl-go@v0.1.0?type=module"
+    },
+    {
+      "ref": "pkg:golang/std@REDACTED?type=module"
+    }
+  ]
+}
+

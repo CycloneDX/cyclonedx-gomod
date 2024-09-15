@@ -18,18 +18,25 @@
 package testutil
 
 import (
+	"embed"
 	"fmt"
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/pkg/errors"
+	"net/http"
 
+	_ "embed"
 	"github.com/xeipuuv/gojsonschema"
 )
 
+//go:embed schema/*
+var jsonSchemaFS embed.FS
+
 var jsonSchemaFiles = map[cdx.SpecVersion]string{
-	cdx.SpecVersion1_2: "file://./schema/bom-1.2.schema.json",
-	cdx.SpecVersion1_3: "file://./schema/bom-1.3.schema.json",
-	cdx.SpecVersion1_4: "file://./schema/bom-1.4.schema.json",
-	cdx.SpecVersion1_5: "file://./schema/bom-1.5.schema.json",
-	cdx.SpecVersion1_6: "file://./schema/bom-1.6.schema.json",
+	cdx.SpecVersion1_2: "file://schema/bom-1.2.schema.json",
+	cdx.SpecVersion1_3: "file://schema/bom-1.3.schema.json",
+	cdx.SpecVersion1_4: "file://schema/bom-1.4.schema.json",
+	cdx.SpecVersion1_5: "file://schema/bom-1.5.schema.json",
+	cdx.SpecVersion1_6: "file://schema/bom-1.6.schema.json",
 }
 
 type jsonValidator struct{}
@@ -44,7 +51,7 @@ func (jv jsonValidator) Validate(bom []byte, specVersion cdx.SpecVersion) error 
 		return fmt.Errorf("no json schema known for spec version %s", specVersion)
 	}
 
-	schemaLoader := gojsonschema.NewReferenceLoader(schemaFilePath)
+	schemaLoader := gojsonschema.NewReferenceLoaderFileSystem(schemaFilePath, http.FS(jsonSchemaFS))
 	documentLoader := gojsonschema.NewBytesLoader(bom)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
@@ -61,5 +68,5 @@ func (jv jsonValidator) Validate(bom []byte, specVersion cdx.SpecVersion) error 
 		errSummary += fmt.Sprintf("\n  - %s", verr.String())
 	}
 
-	return fmt.Errorf(errSummary)
+	return errors.New(errSummary)
 }

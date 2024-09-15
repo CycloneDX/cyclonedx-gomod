@@ -1,62 +1,102 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.6" version="1">
-  <metadata>
-    <component bom-ref="pkg:golang/testmod-simple@(devel)?type=module" type="application">
-      <name>testmod-simple</name>
-      <version>(devel)</version>
-      <purl>pkg:golang/testmod-simple@(devel)?type=module&amp;goos=darwin&amp;goarch=arm64</purl>
-    </component>
-    <properties>
-      <property name="cdx:gomod:binary:hash:MD5">f2bd20870a0bc20bef23facd73a1fd21</property>
-      <property name="cdx:gomod:binary:hash:SHA-1">eaff83601ad04f88d8f44b7acd97201932e8037e</property>
-      <property name="cdx:gomod:binary:hash:SHA-256">2fad71e51c9d4d892036bf253a65b4555c6b72a0a0e2a4b3a1a8c47ca5e5272a</property>
-      <property name="cdx:gomod:binary:hash:SHA-384">cff5f2a077c59e66f1862759212720fa74f4c2ccc81eb3c0ed93155be4b52a8659eb7d79e7ac174cc997b5fe5a5333e0</property>
-      <property name="cdx:gomod:binary:hash:SHA-512">e678f2af01315f382e62260a30485ae23307d33615b1d1661c86c07a0468d676398955e8ebc0efca25b17de01eb167d628780ca4b5f768588d64c0b5761773a4</property>
-      <property name="cdx:gomod:binary:name">simple</property>
-      <property name="cdx:gomod:build:env:GOVERSION">go1.16.7</property>
-    </properties>
-  </metadata>
-  <components>
-    <component bom-ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module" type="library">
-      <name>github.com/google/uuid</name>
-      <version>v1.2.0</version>
-      <scope>required</scope>
-      <hashes>
-        <hash alg="SHA-256">a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b</hash>
-      </hashes>
-      <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=module&amp;goos=darwin&amp;goarch=arm64</purl>
-      <externalReferences>
-        <reference type="vcs">
-          <url>https://github.com/google/uuid</url>
-        </reference>
-      </externalReferences>
-      <evidence>
-        <licenses>
-          <license>
-            <id>BSD-3-Clause</id>
-          </license>
-        </licenses>
-      </evidence>
-    </component>
-  </components>
-  <dependencies>
-    <dependency ref="pkg:golang/testmod-simple@(devel)?type=module">
-      <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
-    </dependency>
-    <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
-  </dependencies>
-  <compositions>
-    <composition>
-      <aggregate>complete</aggregate>
-      <dependencies>
-        <dependency ref="pkg:golang/testmod-simple@(devel)?type=module"></dependency>
-      </dependencies>
-    </composition>
-    <composition>
-      <aggregate>unknown</aggregate>
-      <dependencies>
-        <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
-      </dependencies>
-    </composition>
-  </compositions>
-</bom>
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "bom-ref": "pkg:golang/testmod-simple@(devel)?type=module",
+      "type": "application",
+      "name": "testmod-simple",
+      "version": "(devel)",
+      "purl": "pkg:golang/testmod-simple@(devel)?type=module\u0026goos=linux\u0026goarch=amd64"
+    },
+    "properties": [
+      {
+        "name": "cdx:gomod:binary:hash:MD5",
+        "value": "f2bd20870a0bc20bef23facd73a1fd21"
+      },
+      {
+        "name": "cdx:gomod:binary:hash:SHA-1",
+        "value": "eaff83601ad04f88d8f44b7acd97201932e8037e"
+      },
+      {
+        "name": "cdx:gomod:binary:hash:SHA-256",
+        "value": "2fad71e51c9d4d892036bf253a65b4555c6b72a0a0e2a4b3a1a8c47ca5e5272a"
+      },
+      {
+        "name": "cdx:gomod:binary:hash:SHA-384",
+        "value": "cff5f2a077c59e66f1862759212720fa74f4c2ccc81eb3c0ed93155be4b52a8659eb7d79e7ac174cc997b5fe5a5333e0"
+      },
+      {
+        "name": "cdx:gomod:binary:hash:SHA-512",
+        "value": "e678f2af01315f382e62260a30485ae23307d33615b1d1661c86c07a0468d676398955e8ebc0efca25b17de01eb167d628780ca4b5f768588d64c0b5761773a4"
+      },
+      {
+        "name": "cdx:gomod:binary:name",
+        "value": "simple"
+      },
+      {
+        "name": "cdx:gomod:build:env:GOVERSION",
+        "value": "go1.16.7"
+      }
+    ]
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:golang/github.com/google/uuid@v1.2.0?type=module",
+      "type": "library",
+      "name": "github.com/google/uuid",
+      "version": "v1.2.0",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b"
+        }
+      ],
+      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "externalReferences": [
+        {
+          "url": "https://github.com/google/uuid",
+          "type": "vcs"
+        }
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "BSD-3-Clause"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:golang/testmod-simple@(devel)?type=module",
+      "dependsOn": [
+        "pkg:golang/github.com/google/uuid@v1.2.0?type=module"
+      ]
+    },
+    {
+      "ref": "pkg:golang/github.com/google/uuid@v1.2.0?type=module"
+    }
+  ],
+  "compositions": [
+    {
+      "aggregate": "complete",
+      "dependencies": [
+        "pkg:golang/testmod-simple@(devel)?type=module"
+      ]
+    },
+    {
+      "aggregate": "unknown",
+      "dependencies": [
+        "pkg:golang/github.com/google/uuid@v1.2.0?type=module"
+      ]
+    }
+  ]
+}
+

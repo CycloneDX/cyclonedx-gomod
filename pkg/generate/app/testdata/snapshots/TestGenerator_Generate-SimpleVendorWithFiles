@@ -1,225 +1,467 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<bom xmlns="http://cyclonedx.org/schema/bom/1.6" version="1">
-  <metadata>
-    <component bom-ref="pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module" type="application">
-      <name>testmod-vendored</name>
-      <version>v0.0.0-20210716185931-5c9f3d791930</version>
-      <purl>pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-      <properties>
-        <property name="cdx:gomod:build:env:CGO_ENABLED">REDACTED</property>
-        <property name="cdx:gomod:build:env:GOARCH">REDACTED</property>
-        <property name="cdx:gomod:build:env:GOOS">REDACTED</property>
-        <property name="cdx:gomod:build:env:GOVERSION">REDACTED</property>
-      </properties>
-      <components>
-        <component type="library">
-          <name>testmod-vendored</name>
-          <version>v0.0.0-20210716185931-5c9f3d791930</version>
-          <purl>pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=package</purl>
-          <components>
-            <component type="file">
-              <name>main.go</name>
-              <version>v0.0.0-bbf3177def03</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">38c6a51b3a823a048f0717eab4716b31</hash>
-                <hash alg="SHA-1">bbf3177def0307fd030c155c0d8f7738c75c558e</hash>
-                <hash alg="SHA-256">61bc38fda891fa3aeb408b4479795de5cbe85c05853dc022df72e692ecf966f5</hash>
-                <hash alg="SHA-384">84a6a84bc6ab162921aade7aabc2d26f71e8acecc06ceb6857769ae5597b1b7a789a609dcf46e020ca85a758513038f4</hash>
-                <hash alg="SHA-512">45fa3782efef2928fb6f26f3f3048998594cd7d12a21b31186567df2771c48aea1d75f662ac4286b335f5bc7ebd6b1751de48957beae6d35c4b61529923554e7</hash>
-              </hashes>
-            </component>
-          </components>
-        </component>
-      </components>
-    </component>
-  </metadata>
-  <components>
-    <component bom-ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module" type="library">
-      <name>github.com/google/uuid</name>
-      <version>v1.2.0</version>
-      <scope>required</scope>
-      <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-      <externalReferences>
-        <reference type="vcs">
-          <url>https://github.com/google/uuid</url>
-        </reference>
-      </externalReferences>
-      <components>
-        <component type="library">
-          <name>github.com/google/uuid</name>
-          <version>v1.2.0</version>
-          <purl>pkg:golang/github.com/google/uuid@v1.2.0?type=package</purl>
-          <components>
-            <component type="file">
-              <name>dce.go</name>
-              <version>v0.0.0-02a2efb3ec5b</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">c3834d5cf07e7670e9471c0e3d65d810</hash>
-                <hash alg="SHA-1">02a2efb3ec5b3058950288fa6d31aa6dd4e8726c</hash>
-                <hash alg="SHA-256">6a4b89e7f6165a673e76f00bebaabf8d0d7eb4356a672c6cb771d95a45fb2695</hash>
-                <hash alg="SHA-384">56fdaeeee426ca25cf91f1bd3e6f3d340cd5c86e79c0e76fcdf4e400ad68f957838e7689d4f797b99d420180d463446d</hash>
-                <hash alg="SHA-512">5d89fd52d285bf9b7cadb5f7224a469ceacfd186663ea95a2012baaae815add9303fc964a214bf556be6e39e0b57f7475efbc5eb5af3d777ab2c2dde530da2f6</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>doc.go</name>
-              <version>v0.0.0-a1e6141b5d53</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">abda04fab87cae52f6d22b3281fe4a39</hash>
-                <hash alg="SHA-1">a1e6141b5d5301f2f073ec0175793ad43a046e44</hash>
-                <hash alg="SHA-256">0b286e2af61ede9f58d2455781ea254284c477b7fce2447aab3203992cc51f9f</hash>
-                <hash alg="SHA-384">b941b0ed24faf6de785a696604a18765e4bda50c091317a6358ce21a9dade95ab92c844e9ef4a520691591228684fc1c</hash>
-                <hash alg="SHA-512">fe64650d7ed4de494025305acf9a2b6c26cbe70924c59ee1f87de6acc7e188c57c0d95305f5ca985dd510aa932f642da5604c559377a5905c34364f87603c0a6</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>hash.go</name>
-              <version>v0.0.0-f86842458f6e</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">1d8d3d8574c6094e61b41a2565c53928</hash>
-                <hash alg="SHA-1">f86842458f6e93cdba9f223c120efebcce4bbc5c</hash>
-                <hash alg="SHA-256">a9af4e955bfa0854a9e4c949a09efead471dd1504ce4c2a336cc7a88365da6c6</hash>
-                <hash alg="SHA-384">27d12963fd2eb1e594ca1b8e026f304f9be7a5be58dae605c1a92cf679bb58ec5acd2ab051e477a07acd10b84b16458c</hash>
-                <hash alg="SHA-512">0a9dd5625e9c5ebae62c839a6b5c6b82a8156c02cadc8b93ba70698158dfefcd6af778c8ed5c4053564235d7225261fdb813e36b74e37d9d75df7373bb974c54</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>marshal.go</name>
-              <version>v0.0.0-7bab98ce43e2</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">463b0cf8cd8616d97ef2d741a6bc268b</hash>
-                <hash alg="SHA-1">7bab98ce43e2b7ba5214f01e58235a05691fa051</hash>
-                <hash alg="SHA-256">933eb226d049268e17809fd37f777c650b9ec8cb3fa988534b792610a64dcc43</hash>
-                <hash alg="SHA-384">e9d4f921aef8fc1e0cd445f7607042f5fd40db4d78bc087b70204e72596d91535d974f4845aaf036640c0b0d82e8a96d</hash>
-                <hash alg="SHA-512">56938af349d49cfbd68bdc4b85a0892baa01ad6687e88bbae011e3e362cf93a46d4d94fce0bb06e43f4b9d944789faff313466abdc19c163241a7300a1e9274f</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>node.go</name>
-              <version>v0.0.0-f343ad00cf81</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">4e9ddb32c093b9f18605fb0abcd28cc4</hash>
-                <hash alg="SHA-1">f343ad00cf81aed9a78e8587f56713569e0ebecc</hash>
-                <hash alg="SHA-256">73a93d192ca24078e0f93b8c1675e13adb442421252d3974d697b0821c4832cf</hash>
-                <hash alg="SHA-384">56ca05a2d5ff4080a69811d9d28a22b3f18621c9838ef1a47de3796534d1e9e4574ced27235ebcc43fbb0033cf07ecd7</hash>
-                <hash alg="SHA-512">3101410cf72e011963521420318536c49e2ea781391b6d9f8baf41a10b41d5f241cac6327be8b4e9e0a97042c283f8d038dc13ddde87c12cae5ba251b85f839a</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>node_net.go</name>
-              <version>v0.0.0-19b6df35b399</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">a316fff19379ace1268c70638eab7f09</hash>
-                <hash alg="SHA-1">19b6df35b3997e9b9bc936af5da9a5255f22fb90</hash>
-                <hash alg="SHA-256">78e274b465de8da8690f4ab06281f41025b142c1d093e337fda1d6726b35662b</hash>
-                <hash alg="SHA-384">6bcc0cd48626fcee1bba2da84bcdd124d31b1d55bbdc2fc04e8057f93e5e1ce08dcced63096a00155f25c3f4a3eb553f</hash>
-                <hash alg="SHA-512">b60180b021fae82a2c0865be28672a5e8043a6a20e7a375a56a29f9a1074869aff6d57ddf921ff6a329f0affb2a4acbfe30f16a71f921fce7e0f55353a203114</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>sql.go</name>
-              <version>v0.0.0-7ca24525c43c</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">cafc164835d3e3e85cb592488b3a3609</hash>
-                <hash alg="SHA-1">7ca24525c43ce49d0fdc536449ff6389fe6c1561</hash>
-                <hash alg="SHA-256">29281b11e8f97f1ddf73d087854cb401ba42a87c4f59ce45fc69763a4d927f2f</hash>
-                <hash alg="SHA-384">398415c1a5f04e9a2db7a6f07033a13ca20b43955d442e2aa56f9b6cba317e332f9c42b44a631df1858cb8974668c17d</hash>
-                <hash alg="SHA-512">c53a8cfb884a4c850cb973f20ba43e1d5da2dfbda662aabfe33b68caf814bd9ec764107aa12265fbaf2c982c5af1532f027b73f34af1c9310dff938df85e5466</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>time.go</name>
-              <version>v0.0.0-f5ad87aaae45</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">75da0b908ddcd454438b0dd91533d9d6</hash>
-                <hash alg="SHA-1">f5ad87aaae45c7f2dbc5fba2f3b1f8c503c85969</hash>
-                <hash alg="SHA-256">057f98f779afbc6d293330f7aa0aa5fcd09541ff008f93060bf644e6fb7df510</hash>
-                <hash alg="SHA-384">96300aca9211222e5377030be69eb90bf9c7fca9fd831d7d196ec15739879155c0b3a6c46549357c01582034dc22ba4a</hash>
-                <hash alg="SHA-512">bf1b20dbdd43fe04eeb221a1b078b962f129e1205e5cfd33bff9f4bd03df36d651efd67af44593de7e0f4b32a5467e8b2080212959656ab53126456ed9075250</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>util.go</name>
-              <version>v0.0.0-24f078505eb1</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">be54c6e381a43c7af4cdf8047fa8d8f3</hash>
-                <hash alg="SHA-1">24f078505eb1d75e062d1806d871139299a4e2e3</hash>
-                <hash alg="SHA-256">755f50afafb13dd89ae6177da7eb6dc31ae650ece2f9ba52821021e9f8de044e</hash>
-                <hash alg="SHA-384">19a145a045ee6ef6c7556241b49185ffc016be785a4ed97a6607a4f670e40eba71e5f69f43dfd343de72c8639513cf98</hash>
-                <hash alg="SHA-512">f61300c91e1ac0614992f11f3b0fc787f85724d2af7f453ba999c4e42cb352157d93817a24a103649a5b4fdab5c61e5b5836873180b69d196f89e410f19ba960</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>uuid.go</name>
-              <version>v0.0.0-f0b921e31459</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">9e9d41d4f06a68dc9507c4b5815b2a29</hash>
-                <hash alg="SHA-1">f0b921e31459ba7e2aa6976d8390fbfc487f6c1a</hash>
-                <hash alg="SHA-256">a5cec734b976d1af822bf774d95fb608a25f0f461a4febbf9d0e2dedd1f770e8</hash>
-                <hash alg="SHA-384">d1f89d4de5aa252a4fb1ea7f47e1d6b2cd43b334e7e3d95151dffeb545a672ba3dbde5f15e7513f824889938cbf8bb58</hash>
-                <hash alg="SHA-512">f51eb2ced69a45f4c982ea61acaa9e09c2a751a5ad2c60569e9a7c8cec915e3cfbf3001832bd8e4f9b362f7ab18b767e760c20fd4910195d291d5ede85b8de1c</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>version1.go</name>
-              <version>v0.0.0-48b1fecbc252</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">542bb15267852ef2203fb4bc2572804d</hash>
-                <hash alg="SHA-1">48b1fecbc25201fa0c3c65a3f2ec91ce3e3613de</hash>
-                <hash alg="SHA-256">38a2c229a2aad4bb72d45529304f210b1f31e8ef60bbd2605690a10f0d8a8242</hash>
-                <hash alg="SHA-384">55cac0aba0ecb6f5f4bafc1de9e8f9db339d7a77afbf0f77c6c57889eb12a956ce29ea3e65c2a16d2f621626b46fb844</hash>
-                <hash alg="SHA-512">1a8ac9f55cc4acb96f1a94c02048fb52c4b11ea493904a43c8022497ab5d91aecd4228357a810e539235b9cf7da48f63539e161c12d6ab1b775e57707e96e797</hash>
-              </hashes>
-            </component>
-            <component type="file">
-              <name>version4.go</name>
-              <version>v0.0.0-c8cc889d5f4b</version>
-              <scope>required</scope>
-              <hashes>
-                <hash alg="MD5">8c94ce80d6a1051c82e1e963880aabc9</hash>
-                <hash alg="SHA-1">c8cc889d5f4bb296aef7a9772e259639392baa17</hash>
-                <hash alg="SHA-256">c558a8c0f2a1f300656f92a156cc255465ede328774c66e0c1e8a2f736441058</hash>
-                <hash alg="SHA-384">c073277d67be39ab69eac45b6fd8311f868ea5c44f4592cf3c5d9050893c46f02575abdeacbdf6c047f2170b65869cd7</hash>
-                <hash alg="SHA-512">a6e8acfe6e9ac15ff958b0e0f792bf869a99487e2ef1daf928f647fbd65e2db908c52afacd678e586a835b649ab962904b004662f69339b79223ac3a8c5ed630</hash>
-              </hashes>
-            </component>
-          </components>
-        </component>
-      </components>
-      <evidence>
-        <licenses>
-          <license>
-            <id>BSD-3-Clause</id>
-          </license>
-        </licenses>
-      </evidence>
-    </component>
-    <component bom-ref="pkg:golang/std@REDACTED?type=module" type="library">
-      <name>std</name>
-      <version>REDACTED</version>
-      <scope>required</scope>
-      <purl>pkg:golang/std@REDACTED?type=module&amp;goos=linux&amp;goarch=amd64</purl>
-      <components></components>
-    </component>
-  </components>
-  <dependencies>
-    <dependency ref="pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module">
-      <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
-      <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
-    </dependency>
-    <dependency ref="pkg:golang/github.com/google/uuid@v1.2.0?type=module"></dependency>
-    <dependency ref="pkg:golang/std@REDACTED?type=module"></dependency>
-  </dependencies>
-</bom>
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "bom-ref": "pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module",
+      "type": "application",
+      "name": "testmod-vendored",
+      "version": "v0.0.0-20210716185931-5c9f3d791930",
+      "purl": "pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module\u0026goos=linux\u0026goarch=amd64",
+      "properties": [
+        {
+          "name": "cdx:gomod:build:env:CGO_ENABLED",
+          "value": "REDACTED"
+        },
+        {
+          "name": "cdx:gomod:build:env:GOARCH",
+          "value": "REDACTED"
+        },
+        {
+          "name": "cdx:gomod:build:env:GOOS",
+          "value": "REDACTED"
+        },
+        {
+          "name": "cdx:gomod:build:env:GOVERSION",
+          "value": "REDACTED"
+        }
+      ],
+      "components": [
+        {
+          "type": "library",
+          "name": "testmod-vendored",
+          "version": "v0.0.0-20210716185931-5c9f3d791930",
+          "purl": "pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=package",
+          "components": [
+            {
+              "type": "file",
+              "name": "main.go",
+              "version": "v0.0.0-bbf3177def03",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "38c6a51b3a823a048f0717eab4716b31"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "bbf3177def0307fd030c155c0d8f7738c75c558e"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "61bc38fda891fa3aeb408b4479795de5cbe85c05853dc022df72e692ecf966f5"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "84a6a84bc6ab162921aade7aabc2d26f71e8acecc06ceb6857769ae5597b1b7a789a609dcf46e020ca85a758513038f4"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "45fa3782efef2928fb6f26f3f3048998594cd7d12a21b31186567df2771c48aea1d75f662ac4286b335f5bc7ebd6b1751de48957beae6d35c4b61529923554e7"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:golang/github.com/google/uuid@v1.2.0?type=module",
+      "type": "library",
+      "name": "github.com/google/uuid",
+      "version": "v1.2.0",
+      "scope": "required",
+      "purl": "pkg:golang/github.com/google/uuid@v1.2.0?type=module\u0026goos=linux\u0026goarch=amd64",
+      "externalReferences": [
+        {
+          "url": "https://github.com/google/uuid",
+          "type": "vcs"
+        }
+      ],
+      "components": [
+        {
+          "type": "library",
+          "name": "github.com/google/uuid",
+          "version": "v1.2.0",
+          "purl": "pkg:golang/github.com/google/uuid@v1.2.0?type=package",
+          "components": [
+            {
+              "type": "file",
+              "name": "dce.go",
+              "version": "v0.0.0-02a2efb3ec5b",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "c3834d5cf07e7670e9471c0e3d65d810"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "02a2efb3ec5b3058950288fa6d31aa6dd4e8726c"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "6a4b89e7f6165a673e76f00bebaabf8d0d7eb4356a672c6cb771d95a45fb2695"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "56fdaeeee426ca25cf91f1bd3e6f3d340cd5c86e79c0e76fcdf4e400ad68f957838e7689d4f797b99d420180d463446d"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "5d89fd52d285bf9b7cadb5f7224a469ceacfd186663ea95a2012baaae815add9303fc964a214bf556be6e39e0b57f7475efbc5eb5af3d777ab2c2dde530da2f6"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "doc.go",
+              "version": "v0.0.0-a1e6141b5d53",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "abda04fab87cae52f6d22b3281fe4a39"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "a1e6141b5d5301f2f073ec0175793ad43a046e44"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "0b286e2af61ede9f58d2455781ea254284c477b7fce2447aab3203992cc51f9f"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "b941b0ed24faf6de785a696604a18765e4bda50c091317a6358ce21a9dade95ab92c844e9ef4a520691591228684fc1c"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "fe64650d7ed4de494025305acf9a2b6c26cbe70924c59ee1f87de6acc7e188c57c0d95305f5ca985dd510aa932f642da5604c559377a5905c34364f87603c0a6"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "hash.go",
+              "version": "v0.0.0-f86842458f6e",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "1d8d3d8574c6094e61b41a2565c53928"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "f86842458f6e93cdba9f223c120efebcce4bbc5c"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "a9af4e955bfa0854a9e4c949a09efead471dd1504ce4c2a336cc7a88365da6c6"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "27d12963fd2eb1e594ca1b8e026f304f9be7a5be58dae605c1a92cf679bb58ec5acd2ab051e477a07acd10b84b16458c"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "0a9dd5625e9c5ebae62c839a6b5c6b82a8156c02cadc8b93ba70698158dfefcd6af778c8ed5c4053564235d7225261fdb813e36b74e37d9d75df7373bb974c54"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "marshal.go",
+              "version": "v0.0.0-7bab98ce43e2",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "463b0cf8cd8616d97ef2d741a6bc268b"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "7bab98ce43e2b7ba5214f01e58235a05691fa051"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "933eb226d049268e17809fd37f777c650b9ec8cb3fa988534b792610a64dcc43"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "e9d4f921aef8fc1e0cd445f7607042f5fd40db4d78bc087b70204e72596d91535d974f4845aaf036640c0b0d82e8a96d"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "56938af349d49cfbd68bdc4b85a0892baa01ad6687e88bbae011e3e362cf93a46d4d94fce0bb06e43f4b9d944789faff313466abdc19c163241a7300a1e9274f"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "node.go",
+              "version": "v0.0.0-f343ad00cf81",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "4e9ddb32c093b9f18605fb0abcd28cc4"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "f343ad00cf81aed9a78e8587f56713569e0ebecc"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "73a93d192ca24078e0f93b8c1675e13adb442421252d3974d697b0821c4832cf"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "56ca05a2d5ff4080a69811d9d28a22b3f18621c9838ef1a47de3796534d1e9e4574ced27235ebcc43fbb0033cf07ecd7"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "3101410cf72e011963521420318536c49e2ea781391b6d9f8baf41a10b41d5f241cac6327be8b4e9e0a97042c283f8d038dc13ddde87c12cae5ba251b85f839a"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "node_net.go",
+              "version": "v0.0.0-19b6df35b399",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "a316fff19379ace1268c70638eab7f09"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "19b6df35b3997e9b9bc936af5da9a5255f22fb90"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "78e274b465de8da8690f4ab06281f41025b142c1d093e337fda1d6726b35662b"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "6bcc0cd48626fcee1bba2da84bcdd124d31b1d55bbdc2fc04e8057f93e5e1ce08dcced63096a00155f25c3f4a3eb553f"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "b60180b021fae82a2c0865be28672a5e8043a6a20e7a375a56a29f9a1074869aff6d57ddf921ff6a329f0affb2a4acbfe30f16a71f921fce7e0f55353a203114"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "sql.go",
+              "version": "v0.0.0-7ca24525c43c",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "cafc164835d3e3e85cb592488b3a3609"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "7ca24525c43ce49d0fdc536449ff6389fe6c1561"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "29281b11e8f97f1ddf73d087854cb401ba42a87c4f59ce45fc69763a4d927f2f"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "398415c1a5f04e9a2db7a6f07033a13ca20b43955d442e2aa56f9b6cba317e332f9c42b44a631df1858cb8974668c17d"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "c53a8cfb884a4c850cb973f20ba43e1d5da2dfbda662aabfe33b68caf814bd9ec764107aa12265fbaf2c982c5af1532f027b73f34af1c9310dff938df85e5466"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "time.go",
+              "version": "v0.0.0-f5ad87aaae45",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "75da0b908ddcd454438b0dd91533d9d6"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "f5ad87aaae45c7f2dbc5fba2f3b1f8c503c85969"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "057f98f779afbc6d293330f7aa0aa5fcd09541ff008f93060bf644e6fb7df510"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "96300aca9211222e5377030be69eb90bf9c7fca9fd831d7d196ec15739879155c0b3a6c46549357c01582034dc22ba4a"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "bf1b20dbdd43fe04eeb221a1b078b962f129e1205e5cfd33bff9f4bd03df36d651efd67af44593de7e0f4b32a5467e8b2080212959656ab53126456ed9075250"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "util.go",
+              "version": "v0.0.0-24f078505eb1",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "be54c6e381a43c7af4cdf8047fa8d8f3"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "24f078505eb1d75e062d1806d871139299a4e2e3"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "755f50afafb13dd89ae6177da7eb6dc31ae650ece2f9ba52821021e9f8de044e"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "19a145a045ee6ef6c7556241b49185ffc016be785a4ed97a6607a4f670e40eba71e5f69f43dfd343de72c8639513cf98"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "f61300c91e1ac0614992f11f3b0fc787f85724d2af7f453ba999c4e42cb352157d93817a24a103649a5b4fdab5c61e5b5836873180b69d196f89e410f19ba960"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "uuid.go",
+              "version": "v0.0.0-f0b921e31459",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "9e9d41d4f06a68dc9507c4b5815b2a29"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "f0b921e31459ba7e2aa6976d8390fbfc487f6c1a"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "a5cec734b976d1af822bf774d95fb608a25f0f461a4febbf9d0e2dedd1f770e8"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "d1f89d4de5aa252a4fb1ea7f47e1d6b2cd43b334e7e3d95151dffeb545a672ba3dbde5f15e7513f824889938cbf8bb58"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "f51eb2ced69a45f4c982ea61acaa9e09c2a751a5ad2c60569e9a7c8cec915e3cfbf3001832bd8e4f9b362f7ab18b767e760c20fd4910195d291d5ede85b8de1c"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "version1.go",
+              "version": "v0.0.0-48b1fecbc252",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "542bb15267852ef2203fb4bc2572804d"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "48b1fecbc25201fa0c3c65a3f2ec91ce3e3613de"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "38a2c229a2aad4bb72d45529304f210b1f31e8ef60bbd2605690a10f0d8a8242"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "55cac0aba0ecb6f5f4bafc1de9e8f9db339d7a77afbf0f77c6c57889eb12a956ce29ea3e65c2a16d2f621626b46fb844"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "1a8ac9f55cc4acb96f1a94c02048fb52c4b11ea493904a43c8022497ab5d91aecd4228357a810e539235b9cf7da48f63539e161c12d6ab1b775e57707e96e797"
+                }
+              ]
+            },
+            {
+              "type": "file",
+              "name": "version4.go",
+              "version": "v0.0.0-c8cc889d5f4b",
+              "scope": "required",
+              "hashes": [
+                {
+                  "alg": "MD5",
+                  "content": "8c94ce80d6a1051c82e1e963880aabc9"
+                },
+                {
+                  "alg": "SHA-1",
+                  "content": "c8cc889d5f4bb296aef7a9772e259639392baa17"
+                },
+                {
+                  "alg": "SHA-256",
+                  "content": "c558a8c0f2a1f300656f92a156cc255465ede328774c66e0c1e8a2f736441058"
+                },
+                {
+                  "alg": "SHA-384",
+                  "content": "c073277d67be39ab69eac45b6fd8311f868ea5c44f4592cf3c5d9050893c46f02575abdeacbdf6c047f2170b65869cd7"
+                },
+                {
+                  "alg": "SHA-512",
+                  "content": "a6e8acfe6e9ac15ff958b0e0f792bf869a99487e2ef1daf928f647fbd65e2db908c52afacd678e586a835b649ab962904b004662f69339b79223ac3a8c5ed630"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "BSD-3-Clause"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "bom-ref": "pkg:golang/std@REDACTED?type=module",
+      "type": "library",
+      "name": "std",
+      "version": "REDACTED",
+      "scope": "required",
+      "purl": "pkg:golang/std@REDACTED?type=module\u0026goos=linux\u0026goarch=amd64",
+      "components": []
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:golang/testmod-vendored@v0.0.0-20210716185931-5c9f3d791930?type=module",
+      "dependsOn": [
+        "pkg:golang/github.com/google/uuid@v1.2.0?type=module",
+        "pkg:golang/std@REDACTED?type=module"
+      ]
+    },
+    {
+      "ref": "pkg:golang/github.com/google/uuid@v1.2.0?type=module"
+    },
+    {
+      "ref": "pkg:golang/std@REDACTED?type=module"
+    }
+  ]
+}
+

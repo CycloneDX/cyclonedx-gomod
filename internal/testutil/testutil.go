@@ -155,7 +155,7 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	if fileFormat == cdx.BOMFileFormatJSON {
 		v = newJSONValidator()
 	} else {
-		v = newXMLValidator()
+		panic("xml validation not available")
 	}
 	err = v.Validate(buf.Bytes(), cdx.SpecVersion1_6)
 	require.NoError(t, err)
