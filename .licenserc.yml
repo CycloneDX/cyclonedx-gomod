@@ -33,6 +33,7 @@ header:
     - "**/go.sum"
     - "**/testdata/**"
     - "examples/**"
+    - "internal/testutil/schema/**"
     - "CODEOWNERS"
     - "Dockerfile"
     - "Dockerfile.*"
