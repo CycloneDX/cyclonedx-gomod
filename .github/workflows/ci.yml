@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # tag=v4.1.7
+      uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # tag=v4.2.0
     - name: Check license headers
       uses: apache/skywalking-eyes@cd7b195c51fd3d6ad52afceb760719ddc6b3ee91 # tag=v0.6.0
       with:
@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # tag=v4.1.7
+      uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # tag=v4.2.0
     - name: Setup Go
       uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # tag=v5.0.2
       with:
@@ -62,6 +62,6 @@ jobs:
         go-version: "1.23"
         check-latest: true
     - name: Checkout Repository
-      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # tag=v4.1.7
+      uses: actions/checkout@d632683dd7b4114ad314bca15554477dd762a938 # tag=v4.2.0
     - name: Test
       run: make test
