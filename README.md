@@ -132,19 +132,20 @@ Examples:
   $ cyclonedx-gomod app -json -output acme-app.bom.json -packages -files -licenses -main cmd/acme-app /usr/src/acme-module
 
 FLAGS
-  -assert-licenses=false  Assert detected licenses
-  -files=false            Include files
-  -json=false             Output in JSON
-  -licenses=false         Perform license detection
-  -main string            Path to the application's main package, relative to MODULE_PATH
-  -noserial=false         Omit serial number
-  -output -               Output file path (or - for STDOUT)
-  -output-version 1.6     Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
-  -packages=false         Include packages
-  -paths=false            Include file paths relative to their module root
-  -serial string          Serial number
-  -std=false              Include Go standard library as component and dependency of the module
-  -verbose=false          Enable verbose output
+  -assert-licenses=false       Assert detected licenses
+  -files=false                 Include files
+  -json=false                  Output in JSON
+  -disable-html-escape=false   Disable HTML escaping in JSON output
+  -licenses=false              Perform license detection
+  -main string                 Path to the application's main package, relative to MODULE_PATH
+  -noserial=false              Omit serial number
+  -output -                    Output file path (or - for STDOUT)
+  -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -packages=false              Include packages
+  -paths=false                 Include file paths relative to their module root
+  -serial string               Serial number
+  -std=false                   Include Go standard library as component and dependency of the module
+  -verbose=false               Enable verbose output
 ```
 
 #### `bin`
@@ -179,16 +180,17 @@ Example:
   $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app
 
 FLAGS
-  -assert-licenses=false  Assert detected licenses
-  -json=false             Output in JSON
-  -licenses=false         Perform license detection
-  -noserial=false         Omit serial number
-  -output -               Output file path (or - for STDOUT)
-  -output-version 1.6     Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
-  -serial string          Serial number
-  -std=false              Include Go standard library as component and dependency of the module
-  -verbose=false          Enable verbose output
-  -version string         Version of the main component
+  -assert-licenses=false       Assert detected licenses
+  -json=false                  Output in JSON
+  -disable-html-escape=false   Disable HTML escaping in JSON output
+  -licenses=false              Perform license detection
+  -noserial=false              Omit serial number
+  -output -                    Output file path (or - for STDOUT)
+  -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -serial string               Serial number
+  -std=false                   Include Go standard library as component and dependency of the module
+  -verbose=false               Enable verbose output
+  -version string              Version of the main component
 ```
 
 #### `mod`
@@ -212,17 +214,18 @@ Examples:
   $ cyclonedx-gomod mod -test -output bom.xml ./cyclonedx-go
 
 FLAGS
-  -assert-licenses=false  Assert detected licenses
-  -json=false             Output in JSON
-  -licenses=false         Perform license detection
-  -noserial=false         Omit serial number
-  -output -               Output file path (or - for STDOUT)
-  -output-version 1.6     Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
-  -serial string          Serial number
-  -std=false              Include Go standard library as component and dependency of the module
-  -test=false             Include test dependencies
-  -type application       Type of the main component
-  -verbose=false          Enable verbose output
+  -assert-licenses=false       Assert detected licenses
+  -json=false                  Output in JSON
+  -disable-html-escape=false   Disable HTML escaping in JSON output
+  -licenses=false              Perform license detection
+  -noserial=false              Omit serial number
+  -output -                    Output file path (or - for STDOUT)
+  -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -serial string               Serial number
+  -std=false                   Include Go standard library as component and dependency of the module
+  -test=false                  Include test dependencies
+  -type application            Type of the main component
+  -verbose=false               Enable verbose output
 ```
 
 ### Examples 📃
