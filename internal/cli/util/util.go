@@ -98,6 +98,10 @@ func WriteBOM(bom *cdx.BOM, outputOptions options.OutputOptions) error {
 	encoder := cdx.NewBOMEncoder(outputWriter, outputFormat)
 	encoder.SetPretty(true)
 
+	if(outputOptions.DisableHTMLEscape) {
+		encoder.SetEscapeHTML(false)
+	}	
+
 	if err := encoder.EncodeVersion(bom, outputVersion); err != nil {
 		return fmt.Errorf("failed to encode sbom: %w", err)
 	}
