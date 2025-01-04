@@ -78,9 +78,9 @@ func (l LogOptions) Validate() error {
 
 // OutputOptions provides options for customizing the output.
 type OutputOptions struct {
-	OutputFilePath string
-	OutputVersion  string
-	UseJSON        bool
+	OutputFilePath    string
+	OutputVersion     string
+	UseJSON           bool
 	DisableHTMLEscape bool
 }
 
