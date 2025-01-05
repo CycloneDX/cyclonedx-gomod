@@ -78,9 +78,10 @@ func (l LogOptions) Validate() error {
 
 // OutputOptions provides options for customizing the output.
 type OutputOptions struct {
-	OutputFilePath string
-	OutputVersion  string
-	UseJSON        bool
+	OutputFilePath    string
+	OutputVersion     string
+	UseJSON           bool
+	DisableHTMLEscape bool
 }
 
 func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
@@ -98,6 +99,7 @@ func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.StringVar(&o.OutputFilePath, "output", "-", "Output file path (or - for STDOUT)")
 	fs.StringVar(&o.OutputVersion, "output-version", cdx.SpecVersion1_6.String(),
 		fmt.Sprintf("Output spec verson (%s)", strings.Join(versionChoices, ", ")))
+	fs.BoolVar(&o.DisableHTMLEscape, "disable-html-escape", false, "Disable HTML escaping in JSON output")
 }
 
 func (o OutputOptions) Validate() error {
