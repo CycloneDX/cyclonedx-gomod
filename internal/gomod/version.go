@@ -61,7 +61,7 @@ func GetModuleVersion(logger zerolog.Logger, moduleDir string) (string, error) {
 				continue
 			}
 
-			return "", err
+			return "", fmt.Errorf("git: %w", err)
 		}
 	}
 }
