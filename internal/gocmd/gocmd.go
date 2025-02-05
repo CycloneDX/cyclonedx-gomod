@@ -112,7 +112,8 @@ func ListVendoredModules(logger zerolog.Logger, moduleDir string, writer io.Writ
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-graph.
 func GetModuleGraph(logger zerolog.Logger, moduleDir string, writer io.Writer) error {
-	return executeGoCommand(logger, []string{"mod", "graph"}, withDir(moduleDir), withStdout(writer))
+	return executeGoCommand(logger, []string{"mod", "graph"}, withDir(moduleDir),
+		withStdout(writer), withStderr(newLoggerWriter(logger)))
 }
 
 // ModWhy executes `go mod why -m -vendor` and writes the output to a given writer.
