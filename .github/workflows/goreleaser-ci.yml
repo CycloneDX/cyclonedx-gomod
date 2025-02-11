@@ -23,7 +23,7 @@ jobs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25 # tag=v3.4.0
     - name: Run GoReleaser
-      uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf # tag=v6.1.0
+      uses: goreleaser/goreleaser-action@90a3faa9d0182683851fbfa97ca1a2cb983bfca3 # tag=v6.2.1
       with:
         version: latest
         args: release --skip publish,sign --snapshot
