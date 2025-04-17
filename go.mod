@@ -6,7 +6,7 @@ require (
 	github.com/CycloneDX/cyclonedx-go v0.9.2
 	github.com/bradleyjkemp/cupaloy/v2 v2.8.0
 	github.com/go-enry/go-license-detector/v4 v4.3.0
-	github.com/go-git/go-git/v5 v5.14.0
+	github.com/go-git/go-git/v5 v5.16.0
 	github.com/google/uuid v1.6.0
 	github.com/package-url/packageurl-go v0.1.3
 	github.com/peterbourgon/ff/v3 v3.4.0
@@ -22,8 +22,8 @@ require (
 require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/ProtonMail/go-crypto v1.1.5 // indirect
-	github.com/cloudflare/circl v1.6.0 // indirect
+	github.com/ProtonMail/go-crypto v1.1.6 // indirect
+	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-minhash v0.0.0-20170608043002-7fe510aff544 // indirect
@@ -49,7 +49,7 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
-	golang.org/x/net v0.38.0 // indirect
+	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.24.0 // indirect
 	gonum.org/v1/gonum v0.7.0 // indirect
