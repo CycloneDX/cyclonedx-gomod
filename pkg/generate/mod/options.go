@@ -74,3 +74,11 @@ func WithLogger(logger zerolog.Logger) Option {
 		return nil
 	}
 }
+
+// WithShortPURLS toggles the use of short PURLs without query parameters.
+func WithShortPURLS(enable bool) Option {
+	return func(g *generator) error {
+		g.shortPURLs = enable
+		return nil
+	}
+}

@@ -121,7 +121,8 @@ func Exec(options Options) error {
 		app.WithIncludePaths(options.IncludePaths),
 		app.WithIncludeStdlib(options.IncludeStd),
 		app.WithLicenseDetector(licenseDetector),
-		app.WithMainDir(options.Main))
+		app.WithMainDir(options.Main),
+		app.WithShortPURLS(options.ShortPURLs))
 	if err != nil {
 		return err
 	}

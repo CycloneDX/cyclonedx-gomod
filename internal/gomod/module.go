@@ -86,6 +86,10 @@ func (m Module) PackageURL() string {
 	return fmt.Sprintf("pkg:golang/%s?type=module&goos=%s&goarch=%s", m.Coordinates(), envMap["GOOS"], envMap["GOARCH"])
 }
 
+func (m Module) ShortPackageURL() string {
+	return fmt.Sprintf("pkg:golang/%s", m.Coordinates())
+}
+
 // IsModule determines whether dir is a Go module.
 func IsModule(dir string) bool {
 	return util.FileExists(filepath.Join(dir, "go.mod"))

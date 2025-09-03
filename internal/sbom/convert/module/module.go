@@ -168,6 +168,17 @@ func WithTestScope(scope cdx.Scope) Option {
 	}
 }
 
+// WithShortPURL configures the component to use short PURLs without query parameters.
+func WithShortPURL(enabled bool) Option {
+	return func(_ zerolog.Logger, module gomod.Module, component *cdx.Component) error {
+		if enabled {
+			component.PackageURL = module.ShortPackageURL()
+		}
+
+		return nil
+	}
+}
+
 // ToComponent converts a gomod.Module to a CycloneDX component.
 // The component can be further customized using options, before it's returned.
 func ToComponent(logger zerolog.Logger, module gomod.Module, options ...Option) (*cdx.Component, error) {
