@@ -89,7 +89,8 @@ func Exec(options Options) error {
 		mod.WithComponentType(cdx.ComponentType(options.ComponentType)),
 		mod.WithIncludeStdlib(options.IncludeStd),
 		mod.WithIncludeTestModules(options.IncludeTest),
-		mod.WithLicenseDetector(licenseDetector))
+		mod.WithLicenseDetector(licenseDetector),
+		mod.WithShortPURLS(options.ShortPURLs))
 	if err != nil {
 		return err
 	}

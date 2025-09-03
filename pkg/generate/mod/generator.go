@@ -42,6 +42,7 @@ type generator struct {
 	includeStdlib   bool
 	includeTest     bool
 	licenseDetector licensedetect.Detector
+	shortPURLs      bool
 }
 
 // NewGenerator returns a generator that is capable of generating BOMs for Go modules.
@@ -106,6 +107,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(g.componentType),
 		modConv.WithLicenses(g.licenseDetector),
+		modConv.WithShortPURL(g.shortPURLs),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
@@ -113,6 +115,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	components, err := modConv.ToComponents(g.logger, modules[1:],
 		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithModuleHashes(),
+		modConv.WithShortPURL(g.shortPURLs),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
