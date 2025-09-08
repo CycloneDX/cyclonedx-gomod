@@ -1,6 +1,6 @@
 module github.com/CycloneDX/cyclonedx-gomod
 
-go 1.23.1
+go 1.24.0
 
 require (
 	github.com/CycloneDX/cyclonedx-go v0.9.2
@@ -16,7 +16,7 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/crypto v0.41.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-	golang.org/x/mod v0.27.0
+	golang.org/x/mod v0.28.0
 )
 
 require (
