@@ -32,7 +32,7 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
 )
 
-func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM) error {
+func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM, sbomOptions options.SBOMOptions) error {
 	if bom.Metadata == nil {
 		bom.Metadata = &cdx.Metadata{}
 	}
@@ -42,7 +42,9 @@ func AddCommonMetadata(logger zerolog.Logger, bom *cdx.BOM) error {
 		return fmt.Errorf("failed to build tool metadata: %w", err)
 	}
 
-	bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
+	if !sbomOptions.NoTimestamp {
+		bom.Metadata.Timestamp = time.Now().Format(time.RFC3339)
+	}
 	bom.Metadata.Tools = &cdx.ToolsChoice{
 		Tools: &[]cdx.Tool{*tool}, //nolint:staticcheck
 	}
