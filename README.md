@@ -139,6 +139,7 @@ FLAGS
   -licenses=false              Perform license detection
   -main string                 Path to the application's main package, relative to MODULE_PATH
   -noserial=false              Omit serial number
+  -notimestamp=false           Omit timestamp
   -output -                    Output file path (or - for STDOUT)
   -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -packages=false              Include packages
