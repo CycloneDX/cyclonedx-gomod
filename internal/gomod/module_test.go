@@ -25,6 +25,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/package-url/packageurl-go"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -89,7 +90,15 @@ func TestModule_PackageURL(t *testing.T) {
 		Path:    "github.com/CycloneDX/cyclonedx-go",
 		Version: "v0.1.0",
 	}
-	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?type=module&goos="+goos+"&goarch="+goarch, module.PackageURL())
+
+	qualifiers := packageurl.Qualifiers{
+		{Key: "type", Value: "module"},
+		{Key: "goos", Value: goos},
+		{Key: "goarch", Value: goarch},
+	}
+	require.NoError(t, qualifiers.Normalize())
+
+	assert.Equal(t, "pkg:golang/github.com/CycloneDX/cyclonedx-go@v0.1.0?"+qualifiers.String(), module.PackageURL())
 }
 
 func TestIsModule(t *testing.T) {
