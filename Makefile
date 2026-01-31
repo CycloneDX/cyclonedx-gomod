@@ -6,6 +6,10 @@ build:
 	CGO_ENABLED=0 go build -v ${GOFLAGS} -ldflags=${LDFLAGS} -o ./bin/cyclonedx-gomod ./cmd/cyclonedx-gomod
 .PHONY: build
 
+lint:
+	golangci-lint run
+.PHONY: lint
+
 install:
 	CGO_ENABLED=0 go install -v ${GOFLAGS} -ldflags=${LDFLAGS} ./cmd/cyclonedx-gomod
 .PHONY: install

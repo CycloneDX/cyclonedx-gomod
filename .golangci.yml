@@ -1,20 +1,41 @@
+version: "2"
 linters:
   enable:
-    - asciicheck
-    - exhaustive
-    - gochecknoinits
-    - goconst
-    - gofmt
-    - gosec
-    - predeclared
-    - unconvert
-    - unparam
-    - wastedassign
-
-linters-settings:
-  goconst:
-    ignore-tests: true
-  gosec:
-    config:
-      global:
-        nosec: true
+  - asciicheck
+  - exhaustive
+  - gochecknoinits
+  - goconst
+  - gosec
+  - predeclared
+  - unconvert
+  - unparam
+  - wastedassign
+  settings:
+    gosec:
+      config:
+        global:
+          nosec: true
+  exclusions:
+    generated: lax
+    presets:
+    - comments
+    - common-false-positives
+    - legacy
+    - std-error-handling
+    rules:
+    - linters:
+      - goconst
+      path: (.+)_test\.go
+    paths:
+    - third_party$
+    - builtin$
+    - examples$
+formatters:
+  enable:
+  - gofmt
+  exclusions:
+    generated: lax
+    paths:
+    - third_party$
+    - builtin$
+    - examples$
