@@ -22,14 +22,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog"
-	"golang.org/x/exp/slices"
-	"golang.org/x/mod/semver"
-	"golang.org/x/mod/sumdb/dirhash"
 	"io"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/rs/zerolog"
+	"golang.org/x/exp/slices"
+	"golang.org/x/mod/semver"
+	"golang.org/x/mod/sumdb/dirhash"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
@@ -83,7 +84,7 @@ func (m Module) PackageURL() string {
 		envMap, _ = gocmd.GetEnv(zerolog.Nop())
 	})
 
-	return fmt.Sprintf("pkg:golang/%s?type=module&goos=%s&goarch=%s", m.Coordinates(), envMap["GOOS"], envMap["GOARCH"])
+	return fmt.Sprintf("pkg:golang/%s?goarch=%s&goos=%s&type=module", m.Coordinates(), envMap["GOARCH"], envMap["GOOS"])
 }
 
 // IsModule determines whether dir is a Go module.
