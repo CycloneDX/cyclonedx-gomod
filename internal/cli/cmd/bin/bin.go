@@ -96,7 +96,8 @@ func Exec(options Options) error {
 		bin.WithLogger(logger),
 		bin.WithIncludeStdlib(options.IncludeStd),
 		bin.WithLicenseDetector(licenseDetector),
-		bin.WithVersionOverride(options.Version))
+		bin.WithVersionOverride(options.Version),
+		bin.WithShortPURLS(options.ShortPURLs))
 	if err != nil {
 		return err
 	}

@@ -47,6 +47,7 @@ type generator struct {
 	licenseDetector licensedetect.Detector
 	mainDir         string
 	moduleDir       string
+	shortPURLs      bool
 }
 
 func NewGenerator(moduleDir string, opts ...Option) (generate.Generator, error) {
@@ -109,8 +110,10 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	mainComponent, err := modConv.ToComponent(g.logger, modules[appModuleIndex],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
 		modConv.WithLicenses(g.licenseDetector),
+		modConv.WithShortPURL(g.shortPURLs),
 		modConv.WithPackages(g.includePackages,
-			pkgConv.WithFiles(g.includeFiles, g.includePaths)),
+			pkgConv.WithFiles(g.includeFiles, g.includePaths),
+			pkgConv.WithShortPURL(g.shortPURLs)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
@@ -129,8 +132,10 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	components, err := modConv.ToComponents(g.logger, modules,
 		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithModuleHashes(),
+		modConv.WithShortPURL(g.shortPURLs),
 		modConv.WithPackages(g.includePackages,
-			pkgConv.WithFiles(g.includeFiles, g.includePaths)),
+			pkgConv.WithFiles(g.includeFiles, g.includePaths),
+			pkgConv.WithShortPURL(g.shortPURLs)),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
@@ -240,7 +245,7 @@ func (g generator) includeAppPathInMainComponentPURL(bom *cdx.BOM) error {
 	mainDirRel := strings.TrimPrefix(mainDirAbs, moduleDirAbs)
 	mainDirRel = strings.TrimPrefix(mainDirRel, string(os.PathSeparator))
 
-	if mainDirRel != "" {
+	if mainDirRel != "" && !g.shortPURLs {
 		mainDirRel = strings.TrimSuffix(mainDirRel, string(os.PathSeparator))
 
 		oldPURL := bom.Metadata.Component.PackageURL

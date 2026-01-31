@@ -82,6 +82,17 @@ func WithFiles(enabled bool, pathEnabled bool) Option {
 	}
 }
 
+// WithShortPURL configures the component to use short PURLs without query parameters.
+func WithShortPURL(enabled bool) Option {
+	return func(_ zerolog.Logger, pkg gomod.Package, module gomod.Module, component *cdx.Component) error {
+		if enabled {
+			component.PackageURL = fmt.Sprintf("pkg:golang/%s@%s", pkg.ImportPath, module.Version)
+		}
+
+		return nil
+	}
+}
+
 func ToComponent(logger zerolog.Logger, pkg gomod.Package, module gomod.Module, options ...Option) (*cdx.Component, error) {
 	logger.Debug().
 		Str("package", pkg.ImportPath).

@@ -42,6 +42,7 @@ type generator struct {
 	includeStdlib   bool
 	licenseDetector licensedetect.Detector
 	versionOverride string
+	shortPURLs      bool
 }
 
 // NewGenerator returns a generator that is capable of generating BOMs from Go module binaries.
@@ -99,12 +100,14 @@ func (g generator) Generate() (*cdx.BOM, error) {
 
 	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
-		modConv.WithLicenses(g.licenseDetector))
+		modConv.WithLicenses(g.licenseDetector),
+		modConv.WithShortPURL(g.shortPURLs))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert main module: %w", err)
 	}
 	components, err := modConv.ToComponents(g.logger, modules[1:],
-		modConv.WithLicenses(g.licenseDetector))
+		modConv.WithLicenses(g.licenseDetector),
+		modConv.WithShortPURL(g.shortPURLs))
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
 	}
@@ -297,7 +300,7 @@ func matchModule(modules []gomod.Module, coordinates string) *gomod.Module {
 }
 
 func (g generator) includeAppPathInMainComponentPURL(bi *gomod.BuildInfo, bom *cdx.BOM) {
-	if bi.Path != bi.Main.Path && strings.HasPrefix(bi.Path, bi.Main.Path) {
+	if bi.Path != bi.Main.Path && strings.HasPrefix(bi.Path, bi.Main.Path) && !g.shortPURLs {
 		subpath := strings.TrimPrefix(bi.Path, bi.Main.Path)
 		subpath = strings.TrimPrefix(subpath, "/")
 
