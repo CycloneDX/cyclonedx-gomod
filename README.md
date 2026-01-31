@@ -145,7 +145,7 @@ FLAGS
   -packages=false              Include packages
   -paths=false                 Include file paths relative to their module root
   -serial string               Serial number
-  -short-PURLs=false           Omit all qualifiers from PackageURLs
+  -short-purls=false           Omit all qualifiers from PackageURLs
   -std=false                   Include Go standard library as component and dependency of the module
   -verbose=false               Enable verbose output
 ```
@@ -190,7 +190,7 @@ FLAGS
   -output -                    Output file path (or - for STDOUT)
   -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -serial string               Serial number
-  -short-PURLs=false           Omit all qualifiers from PackageURLs
+  -short-purls=false           Omit all qualifiers from PackageURLs
   -std=false                   Include Go standard library as component and dependency of the module
   -verbose=false               Enable verbose output
   -version string              Version of the main component
@@ -225,7 +225,7 @@ FLAGS
   -output -                    Output file path (or - for STDOUT)
   -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -serial string               Serial number
-  -short-PURLs=false           Omit all qualifiers from PackageURLs
+  -short-purls=false           Omit all qualifiers from PackageURLs
   -std=false                   Include Go standard library as component and dependency of the module
   -test=false                  Include test dependencies
   -type application            Type of the main component
