@@ -24,7 +24,6 @@ header:
     - ".github/**"
     - ".idea/**"
     - ".gitignore"
-    - ".gitpod.*"
     - ".golangci.yml"
     - ".goreleaser.yml"
     - ".licenserc.yml"

@@ -399,8 +399,6 @@ See the [LICENSE](./LICENSE) file for the full license.
 
 ## Contributing
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/CycloneDX/cyclonedx-gomod)
-
 Pull requests are welcome. But please read the
 [CycloneDX contributing guidelines](https://github.com/CycloneDX/.github/blob/master/CONTRIBUTING.md) first.
 
