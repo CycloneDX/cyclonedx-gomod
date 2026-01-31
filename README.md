@@ -28,7 +28,7 @@ brew install cyclonedx/cyclonedx/cyclonedx-gomod
 go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
 ```
 
-Building from source requires Go 1.23.1 or newer.
+Building from source requires Go 1.25 or newer.
 
 ## Compatibility
 

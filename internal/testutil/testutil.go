@@ -21,13 +21,13 @@ package testutil
 import (
 	"bytes"
 	"fmt"
-	"github.com/package-url/packageurl-go"
 	"os/exec"
 	"strings"
 	"testing"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 	"github.com/bradleyjkemp/cupaloy/v2"
+	"github.com/package-url/packageurl-go"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -138,9 +138,10 @@ func RequireVolatilePURLQualifiersToBeRedacted(t *testing.T, bom *cdx.BOM) {
 
 		qualifierMap := purl.Qualifiers.Map()
 		for k := range qualifierMap {
-			if k == "goarch" {
+			switch k {
+			case "goarch":
 				qualifierMap[k] = Redacted
-			} else if k == "goos" {
+			case "goos":
 				qualifierMap[k] = Redacted
 			}
 		}
@@ -156,9 +157,10 @@ func RequireVolatilePURLQualifiersToBeRedacted(t *testing.T, bom *cdx.BOM) {
 
 			qualifierMap := purl.Qualifiers.Map()
 			for k := range qualifierMap {
-				if k == "goarch" {
+				switch k {
+				case "goarch":
 					qualifierMap[k] = Redacted
-				} else if k == "goos" {
+				case "goos":
 					qualifierMap[k] = Redacted
 				}
 			}
