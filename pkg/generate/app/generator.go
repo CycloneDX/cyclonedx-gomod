@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -71,10 +72,20 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to load modules: %w", err)
 	}
 
+	moduleDirAbs, err := filepath.Abs(g.moduleDir)
+	if err != nil {
+		return nil, fmt.Errorf("failed to make moduleDir absolute: %w", err)
+	}
+
+	appModuleIndex := slices.IndexFunc(modules, func(mod gomod.Module) bool { return mod.Dir == moduleDirAbs })
+	if appModuleIndex < 0 {
+		return nil, fmt.Errorf(("failed to find application module"))
+	}
+
 	for i, module := range modules {
 		if module.Path == gomod.StdlibModulePath {
 			if g.includeStdlib {
-				modules[0].Dependencies = append(modules[0].Dependencies, &modules[i])
+				modules[appModuleIndex].Dependencies = append(modules[appModuleIndex].Dependencies, &modules[i])
 				break
 			} else {
 				modules = append(modules[:i], modules[i+1:]...)
@@ -90,12 +101,12 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
-	modules[0].Version, err = gomod.GetModuleVersion(g.logger, modules[0].Dir)
+	modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
 	if err != nil {
 		return nil, fmt.Errorf("failed to determine version of main module: %w", err)
 	}
 
-	mainComponent, err := modConv.ToComponent(g.logger, modules[0],
+	mainComponent, err := modConv.ToComponent(g.logger, modules[appModuleIndex],
 		modConv.WithComponentType(cdx.ComponentTypeApplication),
 		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithPackages(g.includePackages,
@@ -115,7 +126,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		*mainComponent.Properties = append(*mainComponent.Properties, buildProperties...)
 	}
 
-	components, err := modConv.ToComponents(g.logger, modules[1:],
+	components, err := modConv.ToComponents(g.logger, modules,
 		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithModuleHashes(),
 		modConv.WithPackages(g.includePackages,
@@ -124,6 +135,8 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert modules: %w", err)
 	}
+	components = append(components[0:appModuleIndex], components[appModuleIndex+1:]...)
+
 	dependencies := sbom.BuildDependencyGraph(modules)
 
 	bom := cdx.NewBOM()
