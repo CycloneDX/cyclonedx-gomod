@@ -110,7 +110,7 @@ func Exec(options Options) error {
 	if err != nil {
 		return fmt.Errorf("failed to set serial number: %w", err)
 	}
-	err = cliUtil.AddCommonMetadata(logger, bom)
+	err = cliUtil.AddCommonMetadata(logger, bom, options.SBOMOptions)
 	if err != nil {
 		return fmt.Errorf("failed to add common metadata: %w", err)
 	}

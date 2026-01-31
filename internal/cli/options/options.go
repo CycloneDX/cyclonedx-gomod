@@ -115,6 +115,7 @@ type SBOMOptions struct {
 	AssertLicenses  bool
 	IncludeStd      bool
 	NoSerialNumber  bool
+	NoTimestamp     bool
 	ResolveLicenses bool
 	SerialNumber    string
 }
@@ -123,6 +124,7 @@ func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.AssertLicenses, "assert-licenses", false, "Assert detected licenses")
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
+	fs.BoolVar(&s.NoTimestamp, "notimestamp", false, "Omit timestamp")
 	fs.BoolVar(&s.ResolveLicenses, "licenses", false, "Perform license detection")
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
 }

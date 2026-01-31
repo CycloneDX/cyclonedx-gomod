@@ -22,6 +22,7 @@ import (
 
 	"github.com/CycloneDX/cyclonedx-go"
 	"github.com/CycloneDX/cyclonedx-gomod/internal/cli/options"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 )
 
@@ -58,5 +59,29 @@ func TestSetSerialNumber(t *testing.T) {
 			SerialNumber:   "invalid",
 			NoSerialNumber: false,
 		}))
+	})
+}
+
+func TestAddCommonMetadata(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Timestamp", func(t *testing.T) {
+		t.Parallel()
+		bom := new(cyclonedx.BOM)
+
+		require.NoError(t, AddCommonMetadata(zerolog.New(zerolog.NewTestWriter(t)), bom, options.SBOMOptions{
+			NoTimestamp: false,
+		}))
+		require.NotEmpty(t, bom.Metadata.Timestamp)
+	})
+
+	t.Run("NoTimestamp", func(t *testing.T) {
+		t.Parallel()
+		bom := new(cyclonedx.BOM)
+
+		require.NoError(t, AddCommonMetadata(zerolog.New(zerolog.NewTestWriter(t)), bom, options.SBOMOptions{
+			NoTimestamp: true,
+		}))
+		require.Empty(t, bom.Metadata.Timestamp)
 	})
 }
