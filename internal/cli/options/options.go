@@ -128,7 +128,7 @@ func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.NoTimestamp, "notimestamp", false, "Omit timestamp")
 	fs.BoolVar(&s.ResolveLicenses, "licenses", false, "Perform license detection")
 	fs.StringVar(&s.SerialNumber, "serial", "", "Serial number")
-	fs.BoolVar(&s.ShortPURLs, "short-PURLs", false, "Omit all qualifiers from PackageURLs")
+	fs.BoolVar(&s.ShortPURLs, "short-purls", false, "Omit all qualifiers from PackageURLs")
 }
 
 func (s SBOMOptions) Validate() error {
