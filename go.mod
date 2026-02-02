@@ -16,7 +16,7 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/crypto v0.47.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-	golang.org/x/mod v0.31.0
+	golang.org/x/mod v0.32.0
 )
 
 require (
