@@ -1,6 +1,6 @@
 # This Dockerfile is meant for generating example SBOMs in a way
 # that is reproducible for everyone.
-FROM golang:1.25.6-alpine3.23@sha256:98e6cffc31ccc44c7c15d83df1d69891efee8115a5bb7ede2bf30a38af3e3c92 AS build
+FROM golang:1.26rc3-alpine3.23@sha256:343c20fd6876bfb5ba9f46b0a452008b7dced3804e424ff7ada0ceadafad5c55 AS build
 WORKDIR /usr/src/app
 RUN apk --no-cache add git make
 COPY ./go.mod ./go.sum ./
@@ -8,7 +8,7 @@ RUN go mod download
 COPY . .
 RUN make install
 
-FROM golang:1.25.6-alpine3.23@sha256:98e6cffc31ccc44c7c15d83df1d69891efee8115a5bb7ede2bf30a38af3e3c92
+FROM golang:1.26rc3-alpine3.23@sha256:343c20fd6876bfb5ba9f46b0a452008b7dced3804e424ff7ada0ceadafad5c55
 VOLUME /examples
 
 # Install prerequisites
