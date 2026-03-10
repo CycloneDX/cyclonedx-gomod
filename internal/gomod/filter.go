@@ -55,7 +55,18 @@ func FilterModules(logger zerolog.Logger, moduleDir string, modules []Module, in
 
 	buf := new(bytes.Buffer)
 	filtered := make([]Module, 0)
-	chunks := chunkModules(modules, 20)
+
+	// The main module is always included; separate it out before filtering.
+	nonMain := make([]Module, 0, len(modules))
+	for _, mod := range modules {
+		if mod.Main {
+			filtered = append(filtered, mod)
+		} else {
+			nonMain = append(nonMain, mod)
+		}
+	}
+
+	chunks := chunkModules(nonMain, 20)
 
 	for _, chunk := range chunks {
 		paths := make([]string, len(chunk))
