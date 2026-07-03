@@ -107,6 +107,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	main, err := modConv.ToComponent(g.logger, modules[0],
 		modConv.WithComponentType(g.componentType),
 		modConv.WithLicenses(g.licenseDetector),
+		modConv.WithModulePURL(),
 		modConv.WithShortPURL(g.shortPURLs),
 	)
 	if err != nil {
@@ -115,6 +116,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	components, err := modConv.ToComponents(g.logger, modules[1:],
 		modConv.WithLicenses(g.licenseDetector),
 		modConv.WithModuleHashes(),
+		modConv.WithModulePURL(),
 		modConv.WithShortPURL(g.shortPURLs),
 	)
 	if err != nil {
