@@ -241,6 +241,7 @@ func resolveLocalReplacement(logger zerolog.Logger, localModuleDir string, modul
 	}
 
 	module.Path = localModule.Path
+	module.Dir = localModuleDir
 	module.Local = true
 
 	// Try to resolve the version. Only works when module.Dir is a Git repo.
