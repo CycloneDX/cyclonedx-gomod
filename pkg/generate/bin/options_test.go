@@ -35,7 +35,7 @@ func TestWithIncludeStdlib(t *testing.T) {
 }
 
 func TestWithLicenseDetector(t *testing.T) {
-	detector := local.NewDetector(zerolog.Nop())
+	detector := local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)
 
 	g := &generator{licenseDetector: nil}
 	err := WithLicenseDetector(detector)(g)

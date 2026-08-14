@@ -89,7 +89,7 @@ func Exec(options Options) error {
 
 	var licenseDetector licensedetect.Detector
 	if options.ResolveLicenses {
-		licenseDetector = local.NewDetector(logger)
+		licenseDetector = local.NewDetector(logger, float32(options.LicenseConfidenceThreshold))
 	}
 
 	generator, err := bin.NewGenerator(options.BinaryPath,

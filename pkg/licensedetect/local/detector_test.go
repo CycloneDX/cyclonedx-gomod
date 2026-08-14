@@ -27,14 +27,14 @@ import (
 
 func TestDetector_Detect(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		licenses, err := NewDetector(zerolog.Nop()).Detect("path", "version", "../../../")
+		licenses, err := NewDetector(zerolog.Nop(), DefaultMinDetectionConfidence).Detect("path", "version", "../../../")
 		require.NoError(t, err)
 		require.Len(t, licenses, 1)
 		assert.Equal(t, "Apache-2.0", licenses[0].ID)
 	})
 
 	t.Run("NoLicenseDetected", func(t *testing.T) {
-		licenses, err := NewDetector(zerolog.Nop()).Detect("path", "version", t.TempDir())
+		licenses, err := NewDetector(zerolog.Nop(), DefaultMinDetectionConfidence).Detect("path", "version", t.TempDir())
 		require.NoError(t, err)
 		require.Empty(t, licenses)
 	})

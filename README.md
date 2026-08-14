@@ -132,22 +132,23 @@ Examples:
   $ cyclonedx-gomod app -json -output acme-app.bom.json -packages -files -licenses -main cmd/acme-app /usr/src/acme-module
 
 FLAGS
-  -assert-licenses=false       Assert detected licenses
-  -files=false                 Include files
-  -json=false                  Output in JSON
-  -disable-html-escape=false   Disable HTML escaping in JSON output
-  -licenses=false              Perform license detection
-  -main string                 Path to the application's main package, relative to MODULE_PATH
-  -noserial=false              Omit serial number
-  -notimestamp=false           Omit timestamp
-  -output -                    Output file path (or - for STDOUT)
-  -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
-  -packages=false              Include packages
-  -paths=false                 Include file paths relative to their module root
-  -serial string               Serial number
-  -short-purls=false           Omit all qualifiers from PackageURLs
-  -std=false                   Include Go standard library as component and dependency of the module
-  -verbose=false               Enable verbose output
+  -assert-licenses=false              Assert detected licenses
+  -disable-html-escape=false          Disable HTML escaping in JSON output
+  -files=false                        Include files
+  -json=false                         Output in JSON
+  -license-confidence-threshold 0.85  Minimum confidence (0.0-1.0) required for a detected license to be included
+  -licenses=false                     Perform license detection
+  -main string                        Path to the application's main package, relative to MODULE_PATH
+  -noserial=false                     Omit serial number
+  -notimestamp=false                  Omit timestamp
+  -output -                           Output file path (or - for STDOUT)
+  -output-version 1.6                 Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -packages=false                     Include packages
+  -paths=false                        Include file paths relative to their module root
+  -serial string                      Serial number
+  -short-purls=false                  Omit all qualifiers from PackageURLs
+  -std=false                          Include Go standard library as component and dependency of the module
+  -verbose=false                      Enable verbose output
 ```
 
 #### `bin`
@@ -182,18 +183,20 @@ Example:
   $ cyclonedx-gomod bin -json -output acme-app-v1.0.0.bom.json -version v1.0.0 ./acme-app
 
 FLAGS
-  -assert-licenses=false       Assert detected licenses
-  -json=false                  Output in JSON
-  -disable-html-escape=false   Disable HTML escaping in JSON output
-  -licenses=false              Perform license detection
-  -noserial=false              Omit serial number
-  -output -                    Output file path (or - for STDOUT)
-  -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
-  -serial string               Serial number
-  -short-purls=false           Omit all qualifiers from PackageURLs
-  -std=false                   Include Go standard library as component and dependency of the module
-  -verbose=false               Enable verbose output
-  -version string              Version of the main component
+  -assert-licenses=false              Assert detected licenses
+  -disable-html-escape=false          Disable HTML escaping in JSON output
+  -json=false                         Output in JSON
+  -license-confidence-threshold 0.85  Minimum confidence (0.0-1.0) required for a detected license to be included
+  -licenses=false                     Perform license detection
+  -noserial=false                     Omit serial number
+  -notimestamp=false                  Omit timestamp
+  -output -                           Output file path (or - for STDOUT)
+  -output-version 1.6                 Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -serial string                      Serial number
+  -short-purls=false                  Omit all qualifiers from PackageURLs
+  -std=false                          Include Go standard library as component and dependency of the module
+  -verbose=false                      Enable verbose output
+  -version string                     Version of the main component
 ```
 
 #### `mod`
@@ -217,19 +220,21 @@ Examples:
   $ cyclonedx-gomod mod -test -output bom.xml ./cyclonedx-go
 
 FLAGS
-  -assert-licenses=false       Assert detected licenses
-  -json=false                  Output in JSON
-  -disable-html-escape=false   Disable HTML escaping in JSON output
-  -licenses=false              Perform license detection
-  -noserial=false              Omit serial number
-  -output -                    Output file path (or - for STDOUT)
-  -output-version 1.6          Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
-  -serial string               Serial number
-  -short-purls=false           Omit all qualifiers from PackageURLs
-  -std=false                   Include Go standard library as component and dependency of the module
-  -test=false                  Include test dependencies
-  -type application            Type of the main component
-  -verbose=false               Enable verbose output
+  -assert-licenses=false              Assert detected licenses
+  -disable-html-escape=false          Disable HTML escaping in JSON output
+  -json=false                         Output in JSON
+  -license-confidence-threshold 0.85  Minimum confidence (0.0-1.0) required for a detected license to be included
+  -licenses=false                     Perform license detection
+  -noserial=false                     Omit serial number
+  -notimestamp=false                  Omit timestamp
+  -output -                           Output file path (or - for STDOUT)
+  -output-version 1.6                 Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -serial string                      Serial number
+  -short-purls=false                  Omit all qualifiers from PackageURLs
+  -std=false                          Include Go standard library as component and dependency of the module
+  -test=false                         Include test dependencies
+  -type application                   Type of the main component
+  -verbose=false                      Enable verbose output
 ```
 
 ### Examples 📃
@@ -372,6 +377,11 @@ rather than the `licenses` field directly.
 > *cyclonedx-gomod* will use the `licenses` field, instead of `evidences`. This can be
 > helpful when the generated BOM is pushed to an analysis tool that does not yet handle
 > evidences.
+
+Licenses detected with a confidence below `0.85` are discarded by default. This threshold
+can be adjusted via the `-license-confidence-threshold` flag, accepting values between `0.0` and `1.0`.
+Lowering it will surface more (potentially incorrect) license matches, while raising it
+makes detection more conservative.
 
 ### Hashes
 
