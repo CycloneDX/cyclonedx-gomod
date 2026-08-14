@@ -27,11 +27,10 @@ import (
 	"hash"
 	"io"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/rs/zerolog"
-
-	"golang.org/x/exp/slices"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
 
