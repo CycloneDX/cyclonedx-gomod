@@ -6,7 +6,8 @@ FROM golang:1.26.2-alpine3.23@sha256:c2a1f7b2095d046ae14b286b18413a05bb82c9bca9b
 # which is owned by root.
 # https://github.com/golang/go/issues/26280#issuecomment-445294378
 ENV GOCACHE=/tmp/go-build
-COPY cyclonedx-gomod /usr/local/bin/
+ARG TARGETPLATFORM
+COPY $TARGETPLATFORM/cyclonedx-gomod /usr/local/bin/
 USER 1000
 ENTRYPOINT ["cyclonedx-gomod"]
 CMD ["-h"]
