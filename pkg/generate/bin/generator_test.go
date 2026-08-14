@@ -57,7 +57,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 	t.Run("Simple", func(t *testing.T) {
 		g, err := NewGenerator("../testdata/simple",
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -71,7 +71,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 	t.Run("Simple1.18", func(t *testing.T) {
 		g, err := NewGenerator("../testdata/simple1.18",
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 

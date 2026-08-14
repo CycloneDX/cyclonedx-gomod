@@ -30,6 +30,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/util"
+	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect/local"
 )
 
 // ValidationError represents a validation error for options.
@@ -112,18 +113,21 @@ func (o OutputOptions) Validate() error {
 
 // SBOMOptions provides options for customizing the SBOM.
 type SBOMOptions struct {
-	AssertLicenses  bool
-	IncludeStd      bool
-	NoSerialNumber  bool
-	NoTimestamp     bool
-	ResolveLicenses bool
-	SerialNumber    string
-	ShortPURLs      bool
+	AssertLicenses             bool
+	IncludeStd                 bool
+	LicenseConfidenceThreshold float64
+	NoSerialNumber             bool
+	NoTimestamp                bool
+	ResolveLicenses            bool
+	SerialNumber               string
+	ShortPURLs                 bool
 }
 
 func (s *SBOMOptions) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&s.AssertLicenses, "assert-licenses", false, "Assert detected licenses")
 	fs.BoolVar(&s.IncludeStd, "std", false, "Include Go standard library as component and dependency of the module")
+	fs.Float64Var(&s.LicenseConfidenceThreshold, "license-confidence-threshold", local.DefaultMinDetectionConfidence,
+		"Minimum confidence (0.0-1.0) required for a detected license to be included")
 	fs.BoolVar(&s.NoSerialNumber, "noserial", false, "Omit serial number")
 	fs.BoolVar(&s.NoTimestamp, "notimestamp", false, "Omit timestamp")
 	fs.BoolVar(&s.ResolveLicenses, "licenses", false, "Perform license detection")
@@ -136,6 +140,10 @@ func (s SBOMOptions) Validate() error {
 
 	if s.AssertLicenses && !s.ResolveLicenses {
 		errs = append(errs, fmt.Errorf("assertion of licenses has no effect without licenses detection"))
+	}
+
+	if s.LicenseConfidenceThreshold < 0 || s.LicenseConfidenceThreshold > 1 {
+		errs = append(errs, fmt.Errorf("license confidence threshold: must be between 0.0 and 1.0, got %v", s.LicenseConfidenceThreshold))
 	}
 
 	// Serial numbers must be valid UUIDs

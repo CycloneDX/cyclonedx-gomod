@@ -86,4 +86,20 @@ func TestSBOMOptions_Validate(t *testing.T) {
 		require.Len(t, validationError.Errors, 1)
 		require.Contains(t, validationError.Errors[0].Error(), "serial number")
 	})
+
+	t.Run("InvalidLicenseConfidenceThreshold", func(t *testing.T) {
+		for _, threshold := range []float64{-0.1, 1.1} {
+			var options SBOMOptions
+			options.LicenseConfidenceThreshold = threshold
+
+			err := options.Validate()
+			require.Error(t, err)
+
+			var validationError *ValidationError
+			require.ErrorAs(t, err, &validationError)
+
+			require.Len(t, validationError.Errors, 1)
+			require.Contains(t, validationError.Errors[0].Error(), "license confidence threshold")
+		}
+	})
 }
