@@ -87,6 +87,7 @@ type OutputOptions struct {
 
 func (o *OutputOptions) RegisterFlags(fs *flag.FlagSet) {
 	versionChoices := []string{
+		cdx.SpecVersion1_7.String(),
 		cdx.SpecVersion1_6.String(),
 		cdx.SpecVersion1_5.String(),
 		cdx.SpecVersion1_4.String(),
