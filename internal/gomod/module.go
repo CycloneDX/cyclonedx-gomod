@@ -221,7 +221,7 @@ func ResolveLocalReplacements(logger zerolog.Logger, mainModuleDir string, modul
 			continue
 		}
 
-		err := resolveLocalReplacement(logger, localModuleDir, modules[i].Replace)
+		err := resolveLocalReplacement(logger, localModuleDir, module.Replace)
 		if err != nil {
 			return fmt.Errorf("resolving local module %s failed: %w", module.Replace.Coordinates(), err)
 		}
@@ -241,6 +241,7 @@ func resolveLocalReplacement(logger zerolog.Logger, localModuleDir string, modul
 	}
 
 	module.Path = localModule.Path
+	module.Dir = localModuleDir
 	module.Local = true
 
 	// Try to resolve the version. Only works when module.Dir is a Git repo.

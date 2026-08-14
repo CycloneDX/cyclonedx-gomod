@@ -19,7 +19,7 @@ package gomod
 
 import (
 	"bytes"
-
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -166,4 +166,34 @@ func TestSortModules(t *testing.T) {
 	require.Equal(t, "v2.0.0", modules[0].Version) // main
 	require.Equal(t, "v1.2.3", modules[1].Version)
 	require.Equal(t, "v1.3.2", modules[2].Version)
+}
+
+func TestResolveLocalReplacementPreservesResolvedDirectory(t *testing.T) {
+	rootDir := t.TempDir()
+	mainModuleDir := filepath.Join(rootDir, "app")
+	replacementDir := filepath.Join(rootDir, "deploy")
+	require.NoError(t, os.MkdirAll(mainModuleDir, 0o755))
+	require.NoError(t, os.MkdirAll(replacementDir, 0o755))
+	require.NoError(t, os.WriteFile(
+		filepath.Join(replacementDir, "go.mod"),
+		[]byte("module example.com/org/project/deploy\n\ngo 1.24\n"),
+		0o600,
+	))
+
+	modules := []Module{
+		{
+			Path: "example.com/org/app/deploy",
+			Replace: &Module{
+				Path: "../deploy",
+				// Reproduce stale directory metadata when the module and replacement
+				// directory have the same final segment.
+				Dir: filepath.Join(replacementDir, "deploy"),
+			},
+		},
+	}
+
+	require.NoError(t, ResolveLocalReplacements(zerolog.Nop(), mainModuleDir, modules))
+	require.Equal(t, "example.com/org/project/deploy", modules[0].Replace.Path)
+	require.Equal(t, replacementDir, modules[0].Replace.Dir)
+	require.True(t, modules[0].Replace.Local)
 }
