@@ -1,6 +1,6 @@
 module github.com/CycloneDX/cyclonedx-gomod
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/CycloneDX/cyclonedx-go v0.11.0
