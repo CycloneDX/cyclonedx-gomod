@@ -6,15 +6,25 @@ updates:
       - "CycloneDX/go-maintainers"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
   - package-ecosystem: "gomod"
     directory: "/"
     reviewers:
       - "CycloneDX/go-maintainers"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
   - package-ecosystem: "github-actions"
     directory: "/"
     reviewers:
       - "CycloneDX/go-maintainers"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 7
+    groups:
+      codeql:
+        patterns:
+          - "github/codeql-action/*"
