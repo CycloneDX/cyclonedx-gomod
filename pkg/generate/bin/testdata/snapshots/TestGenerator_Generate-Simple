@@ -9,7 +9,7 @@
       "type": "application",
       "name": "testmod-simple",
       "version": "(devel)",
-      "purl": "pkg:golang/testmod-simple@%28devel%29?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
+      "purl": "pkg:golang/testmod-simple@(devel)?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
     },
     "properties": [
       {
