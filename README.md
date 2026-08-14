@@ -142,7 +142,7 @@ FLAGS
   -noserial=false                     Omit serial number
   -notimestamp=false                  Omit timestamp
   -output -                           Output file path (or - for STDOUT)
-  -output-version 1.6                 Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -output-version 1.6                 Output spec verson (1.7, 1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -packages=false                     Include packages
   -paths=false                        Include file paths relative to their module root
   -serial string                      Serial number
@@ -191,7 +191,7 @@ FLAGS
   -noserial=false                     Omit serial number
   -notimestamp=false                  Omit timestamp
   -output -                           Output file path (or - for STDOUT)
-  -output-version 1.6                 Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -output-version 1.6                 Output spec verson (1.7, 1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -serial string                      Serial number
   -short-purls=false                  Omit all qualifiers from PackageURLs
   -std=false                          Include Go standard library as component and dependency of the module
@@ -228,7 +228,7 @@ FLAGS
   -noserial=false                     Omit serial number
   -notimestamp=false                  Omit timestamp
   -output -                           Output file path (or - for STDOUT)
-  -output-version 1.6                 Output spec verson (1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
+  -output-version 1.6                 Output spec verson (1.7, 1.6, 1.5, 1.4, 1.3, 1.2, 1.1, 1.0)
   -serial string                      Serial number
   -short-purls=false                  Omit all qualifiers from PackageURLs
   -std=false                          Include Go standard library as component and dependency of the module

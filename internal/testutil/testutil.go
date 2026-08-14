@@ -198,7 +198,7 @@ func RequireValidSBOM(t *testing.T, bom *cdx.BOM, fileFormat cdx.BOMFileFormat) 
 	} else {
 		panic("xml validation not available")
 	}
-	err = v.Validate(buf.Bytes(), cdx.SpecVersion1_6)
+	err = v.Validate(buf.Bytes(), cdx.SpecVersion1_7)
 	require.NoError(t, err)
 }
 
