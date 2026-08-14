@@ -1,3 +1,5 @@
+version: 2
+
 project_name: cyclonedx-gomod
 
 before:
@@ -36,8 +38,6 @@ sboms:
 
 signs:
   - cmd: cosign
-    env:
-      - COSIGN_EXPERIMENTAL=1
     certificate: '${artifact}.pem'
     args:
       - sign-blob
@@ -48,60 +48,30 @@ signs:
     artifacts: checksum
     output: true
 
-dockers:
-- goos: linux
-  goarch: amd64
-  dockerfile: Dockerfile.goreleaser
-  use: buildx
-  image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  build_flag_templates:
-  - "--platform=linux/amd64"
-  - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-  - "--label=org.opencontainers.image.version={{ .Tag }}"
-  - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-  - "--label=org.opencontainers.image.created={{ .Date }}"
-  - "--label=org.opencontainers.image.vendor=CycloneDX"
-  - "--label=org.opencontainers.image.url=https://cyclonedx.org"
-  - "--label=org.opencontainers.image.source={{ .GitURL }}"
-- goos: linux
-  goarch: arm64
-  dockerfile: Dockerfile.goreleaser
-  use: buildx
-  image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-  build_flag_templates:
-  - "--platform=linux/arm64"
-  - "--label=org.opencontainers.image.title={{ .ProjectName }}"
-  - "--label=org.opencontainers.image.version={{ .Tag }}"
-  - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
-  - "--label=org.opencontainers.image.created={{ .Date }}"
-  - "--label=org.opencontainers.image.vendor=CycloneDX"
-  - "--label=org.opencontainers.image.url=https://cyclonedx.org"
-  - "--label=org.opencontainers.image.source={{ .GitURL }}"
-
-docker_manifests:
-- name_template: "cyclonedx/{{ .ProjectName }}:latest"
-  image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-- name_template: "cyclonedx/{{ .ProjectName }}:{{ .Tag }}"
-  image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-- name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}"
-  image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
-- name_template: "cyclonedx/{{ .ProjectName }}:v{{ .Major }}.{{ .Minor }}"
-  image_templates:
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-amd64"
-  - "cyclonedx/{{ .ProjectName }}:{{ .Tag }}-arm64"
+dockers_v2:
+- dockerfile: Dockerfile.goreleaser
+  images:
+  - "cyclonedx/{{ .ProjectName }}"
+  platforms:
+  - linux/amd64
+  - linux/arm64
+  sbom: false
+  tags:
+  - "latest"
+  - "{{ .Tag }}"
+  - "v{{ .Major }}"
+  - "v{{ .Major }}.{{ .Minor }}"
+  labels:
+    org.opencontainers.image.title: "{{ .ProjectName }}"
+    org.opencontainers.image.version: "{{ .Tag }}"
+    org.opencontainers.image.revision: "{{ .FullCommit }}"
+    org.opencontainers.image.created: "{{ .Date }}"
+    org.opencontainers.image.vendor: "CycloneDX"
+    org.opencontainers.image.url: "https://cyclonedx.org"
+    org.opencontainers.image.source: "{{ .GitURL }}"
 
 docker_signs:
   - cmd: cosign
-    env:
-    - COSIGN_EXPERIMENTAL=1
     artifacts: all
     output: true
     args:
@@ -112,7 +82,7 @@ docker_signs:
 archives:
 - format_overrides:
   - goos: windows
-    format: zip
+    formats: [ zip ]
 
 release:
   prerelease: auto
