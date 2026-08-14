@@ -21,6 +21,7 @@ import (
 	"crypto/md5"  //nolint:gosec // #nosec G501
 	"crypto/sha1" //nolint:gosec // #nosec G505
 	"crypto/sha256"
+	"crypto/sha3"
 	"crypto/sha512"
 	"fmt"
 	"hash"
@@ -29,7 +30,7 @@ import (
 	"strings"
 
 	"github.com/rs/zerolog"
-	"golang.org/x/crypto/sha3"
+
 	"golang.org/x/exp/slices"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
@@ -162,9 +163,9 @@ func CalculateFileHashes(logger zerolog.Logger, filePath string, algos ...cdx.Ha
 		case cdx.HashAlgoSHA512:
 			hashWriter = sha512.New()
 		case cdx.HashAlgoSHA3_256:
-			hashWriter = sha3.New256()
+			hashWriter = hash.Hash(sha3.New256())
 		case cdx.HashAlgoSHA3_512:
-			hashWriter = sha3.New512()
+			hashWriter = hash.Hash(sha3.New512())
 		default:
 			return nil, fmt.Errorf("unsupported hash algorithm: %s", algo)
 		}
