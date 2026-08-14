@@ -22,10 +22,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 
 	"github.com/rs/zerolog"
-	"golang.org/x/exp/slices"
 	"golang.org/x/mod/semver"
 
 	"github.com/CycloneDX/cyclonedx-gomod/internal/gocmd"
