@@ -221,7 +221,7 @@ func ResolveLocalReplacements(logger zerolog.Logger, mainModuleDir string, modul
 			continue
 		}
 
-		err := resolveLocalReplacement(logger, localModuleDir, modules[i].Replace)
+		err := resolveLocalReplacement(logger, localModuleDir, module.Replace)
 		if err != nil {
 			return fmt.Errorf("resolving local module %s failed: %w", module.Replace.Coordinates(), err)
 		}

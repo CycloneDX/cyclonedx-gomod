@@ -177,7 +177,7 @@ func TestResolveLocalReplacementPreservesResolvedDirectory(t *testing.T) {
 	require.NoError(t, os.WriteFile(
 		filepath.Join(replacementDir, "go.mod"),
 		[]byte("module example.com/org/project/deploy\n\ngo 1.24\n"),
-		0o644,
+		0o600,
 	))
 
 	modules := []Module{
