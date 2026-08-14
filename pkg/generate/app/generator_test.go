@@ -62,7 +62,7 @@ func TestGenerator_Generate(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple.tar.gz")
 
 		g, err := NewGenerator(fixturePath,
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger),
 			WithIncludeStdlib(true))
 		require.NoError(t, err)
@@ -88,7 +88,7 @@ func TestGenerator_Generate(t *testing.T) {
 			WithIncludeFiles(true),
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -112,7 +112,7 @@ func TestGenerator_Generate(t *testing.T) {
 		g, err := NewGenerator(fixturePath,
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -135,7 +135,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger),
 			WithMainDir("cmd/purl"))
 		require.NoError(t, err)
@@ -159,7 +159,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger),
 			WithMainDir("cmd/uuid"))
 		require.NoError(t, err)
@@ -183,7 +183,7 @@ func TestGenerator_Generate(t *testing.T) {
 
 		g, err := NewGenerator(fixturePath,
 			WithIncludeStdlib(true),
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -208,7 +208,7 @@ func TestGenerator_Generate(t *testing.T) {
 			WithIncludeFiles(true),
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
@@ -232,7 +232,7 @@ func TestGenerator_Generate(t *testing.T) {
 		g, err := NewGenerator(fixturePath,
 			WithIncludePackages(true),
 			WithIncludeStdlib(true),
-			WithLicenseDetector(local.NewDetector(zerolog.Nop())),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
 			WithLogger(testutil.SilentLogger))
 		require.NoError(t, err)
 
