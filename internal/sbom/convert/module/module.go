@@ -106,6 +106,12 @@ func WithModuleHashes() Option {
 			return nil
 		}
 
+		if module.Dir == "" {
+			// Pseudo-modules such as command-line-arguments may not have a filesystem directory.
+			logger.Debug().Str("module", module.Coordinates()).Msg("not calculating hash for module without directory")
+			return nil
+		}
+
 		logger.Debug().Str("module", module.Coordinates()).Msg("calculating module hash")
 		h1, err := module.Hash()
 		if err != nil {

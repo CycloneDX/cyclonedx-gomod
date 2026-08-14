@@ -138,6 +138,18 @@ func TestWithModuleHashes(t *testing.T) {
 	assert.Equal(t, "a8962d5e72515a6a5eee6ff75e5ca1aec2eb11446a1d1336931ce8c57ab2503b", hashes[0].Value)
 }
 
+func TestWithModuleHashesWithoutDirectory(t *testing.T) {
+	module := gomod.Module{
+		Path:    "command-line-arguments",
+		Version: "go1.26.3",
+	}
+	component := new(cdx.Component)
+
+	err := WithModuleHashes()(zerolog.Nop(), module, component)
+	require.NoError(t, err)
+	require.Nil(t, component.Hashes)
+}
+
 func TestWithComponentType(t *testing.T) {
 	module := gomod.Module{}
 	component := cdx.Component{}
