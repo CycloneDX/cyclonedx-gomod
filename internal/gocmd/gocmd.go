@@ -58,7 +58,7 @@ func ParseVersion(s string) (string, error) {
 // See https://pkg.go.dev/cmd/go#hdr-Print_Go_environment_information.
 func GetEnv(logger zerolog.Logger) (map[string]string, error) {
 	buf := new(bytes.Buffer)
-	err := executeGoCommand(logger, []string{"env", "-json"}, withStdout(buf))
+	err := executeGoCommand(logger, []string{"env", "-json"}, withStdout(buf)) //nolint:goconst
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func GetEnv(logger zerolog.Logger) (map[string]string, error) {
 // ListModule executes `go list -json -m` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-list-m
 func ListModule(logger zerolog.Logger, moduleDir string, writer io.Writer) error {
-	return executeGoCommand(logger, []string{"list", "-mod", "readonly", "-json", "-m"}, withDir(moduleDir), withStdout(writer))
+	return executeGoCommand(logger, []string{"list", "-mod", "readonly", "-json", "-m"}, withDir(moduleDir), withStdout(writer)) //nolint:goconst
 }
 
 // ListModules executes `go list -json -m all` and writes the output to a given writer.
@@ -106,7 +106,7 @@ func ListPackages(logger zerolog.Logger, moduleDir, packagePattern string, write
 // ListVendoredModules executes `go mod vendor -v` and writes the output to a given writer.
 // See https://golang.org/ref/mod#go-mod-vendor.
 func ListVendoredModules(logger zerolog.Logger, moduleDir string, writer io.Writer) error {
-	return executeGoCommand(logger, []string{"mod", "vendor", "-v", "-e"}, withDir(moduleDir), withStderr(writer))
+	return executeGoCommand(logger, []string{"mod", "vendor", "-v", "-e"}, withDir(moduleDir), withStderr(writer)) //nolint:goconst
 }
 
 // GetModuleGraph executes `go mod graph` and writes the output to a given writer.

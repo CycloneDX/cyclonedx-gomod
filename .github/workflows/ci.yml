@@ -22,6 +22,8 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # tag=v6.0.2
+      with:
+        persist-credentials: false
     - name: Check license headers
       uses: apache/skywalking-eyes@61275cc80d0798a405cb070f7d3a8aaf7cf2c2c1 # tag=v0.8.0
       with:
@@ -34,17 +36,19 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # tag=v6.0.2
-    - name: Setup Go
-      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # tag=v6.2.0
       with:
-        go-version: "1.25"
+        persist-credentials: false
+    - name: Setup Go
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # tag=v7.0.0
+      with:
+        go-version: "1.26"
         check-latest: true
     - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # tag=v9.2.0
+      uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # tag=v9.3.0
       with:
         version: latest
     - name: Scan Dockerfiles
-      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # tag=v0.35.0
+      uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # tag=v0.36.0
       with:
         scan-type: config
         skip-files: "Dockerfile.examples"
@@ -57,11 +61,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Setup Go
-      uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # tag=v6.2.0
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # tag=v7.0.0
       with:
-        go-version: "1.25"
+        go-version: "1.26"
         check-latest: true
     - name: Checkout Repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # tag=v6.0.2
+      with:
+        persist-credentials: false
     - name: Test
       run: make test
+
+  lint-gha:
+    name: Lint GitHub Actions
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # tag=v6.0.2
+        with:
+          persist-credentials: false
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2

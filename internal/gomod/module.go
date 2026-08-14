@@ -24,11 +24,11 @@ import (
 	"fmt"
 	"io"
 	"path/filepath"
+	"slices"
 	"strings"
 	"sync"
 
 	"github.com/rs/zerolog"
-	"golang.org/x/exp/slices"
 	"golang.org/x/mod/semver"
 	"golang.org/x/mod/sumdb/dirhash"
 

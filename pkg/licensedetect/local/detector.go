@@ -31,16 +31,23 @@ import (
 	"github.com/CycloneDX/cyclonedx-gomod/pkg/licensedetect"
 )
 
-const minDetectionConfidence = 0.85
+// DefaultMinDetectionConfidence is the minimum confidence a detected license
+// must have in order to be included in the SBOM, unless overridden via NewDetector.
+const DefaultMinDetectionConfidence = 0.85
 
 type detector struct {
-	logger zerolog.Logger
+	logger                 zerolog.Logger
+	minDetectionConfidence float32
 }
 
 // NewDetector returns a license detector capable of detecting licenses locally.
-func NewDetector(logger zerolog.Logger) licensedetect.Detector {
+// minDetectionConfidence is the minimum confidence (0.0-1.0) a detected license
+// must have in order to be included in the SBOM. Licenses detected with a lower
+// confidence are discarded.
+func NewDetector(logger zerolog.Logger, minDetectionConfidence float32) licensedetect.Detector {
 	return &detector{
-		logger: logger,
+		logger:                 logger,
+		minDetectionConfidence: minDetectionConfidence,
 	}
 }
 
@@ -84,12 +91,12 @@ func (d detector) Detect(path, version, dir string) ([]cdx.License, error) {
 	if detectedLicense == "" {
 		return []cdx.License{}, nil
 	}
-	if detectedLicenseConfidence < minDetectionConfidence {
+	if detectedLicenseConfidence < d.minDetectionConfidence {
 		d.logger.Debug().
 			Str("module", fmt.Sprintf("%s@%s", path, version)).
 			Str("license", detectedLicense).
 			Float32("confidence", detectedLicenseConfidence).
-			Float32("minConfidence", minDetectionConfidence).
+			Float32("minConfidence", d.minDetectionConfidence).
 			Msg("detection confidence for license is too low")
 		return []cdx.License{}, nil
 	}
