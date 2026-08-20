@@ -49,7 +49,16 @@
           "url": "https://github.com/package-url/packageurl-go",
           "type": "vcs"
         }
-      ]
+      ],
+      "evidence": {
+        "licenses": [
+          {
+            "license": {
+              "id": "MIT"
+            }
+          }
+        ]
+      }
     },
     {
       "bom-ref": "pkg:golang/std@REDACTED?type=module",
