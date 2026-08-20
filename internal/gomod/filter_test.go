@@ -26,7 +26,8 @@ import (
 )
 
 func TestParseModWhy(t *testing.T) {
-	modWhyOutput := `
+	t.Run("Mixed", func(t *testing.T) {
+		modWhyOutput := `
 # github.com/stretchr/testify
 github.com/CycloneDX/cyclonedx-gomod
 github.com/CycloneDX/cyclonedx-gomod.test
@@ -39,10 +40,22 @@ github.com/stretchr/testify/assert
 (main module does not need to vendor module bazil.org/fuse)
 `
 
-	modulePkgs := parseModWhy(strings.NewReader(modWhyOutput))
-	require.Len(t, modulePkgs, 3)
+		modulePkgs := parseModWhy(strings.NewReader(modWhyOutput))
+		require.Len(t, modulePkgs, 3)
 
-	assert.Len(t, modulePkgs["github.com/stretchr/testify"], 3)
-	assert.Len(t, modulePkgs["github.com/CycloneDX/cyclonedx-go"], 0)
-	assert.Len(t, modulePkgs["bazil.org/fuse"], 0)
+		assert.Len(t, modulePkgs["github.com/stretchr/testify"], 3)
+		assert.Len(t, modulePkgs["github.com/CycloneDX/cyclonedx-go"], 0)
+		assert.Len(t, modulePkgs["bazil.org/fuse"], 0)
+	})
+
+	t.Run("NoDirectDependencies", func(t *testing.T) {
+		modWhyOutput := `
+# github.com/CycloneDX/cyclonedx-go
+(main module does not need to vendor module github.com/CycloneDX/cyclonedx-go)
+`
+		modulePkgs := parseModWhy(strings.NewReader(modWhyOutput))
+		require.Len(t, modulePkgs, 1)
+
+		assert.Len(t, modulePkgs["github.com/CycloneDX/cyclonedx-go"], 0)
+	})
 }

@@ -99,6 +99,10 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
+	if len(modules) == 0 {
+		return nil, fmt.Errorf("no modules found")
+	}
+
 	modules[0].Version, err = gomod.GetModuleVersion(g.logger, modules[0].Dir)
 	if err != nil {
 		g.logger.Warn().Err(err).Msg("failed to determine version of main module")
