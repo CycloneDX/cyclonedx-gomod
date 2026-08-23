@@ -261,10 +261,6 @@ func ToComponents(logger zerolog.Logger, modules []gomod.Module, options ...Opti
 }
 
 var (
-	// By convention, modules with a major version equal to or above v2
-	// have it as suffix in their module path.
-	vcsUrlMajorVersionSuffixRegex = regexp.MustCompile(`(/v[\d]+)$`)
-
 	// gopkg.in with user segment
 	// Example: gopkg.in/user/pkg.v3 -> github.com/user/pkg
 	vcsUrlGoPkgInRegexWithUser = regexp.MustCompile(`^gopkg\.in/([^/]+)/([^.]+)\..*$`)
@@ -279,7 +275,7 @@ const vcsHttpsPrefix = "https://"
 func resolveVCSURL(modulePath string) string {
 	switch {
 	case strings.HasPrefix(modulePath, "github.com/"):
-		return vcsHttpsPrefix + vcsUrlMajorVersionSuffixRegex.ReplaceAllString(modulePath, "")
+		return vcsHttpsPrefix + gitHubRepositoryPath(modulePath)
 	case vcsUrlGoPkgInRegexWithUser.MatchString(modulePath):
 		return vcsHttpsPrefix + vcsUrlGoPkgInRegexWithUser.ReplaceAllString(modulePath, "github.com/$1/$2")
 	case vcsUrlGoPkgInRegexWithoutUser.MatchString(modulePath):
@@ -287,4 +283,22 @@ func resolveVCSURL(modulePath string) string {
 	}
 
 	return ""
+}
+
+// gitHubRepositoryPath reduces a GitHub module path to the path of the repository hosting it.
+// Repositories are addressed by owner and name only, so any additional segments of the module
+// path refer to a directory inside the repository and are not part of its URL. This includes
+// the major version suffix that modules with a major version equal to or above v2 carry by
+// convention.
+//
+// Example: github.com/aws/aws-sdk-go-v2/internal/ini -> github.com/aws/aws-sdk-go-v2
+func gitHubRepositoryPath(modulePath string) string {
+	const repositoryPathSegments = 3 // host, owner, repository
+
+	segments := strings.Split(modulePath, "/")
+	if len(segments) <= repositoryPathSegments {
+		return modulePath
+	}
+
+	return strings.Join(segments[:repositoryPathSegments], "/")
 }
