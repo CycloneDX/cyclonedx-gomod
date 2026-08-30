@@ -64,3 +64,10 @@ func TestWithLogger(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, logger, g.logger)
 }
+
+func TestWithVersionOverride(t *testing.T) {
+	g := &generator{versionOverride: ""}
+	err := WithVersionOverride("v1.2.3")(g)
+	require.NoError(t, err)
+	require.Equal(t, "v1.2.3", g.versionOverride)
+}
