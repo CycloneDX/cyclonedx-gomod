@@ -78,9 +78,14 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to make moduleDir absolute: %w", err)
 	}
 
-	appModuleIndex := slices.IndexFunc(modules, func(mod gomod.Module) bool { return mod.Dir == moduleDirAbs })
+	mainDirAbs := filepath.Join(moduleDirAbs, g.mainDir)
+	appModuleIndex := slices.IndexFunc(modules, func(mod gomod.Module) bool {
+		return slices.ContainsFunc(mod.Packages, func(pkg gomod.Package) bool {
+			return pkg.Name == "main" && filepath.Clean(pkg.Dir) == mainDirAbs
+		})
+	})
 	if appModuleIndex < 0 {
-		return nil, fmt.Errorf(("failed to find application module"))
+		return nil, fmt.Errorf("failed to find application module")
 	}
 
 	for i, module := range modules {
@@ -90,6 +95,9 @@ func (g generator) Generate() (*cdx.BOM, error) {
 				break
 			} else {
 				modules = append(modules[:i], modules[i+1:]...)
+				if i < appModuleIndex {
+					appModuleIndex--
+				}
 				break
 			}
 		}
@@ -102,9 +110,12 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
-	modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to determine version of main module: %w", err)
+	// Only the main module is missing its version in `go list` output.
+	if modules[appModuleIndex].Main {
+		modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
+		if err != nil {
+			return nil, fmt.Errorf("failed to determine version of main module: %w", err)
+		}
 	}
 
 	mainComponent, err := modConv.ToComponent(g.logger, modules[appModuleIndex],
