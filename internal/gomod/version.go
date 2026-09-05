@@ -100,8 +100,8 @@ func GetVersionFromTag(logger zerolog.Logger, moduleDir string) (string, error) 
 	return module.PseudoVersion(
 		semver.Major(latestTag.name),
 		latestTag.name,
-		latestTag.commit.Author.When,
-		latestTag.commit.Hash.String()[:12],
+		headCommit.Author.When,
+		headCommit.Hash.String()[:12],
 	), nil
 }
 
@@ -138,10 +138,12 @@ func GetLatestTag(logger zerolog.Logger, repo *git.Repository, headCommit *objec
 				return err
 			}
 
-			isBeforeOrAtHead := commit.Committer.When.Before(headCommit.Author.When) ||
-				commit.Committer.When.Equal(headCommit.Committer.When)
+			isAncestor, err := commit.IsAncestor(headCommit)
+			if err != nil {
+				return err
+			}
 
-			if isBeforeOrAtHead && (latestTag.commit == nil || commit.Committer.When.After(latestTag.commit.Committer.When)) {
+			if isAncestor && (latestTag.commit == nil || commit.Committer.When.After(latestTag.commit.Committer.When)) {
 				latestTag.name = ref.Name().Short()
 				latestTag.commit = commit
 			}
