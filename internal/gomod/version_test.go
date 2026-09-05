@@ -18,13 +18,50 @@
 package gomod
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/mod/module"
 )
+
+func TestGetVersionFromTagPseudoVersionUsesHeadRevision(t *testing.T) {
+	repositoryDir := t.TempDir()
+	repository, err := git.PlainInit(repositoryDir, false)
+	require.NoError(t, err)
+
+	worktree, err := repository.Worktree()
+	require.NoError(t, err)
+
+	commit := func(contents string, when time.Time) plumbing.Hash {
+		require.NoError(t, os.WriteFile(filepath.Join(repositoryDir, "module.go"), []byte(contents), 0o600))
+		_, err := worktree.Add("module.go")
+		require.NoError(t, err)
+
+		signature := &object.Signature{Name: "Test", Email: "test@example.com", When: when}
+		hash, err := worktree.Commit(contents, &git.CommitOptions{Author: signature, Committer: signature})
+		require.NoError(t, err)
+		return hash
+	}
+
+	taggedAt := time.Date(2025, time.January, 2, 3, 4, 5, 0, time.UTC)
+	taggedHash := commit("tagged", taggedAt)
+	_, err = repository.CreateTag("v1.2.3", taggedHash, nil)
+	require.NoError(t, err)
+
+	headAt := taggedAt.Add(time.Hour)
+	headHash := commit("head", headAt)
+
+	version, err := GetVersionFromTag(zerolog.Nop(), repositoryDir)
+	require.NoError(t, err)
+	require.Equal(t, module.PseudoVersion("v1", "v1.2.3", headAt, headHash.String()[:12]), version)
+}
 
 func TestGetLatestTag(t *testing.T) {
 	repo, err := git.PlainClone(t.TempDir(), false, &git.CloneOptions{

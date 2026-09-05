@@ -100,8 +100,8 @@ func GetVersionFromTag(logger zerolog.Logger, moduleDir string) (string, error) 
 	return module.PseudoVersion(
 		semver.Major(latestTag.name),
 		latestTag.name,
-		latestTag.commit.Author.When,
-		latestTag.commit.Hash.String()[:12],
+		headCommit.Author.When,
+		headCommit.Hash.String()[:12],
 	), nil
 }
 
