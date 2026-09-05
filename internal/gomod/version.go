@@ -138,10 +138,12 @@ func GetLatestTag(logger zerolog.Logger, repo *git.Repository, headCommit *objec
 				return err
 			}
 
-			isBeforeOrAtHead := commit.Committer.When.Before(headCommit.Author.When) ||
-				commit.Committer.When.Equal(headCommit.Committer.When)
+			isAncestor, err := commit.IsAncestor(headCommit)
+			if err != nil {
+				return err
+			}
 
-			if isBeforeOrAtHead && (latestTag.commit == nil || commit.Committer.When.After(latestTag.commit.Committer.When)) {
+			if isAncestor && (latestTag.commit == nil || commit.Committer.When.After(latestTag.commit.Committer.When)) {
 				latestTag.name = ref.Name().Short()
 				latestTag.commit = commit
 			}
