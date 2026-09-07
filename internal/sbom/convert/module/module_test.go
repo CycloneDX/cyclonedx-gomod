@@ -312,4 +312,9 @@ func TestResolveVCSURL(t *testing.T) {
 	t.Run("gopkg.in variant 2", func(t *testing.T) {
 		require.Equal(t, "https://github.com/go-check/check", resolveVCSURL("gopkg.in/check.v1"))
 	})
+
+	t.Run("GitHub with nested module", func(t *testing.T) {
+		assert.Equal(t, "https://github.com/aws/aws-sdk-go-v2", resolveVCSURL("github.com/aws/aws-sdk-go-v2/internal/ini"))
+		assert.Equal(t, "https://github.com/CycloneDX/cyclonedx-go", resolveVCSURL("github.com/CycloneDX/cyclonedx-go/pkg/sub/v2"))
+	})
 }
