@@ -96,3 +96,15 @@ func WithShortPURLS(enable bool) Option {
 		return nil
 	}
 }
+
+// WithVersionOverride overrides the version of the application.
+//
+// This is useful in cases where a BOM is generated from a monorepo
+// containing multiple applications and generating version info from
+// git is not useful or not possible.
+func WithVersionOverride(version string) Option {
+	return func(g *generator) error {
+		g.versionOverride = version
+		return nil
+	}
+}

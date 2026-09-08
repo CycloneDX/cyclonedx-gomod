@@ -48,6 +48,7 @@ type generator struct {
 	mainDir         string
 	moduleDir       string
 	shortPURLs      bool
+	versionOverride string
 }
 
 func NewGenerator(moduleDir string, opts ...Option) (generate.Generator, error) {
@@ -102,9 +103,13 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
-	modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to determine version of main module: %w", err)
+	if g.versionOverride != "" {
+		modules[appModuleIndex].Version = g.versionOverride
+	} else {
+		modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
+		if err != nil {
+			return nil, fmt.Errorf("failed to determine version of main module: %w", err)
+		}
 	}
 
 	mainComponent, err := modConv.ToComponent(g.logger, modules[appModuleIndex],

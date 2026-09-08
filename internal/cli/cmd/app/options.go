@@ -41,6 +41,7 @@ type Options struct {
 	IncludePaths    bool
 	Main            string
 	ModuleDir       string
+	Version         string
 }
 
 func (o *Options) RegisterFlags(fs *flag.FlagSet) {
@@ -52,6 +53,7 @@ func (o *Options) RegisterFlags(fs *flag.FlagSet) {
 	fs.BoolVar(&o.IncludePackages, "packages", false, "Include packages")
 	fs.BoolVar(&o.IncludePaths, "paths", false, "Include file paths relative to their module root")
 	fs.StringVar(&o.Main, "main", "", "Path to the application's main package, relative to MODULE_PATH")
+	fs.StringVar(&o.Version, "version", "", "Version of the application")
 }
 
 func (o Options) Validate() error {
