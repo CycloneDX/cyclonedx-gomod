@@ -88,8 +88,10 @@ func RequireStdlibComponentToBeRedacted(t *testing.T, bom *cdx.BOM, expectPackag
 
 			version = component.Version
 			oldBOMRef = component.BOMRef
+			// PackageURL percent-encodes special chars in the version; BOMRef does not.
+			purlVersion := strings.ReplaceAll(version, ":", "%3A")
 			newBOMRef = strings.ReplaceAll((*bom.Components)[i].BOMRef, version, Redacted)
-			newPURL = strings.ReplaceAll((*bom.Components)[i].PackageURL, version, Redacted)
+			newPURL = strings.ReplaceAll((*bom.Components)[i].PackageURL, purlVersion, Redacted)
 
 			(*bom.Components)[i].Version = Redacted
 			(*bom.Components)[i].BOMRef = newBOMRef
