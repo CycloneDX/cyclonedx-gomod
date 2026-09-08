@@ -87,6 +87,13 @@ func (m Module) PackageURL() string {
 	return fmt.Sprintf("pkg:golang/%s?goarch=%s&goos=%s&type=module", m.Coordinates(), envMap["GOARCH"], envMap["GOOS"])
 }
 
+// ModulePackageURL is like PackageURL but without the goarch and goos
+// qualifiers. A module SBOM is platform independent, so it shouldn't carry
+// the build host's GOOS/GOARCH.
+func (m Module) ModulePackageURL() string {
+	return fmt.Sprintf("pkg:golang/%s?type=module", m.Coordinates())
+}
+
 func (m Module) ShortPackageURL() string {
 	return fmt.Sprintf("pkg:golang/%s", m.Coordinates())
 }

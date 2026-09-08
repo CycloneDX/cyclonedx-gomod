@@ -185,6 +185,15 @@ func WithShortPURL(enabled bool) Option {
 	}
 }
 
+// WithModulePURL configures the component to use a platform-neutral module PURL,
+// dropping the goarch and goos qualifiers.
+func WithModulePURL() Option {
+	return func(_ zerolog.Logger, module gomod.Module, component *cdx.Component) error {
+		component.PackageURL = module.ModulePackageURL()
+		return nil
+	}
+}
+
 // ToComponent converts a gomod.Module to a CycloneDX component.
 // The component can be further customized using options, before it's returned.
 func ToComponent(logger zerolog.Logger, module gomod.Module, options ...Option) (*cdx.Component, error) {
