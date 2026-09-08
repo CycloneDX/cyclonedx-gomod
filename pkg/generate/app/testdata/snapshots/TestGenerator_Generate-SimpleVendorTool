@@ -1,0 +1,71 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.7.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "version": 1,
+  "metadata": {
+    "component": {
+      "bom-ref": "pkg:golang/golang.org/x/tools@v0.37.0?type=module#vendor/golang.org/x/tools/cmd/stringer",
+      "type": "application",
+      "name": "golang.org/x/tools",
+      "version": "v0.37.0",
+      "scope": "required",
+      "purl": "pkg:golang/golang.org/x/tools@v0.37.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module#vendor/golang.org/x/tools/cmd/stringer",
+      "properties": [
+        {
+          "name": "cdx:gomod:build:env:CGO_ENABLED",
+          "value": "REDACTED"
+        },
+        {
+          "name": "cdx:gomod:build:env:GOARCH",
+          "value": "REDACTED"
+        },
+        {
+          "name": "cdx:gomod:build:env:GOOS",
+          "value": "REDACTED"
+        },
+        {
+          "name": "cdx:gomod:build:env:GOVERSION",
+          "value": "REDACTED"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "pkg:golang/golang.org/x/mod@v0.28.0?type=module",
+      "type": "library",
+      "name": "golang.org/x/mod",
+      "version": "v0.28.0",
+      "scope": "required",
+      "purl": "pkg:golang/golang.org/x/mod@v0.28.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
+    },
+    {
+      "bom-ref": "pkg:golang/golang.org/x/sync@v0.17.0?type=module",
+      "type": "library",
+      "name": "golang.org/x/sync",
+      "version": "v0.17.0",
+      "scope": "required",
+      "purl": "pkg:golang/golang.org/x/sync@v0.17.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:golang/golang.org/x/mod@v0.28.0?type=module",
+      "dependsOn": [
+        "pkg:golang/golang.org/x/tools@v0.37.0?type=module"
+      ]
+    },
+    {
+      "ref": "pkg:golang/golang.org/x/sync@v0.17.0?type=module"
+    },
+    {
+      "ref": "pkg:golang/golang.org/x/tools@v0.37.0?type=module#vendor/golang.org/x/tools/cmd/stringer",
+      "dependsOn": [
+        "pkg:golang/golang.org/x/mod@v0.28.0?type=module",
+        "pkg:golang/golang.org/x/sync@v0.17.0?type=module"
+      ]
+    }
+  ]
+}
+
