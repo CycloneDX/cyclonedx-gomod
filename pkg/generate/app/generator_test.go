@@ -214,6 +214,22 @@ func TestGenerator_Generate(t *testing.T) {
 
 		require.Equal(t, "golang.org/x/tools", bom.Metadata.Component.Name)
 		require.Equal(t, "v0.37.0", bom.Metadata.Component.Version)
+		appRef := "pkg:golang/golang.org/x/tools@v0.37.0?type=module#cmd/stringer"
+		assert.Equal(t, appRef, bom.Metadata.Component.BOMRef)
+		assert.Regexp(t, `#cmd/stringer$`, bom.Metadata.Component.PackageURL)
+
+		refs := map[string]bool{bom.Metadata.Component.BOMRef: true}
+		for _, component := range *bom.Components {
+			refs[component.BOMRef] = true
+		}
+		for _, dependency := range *bom.Dependencies {
+			assert.True(t, refs[dependency.Ref], "unresolved ref: %s", dependency.Ref)
+			if dependency.Dependencies != nil {
+				for _, ref := range *dependency.Dependencies {
+					assert.True(t, refs[ref], "unresolved dependsOn: %s", ref)
+				}
+			}
+		}
 		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
 
 		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)

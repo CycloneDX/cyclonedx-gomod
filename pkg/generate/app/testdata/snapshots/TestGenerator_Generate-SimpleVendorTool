@@ -5,12 +5,12 @@
   "version": 1,
   "metadata": {
     "component": {
-      "bom-ref": "pkg:golang/golang.org/x/tools@v0.37.0?type=module#vendor/golang.org/x/tools/cmd/stringer",
+      "bom-ref": "pkg:golang/golang.org/x/tools@v0.37.0?type=module#cmd/stringer",
       "type": "application",
       "name": "golang.org/x/tools",
       "version": "v0.37.0",
       "scope": "required",
-      "purl": "pkg:golang/golang.org/x/tools@v0.37.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module#vendor/golang.org/x/tools/cmd/stringer",
+      "purl": "pkg:golang/golang.org/x/tools@v0.37.0?goarch=REDACTED\u0026goos=REDACTED\u0026type=module#cmd/stringer",
       "properties": [
         {
           "name": "cdx:gomod:build:env:CGO_ENABLED",
@@ -53,14 +53,14 @@
     {
       "ref": "pkg:golang/golang.org/x/mod@v0.28.0?type=module",
       "dependsOn": [
-        "pkg:golang/golang.org/x/tools@v0.37.0?type=module"
+        "pkg:golang/golang.org/x/tools@v0.37.0?type=module#cmd/stringer"
       ]
     },
     {
       "ref": "pkg:golang/golang.org/x/sync@v0.17.0?type=module"
     },
     {
-      "ref": "pkg:golang/golang.org/x/tools@v0.37.0?type=module#vendor/golang.org/x/tools/cmd/stringer",
+      "ref": "pkg:golang/golang.org/x/tools@v0.37.0?type=module#cmd/stringer",
       "dependsOn": [
         "pkg:golang/golang.org/x/mod@v0.28.0?type=module",
         "pkg:golang/golang.org/x/sync@v0.17.0?type=module"
