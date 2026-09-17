@@ -19,7 +19,6 @@ package app
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -78,9 +77,16 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to make moduleDir absolute: %w", err)
 	}
 
-	appModuleIndex := slices.IndexFunc(modules, func(mod gomod.Module) bool { return mod.Dir == moduleDirAbs })
+	mainDirAbs := filepath.Join(moduleDirAbs, g.mainDir)
+	var appPackageIndex int
+	appModuleIndex := slices.IndexFunc(modules, func(mod gomod.Module) bool {
+		appPackageIndex = slices.IndexFunc(mod.Packages, func(pkg gomod.Package) bool {
+			return pkg.Name == "main" && filepath.Clean(pkg.Dir) == mainDirAbs
+		})
+		return appPackageIndex >= 0
+	})
 	if appModuleIndex < 0 {
-		return nil, fmt.Errorf(("failed to find application module"))
+		return nil, fmt.Errorf("failed to find application module")
 	}
 
 	for i, module := range modules {
@@ -90,6 +96,9 @@ func (g generator) Generate() (*cdx.BOM, error) {
 				break
 			} else {
 				modules = append(modules[:i], modules[i+1:]...)
+				if i < appModuleIndex {
+					appModuleIndex--
+				}
 				break
 			}
 		}
@@ -102,9 +111,12 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		return nil, fmt.Errorf("failed to apply module graph: %w", err)
 	}
 
-	modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
-	if err != nil {
-		return nil, fmt.Errorf("failed to determine version of main module: %w", err)
+	// Only the main module is missing its version in `go list` output.
+	if modules[appModuleIndex].Main {
+		modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
+		if err != nil {
+			return nil, fmt.Errorf("failed to determine version of main module: %w", err)
+		}
 	}
 
 	mainComponent, err := modConv.ToComponent(g.logger, modules[appModuleIndex],
@@ -151,10 +163,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 	bom.Components = &components
 	bom.Dependencies = &dependencies
 
-	err = g.includeAppPathInMainComponentPURL(bom)
-	if err != nil {
-		return nil, fmt.Errorf("failed to enrich bom with app details: %w", err)
-	}
+	g.includeAppPathInMainComponentPURL(bom, modules[appModuleIndex].Path, modules[appModuleIndex].Packages[appPackageIndex].ImportPath)
 
 	return bom, nil
 }
@@ -212,10 +221,10 @@ func parseTagsFromGoFlags(goflags string) (tags []string) {
 	return
 }
 
-// includeAppPathInMainComponentPURL determines the application name as well as
-// the path to the application (path to mainDir) relative to moduleDir.
+// includeAppPathInMainComponentPURL determines the path to the application
+// (path to mainDir) relative to the module that owns the main package (moduleDir).
 // If the application path is not equal to moduleDir, it is added to the main component's
-// package URL as sub path. For example:
+// package URL as sub path, unless short PURLs are enabled. For example:
 //
 // + moduleDir 		<- application name
 // |-+ main.go
@@ -229,30 +238,21 @@ func parseTagsFromGoFlags(goflags string) (tags []string) {
 //  1. pkg:golang/.../module@version         		(untouched)
 //  2. pkg:golang/.../module@version#cmd/mainDir 	(with sub path)
 //
+// The selected main package may belong to a vendored tool rather than
+// the module providing the dependency graph. The sub path is therefore derived
+// from import paths relative to the owning module: selecting
+// vendor/example.com/module/cmd/app yields #cmd/app within example.com/module.
+//
 // If the package URL is updated, the BOM reference is as well.
 // All places within the BOM that reference the main component will be updated accordingly.
-func (g generator) includeAppPathInMainComponentPURL(bom *cdx.BOM) error {
-	moduleDirAbs, err := filepath.Abs(g.moduleDir)
-	if err != nil {
-		return fmt.Errorf("failed to make moduleDir absolute: %w", err)
-	}
-	mainDirAbs, err := filepath.Abs(filepath.Join(moduleDirAbs, g.mainDir))
-	if err != nil {
-		return fmt.Errorf("failed to make mainDir absolute: %w", err)
-	}
-
-	// Construct path to mainDir relative to moduleDir
-	mainDirRel := strings.TrimPrefix(mainDirAbs, moduleDirAbs)
-	mainDirRel = strings.TrimPrefix(mainDirRel, string(os.PathSeparator))
-
-	if mainDirRel != "" && !g.shortPURLs {
-		mainDirRel = strings.TrimSuffix(mainDirRel, string(os.PathSeparator))
-
+// This includes both dependencies[].ref and incoming dependsOn references.
+func (g generator) includeAppPathInMainComponentPURL(bom *cdx.BOM, modulePath, packagePath string) {
+	if subpath, ok := strings.CutPrefix(packagePath, modulePath+"/"); ok && !g.shortPURLs {
 		oldPURL := bom.Metadata.Component.PackageURL
-		newPURL := oldPURL + "#" + filepath.ToSlash(mainDirRel)
+		newPURL := oldPURL + "#" + subpath
 
 		oldBOMRef := bom.Metadata.Component.BOMRef
-		newBOMRef := oldBOMRef + "#" + filepath.ToSlash(mainDirRel)
+		newBOMRef := oldBOMRef + "#" + subpath
 
 		g.logger.Debug().
 			Str("oldpurl", oldPURL).
@@ -265,14 +265,18 @@ func (g generator) includeAppPathInMainComponentPURL(bom *cdx.BOM) error {
 		bom.Metadata.Component.BOMRef = newBOMRef
 		bom.Metadata.Component.PackageURL = newPURL
 
-		// Update PURL in dependency graph (without GOOS and GOARCH)
+		// Update both outgoing and incoming refs in the dependency graph (without GOOS and GOARCH).
 		for i, dep := range *bom.Dependencies {
 			if dep.Ref == oldBOMRef {
 				(*bom.Dependencies)[i].Ref = newBOMRef
-				break
+			}
+			if dep.Dependencies != nil {
+				for j, ref := range *dep.Dependencies {
+					if ref == oldBOMRef {
+						(*dep.Dependencies)[j] = newBOMRef
+					}
+				}
 			}
 		}
 	}
-
-	return nil
 }

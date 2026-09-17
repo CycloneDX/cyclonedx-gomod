@@ -201,6 +201,45 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
+	t.Run("SimpleVendorTool", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor-tool.tar.gz")
+
+		g, err := NewGenerator(fixturePath,
+			WithMainDir("vendor/golang.org/x/tools/cmd/stringer"),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		require.Equal(t, "golang.org/x/tools", bom.Metadata.Component.Name)
+		require.Equal(t, "v0.37.0", bom.Metadata.Component.Version)
+		appRef := "pkg:golang/golang.org/x/tools@v0.37.0?type=module#cmd/stringer"
+		assert.Equal(t, appRef, bom.Metadata.Component.BOMRef)
+		assert.Regexp(t, `#cmd/stringer$`, bom.Metadata.Component.PackageURL)
+
+		refs := map[string]bool{bom.Metadata.Component.BOMRef: true}
+		for _, component := range *bom.Components {
+			refs[component.BOMRef] = true
+		}
+		for _, dependency := range *bom.Dependencies {
+			assert.True(t, refs[dependency.Ref], "unresolved ref: %s", dependency.Ref)
+			if dependency.Dependencies != nil {
+				for _, ref := range *dependency.Dependencies {
+					assert.True(t, refs[ref], "unresolved dependsOn: %s", ref)
+				}
+			}
+		}
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
+
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
+	})
+
 	t.Run("SimpleVendorWithFiles", func(t *testing.T) {
 		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-vendor.tar.gz")
 
