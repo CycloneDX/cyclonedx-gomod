@@ -71,6 +71,68 @@ func TestFindModule(t *testing.T) {
 	})
 }
 
+func TestApplyPackageGraph(t *testing.T) {
+	modules := []Module{
+		{
+			Path: "main",
+			Main: true,
+			Packages: []Package{
+				{ImportPath: "main", Imports: []string{"a", "fmt", "main/internal"}},
+				{ImportPath: "main/internal", Imports: []string{"a/sub", "b"}},
+			},
+		},
+		{
+			Path:    "a",
+			Version: "v1.0.0",
+			Packages: []Package{
+				{ImportPath: "a", Imports: []string{"a/sub", "c", "fmt"}},
+				{ImportPath: "a/sub"},
+			},
+		},
+		{
+			Path:    "b",
+			Version: "v1.0.0",
+			Replace: &Module{
+				Path:    "b-fork",
+				Version: "v1.1.0",
+			},
+			Packages: []Package{
+				{ImportPath: "b", Imports: []string{"c"}},
+			},
+		},
+		{
+			Path:    "c",
+			Version: "v1.0.0",
+			Packages: []Package{
+				{ImportPath: "c", Imports: []string{"C", "unsafe"}},
+			},
+		},
+		{
+			Path: StdlibModulePath,
+			Packages: []Package{
+				{ImportPath: "fmt", Standard: true, Imports: []string{"unsafe"}},
+				{ImportPath: "unsafe", Standard: true},
+			},
+		},
+	}
+
+	ApplyPackageGraph(modules)
+
+	dependencyPaths := func(module *Module) (paths []string) {
+		for _, dependency := range module.Dependencies {
+			paths = append(paths, dependency.Path)
+		}
+		return
+	}
+
+	require.Equal(t, []string{"a", "b-fork"}, dependencyPaths(&modules[0]))
+	require.Equal(t, []string{"c"}, dependencyPaths(&modules[1]))
+	require.Empty(t, modules[2].Dependencies)
+	require.Equal(t, []string{"c"}, dependencyPaths(modules[2].Replace))
+	require.Empty(t, modules[3].Dependencies)
+	require.Empty(t, modules[4].Dependencies)
+}
+
 func TestSortDependencies(t *testing.T) {
 	modules := []*Module{
 		{
