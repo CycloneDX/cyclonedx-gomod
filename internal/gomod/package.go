@@ -53,6 +53,8 @@ type Package struct {
 	SysoFiles    []string // .syso object files to add to archive
 	EmbedFiles   []string // files matched by EmbedPatterns
 
+	Imports []string // import paths used by this package
+
 	Error *PackageError // error loading package
 }
 

@@ -95,12 +95,7 @@ func (g generator) Generate() (*cdx.BOM, error) {
 		}
 	}
 
-	// Dependencies need to be applied prior to determining the main
-	// module's version, because `go mod graph` omits that version.
-	err = gomod.ApplyModuleGraph(g.logger, g.moduleDir, modules)
-	if err != nil {
-		return nil, fmt.Errorf("failed to apply module graph: %w", err)
-	}
+	gomod.ApplyPackageGraph(modules)
 
 	modules[appModuleIndex].Version, err = gomod.GetModuleVersion(g.logger, modules[appModuleIndex].Dir)
 	if err != nil {

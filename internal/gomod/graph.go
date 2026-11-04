@@ -112,6 +112,48 @@ func parseModuleGraph(logger zerolog.Logger, reader io.Reader, modules []Module)
 	return nil
 }
 
+// ApplyPackageGraph populates the Dependencies field of a given Module slice
+// based on the imports of the packages within the modules.
+//
+// A module depends on another module if at least one of its packages imports
+// a package of the other module. Imports of standard library packages are ignored.
+//
+// Unlike ApplyModuleGraph, this only requires the packages as loaded by
+// LoadModulesFromPackages, and not the go.mod files of the entire module graph.
+func ApplyPackageGraph(modules []Module) {
+	pkgModules := make(map[string]*Module)
+	for i := range modules {
+		if modules[i].Path == StdlibModulePath {
+			continue
+		}
+		for _, pkg := range modules[i].Packages {
+			pkgModules[pkg.ImportPath] = effectiveModule(&modules[i])
+		}
+	}
+
+	for i := range modules {
+		dependant := effectiveModule(&modules[i])
+		for _, pkg := range modules[i].Packages {
+			for _, importPath := range pkg.Imports {
+				dependency, ok := pkgModules[importPath]
+				if !ok || dependency == dependant || slices.Contains(dependant.Dependencies, dependency) {
+					continue
+				}
+				dependant.Dependencies = append(dependant.Dependencies, dependency)
+			}
+		}
+		sortDependencies(dependant.Dependencies)
+	}
+}
+
+// effectiveModule returns the replacement of a given module, if any.
+func effectiveModule(module *Module) *Module {
+	if module.Replace != nil {
+		return module.Replace
+	}
+	return module
+}
+
 func findModule(modules []Module, coordinates string, strict bool) *Module {
 	for i := range modules {
 		if coordinates == modules[i].Coordinates() || (!strict && strings.HasPrefix(coordinates, modules[i].Path+"@")) {

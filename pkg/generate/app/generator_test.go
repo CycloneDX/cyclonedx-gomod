@@ -20,6 +20,7 @@ package app
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"runtime"
 	"testing"
 
@@ -127,6 +128,29 @@ func TestGenerator_Generate(t *testing.T) {
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
 		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
 		testutil.RequireStdlibComponentToBeRedacted(t, bom, true, false)
+		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
+	})
+
+	t.Run("SimpleLocal", func(t *testing.T) {
+		fixturePath := testutil.ExtractFixtureArchive(t, "../testdata/simple-local.tar.gz")
+
+		g, err := NewGenerator(filepath.Join(fixturePath, "local"),
+			WithIncludeStdlib(true),
+			WithLicenseDetector(local.NewDetector(zerolog.Nop(), local.DefaultMinDetectionConfidence)),
+			WithLogger(testutil.SilentLogger))
+		require.NoError(t, err)
+
+		bom, err := g.Generate()
+		require.NoError(t, err)
+
+		testutil.RequireValidSBOM(t, bom, cyclonedx.BOMFileFormatJSON)
+
+		testutil.RequireVolatilePURLQualifiersToBeRedacted(t, bom)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:CGO_ENABLED", `(0|1)`)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOARCH", runtime.GOARCH)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOOS", runtime.GOOS)
+		testutil.RequireMatchingPropertyToBeRedacted(t, *bom.Metadata.Component.Properties, "cdx:gomod:build:env:GOVERSION", `^go1\.`)
+		testutil.RequireStdlibComponentToBeRedacted(t, bom, false, false)
 		testutil.RequireMatchingSBOMSnapshot(t, snapShooter, bom, cyclonedx.BOMFileFormatJSON)
 	})
 
