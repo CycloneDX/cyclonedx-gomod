@@ -69,7 +69,9 @@ func GetModuleVersion(logger zerolog.Logger, moduleDir string) (string, error) {
 // GetVersionFromTag checks if the HEAD commit is annotated with a tag and if it is, returns that tag's name.
 // If the HEAD commit is not tagged, a pseudo version will be generated and returned instead.
 func GetVersionFromTag(logger zerolog.Logger, moduleDir string) (string, error) {
-	repo, err := git.PlainOpen(moduleDir)
+	repo, err := git.PlainOpenWithOptions(moduleDir, &git.PlainOpenOptions{
+		EnableDotGitCommonDir: true,
+	})
 	if err != nil {
 		return "", err
 	}
